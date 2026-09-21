@@ -1,0 +1,98 @@
+# Field descriptions for the LLM-facing schemas, ported verbatim from the
+# `Annotated[type, 'description']` docs in calibre's src/calibre/ai/cyoa.py.
+#
+# Keyed by dotted "TypeName.field_name" path, matching the anti-drift test
+# design in PLAN.md ("schema_docs_cover_every_field_and_no_others"). A `_doc`
+# key holds the object-level description (Python's `doc = Doc(...)`).
+#
+# NOT included here: PlayerCharacter/NonPlayerCharacter/GeneratedWorld,
+# which are state types built by validation code, never requested directly
+# from the model as their own top-level schema (their fields ARE requested,
+# nested inside GeneratedCast — see [GeneratedCast] below).
+
+version = 1
+
+[WorldOutline]
+_doc = "A detailed game world generated from a brief description"
+title = "A short, evocative title for this adventure"
+world_description = "Detailed description of the world: its geography, factions, atmosphere, central conflict and stakes"
+
+[GeneratedCast]
+_doc = "The cast of characters of an adventure set in a world"
+characters = "Between three and five distinct characters or character variants the player can choose to play as, with physical descriptions and brief back stories"
+# {{ max_generated_npcs }} = 8, interpolated in the original f-string.
+npcs = "Between three and {{ max_generated_npcs }} other characters who live in this world and whom the player will meet as the story unfolds, whoever the player chooses to play as"
+
+[PlayerCharacter]
+_doc = "A character the player can choose to play as"
+name = ""  # no annotation in the original — plain `name: str`
+description = "Short third person description of the character"
+backstory = "The character's backstory and motivations"
+
+[NonPlayerCharacter]
+_doc = "A character who lives in the world and whom the player will meet, but cannot play as"
+name = ""
+description = "Short third person description of the character"
+backstory = "The character's backstory and motivations"
+relationships = "Their place in the world: their relationships with the other characters and, if they have one already, with the protagonist"
+
+[CharacterState]
+_doc = "The current state of a significant character in the story"
+name = ""
+description = "The durable physical appearance and nature of the character, doubling as the prompt used to draw them"
+backstory = "The character's brief backstory: who they are and how they came to be part of the story"
+relationships = "Their relationships with the player and the other characters, and how those have changed"
+current_state = ""  # defaulted to '' — filled in every turn, but not model-facing at creation time
+id = "A short, permanent, lowercase identifier for this character, such as 'marlo'. It is the identity of the character, not their name, so it survives them being renamed."
+
+[StorySummary]
+_doc = "A summary of the story so far, serving as memory for continuing it"
+world = "Description of the world and its current state"
+# {{ max_major_events }} = 30
+major_events = "The major events of the story so far, in chronological order, at most {{ max_major_events }} of them"
+characters = "All significant named characters in the story, each with a description, brief backstory, their relationships and their current state"
+current_situation = "Where the player currently is and what is happening"
+upcoming_events = "Foreshadowed or planned future events and unresolved plot threads"
+
+[CharacterDelta]
+_doc = "A change to one character of the story summary. Only what changed this turn need be filled in: every field left empty keeps the value the character already has in the summary."
+id = "The short, permanent, lowercase identifier of the character this updates, such as 'marlo'. It is the identity of the character, not their name: reproduce the id from the summary verbatim, even when you rename the character or reveal their true identity. Invent a new one, based on their name, only for a character you are adding to the summary for the first time."
+current_state = "Everything that is true of this character only right now: where they are, what they are doing, their physical condition and any injuries, their mood, what they are carrying and what they intend to do next. Always fill this in: it replaces whatever the summary currently says about them."
+name = "The name of the character. Fill this in only when you are adding them to the summary or the story renames them; leave it empty to keep the name they already have."
+description = "The physical appearance and nature of the character: their looks, age, distinguishing features, the kind of clothes they wear and their temperament. This doubles as the prompt used to draw them. Leave it empty unless you are adding them to the summary, or their appearance or nature has permanently changed, for example a new scar, the loss of a limb or aging, in which case give the full new description. Never record events, mood, injuries, location or plot developments here, they belong in current_state."
+backstory = "The character's brief backstory: who they are and how they came to be part of the story. Leave it empty unless you are adding them to the summary, or the story has just revealed something new about their past, in which case give the full extended backstory."
+relationships = "How this character stands with the protagonist and the other characters. Leave it empty unless their relationships changed this turn, in which case give them in full."
+
+[SummaryUpdate]
+_doc = "The changes a passage of the story makes to the running summary of the story"
+current_situation = "Where the protagonist is and what is happening as this passage ends. This replaces the previous situation."
+character_updates = "One entry for every character this passage changes and every new named character it introduces. Leave out the characters it does not touch: they keep the state they already have in the summary."
+new_major_events = "The events of this passage that matter to the rest of the story, one short line each, in chronological order. They are appended to the major events already in the summary, so never repeat one that is already there. Leave this empty when nothing of lasting importance happened."
+upcoming_events = "The foreshadowed or planned future events and unresolved plot threads of the story. Send null, as most passages must, unless this passage opens a new thread or resolves one the summary already holds. When one does change, this field replaces the previous list rather than adding to it: give the complete list of threads as it now stands, repeating every one that is still open, or an empty list when this passage resolves the last of them."
+world = "The description of the world. Leave it empty unless the state of the world itself has changed, in which case give the full new description."
+# {{ max_major_events }} = 30
+consolidated_major_events = "A condensed rewrite of the major events that were already in the summary, replacing them. Leave this empty except when the summary is nearing its limit of {{ max_major_events }} major events: then merge the older ones into fewer single lines, each covering several events, keeping every development the rest of the story still depends on."
+
+[QuickActionKind]
+_doc = "The kind of approach a suggested action takes. The actions offered to the player must differ in kind, so that they are genuinely different choices rather than variations on a single idea."
+# enum values, not fields: cautious, bold, social, investigate, other
+# — see [quick_actions] in prompts.toml for the per-value meanings.
+
+[QuickAction]
+_doc = "One action suggested to the player, with the kind of approach it takes"
+text = 'The action itself, as a short imperative phrase, such as "Follow the stranger into the alley"'
+kind = "Which kind of approach this action takes"
+
+[StoryTurn]
+_doc = "One turn of the adventure"
+# narrative MUST stay the first key both in this file's iteration and in the
+# Rust struct's field order — see PLAN.md's note on serde_json/preserve_order.
+# The comment at cyoa.py:322-325 explains why length/POV/tense/tone/format
+# are deliberately NOT stated here: they live only in prose_contract(), to
+# avoid the two descriptions drifting apart.
+narrative = "The next passage of the novel, continuing seamlessly from the prose written so far without repeating any of it, written to the contract for the prose given in the instructions"
+quick_actions = "Exactly three actions the player could plausibly take next, one of each kind requested in the instructions: a cautious one, a bold one and one that engages another character or investigates something. They must be three genuinely different approaches to the situation, not three phrasings of the obvious next step."
+scene_description = "A self-contained visual description of the current scene, suitable as a prompt for an image generation AI, that does not rely on knowledge of the story. Describe the current physical state of the characters, their clothing and emotional state."
+summary_update = "The changes this passage makes to the running summary of the story"
+starts_new_chapter = "True only when this turn begins a major new phase of the story, suitable as the start of a new chapter"
+chapter_title = "A title for the new chapter when starts_new_chapter is true, null otherwise"

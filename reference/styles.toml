@@ -1,0 +1,122 @@
+# Style tables ported verbatim from calibre's src/calibre/ai/cyoa.py:754-875.
+#
+# Each table has a stable `key`, a translated-in-the-original `name` (English
+# only here — i18n is out of scope), and an English `prompt` fragment.
+# Lookup falls back to the FIRST entry of a table for an unknown or empty
+# key (style_for_key, cyoa.py:868-875) — so the first entry of each table
+# below is the default.
+
+version = 1
+
+# --- Art style (ART_STYLES, cyoa.py:763-772) --- image prompts only, not prose.
+# Verified verbatim directly against reference/calibre/cyoa.py.
+[[art_style]]
+key = "default"
+name = "Let the AI decide"
+prompt = ""
+
+[[art_style]]
+key = "anime"
+name = "Anime"
+prompt = "Render in a vibrant anime style: clean line art, cel shading, expressive features."
+
+[[art_style]]
+key = "photorealistic"
+name = "Photo realistic"
+prompt = "Render as a photorealistic photograph: natural lighting, shallow depth of field, fine detail."
+
+[[art_style]]
+key = "digital-painting"
+name = "Fantasy painting"
+prompt = "Render as an epic fantasy digital painting: rich colors, dramatic lighting, painterly brushwork."
+
+[[art_style]]
+key = "comic"
+name = "Comic book"
+prompt = "Render in a comic book style: bold ink outlines, flat colors, dynamic halftone shading."
+
+[[art_style]]
+key = "watercolor"
+name = "Watercolor"
+prompt = "Render as a delicate watercolor painting: soft washes of color, visible paper texture, loose expressive strokes."
+
+[[art_style]]
+key = "pixel-art"
+name = "Pixel art"
+prompt = "Render as detailed retro pixel art: limited color palette, crisp pixels, 16-bit video game aesthetic."
+
+[[art_style]]
+key = "noir"
+name = "Film noir"
+prompt = "Render in a film noir style: moody high contrast black and white, deep shadows, dramatic lighting."
+
+# --- Pace / length (PACES, cyoa.py:785-804) --- never empty; default = "long".
+[[pace]]
+key = "long"
+name = "Long (about 400-800 words)"
+prompt = "Write each passage as rich long form fiction of several substantial paragraphs, typically 400-800 words, the way a skilled novelist would: let scenes breathe and unfold rather than summarizing events."
+
+[[pace]]
+key = "medium"
+name = "Medium (about 250-450 words)"
+prompt = "Write each passage as a few brisk paragraphs, typically 250-450 words: room enough for the scene to land, but keep the story moving and leave out what the reader can infer."
+
+[[pace]]
+key = "short"
+name = "Short (about 120-250 words)"
+prompt = "Write each passage as a tight, fast moving scene of two or three lean paragraphs, typically 120-250 words, in the manner of pulp fiction: cut straight to what happens and stop as soon as it has happened."
+
+# --- Tone / register (TONES, cyoa.py:815-847) --- default = "default", empty
+# prompt means the tone clause is omitted entirely from prose_contract().
+[[tone]]
+key = "default"
+name = "Default"
+prompt = ""
+
+[[tone]]
+key = "grimdark"
+name = "Grimdark"
+prompt = "Tell the story in a grimdark register: a harsh, morally grey world where every victory costs something, hope is scarce and violence has weight. Do not flinch from bleakness, but do not wallow in it either."
+
+[[tone]]
+key = "heroic"
+name = "Heroic"
+prompt = "Tell the story in a heroic register: courage, loyalty and sacrifice matter, the stakes are grand and the prose has a sweep to it, even when the protagonist loses."
+
+[[tone]]
+key = "comedic"
+name = "Comedic"
+prompt = "Tell the story in a comedic register: wry, quick witted and absurd, with characters whose plans go amusingly wrong. Keep the humor in the situations and the dialogue rather than in asides to the reader."
+
+[[tone]]
+key = "cozy"
+name = "Cozy"
+prompt = "Tell the story in a cozy register: low stakes, warm company, small pleasures and gentle problems solved with kindness. Trouble, when it comes, stays mild and is never cruel."
+
+[[tone]]
+key = "romance"
+name = "Romance"
+prompt = "Tell the story in a romantic register: attraction, longing and the shifting charge between characters drive it, and the emotional stakes of a scene are drawn as clearly as its practical ones."
+
+# --- Narration: POV + tense (NARRATION_STYLES, cyoa.py:858-863) ---
+# default = "second-present". Prompt text is phrased to follow "Write it ",
+# see [prose_contract] in prompts.toml.
+[[narration]]
+key = "second-present"
+name = "Second person, present tense"
+prompt = 'in second person present tense, addressing the reader as "you"'
+
+[[narration]]
+key = "third-past"
+name = "Third person, past tense"
+prompt = "in third person past tense, referring to the protagonist by name"
+
+[[narration]]
+key = "first-past"
+name = "First person, past tense"
+prompt = "in first person past tense, in the protagonist's own voice"
+
+[[narration]]
+key = "third-present"
+name = "Third person, present tense"
+prompt = "in third person present tense, referring to the protagonist by name"

@@ -1,0 +1,7 @@
+/target
+Cargo.lock
+*.log
+.DS_Store
+
+# personal save files if you ever run this from inside the repo during dev
+/dev-saves/
