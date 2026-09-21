@@ -1,9 +1,14 @@
 # cyoa-rs
 
 A standalone Rust TUI port of calibre's "Create your own adventure" (CYOA)
-game — an LLM-driven choose-your-own-adventure engine — using `claude -p`
-(Claude Code headless mode) as the inference backend, so generation rides a
-Claude Code **subscription** instead of metered Anthropic API credits.
+game — an LLM-driven choose-your-own-adventure engine — driven by a CLI coding
+agent's headless mode as the inference backend, so generation rides an existing
+subscription instead of metered API credits. **Two backends are co-equal, not
+primary/fallback:** `claude -p` (Claude Code headless mode) and `codex exec`
+(OpenAI Codex CLI headless mode). See PLAN.md's "Backend parity and cross-agent
+handoff" section — this project is expected to be implemented across sessions
+using different coding agents on different machines, each with its own CLI
+already authenticated.
 
 This repo is a **seed**: research, verified design decisions, and ported
 prompt/schema content, prepared in one session so implementation can start
@@ -24,9 +29,13 @@ Nothing has been implemented yet. This is the starting point.
    wrong, before any TUI code exists.
 2. `reference/00-engine-notes.md` — the game logic (schemas, the delta-merge
    rules, validation, chapter/rewind logic) in dense reference form.
-3. `reference/01-claude-cli.md` — the exact `claude -p` flags verified to
-   work, including a documented trap (`--bare`) that looks correct and would
-   silently break the whole point of the project.
+3. `reference/01-claude-cli.md` and `reference/02-codex-cli.md` — the exact
+   flags for each backend, what's actually been verified live vs. scaffolded
+   from published docs, and each vendor's own version of the "looks correct,
+   silently breaks the subscription billing" trap (`--bare` for Claude). Read
+   whichever one matches the CLI you actually have authenticated, and if you
+   can finish verifying the *other* one this session, do — see PLAN.md's
+   "Backend parity and cross-agent handoff".
 4. `reference/prompts.toml`, `reference/styles.toml`, `reference/schema_docs.toml`
    — every prompt string, style-table entry, and schema field description,
    copied verbatim from calibre. **Read the warning comment at the top of
@@ -44,9 +53,13 @@ Nothing has been implemented yet. This is the starting point.
 ## Prerequisites
 
 - Rust (stable toolchain)
-- The `claude` CLI installed and logged into a Claude Code subscription
-  (`claude auth`) — verify with `claude --version` and a manual `claude -p`
-  call before assuming the backend works
+- **At least one** of the two backend CLIs, installed and authenticated to its
+  subscription (not an API key — see the `--bare`/`--with-api-key` traps in the
+  reference docs):
+  - `claude` (Claude Code) — verify with `claude --version` and a manual
+    `claude -p` call
+  - `codex` (OpenAI Codex CLI) — verify with `codex --version` and
+    `codex login status`
 - No calibre installation or checkout required
 
 ## License

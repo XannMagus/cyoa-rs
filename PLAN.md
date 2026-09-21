@@ -1,4 +1,4 @@
-# Port calibre's CYOA game to a standalone Rust TUI driven by `claude -p`
+# Port calibre's CYOA game to a standalone Rust TUI, backed by a CLI coding-agent's headless mode
 
 ## Context
 
@@ -11,16 +11,28 @@ open-ended turn loop. Its engine lives in `/home/ahmed/calibre/src/calibre/ai/cy
 The user wants this specific functionality but:
 
 - does not use calibre and does not want Python;
-- does not want to pay per-token for the Anthropic API, and does not want to run a
-  local LLM. They have a Claude Code subscription and want generation to ride it.
+- does not want to pay per-token for a metered API, and does not want to run a local
+  LLM. They hold subscriptions to more than one CLI coding agent (Claude Code, OpenAI
+  Codex CLI) across different machines, and want generation to ride whichever
+  subscription is available on the machine they're working from, not a specific
+  vendor.
 
 Calibre's CYOA reaches every provider through one pluggable interface
 (`AIProvider.generate_structured_output`, `cyoa.py:64-70`) with only three call sites,
 so the engine is cleanly separable from the backend. The plan is therefore a faithful
-port of the engine logic and prompts into Rust, with a new backend that shells out to
-`claude -p` (Claude Code headless mode) as a subprocess. Because the engine owns all
-state and the model owns none, a stateless one-shot subprocess per call is an exact
-match for the original design rather than a compromise.
+port of the engine logic and prompts into Rust, with **two co-equal backends** that
+each shell out to a CLI coding agent's headless/non-interactive mode as a subprocess:
+`claude -p` (Claude Code) and `codex exec` (OpenAI Codex CLI). Because the engine owns
+all state and the model owns none, a stateless one-shot subprocess per call is an
+exact match for the original design rather than a compromise, and it holds equally
+for both backends.
+
+**Neither backend is the "real" one with the other as a fallback.** This project will
+likely be implemented across sessions using different coding agents on different
+machines (a Claude Code session on one machine, a Codex session at home) — each of
+which comes with live, already-authenticated access to its *own* CLI (`claude` or
+`codex` respectively) but not necessarily the other. See "Backend parity and
+cross-agent handoff" below for how that shapes the work.
 
 Intended outcome: a standalone Rust TUI binary, in its own new project directory
 (not the calibre repo), that plays the same game, saves and resumes, and exports the
@@ -31,7 +43,7 @@ finished story to Markdown/EPUB.
 | Area | Decision |
 |---|---|
 | UI | Full TUI with `ratatui` |
-| Inference | Stateless one-shot CLI call per call, behind a pluggable `Backend` trait; `claude -p` is the primary backend, `codex exec` (OpenAI Codex CLI headless mode) a second implementation of the same trait — see below |
+| Inference | Stateless one-shot CLI call per turn, behind a pluggable `Backend` trait, with **two co-equal implementations**: `claude -p` (Claude Code headless mode) and `codex exec` (OpenAI Codex CLI headless mode) — see "Backend parity and cross-agent handoff" below |
 | Prompts | Ported **verbatim** from calibre, externalized to TOML (tunable without recompiling) |
 | v1 scope | World gen, cast gen, character select, turn loop, save/resume, TUI, **plus Markdown/EPUB export** |
 | Images | Out of scope for v1, but the image backend is defined as a trait with a stub impl so a local Stable Diffusion backend (ComfyUI / A1111 HTTP, or `stable-diffusion.cpp`) drops in later without refactoring |
@@ -139,10 +151,59 @@ the opening brace so code fences don't confuse it.
 
 ---
 
-## The `claude -p` backend (verified empirically, not from docs)
+## Backend parity and cross-agent handoff
 
-I tested this against the installed `claude` binary. **The flag surface below is
-confirmed working; several plausible-looking alternatives are actively wrong.**
+**Both backends below are equally important. Neither is the "real" one with the
+other as a fallback** — v1 is not done until `ClaudeCliBackend` and
+`CodexCliBackend` are both implemented and both verified live.
+
+The practical reality driving this: this project is implemented across sessions,
+possibly by different coding agents on different machines — a Claude Code session
+has a live, already-authenticated `claude` CLI riding its own subscription; a
+Codex session (e.g. at home) has a live, already-authenticated `codex` CLI riding
+its own plan. Neither session can be assumed to have the other vendor's CLI
+authenticated, or even installed. That shapes how work on each backend proceeds:
+
+- **Verify your own backend against your own harness.** If you're implementing or
+  verifying `ClaudeCliBackend`, do it from a session with `claude` authenticated —
+  run real `claude -p` calls and record actual output, the way `01-claude-cli.md`
+  was built (`--help` first, then real invocations, then a real streaming call).
+  If you're implementing or verifying `CodexCliBackend`, do the equivalent with a
+  real, authenticated `codex exec`. Don't guess at the other vendor's live
+  behavior from inside a session that can't reach it.
+- **Scaffold the backend you can't test from its published API/CLI docs, and say
+  so.** Both backends' trait implementations, config plumbing, and CLI
+  invocation-building can and should exist even before they're live-verified —
+  don't block on auth. Write that scaffolding against the vendor's own published
+  documentation (official CLI docs, `--help` output) rather than invented
+  behavior, and mark every such assumption inline, e.g.
+  `// UNVERIFIED: from OpenAI's published codex exec docs, not run live — see reference/02-codex-cli.md`.
+  This is exactly the state `CodexCliBackend` is in right now: flags are
+  confirmed to exist, but no real generation has been observed.
+- **Each backend's `reference/0N-*-cli.md` file is the single source of truth for
+  what's actually been verified**, split into a "Confirmed" section (only things
+  actually run and observed against a live call) and an "Open questions" section
+  (documented behavior from `--help`/docs, not yet exercised). Whichever agent
+  picks up a backend next reads its own vendor's doc, resolves the open
+  questions with a real transcript, and moves them into "Confirmed" — never by
+  editing the *other* backend's doc secondhand, and never by marking something
+  confirmed without having actually run it.
+- **Neither backend blocks the other, or the rest of the build.** `cyoa-core`'s
+  `Backend` trait, the engine, prompts, merge/validate logic, persistence, and
+  TUI are backend-agnostic and are built and tested via `ScriptedBackend`/
+  `--demo` without either CLI (see Phase 0). A session with only `codex`
+  available can do all of that, plus finish and verify `CodexCliBackend`, while
+  `ClaudeCliBackend` sits scaffolded-but-unverified for whoever next has
+  `claude` — and symmetrically the other way around.
+
+---
+
+## Backend: `claude -p` (Claude Code headless mode)
+
+**Status: verified live** against the installed `claude` binary — see
+`reference/01-claude-cli.md` for the full transcript evidence. **The flag surface
+below is confirmed working; several plausible-looking alternatives are actively
+wrong.**
 
 ### The invocation
 
@@ -234,15 +295,19 @@ keeping only the semantic field rules. The Markdown formatting instructions
 
 ---
 
-## The `codex exec` backend (⚠️ NOT YET VERIFIED — flags confirmed, streaming behavior is not)
+## Backend: `codex exec` (OpenAI Codex CLI headless mode)
 
-Codex CLI (`npm i -g @openai/codex`, or `npx @openai/codex`) ships an analogous
-headless mode, `codex exec`, confirmed against the real installed binary's `--help`
-output in this session — but **not** run end-to-end against a real model response,
-because doing so needs an interactive `codex login` (ChatGPT OAuth) this session
-couldn't perform. Treat everything below as "flags exist and take these forms",
-not "behavior verified", until someone runs it live. See
-`reference/02-codex-cli.md` for the raw evidence and the open questions.
+**Status: flags confirmed, live generation not yet verified.** Codex CLI
+(`npm i -g @openai/codex`, or `npx @openai/codex`) ships an analogous headless
+mode, `codex exec`, confirmed against the real installed binary's `--help` output
+— but not yet run end-to-end against a real model response, because that needs an
+interactive `codex login` (ChatGPT OAuth) no session has performed yet. Per
+"Backend parity and cross-agent handoff" above, this is expected: whoever
+implements/finishes this backend from a session with `codex` actually
+authenticated should run the live tests `01-claude-cli.md` ran for the other
+backend, and update `reference/02-codex-cli.md` accordingly. Until then, treat
+everything below as "flags exist and take these forms, scaffolded from published
+docs/`--help`", not "behavior verified".
 
 ### The invocation (flags confirmed to exist; not yet run against a live model)
 
@@ -284,7 +349,7 @@ the `--bare` trap, but opt-in here rather than a single flag on the exec call it
 `claude`'s auth, and warn if API-key auth is active**, since nothing on the `codex exec`
 invocation itself prevents it.
 
-### Open questions before implementing `CodexCliBackend`
+### Open questions before `CodexCliBackend` can be marked verified
 
 1. **Does `--output-schema` stream the structured fields incrementally**, the way
    Claude's forced `StructuredOutput` tool call does via `input_json_delta`? If Codex
@@ -302,9 +367,13 @@ invocation itself prevents it.
 5. Token/cost reporting equivalent to `total_cost_usd`, if any, for the "estimate, not
    billed" display.
 
-**Do not implement `CodexCliBackend` until these are answered against a real
-authenticated run** — write `reference/02-codex-cli.md`'s verified section then,
-the same way `01-claude-cli.md` was built from actual output rather than docs.
+The `Backend` trait impl, config wiring, and invocation-building for
+`CodexCliBackend` can be **scaffolded now** from the confirmed `--help` flags
+above — don't block that on auth. What should wait for a real authenticated run
+(from a session with `codex` logged in) is **marking it verified**: resolve these
+open questions, write `reference/02-codex-cli.md`'s "Confirmed" section from an
+actual transcript the way `01-claude-cli.md` was, and only then consider the
+backend equal-status-complete alongside `ClaudeCliBackend`.
 
 ### Backend trait shape
 
@@ -707,12 +776,17 @@ generation + `StreamingStringField` + merge/validate + `engine::{generate_world,
 generate_cast, next_turn}` + `ScriptedBackend`. Ported calibre tests pass. Nothing playable,
 but every hard algorithm is done and proven.
 
-**Phase 1 — walking skeleton: headless, real model.** `ClaudeCliBackend` + `cyoa play
---headless`: print prose to stdout, read a line from stdin, loop, streaming as it arrives.
-**This is the ship-quality checkpoint** — if the prompts produce bad fiction or the JSON
-comes back malformed, you find out here, cheaply, before any TUI exists. Calibre has exactly
-this shape in `develop()` (`cyoa.py:1514`). Keep `--headless` forever; it is the best
-debugging tool in the project.
+**Phase 1 — walking skeleton: headless, real model.** Whichever CLI backend the
+implementing session can actually authenticate to (`ClaudeCliBackend` or
+`CodexCliBackend` — see "Backend parity and cross-agent handoff") + `cyoa play
+--headless`: print prose to stdout, read a line from stdin, loop, streaming as it
+arrives. **This is the ship-quality checkpoint** — if the prompts produce bad
+fiction or the JSON comes back malformed, you find out here, cheaply, before any
+TUI exists. Calibre has exactly this shape in `develop()` (`cyoa.py:1514`). Keep
+`--headless` forever; it is the best debugging tool in the project. Whichever
+backend goes through this gate first, treat the walking skeleton as unfinished
+until the *other* backend has also cleared it in a later session — v1 doesn't
+ship on only one verified backend.
 
 **Phase 2 — persistence.** Save/load/list, atomic writes, migration scaffold, autosave,
 rewind. Headless gains `/save`, `/load`, `/rewind`, `/quit`.
@@ -825,10 +899,12 @@ directory is left ready for you to do that on your own machine.
 - `cargo test -p cyoa-core` — ported calibre suite, merge/prose-context differential tests,
   proptest on the stream scanner, schema-docs sync test, save round-trip and migrations.
 - `cargo test -p cyoa-cli` — `update()` reducer tests, `TestBackend` frame snapshots.
-- `cyoa doctor` — locates the `claude` binary, runs one tiny `--json-schema` call, reports
-  model and auth state. Once `CodexCliBackend` lands, extend this to locate `codex`, check
-  `codex login status`, and warn if API-key auth is active (see the codex-backend section
-  above).
+- `cyoa doctor` — checks **both** backends: locates the `claude` binary, runs one tiny
+  `--json-schema` call, reports model and auth state; locates `codex`, checks
+  `codex login status`, and warns if API-key auth is active (see the codex-backend
+  section above). A missing/unauthenticated CLI for one backend is reported, not
+  fatal — `cyoa` should run fine on whichever backend is actually configured and
+  available.
 - **Phase 1 manual gate:** `cyoa play --headless`, enter a brief, confirm a coherent world,
   a usable cast, then play ~6 turns through at least one chapter break. Verify: prose streams
   incrementally; quick actions differ in kind; a renamed character does not fork (inspect the
