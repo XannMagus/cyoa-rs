@@ -10,14 +10,53 @@ handoff" section — this project is expected to be implemented across sessions
 using different coding agents on different machines, each with its own CLI
 already authenticated.
 
-This repo is a **seed**: research, verified design decisions, and ported
-prompt/schema content, prepared in one session so implementation can start
-cold in a later session, on a different machine, without needing calibre
-checked out.
+This repo contains the Rust workspace scaffold, design research, and ported
+prompt/schema reference content. No calibre checkout is needed.
 
 ## Status
 
-Nothing has been implemented yet. This is the starting point.
+The workspace scaffold is in place; gameplay is not implemented yet.
+
+- `cyoa-core`: domain crate, reserved for game types and business rules; no
+  dependencies yet.
+- `cyoa-application`: use-case layer with cancellation and the image port.
+  Commands, queries, and story-generation ports will arrive with game types.
+- `cyoa-infrastructure`: low-level JSON backend contract and disabled image adapter.
+- `cyoa-presentation`: terminal interface, currently help and version output.
+- `cyoa-cli`: the `cyoa` executable and composition root.
+- `reference/`: the Python source and extracted material used to guide the port.
+
+The port preserves Python's game behavior while using Rust ownership, borrowed
+inputs, enums, and `Result` errors. Backend calls are synchronous and take exclusive
+access to the adapter; the frontend will own canonical game state and commit only
+validated responses. There are no implemented inference adapters yet, and their
+live verification status remains recorded in the individual reference files.
+
+Successful backend responses are constructed by parsing their original JSON;
+callers cannot mutate the parsed value and original text independently. Input-token
+counts enforce that cached tokens are a subset of total input. Cancellation sources
+stay with the caller while workers receive observation-only tokens. The image seam
+currently represents only the disabled outcome. JSON syntax validation is separate
+from schema and game validation, which will arrive with the engine implementation.
+
+Build and check with a stable Rust toolchain supporting edition 2024:
+
+```sh
+cargo run -p cyoa-cli -- --help
+cargo fmt --all -- --check
+cargo clippy --workspace --all-targets --locked -- -D warnings
+cargo test --workspace --locked
+bash scripts/check_architecture.sh
+```
+
+The architecture check uses Bash and `jq`; no Python tooling is required.
+
+`Cargo.lock` is tracked because this workspace ships an application. CI also checks
+inward workspace dependencies, including dev/build dependencies, and rejects direct
+terminal/JSON dependencies in domain and application. The application imports only
+domain types and owns its ports; infrastructure implements them; presentation calls
+use cases. Only the composition root can depend on all layers. Phase 0's
+engine types, ported behavior tests, prompts, schemas, and scripted backend are next.
 
 ## Where to start
 

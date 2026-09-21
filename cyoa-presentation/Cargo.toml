@@ -1,0 +1,13 @@
+[package]
+name = "cyoa-presentation"
+description = "Terminal interfaces for CYOA"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+cyoa-application.workspace = true
+clap.workspace = true
+
+[lints]
+workspace = true

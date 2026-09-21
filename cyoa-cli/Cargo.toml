@@ -1,0 +1,18 @@
+[package]
+name = "cyoa-cli"
+description = "Terminal frontend for cyoa-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "cyoa"
+path = "src/main.rs"
+
+[dependencies]
+cyoa-application.workspace = true
+cyoa-infrastructure.workspace = true
+cyoa-presentation.workspace = true
+
+[lints]
+workspace = true

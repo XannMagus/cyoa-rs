@@ -24,4 +24,27 @@ of which coding agent you are:
 After `PLAN.md`, read `reference/00-engine-notes.md` for the ported game logic,
 and whichever `reference/0N-*-cli.md` matches the CLI you have available.
 
-Nothing has been implemented yet — see `README.md`'s "Status".
+Follow `PLAN.md`'s "Rust domain modeling requirements": preserve Python behavior
+using idiomatic Rust, prefer domain types over bare primitives, and make invalid
+states unrepresentable where practical. Semantic wrappers/aliases are acceptable;
+use newtypes for compile-time distinctions, checked construction for invariants,
+and enums or marker types/typestate for legal states and transitions. Aliases alone
+do not enforce distinctions. Keep boundary validation and serde behavior faithful
+to the port.
+
+Follow `PLAN.md`'s "Clean Architecture, DDD, and lightweight CQRS" decisions.
+Dependencies point inward: presentation calls application use cases; application
+orchestrates the domain through inward-owned ports; infrastructure implements
+those ports; `main.rs` wires concrete implementations. Application code must not
+depend on concrete presentation/infrastructure types. Separate vendor/save DTOs
+from domain types where constraints differ. Use commands for state-changing intent
+and queries for read-only views, without requiring a message bus, separate databases,
+or event sourcing. These boundaries supersede the original module placement and
+"one layer of types" guidance in the plan.
+
+The Rust workspace scaffold is in place; gameplay is not implemented yet — see
+`README.md`'s "Status".
+
+Avoid Python for project tooling. Prefer shell scripts for small checks or Rust
+utilities for larger tools. The copied Python under `reference/calibre/` is source
+reference for the port, not a tooling dependency.

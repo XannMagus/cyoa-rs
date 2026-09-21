@@ -1,0 +1,13 @@
+[package]
+name = "cyoa-application"
+description = "Use cases and inward-owned ports for CYOA"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+cyoa-core.workspace = true
+thiserror.workspace = true
+
+[lints]
+workspace = true

@@ -1,0 +1,11 @@
+[package]
+name = "cyoa-core"
+description = "Game engine for a standalone port of calibre's CYOA"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+
+[lints]
+workspace = true

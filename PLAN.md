@@ -397,6 +397,79 @@ Errors are returned, never panicked — same posture as `next_turn()`.
 
 ## Project layout
 
+### Clean Architecture, DDD, and lightweight CQRS
+
+Adopt the following logical layers. Preserve calibre's game behavior while using
+DDD to express meaningful domain concepts and invariants, without introducing
+repositories, factories, or aggregates merely by convention.
+
+| Layer | Responsibility |
+|---|---|
+| Domain | Vendor-agnostic business logic: worlds, characters, turns, summaries, merge rules, validation, chapters, rewind, and game invariants. No terminal, CLI protocol, filesystem, or vendor concerns. |
+| Application / use cases | Orchestrates world generation, starting a game, taking a turn, saving, and exporting through domain operations and inward-owned ports such as `StoryGenerator` and `GameRepository`. |
+| Presentation | Driving interfaces: Clap commands, headless input/output, TUI screens, and any future HTTP API. Translates external input into application commands and query results into views. |
+| Infrastructure | Driven adapters: Claude/Codex subprocesses, filesystem persistence, configuration loading, and export encoders. Implements ports required by the application/domain. |
+
+Dependency direction is inward:
+
+```text
+Presentation   --> Application --> Domain
+Infrastructure --> application/domain ports
+main.rs wires concrete implementations into the application
+```
+
+The application may hold and invoke infrastructure implementations through traits
+owned by the application (or domain where intrinsically appropriate). It must not
+import concrete presentation or infrastructure types. Presentation-specific
+callbacks and framework types do not cross this boundary; progress is exposed
+through inward-owned contracts. The executable is the composition root and may
+depend on all layers to wire them together.
+
+Use lightweight CQRS: commands express intent and may change state (`TakeTurn`,
+`Rewind`, `EditCharacter`); queries return read-only views (`CurrentStory`,
+`AvailableActions`). Commands may return their outcome and errors. This does not
+require separate databases, a message bus, or event sourcing. Keep the existing
+turn log and derived state model. Failed generation must not commit partial state.
+
+Application generation ports should speak in meaningful world/cast/turn types.
+Raw JSON, CLI event envelopes, and vendor usage formats belong behind adapters;
+normalize and validate external output before it can change domain state. The
+current generic JSON backend interface is scaffolding for a lower-level adapter
+boundary, not the intended domain-facing generation API.
+
+Separate vendor and save DTOs from domain types when their constraints differ.
+Tolerant wire deserialization must not weaken domain invariants. Do not duplicate
+types when there is no meaningful distinction. Preserve the existing external
+defaults, normalization rules, and migration behavior through explicit mapping.
+
+These decisions supersede conflicting placement in the original module inventory
+below (notably persistence, subprocess adapters, and JSON schemas) and the former
+"one layer of types" rule. The original two-crate scaffold was the starting
+point, not a requirement to fit all four layers into two crates. Exact module/crate
+splits enforce these dependencies; this
+decision records architecture. The scaffold has now been split as follows; game
+logic and use cases remain to be implemented.
+
+### Current workspace layout
+
+```text
+cyoa-core/            domain types and business rules (currently empty)
+cyoa-application/     orchestration and ports; cancellation and image port today
+cyoa-infrastructure/ external adapters; JSON transport and disabled image adapter
+cyoa-presentation/   terminal interface, depending inward on application
+cyoa-cli/            executable composition root
+```
+
+`scripts/check_architecture.sh` (Bash + `jq`) checks workspace dependency direction in CI,
+including dev/build dependencies, and rejects direct terminal/JSON dependencies
+in domain and application. Infrastructure and presentation may depend on application
+and domain, but not on each other. Only the composition root imports both. The old
+generic JSON `Backend` lives in infrastructure; domain-facing generation ports and
+CQRS use cases will be introduced alongside the game types, not fabricated before
+their contracts are known.
+
+### Original workspace inventory (subject to the layer boundaries above)
+
 **Cargo workspace, two crates.** The wall between engine and I/O is enforced by the
 dependency graph, not by discipline (calibre's equivalent rule — "cyoa.py must not import
 Qt" — is only a comment).
@@ -438,15 +511,58 @@ Add a CI check so the wall is machine-checked:
 
 ## Type design
 
-**One layer of types, not two.** Same structs for wire and save format, as calibre does.
-Validation is normalisation (trim/dedup/cap) plus rejection at three call sites — keep it
-as free functions, not a separate domain layer.
+### Rust domain modeling requirements
 
-**Rule for serde:** every Python field with a default becomes `#[serde(default)]`; every
+Preserve the Python engine's behavior, while expressing the implementation in
+idiomatic Rust rather than translating Python's structure mechanically. Use the
+type system to make invalid states unrepresentable wherever practical; this is a
+general architectural requirement, not just a request for runtime validation.
+
+- Prefer domain-specific types over bare primitives in domain interfaces and
+  stored state. Distinct concepts such as character ids, chapter indices, and
+  token counts should have named types rather than interchangeable strings or
+  integers. Ordinary primitives remain appropriate inside these types and for
+  incidental implementation details.
+- Semantic wrappers or aliases are acceptable even without extra validation.
+  An alias documents intent but does not establish a distinct Rust type: use a
+  newtype when accidentally mixing two concepts should be a compile error.
+- Where values have invariants, use private fields and checked constructors.
+  Expose accessors and operations that preserve those invariants; do not provide
+  mutation or deserialization paths that bypass them.
+- Represent mutually exclusive states with enums whose variants carry exactly
+  the data each state needs. Avoid independent flags and optional fields that
+  permit contradictory combinations.
+- Use marker types / typestate where legal transitions can usefully be enforced
+  at compile time. Use runtime enums for state machines driven by runtime events,
+  such as the TUI; typestate is an available technique, not a requirement to
+  parameterize every state machine.
+- Derive redundant data from a single source where possible. When retaining both
+  raw and parsed data, construct them together and prevent independent mutation.
+- Validate untrusted input at boundaries. Static guarantees begin after that
+  validation; a typed backend response alone does not establish schema or game
+  validity. Preserve raw diagnostics on failure and the engine's error-as-value,
+  no-automatic-retry, state-untouched-on-error behavior.
+- Test important runtime invariants and use compile-fail examples where useful
+  to demonstrate operations the public API deliberately forbids.
+
+These requirements supersede the earlier blanket "Everything else stays
+`String`" recommendation. They do not call for mechanically duplicated types,
+a generic patch framework, or stricter rejection of model output than calibre's
+behavior requires. Keep external representations serde-compatible, preserve defaults and
+the `None` versus empty-list distinction, and normalize recoverable model output
+as specified below.
+
+**Domain types and boundary DTOs have distinct responsibilities.** Use separate
+vendor/save DTOs where necessary to preserve tolerant wire behavior and strong
+domain invariants. Share types only where their constraints match. Normalization
+(trim/dedup/cap) and rejection retain calibre's semantics; mapping into domain
+types must pass through invariant-preserving constructors or operations.
+
+**Rule for serde at external boundaries:** every Python field with a default becomes `#[serde(default)]`; every
 field without one stays required. That reproduces `instantiate()` exactly and is what lets
 you add fields later without writing a migration.
 
-Keep the four style keys as **flat fields** on `GameState`, not a nested struct — calibre's
+Keep the four style keys as **flat fields in the saved game representation**, not a nested struct — calibre's
 stated reason (`cyoa.py:455`): adding a fifth style then needs no migration.
 
 ### The three places Rust needs care
@@ -460,7 +576,8 @@ the entire point of `cyoa.py:136`.
 pub struct CharacterId(String);
 ```
 
-Everything else stays `String`.
+Use semantic types for other domain concepts as appropriate under the requirements
+above; retain strings as their underlying representation where suitable.
 
 **2. `Option<Vec<T>>` for `upcoming_events` only.**
 
