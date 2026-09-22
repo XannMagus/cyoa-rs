@@ -15,10 +15,10 @@ prompt/schema reference content. No calibre checkout is needed.
 
 ## Status
 
-The workspace scaffold is in place; gameplay is not implemented yet.
+The workspace and first domain slice are in place; gameplay is not implemented yet.
 
-- `cyoa-core`: domain crate, reserved for game types and business rules; no
-  dependencies yet.
+- `cyoa-core`: typed characters and summary memory, validated constructors,
+  stable ids, and invariant-preserving character/event delta merging.
 - `cyoa-application`: use-case layer with cancellation and the image port.
   Commands, queries, and story-generation ports will arrive with game types.
 - `cyoa-infrastructure`: low-level JSON backend contract and disabled image adapter.
@@ -37,7 +37,23 @@ callers cannot mutate the parsed value and original text independently. Input-to
 counts enforce that cached tokens are a subset of total input. Cancellation sources
 stay with the caller while workers receive observation-only tokens. The image seam
 currently represents only the disabled outcome. JSON syntax validation is separate
-from schema and game validation, which will arrive with the engine implementation.
+from schema and turn validation, which will arrive with the remaining engine implementation.
+
+The domain merge is covered by ported calibre scenarios and additional regression
+tests: renames and same-turn aliases, id/name precedence, duplicate updates,
+incomplete introductions, id collisions, event consolidation and capping, and
+keeping versus clearing upcoming events. Stored domain objects expose read-only
+access; incomplete update proposals are distinct from valid stored characters.
+`CharacterDetails` checks for a description or backstory at construction, making
+`Character::new` infallible. Every character delta field uses `Option<NonblankType>`:
+`None` keeps the stored value and `Some` replaces it; blank replacements cannot be
+constructed. Stored optional details use `None` for information not yet known.
+Cast construction removes exact duplicate records first, then suffixes remaining
+id collisions while preserving distinct namesakes. This requires no LLM call.
+There is no serde or JSON dependency in the domain. Future boundary DTOs will map
+blank fields and nullable lists into these domain changes. As permitted by the
+plan, matching currently uses Unicode lowercase rather than full Python casefold
+(so, for example, `ß` and `ss` are not equivalent).
 
 Build and check with a stable Rust toolchain supporting edition 2024:
 
@@ -55,8 +71,9 @@ The architecture check uses Bash and `jq`; no Python tooling is required.
 inward workspace dependencies, including dev/build dependencies, and rejects direct
 terminal/JSON dependencies in domain and application. The application imports only
 domain types and owns its ports; infrastructure implements them; presentation calls
-use cases. Only the composition root can depend on all layers. Phase 0's
-engine types, ported behavior tests, prompts, schemas, and scripted backend are next.
+use cases. Only the composition root can depend on all layers. Remaining Phase 0
+work includes world/turn state, validation and derived-state tests, application use
+cases, prompts, schemas, streaming, and a scripted generation adapter.
 
 ## Where to start
 

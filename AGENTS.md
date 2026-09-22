@@ -42,7 +42,8 @@ and queries for read-only views, without requiring a message bus, separate datab
 or event sourcing. These boundaries supersede the original module placement and
 "one layer of types" guidance in the plan.
 
-The Rust workspace scaffold is in place; gameplay is not implemented yet — see
+The Rust workspace and character/summary merge domain slice are in place;
+gameplay is not implemented yet — see
 `README.md`'s "Status".
 
 Avoid Python for project tooling. Prefer shell scripts for small checks or Rust

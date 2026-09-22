@@ -448,12 +448,12 @@ below (notably persistence, subprocess adapters, and JSON schemas) and the forme
 point, not a requirement to fit all four layers into two crates. Exact module/crate
 splits enforce these dependencies; this
 decision records architecture. The scaffold has now been split as follows; game
-logic and use cases remain to be implemented.
+logic is being ported incrementally; application use cases remain to be implemented.
 
 ### Current workspace layout
 
 ```text
-cyoa-core/            domain types and business rules (currently empty)
+cyoa-core/            domain types and business rules (characters/summary merge implemented)
 cyoa-application/     orchestration and ports; cancellation and image port today
 cyoa-infrastructure/ external adapters; JSON transport and disabled image adapter
 cyoa-presentation/   terminal interface, depending inward on application
@@ -467,6 +467,39 @@ and domain, but not on each other. Only the composition root imports both. The o
 generic JSON `Backend` lives in infrastructure; domain-facing generation ports and
 CQRS use cases will be introduced alongside the game types, not fabricated before
 their contracts are known.
+
+The first domain slice now provides `CharacterId`, named text value objects,
+`Character`, a nonempty `CharacterCast` with unique ids, `StorySummary`, and bounded
+`MajorEvents`. `CharacterCast` stores an `IndexMap<CharacterId, Character>`:
+iteration preserves insertion order and lookup uses stable ids. Construction
+first deduplicates exact records (id, name, and every detail) with an ordered set,
+keeping the first occurrence. It then repairs remaining duplicate ids with
+sequential suffixes (`-2`, `-3`, ...), preserving every distinct record. It reserves
+all supplied ids before assigning suffixes so repairs cannot
+take an id supplied by a later entry. Subsequent prompts must use these repaired
+ids. This normalization is an intentional extension to calibre's behavior, not a
+claim that calibre rejected duplicate input ids. Equal names or ids alone do not
+establish that two people are the same. These construction steps make no LLM calls.
+Cast equality includes order, unlike ordinary map equality. The merge uses this
+map directly instead of rebuilding an id index for each turn.
+Constructors establish stored-state invariants. Proposed deltas
+remain permissive: absent ids/names/details may be ignored when they cannot
+introduce a useful character. All character delta fields use `Option<NonblankType>`:
+`None` means unchanged, and `Some` supplies a nonblank value. Boundary DTOs map blank
+wire strings to `None`. Stored `CharacterDetails` has private fields and a checked
+constructor requiring description or backstory; `Character::new` therefore returns
+`Self` without rechecking that invariant. `updated()` returns a new valid value
+without changing the original. It is infallible because a delta cannot erase
+required fields or the existing cast. Required world/situation validation happens
+when entering the domain, before merging.
+
+`UpcomingEventsUpdate::{Keep, Replace}` expresses nullable wire-list semantics
+inside the domain; future DTO mapping must preserve omitted/null versus empty.
+Optional world/name/id fields likewise represent normalized blank wire values;
+this does not change the schemas sent to the model. `MajorEventLimit` is positive
+and defaults to 30; the bounded event collection carries its limit through merges.
+Matching follows the previously accepted Unicode-lowercase approximation to
+Python casefold. No JSON or serde dependency has been added to the domain.
 
 ### Original workspace inventory (subject to the layer boundaries above)
 
