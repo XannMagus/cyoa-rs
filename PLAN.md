@@ -480,6 +480,15 @@ take an id supplied by a later entry. Subsequent prompts must use these repaired
 ids. This normalization is an intentional extension to calibre's behavior, not a
 claim that calibre rejected duplicate input ids. Equal names or ids alone do not
 establish that two people are the same. These construction steps make no LLM calls.
+The first generation after cast selection (the opening turn) must additionally
+request a cast-identity check using `reference/prompt-additions.toml`; this adds
+instructions to an existing call, not a separate deduplication call. Preserve
+distinct namesakes and reuse established ids rather than introducing aliases as
+new characters. The prompt addition is prepared but not yet wired: the prompt
+renderer has not been implemented. It cannot guarantee semantic deduplication or
+delete/consolidate existing cast entries with the current SummaryUpdate schema.
+An actual semantic consolidation operation would need an explicit future schema
+and domain change; do not silently treat prose or name similarity as a merge command.
 Cast equality includes order, unlike ordinary map equality. The merge uses this
 map directly instead of rebuilding an id index for each turn.
 Constructors establish stored-state invariants. Proposed deltas

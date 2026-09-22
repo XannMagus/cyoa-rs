@@ -50,6 +50,9 @@ access; incomplete update proposals are distinct from valid stored characters.
 constructed. Stored optional details use `None` for information not yet known.
 Cast construction removes exact duplicate records first, then suffixes remaining
 id collisions while preserving distinct namesakes. This requires no LLM call.
+`reference/prompt-additions.toml` prepares an identity-check instruction for the
+opening turn; integration awaits the prompt renderer. It does not enable semantic
+merging or deletion of already stored cast members.
 There is no serde or JSON dependency in the domain. Future boundary DTOs will map
 blank fields and nullable lists into these domain changes. As permitted by the
 plan, matching currently uses Unicode lowercase rather than full Python casefold
