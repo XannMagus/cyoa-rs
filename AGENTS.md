@@ -21,7 +21,17 @@ of which coding agent you are:
    session, do, and move it into "Confirmed" with the evidence. Never mark
    something confirmed without having actually run it.
 
-After `PLAN.md`, read `reference/00-engine-notes.md` for the ported game logic,
+After `PLAN.md`, read `docs/decisions/README.md` and its required-test registry.
+Those project contracts override conflicting Calibre behavior, source notes, and
+historical plan sketches. Never change a regression's expected behavior, delete it,
+or ignore it just to match Python. Behavioral changes need an explicit user decision
+recorded with rationale and updated tests; behavior-preserving test moves/renames
+must update the registry without weakening assertions. Report affected decision IDs
+and run `bash scripts/check_contracts.sh` before considering implementation complete.
+Pending contracts must gain real tests when their features are implemented; do not
+claim an unimplemented feature is enforced because a document mentions it.
+
+Then read `reference/00-engine-notes.md` for the ported game logic,
 and whichever `reference/0N-*-cli.md` matches the CLI you have available.
 
 Follow `PLAN.md`'s "Rust domain modeling requirements": preserve Python behavior

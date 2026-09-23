@@ -89,19 +89,22 @@ Build and check with a stable Rust toolchain supporting edition 2024:
 cargo run -p cyoa-cli -- --help
 cargo fmt --all -- --check
 cargo clippy --workspace --all-targets --locked -- -D warnings
-cargo test --workspace --locked
-bash scripts/check_architecture.sh
+bash scripts/check_contracts.sh
 ```
 
-The architecture check uses Bash and `jq`; no Python tooling is required.
+The contract gate uses Bash and `jq`; no Python tooling is required. It verifies
+that required tests exist and are not ignored, runs workspace tests and compile-fail
+examples, and checks architecture dependencies. It uses cached dependencies after
+the build/Clippy step. [Project contracts](docs/decisions/README.md) explicitly
+override conflicting Python behavior and list remaining unimplemented obligations.
 
 `Cargo.lock` is tracked because this workspace ships an application. CI also checks
 inward workspace dependencies, including dev/build dependencies, and rejects direct
 terminal/JSON dependencies in domain and application. The application imports only
 domain types and owns its ports; infrastructure implements them; presentation calls
 use cases. Only the composition root can depend on all layers. Remaining Phase 0
-work includes world/turn state, validation and derived-state tests, application use
-cases, prompts, schemas, streaming, and a scripted generation adapter.
+work includes boundary DTO validation, application use cases, prompts, schemas,
+streaming, and a scripted generation adapter.
 
 ## Where to start
 

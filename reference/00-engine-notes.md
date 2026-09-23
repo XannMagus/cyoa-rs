@@ -1,5 +1,11 @@
 # Engine notes — extracted from `calibre/src/calibre/ai/cyoa.py`
 
+These describe the Python source, not an overriding project specification.
+[Project contracts](../docs/decisions/README.md) take precedence: notably exact-record
+world deduplication with namesake preservation, ID suffix repair, configurable limits
+and restoration policy, owned selection, Unicode lowercase, and later chapter titles.
+Do not port a conflicting rule from this file over an existing project regression.
+
 Purpose: everything needed to port the engine logic without re-reading the
 Python source (though `reference/calibre/cyoa.py` is kept around for exactly
 that, until the port is done). Line numbers refer to that copy.

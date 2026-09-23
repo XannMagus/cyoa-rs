@@ -1,5 +1,15 @@
 # Port calibre's CYOA game to a standalone Rust TUI, backed by a CLI coding-agent's headless mode
 
+## Authority of project decisions
+
+Read this plan in full, then [the project contracts](docs/decisions/README.md).
+Explicit user decisions and those contracts override Calibre code, source notes,
+and historical sketches below. "Faithful port" always means faithful except for
+recorded deviations. Do not restore a Python behavior that contradicts a contract,
+or weaken a regression to make such a change pass. The required-test registry and
+`bash scripts/check_contracts.sh` guard existing coverage in CI and local work.
+The contract catalog distinguishes implemented guarantees from pending obligations.
+
 ## Context
 
 Calibre ships a built-in AI game, "Create your own adventure" (CYOA): an LLM-driven
@@ -970,6 +980,13 @@ There is exactly one LLM call in flight at a time and the work is "spawn a proce
 stdout" — async buys nothing and forces the TUI into a runtime bridge.
 
 ## Testing
+
+Project-contract regressions have priority over Python differential expectations.
+Every recorded implemented deviation must retain its tests in
+`docs/decisions/required-tests.json`; deleting, ignoring, or moving a required test
+without updating that registry fails the shared contract gate. Keep expected values
+independent of Python for these cases. Run `bash scripts/check_contracts.sh` for
+the registry check, workspace tests/doc tests, and architecture boundaries together.
 
 **Port calibre's test suite first** — `cyoa.py:1569 find_tests()` already has `make_world`,
 `make_update`, `make_turn`, `make_cast` and a `FakePlugin`, covering exactly the logic most

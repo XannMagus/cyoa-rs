@@ -1,0 +1,186 @@
+[
+  {
+    "id": "IDENTITY-001",
+    "coverage": "enforced",
+    "checks": [
+      {
+        "package": "cyoa-core",
+        "target": "lib",
+        "tests": [
+          "world::tests::distinct_playable_namesakes_satisfy_the_minimum",
+          "world::tests::exact_records_collapse_within_each_role_but_shared_names_survive",
+          "game::tests::world_namesakes_survive_into_summary_and_remain_addressable_by_id"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "IDENTITY-002",
+    "coverage": "enforced",
+    "checks": [
+      {
+        "package": "cyoa-core",
+        "target": "summary_merge",
+        "tests": [
+          "suffixing_preserves_existing_ids_and_repaired_ids_support_future_updates",
+          "exact_duplicates_collapse_before_suffixes_are_assigned",
+          "exact_deduplication_includes_identity_and_all_character_details",
+          "cast_supports_id_lookup_without_changing_order_after_rename_or_insertion",
+          "cast_equality_includes_presentation_order",
+          "explicit_ids_are_preserved_and_duplicate_names_match_the_last_entry"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "TEXT-001",
+    "coverage": "enforced",
+    "checks": [
+      {
+        "package": "cyoa-core",
+        "target": "lib",
+        "tests": [
+          "text::tests::exchange_text_preserves_every_byte_including_empty_and_whitespace"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "backend_contract",
+        "tests": [
+          "successful_response_retains_the_exact_json_it_parsed",
+          "malformed_response_is_an_error_with_original_diagnostics"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "TEXT-002",
+    "coverage": "enforced",
+    "checks": [
+      {
+        "package": "cyoa-core",
+        "target": "decision_contracts",
+        "tests": [
+          "text_002_unicode_lowercase_is_not_python_casefold"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "STATE-001",
+    "coverage": "enforced",
+    "checks": [
+      {
+        "package": "cyoa-core",
+        "target": "lib",
+        "tests": [
+          "world::tests::selection_is_checked_against_the_world_it_owns",
+          "game::tests::start_and_restore_keep_the_selected_world_and_protagonist_together"
+        ]
+      },
+      {
+        "package": "cyoa-core",
+        "target": "doc",
+        "tests": [
+          "world::SelectedWorld"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "LIMITS-001",
+    "coverage": "partial",
+    "checks": [
+      {
+        "package": "cyoa-core",
+        "target": "lib",
+        "tests": [
+          "world::tests::npc_limit_applies_to_surviving_entries_including_zero",
+          "world::tests::zero_npc_limit_does_not_consume_candidates",
+          "limits::tests::zero_is_rejected_for_nonzero_limits",
+          "limits::tests::zero_is_accepted_for_count_limits"
+        ]
+      },
+      {
+        "package": "cyoa-core",
+        "target": "restore_limits",
+        "tests": [
+          "current_limits_apply_to_every_snapshot_and_survive_commit_and_rewind",
+          "original_limits_remain_available_after_restoring_with_current_settings",
+          "raising_the_limit_allows_future_events_without_recovering_discarded_ones",
+          "empty_restored_games_use_the_selected_limits_for_their_opening_summary"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "CHAPTER-001",
+    "coverage": "enforced",
+    "checks": [
+      {
+        "package": "cyoa-core",
+        "target": "lib",
+        "tests": [
+          "game::tests::later_turn_retitles_its_chapter_and_rewind_restores_the_earlier_title",
+          "game::tests::first_turn_cannot_open_a_chapter"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "ARCH-001",
+    "coverage": "partial",
+    "checks": []
+  },
+  {
+    "id": "ARCH-002",
+    "coverage": "partial",
+    "checks": [
+      {
+        "package": "cyoa-core",
+        "target": "summary_merge",
+        "tests": [
+          "details_establish_the_invariant_before_infallible_character_construction",
+          "domain_constructors_reject_invalid_state",
+          "present_delta_values_cannot_be_blank",
+          "upcoming_events_null_is_not_empty"
+        ]
+      },
+      {
+        "package": "cyoa-core",
+        "target": "doc",
+        "tests": [
+          "character::Character",
+          "character::CharacterDetails",
+          "summary::StorySummary",
+          "game::GameState"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "TOOLING-001",
+    "coverage": "partial",
+    "checks": []
+  },
+  {
+    "id": "PROMPTS-001",
+    "coverage": "pending",
+    "checks": []
+  },
+  {
+    "id": "BACKENDS-001",
+    "coverage": "pending",
+    "checks": []
+  },
+  {
+    "id": "PROMPTS-002",
+    "coverage": "pending",
+    "checks": []
+  },
+  {
+    "id": "PRODUCT-001",
+    "coverage": "pending",
+    "checks": []
+  }
+]
