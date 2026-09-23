@@ -8,6 +8,7 @@ use indexmap::IndexMap;
 use thiserror::Error;
 
 use crate::{
+    limits::MajorEventLimit,
     summary::{StorySummary, SummaryUpdate},
     text::{
         ChapterTitle, CurrencyCode, Instructions, ModelName, Narrative, PlayerInput, ProviderName,
@@ -302,6 +303,10 @@ impl TurnRecord {
 
     pub fn prompt_trace(&self) -> Option<&PromptTrace> {
         self.prompt_trace.as_ref()
+    }
+
+    pub(crate) fn set_major_event_limit(&mut self, limit: MajorEventLimit) {
+        self.summary.set_major_event_limit(limit);
     }
 }
 

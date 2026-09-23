@@ -14,7 +14,7 @@ use thiserror::Error;
 use crate::{
     character::{Character, CharacterCast, CharacterDetails, CharacterDetailsFields},
     ids::CharacterId,
-    limits::Limits,
+    limits::{Limits, RestoreLimits},
     style::StoryStyle,
     summary::{EventList, MajorEvents, StorySummary},
     text::{Brief, ChapterTitle, CharacterSituation, CurrentSituation},
@@ -117,6 +117,7 @@ pub struct GameState {
     style: StoryStyle,
     turns: Vec<TurnRecord>,
     limits: Limits,
+    original_limits: Limits,
 }
 
 impl GameState {
@@ -128,25 +129,35 @@ impl GameState {
             style,
             turns: Vec::new(),
             limits,
+            original_limits: limits,
         }
     }
 
     /// Restores a game from its persisted turn log. Persistence is a
     /// boundary concern: the caller maps a save's stored chapter indices
     /// into `ChapterMarker`s before calling this.
+    /// Every snapshot receives the selected event cap, including those reached
+    /// by rewind. Lowering it discards older events; raising it cannot recover them.
+    /// Generation-only cast bounds do not prune an established world's characters.
     pub fn restore(
         brief: Brief,
         world: SelectedWorld,
         style: StoryStyle,
-        limits: Limits,
-        turns: Vec<TurnRecord>,
+        original_limits: Limits,
+        limit_policy: RestoreLimits,
+        mut turns: Vec<TurnRecord>,
     ) -> Self {
+        let limits = limit_policy.resolve(original_limits);
+        for turn in &mut turns {
+            turn.set_major_event_limit(limits.max_major_events);
+        }
         Self {
             brief,
             world,
             style,
             turns,
             limits,
+            original_limits,
         }
     }
 
@@ -178,6 +189,11 @@ impl GameState {
 
     pub fn limits(&self) -> Limits {
         self.limits
+    }
+
+    /// Settings from game creation, retained even when restored under newer config.
+    pub fn original_limits(&self) -> Limits {
+        self.original_limits
     }
 
     pub fn turns(&self) -> &[TurnRecord] {
@@ -442,6 +458,7 @@ mod tests {
             selected,
             StoryStyle::default(),
             Limits::default(),
+            RestoreLimits::Original,
             vec![],
         );
         assert_eq!(started, restored);

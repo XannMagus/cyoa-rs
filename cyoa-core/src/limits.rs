@@ -102,14 +102,31 @@ impl Default for MinPlayableCharacters {
     }
 }
 
-/// Every bound the engine and prompts must agree on, injected at startup from
-/// config; never part of a saved game (see PLAN.md's `[limits]` note).
+/// Every bound the engine and prompts must agree on. A game retains its original
+/// settings so restoration can explicitly choose those or the current config.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub struct Limits {
     pub max_major_events: MajorEventLimit,
     pub max_generated_npcs: MaxGeneratedNpcs,
     pub prose_bridge_turns: ProseBridgeTurns,
     pub min_playable_characters: MinPlayableCharacters,
+}
+
+/// Which settings govern a restored game. Original settings come from the game,
+/// while current settings are supplied by the application from configuration.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum RestoreLimits {
+    Current(Limits),
+    Original,
+}
+
+impl RestoreLimits {
+    pub(crate) fn resolve(self, original: Limits) -> Limits {
+        match self {
+            Self::Current(current) => current,
+            Self::Original => original,
+        }
+    }
 }
 
 #[cfg(test)]

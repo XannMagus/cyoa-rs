@@ -29,6 +29,28 @@ and public unchecked lookup are removed. Runtime tests cover foreign/out-of-rang
 positions and selection through start/restore; a compile-fail test prevents replacing
 the aggregate's world independently of its selection.
 
+R5 is now fixed. `RestoreLimits::Current(Limits)` reapplies current settings;
+`RestoreLimits::Original` selects the settings retained from game creation. Both
+paths reconcile all snapshot event caps, so future commits and rewind use the
+selected cap. Original settings survive intervening restores with current config.
+Lowering a cap drops older events; switching back cannot recover discarded events.
+Established cast members survive changes to generation-only limits. Four integration
+tests cover shrinking/raising caps, rewind and subsequent commits, original-setting
+selection across repeated restores, empty logs, and preservation of audit records.
+
+This explicitly supersedes the earlier claim that limits are never saved: future
+save DTOs must carry original settings. Save serialization and a restore UI remain
+outside this domain-only implementation. User authorization on 2026-09-24 covered
+all four repairs and requested a separate commit for each. The review/NPC-cap
+prerequisite is `8e1860f`; namesakes are `a6bc079`, verbatim text `5050fb4`, and owned
+selection `652f0b2`. The restore repair is committed with the title
+`Enforce selected restoration limits across every summary snapshot`.
+
+Validation after all four repairs: 58 runtime tests and seven compile-fail doc
+tests pass, as do formatting, warning-denying Clippy, the architecture check, and
+`git diff --check`. The remaining sections preserve the original review's findings
+and decision status at the time, rather than rewriting that history.
+
 | Commit | Change | Review disposition |
 | --- | --- | --- |
 | [b5fe6c0929fb83e07412afae70b82abb017132ea][limits-commit] | Typed engine limits; move `MajorEventLimit` | Sound extraction. Zero is explicitly legal for NPC and bridge limits. Consumers must honor that contract. |
@@ -263,12 +285,15 @@ their assertions. R2 intentionally catches a panic, whose default panic-hook out
 still appears on stderr. The program exits successfully after checking all findings.
 R3's desired behavior is now tested in `cyoa-core/src/world.rs`.
 
-To rerun the probes from the repository root without adding a workspace member:
+To rerun the historical probes from the repository root, export the reviewed
+source into a temporary directory. The probes intentionally use the old API:
 
 ```sh
 probe_dir=$(mktemp -d /tmp/cyoa-review.XXXXXX)
+source_dir=$(mktemp -d /tmp/cyoa-reviewed-source.XXXXXX)
+git archive 5b7e9824d11cdebca85f5d4d093e18ef820813c6 | tar -x -C "$source_dir"
 cargo init --bin --name cyoa-review-probes --vcs none "$probe_dir"
-cargo add --offline --manifest-path "$probe_dir/Cargo.toml" --path "$PWD/cyoa-core"
+cargo add --offline --manifest-path "$probe_dir/Cargo.toml" --path "$source_dir/cyoa-core"
 cp reviews/2026-09-23-domain-slice/probes.rs "$probe_dir/src/main.rs"
 cargo run --offline --manifest-path "$probe_dir/Cargo.toml"
 ```

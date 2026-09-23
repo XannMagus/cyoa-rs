@@ -61,10 +61,13 @@ plan, matching currently uses Unicode lowercase rather than full Python casefold
 A second slice adds `limits`, `world`, `style`, `turn`, and `game` (`GameState`).
 Every tunable bound (max major events, max generated NPCs, the prose bridge
 window, minimum playable characters) is its own type rather than a bare `usize`,
-gathered into `Limits`, which `GameState` owns and never persists. World-cast
+gathered into `Limits`, with original game settings retained alongside active settings. World-cast
 validation ports calibre's playable/NPC cleaning and capping rules. The
-[domain review](reviews/2026-09-23-domain-slice/README.md) tracks open corrections
-for consistent restored event limits. `SelectedWorld` owns its validated protagonist
+[domain review](reviews/2026-09-23-domain-slice/README.md) records the findings and repairs.
+Restoration explicitly chooses current or original game limits and reapplies the
+event cap to every rewind snapshot. Original limits will be included in future save
+metadata; persistence and a user-facing restore flow are not implemented yet.
+`SelectedWorld` owns its validated protagonist
 selection and world together, preventing cross-cast index reuse.
 Raw responses and optional prompt traces preserve their exact text. Exact-record deduplication preserves
 distinct namesakes through world creation and summary ID assignment, deliberately

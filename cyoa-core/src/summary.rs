@@ -146,6 +146,11 @@ impl StorySummary {
         &self.upcoming_events
     }
 
+    pub(crate) fn set_major_event_limit(&mut self, limit: MajorEventLimit) {
+        self.major_events.events.retain_latest(limit);
+        self.major_events.limit = limit;
+    }
+
     /// Infallible after construction: no delta can erase required summary fields
     /// or remove the existing cast. The caller decides whether to commit the result.
     #[must_use = "merging returns a new summary; use the result to commit the update"]

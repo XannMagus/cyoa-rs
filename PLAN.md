@@ -519,8 +519,14 @@ These diagnostic fields do not establish turn validity; typed turn fields do.
 A second domain slice adds `limits.rs`, `world.rs`, `style.rs`, `turn.rs`, and
 `game.rs`. Every limit (`MajorEventLimit`, `MaxGeneratedNpcs`, `ProseBridgeTurns`,
 `MinPlayableCharacters`) is its own type, not an interchangeable `usize`, gathered
-into a `Limits` value that `GameState` owns. `MajorEvents` also carries its cap;
-restoration does not yet reconcile those two sources (review finding R5).
+into a `Limits` value that `GameState` owns. It retains `original_limits` from game
+creation separately from its active settings. `GameState::restore` takes an explicit
+`RestoreLimits::{Current(Limits), Original}` policy and rebinds every stored summary's
+event cap to the selected settings, retaining only the newest events that fit.
+This includes snapshots reached by rewind and later commits; an empty log's opening
+summary uses the same cap. Raising a cap cannot recover discarded events. Restoration
+does not reapply generation-time cast filtering or minimums to an established world.
+The prose bridge uses the selected active settings directly (review finding R5).
 `WorldCast` deliberately departs from calibre's name-based deduplication: it removes
 only complete, equal normalized records within each role, preserving first order.
 Different records sharing a name survive, including NPCs sharing a playable name;
@@ -551,8 +557,9 @@ marker sequence instead of a stored, `debug_assert!`-guarded chapter index. This
 goes further than the `partition_point` sketch earlier in this document, which
 assumed a stored, non-decreasing chapter number; that assumption is now
 unnecessary because there is no stored chapter index to get out of sync.
-`commit_turn` computes each post-turn summary, while `restore` accepts snapshots
-whose event caps still need reconciliation (R5). `commit_turn` has an
+`commit_turn` computes each post-turn summary, while `restore` reconciles saved
+snapshots' event caps without replaying deltas or rewriting character history.
+`commit_turn` has an
 infallible signature because every check `validated_turn` performed in calibre is already
 carried by `StoryTurn`'s field types (a blank narrative or zero surviving quick
 actions cannot be constructed), and `rewind` takes a `TurnCount` (`NonZeroUsize`)
@@ -893,6 +900,13 @@ three prompt strings. Here `[limits]` is a single source: the `Limits` struct is
 the engine **and** injected into every template context, so they cannot disagree. Document
 clearly that editing `[limits]` changes engine behaviour, not just text.
 
+Restoration offers current configuration or the game's original limits explicitly.
+Prompts must always use `GameState::limits()` after that choice, not reload global
+configuration independently. Original limits mean the settings at game creation,
+not the most recent restoration settings. Retain them when applying current config
+so the original option remains available on later resumes. Switching back restores
+the settings, not summary events already discarded under a smaller cap.
+
 ### ⚠️ Strip JSON/formatting directives from the ported prompts
 
 Because we use `--json-schema`, there must be **no** "respond with only valid JSON" fragment
@@ -903,6 +917,14 @@ Do add one line: *"Emit the fields of the JSON object in the order they appear i
 schema."* Calibre gets ordering free from Python field order; here it should be asked for.
 
 ## Persistence
+
+The 2026-09-24 restore decision supersedes the earlier runtime-only limits policy:
+future save DTOs must record the game's original `Limits` alongside the game, so
+the restore choice has real evidence. No save adapter exists yet; the domain API
+already takes that metadata explicitly. Do not fabricate original settings for an
+import without metadata: resolve known source-format constants in its migration,
+or require an explicit settings choice at the boundary. The selected world's raw
+position must likewise pass through `World::select` when reconstructing a save.
 
 - `directories::ProjectDirs` → saves in `$XDG_DATA_HOME/cyoa/saves/<slug>.json`, with
   `<slug>.assets/` reserved for images.
