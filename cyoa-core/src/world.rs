@@ -7,8 +7,7 @@ use std::collections::HashSet;
 use crate::{
     limits::Limits,
     text::{
-        Backstory, CharacterDescription, CharacterName, Relationships, WorldDescription,
-        WorldTitle, matching_key,
+        Backstory, CharacterDescription, CharacterName, Relationships, WorldDescription, WorldTitle,
     },
 };
 use thiserror::Error;
@@ -37,7 +36,7 @@ impl WorldOutline {
 
 /// A character the player may choose to play. Every field is required: unlike
 /// a story summary's cast there is no previous state to repair these from.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct PlayerCharacter {
     name: CharacterName,
     description: CharacterDescription,
@@ -71,7 +70,7 @@ impl PlayerCharacter {
 }
 
 /// A character who lives in the world but cannot be played.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct NonPlayerCharacter {
     name: CharacterName,
     description: CharacterDescription,
@@ -139,9 +138,9 @@ pub struct WorldCast {
 }
 
 impl WorldCast {
-    /// Deduplicates playables and NPCs by casefolded name (first occurrence
-    /// wins, matching calibre), drops NPCs whose name collides with a
-    /// playable, and caps NPCs at `limits.max_generated_npcs`.
+    /// Deduplicates complete records within each role, preserving order, then
+    /// caps NPCs. Deliberately differs from calibre's name-based deduplication:
+    /// a shared name does not establish identity, including across roles.
     pub fn new(
         playable: impl IntoIterator<Item = PlayerCharacter>,
         npcs: impl IntoIterator<Item = NonPlayerCharacter>,
@@ -150,7 +149,7 @@ impl WorldCast {
         let mut seen = HashSet::new();
         let playable: Vec<_> = playable
             .into_iter()
-            .filter(|c| seen.insert(matching_key(c.name.as_str())))
+            .filter(|c| seen.insert(c.clone()))
             .collect();
         let minimum = limits.min_playable_characters.get();
         if playable.len() < minimum {
@@ -159,13 +158,10 @@ impl WorldCast {
                 found: playable.len(),
             });
         }
-        let mut names: HashSet<String> = playable
-            .iter()
-            .map(|c| matching_key(c.name.as_str()))
-            .collect();
+        let mut seen = HashSet::new();
         let selected_npcs = npcs
             .into_iter()
-            .filter(|npc| names.insert(matching_key(npc.name.as_str())))
+            .filter(|npc| seen.insert(npc.clone()))
             .take(limits.max_generated_npcs.get())
             .collect();
         Ok(Self {
@@ -243,17 +239,30 @@ mod tests {
     }
 
     #[test]
-    fn duplicate_playable_names_collapse_and_npc_colliding_with_playable_is_dropped() {
+    fn exact_records_collapse_within_each_role_but_shared_names_survive() {
         let limits = Limits::default();
         let cast = WorldCast::new(
-            [player("Alex"), player("Blair"), player("alex")],
-            [npc("Alex"), npc("Casey")],
+            [player("Alex"), player("Blair"), player("Alex")],
+            [npc("Alex"), npc("Casey"), npc("Alex")],
             &limits,
         )
         .unwrap();
         assert_eq!(cast.playable().len(), 2);
-        assert_eq!(cast.npcs().len(), 1);
-        assert_eq!(cast.npcs()[0].name().as_str(), "Casey");
+        assert_eq!(cast.npcs().len(), 2);
+        assert_eq!(cast.npcs()[0].name().as_str(), "Alex");
+        assert_eq!(cast.npcs()[1].name().as_str(), "Casey");
+    }
+
+    #[test]
+    fn distinct_playable_namesakes_satisfy_the_minimum() {
+        let first = player("Ajax");
+        let second = PlayerCharacter::new(
+            CharacterName::new("Ajax").unwrap(),
+            CharacterDescription::new("the other Ajax").unwrap(),
+            Backstory::new("a different history").unwrap(),
+        );
+        let cast = WorldCast::new([first.clone(), second.clone()], [], &Limits::default()).unwrap();
+        assert_eq!(cast.playable(), [first, second]);
     }
 
     #[test]
@@ -284,7 +293,7 @@ mod tests {
             };
             let cast = WorldCast::new(
                 [player("Alex"), player("Blair")],
-                [npc("Alex"), npc("Casey"), npc("casey"), npc("Devon")],
+                [npc("Casey"), npc("Casey"), npc("Devon")],
                 &limits,
             )
             .unwrap();

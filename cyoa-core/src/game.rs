@@ -433,6 +433,62 @@ mod tests {
     }
 
     #[test]
+    fn world_namesakes_survive_into_summary_and_remain_addressable_by_id() {
+        let first = npc("Ajax");
+        let second = NonPlayerCharacter::new(
+            CharacterName::new("Ajax").unwrap(),
+            CharacterDescription::new("the other Ajax").unwrap(),
+            Backstory::new("a different history").unwrap(),
+            None,
+        );
+        let state = game_with_npcs(vec![npc("Alex"), first.clone(), first, second]);
+        let summary = state.current_summary();
+        let identities: Vec<_> = summary
+            .characters()
+            .iter()
+            .map(|c| (c.id().as_str(), c.name().as_str()))
+            .collect();
+        assert_eq!(
+            identities,
+            [
+                ("protagonist", "Alex"),
+                ("alex", "Alex"),
+                ("ajax", "Ajax"),
+                ("ajax-2", "Ajax"),
+            ]
+        );
+
+        let updated = summary.updated(&SummaryUpdate {
+            character_updates: vec![
+                crate::character::CharacterDelta {
+                    id: Some(CharacterId::new("ajax").unwrap()),
+                    current_state: Some(CharacterSituation::new("at the ships").unwrap()),
+                    ..Default::default()
+                },
+                crate::character::CharacterDelta {
+                    id: Some(CharacterId::new("ajax-2").unwrap()),
+                    current_state: Some(CharacterSituation::new("at the gate").unwrap()),
+                    ..Default::default()
+                },
+            ],
+            ..Default::default()
+        });
+        for (id, situation) in [("ajax", "at the ships"), ("ajax-2", "at the gate")] {
+            assert_eq!(
+                updated
+                    .characters()
+                    .get(&CharacterId::new(id).unwrap())
+                    .unwrap()
+                    .details()
+                    .current_state()
+                    .unwrap()
+                    .as_str(),
+                situation
+            );
+        }
+    }
+
+    #[test]
     fn first_turn_cannot_open_a_chapter() {
         let mut state = game();
         commit(

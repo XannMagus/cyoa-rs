@@ -514,12 +514,15 @@ A second domain slice adds `limits.rs`, `world.rs`, `style.rs`, `turn.rs`, and
 `game.rs`. Every limit (`MajorEventLimit`, `MaxGeneratedNpcs`, `ProseBridgeTurns`,
 `MinPlayableCharacters`) is its own type, not an interchangeable `usize`, gathered
 into a `Limits` value that `GameState` owns. `MajorEvents` also carries its cap;
-restoration does not yet reconcile those two sources (review finding R5). `WorldCast`
-ports `validated_player_characters`/`validated_npcs`/`validated_cast`: dedup by
-casefolded name (first occurrence wins), NPCs colliding with a playable name are
-dropped, NPCs are capped at `max_generated_npcs`, and construction fails only when
-fewer than `min_playable_characters` remain. This name-based deduplication conflicts
-with our namesake-preservation policy above and needs correction (R1).
+restoration does not yet reconcile those two sources (review finding R5).
+`WorldCast` deliberately departs from calibre's name-based deduplication: it removes
+only complete, equal normalized records within each role, preserving first order.
+Different records sharing a name survive, including NPCs sharing a playable name;
+roles are not merged without identity evidence. NPCs are capped after exact deduplication,
+including a zero cap, and the playable minimum is checked after exact deduplication.
+Initial-summary construction assigns distinct IDs with suffixes. Regression tests
+cover playable namesakes, NPC/playable namesakes, exact duplicates, and two NPC
+Ajaxes surviving into the summary and receiving independent updates by ID (R1).
 `WorldCast::playable_index` checks a position against one cast, but its result can
 currently be used with another cast; `GameState::start` and `restore` therefore
 do not yet enforce protagonist validity (R2). The

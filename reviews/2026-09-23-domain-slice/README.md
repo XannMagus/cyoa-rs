@@ -8,6 +8,16 @@ about the model or the author's intentions.
 
 ## Scope and disposition
 
+### Follow-up: 2026-09-24
+
+The original findings below describe the reviewed commits. R1 is now fixed:
+world construction deduplicates complete records within each role and preserves
+namesakes across roles. Tests cover the playable minimum, exact deduplication,
+and NPC namesakes reaching the summary with distinct, independently updateable IDs.
+This is an explicitly requested deviation from calibre's name-based filtering.
+The historical probes target the reviewed HEAD; use that revision to reproduce
+the original defects as subsequent repairs change behavior and APIs.
+
 | Commit | Change | Review disposition |
 | --- | --- | --- |
 | [b5fe6c0929fb83e07412afae70b82abb017132ea][limits-commit] | Typed engine limits; move `MajorEventLimit` | Sound extraction. Zero is explicitly legal for NPC and bridge limits. Consumers must honor that contract. |
