@@ -407,7 +407,7 @@ mod tests {
             turn(chapter),
             TurnGenerationRecord {
                 input: None,
-                raw_response: RawResponse::new("{}").unwrap(),
+                raw_response: RawResponse::new("{}"),
                 provenance: GenerationProvenance::default(),
                 prompt_trace: None,
             },

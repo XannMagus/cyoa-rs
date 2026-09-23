@@ -510,6 +510,12 @@ and defaults to 30; the bounded event collection carries its limit through merge
 Matching follows the previously accepted Unicode-lowercase approximation to
 Python casefold. No JSON or serde dependency has been added to the domain.
 
+String newtypes distinguish normalized business text from verbatim exchange text.
+`define_nonblank_string_type!` trims and rejects blank domain values;
+`define_verbatim_string_type!` preserves every UTF-8 byte, including empty input,
+and is used only for `RawResponse`, `Instructions`, and `RenderedPrompt`.
+These diagnostic fields do not establish turn validity; typed turn fields do.
+
 A second domain slice adds `limits.rs`, `world.rs`, `style.rs`, `turn.rs`, and
 `game.rs`. Every limit (`MajorEventLimit`, `MaxGeneratedNpcs`, `ProseBridgeTurns`,
 `MinPlayableCharacters`) is its own type, not an interchangeable `usize`, gathered

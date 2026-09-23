@@ -64,8 +64,8 @@ window, minimum playable characters) is its own type rather than a bare `usize`,
 gathered into `Limits`, which `GameState` owns and never persists. World-cast
 validation ports calibre's playable/NPC cleaning and capping rules. The
 [domain review](reviews/2026-09-23-domain-slice/README.md) tracks open corrections
-for binding protagonist selection to its world, exact audit
-text, and consistent restored event limits. Exact-record deduplication preserves
+for binding protagonist selection to its world and consistent restored event limits.
+Raw responses and optional prompt traces preserve their exact text. Exact-record deduplication preserves
 distinct namesakes through world creation and summary ID assignment, deliberately
 departing from calibre's name-based filtering. The zero-NPC-cap defect is fixed.
 A turn's chapter proposal is a single

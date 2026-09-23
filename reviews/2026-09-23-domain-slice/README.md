@@ -18,6 +18,11 @@ This is an explicitly requested deviation from calibre's name-based filtering.
 The historical probes target the reviewed HEAD; use that revision to reproduce
 the original defects as subsequent repairs change behavior and APIs.
 
+R4 is now fixed with `define_verbatim_string_type!` for raw response, instructions,
+and rendered prompt. These infallible wrappers preserve empty, whitespace-only,
+and Unicode input exactly. Business text retains its nonblank normalization.
+The byte-preservation regression covers all three exchange-text types.
+
 | Commit | Change | Review disposition |
 | --- | --- | --- |
 | [b5fe6c0929fb83e07412afae70b82abb017132ea][limits-commit] | Typed engine limits; move `MajorEventLimit` | Sound extraction. Zero is explicitly legal for NPC and bridge limits. Consumers must honor that contract. |

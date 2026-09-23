@@ -1,5 +1,5 @@
-//! Nonblank text value objects. Optional values use `Option<T>` rather than an
-//! empty-string sentinel. Every constructor trims boundary whitespace.
+//! Normalized nonblank text and verbatim exchange text have distinct constructors.
+//! Optional domain values use `Option<T>` rather than an empty-string sentinel.
 
 use thiserror::Error;
 
@@ -40,6 +40,30 @@ macro_rules! define_nonblank_string_type {
 }
 pub(crate) use define_nonblank_string_type;
 
+macro_rules! define_verbatim_string_type {
+    ($name:ident) => {
+        #[doc = concat!("Verbatim text for `", stringify!($name), "`; preserves whitespace and empty input.")]
+        #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+        pub struct $name(String);
+
+        impl $name {
+            pub fn new(text: impl Into<String>) -> Self {
+                Self(text.into())
+            }
+
+            pub fn as_str(&self) -> &str {
+                &self.0
+            }
+        }
+
+        impl AsRef<str> for $name {
+            fn as_ref(&self) -> &str {
+                self.as_str()
+            }
+        }
+    };
+}
+
 define_nonblank_string_type!(CharacterName);
 define_nonblank_string_type!(WorldDescription);
 define_nonblank_string_type!(CurrentSituation);
@@ -56,12 +80,12 @@ define_nonblank_string_type!(Narrative);
 define_nonblank_string_type!(QuickActionText);
 define_nonblank_string_type!(SceneDescription);
 define_nonblank_string_type!(ChapterTitle);
-define_nonblank_string_type!(RawResponse);
+define_verbatim_string_type!(RawResponse);
 define_nonblank_string_type!(ProviderName);
 define_nonblank_string_type!(ModelName);
 define_nonblank_string_type!(CurrencyCode);
-define_nonblank_string_type!(Instructions);
-define_nonblank_string_type!(RenderedPrompt);
+define_verbatim_string_type!(Instructions);
+define_verbatim_string_type!(RenderedPrompt);
 
 // Distinct types so a pace key cannot be passed where a tone key is expected,
 // even though all four are interchangeable strings at the storage level.
@@ -100,7 +124,32 @@ pub(crate) fn matching_key(text: &str) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::{CharacterName, type_label};
+    use super::{CharacterName, Instructions, RawResponse, RenderedPrompt, type_label};
+
+    #[test]
+    fn exchange_text_preserves_every_byte_including_empty_and_whitespace() {
+        for input in [
+            "",
+            " \t\r\n",
+            " \n{\"narrative\":\"Ajax\"}\r\n",
+            "\u{2003}é😀\n",
+        ] {
+            assert_eq!(
+                RawResponse::new(input).as_str().as_bytes(),
+                input.as_bytes()
+            );
+            assert_eq!(
+                Instructions::new(input).as_str().as_bytes(),
+                input.as_bytes()
+            );
+            assert_eq!(
+                RenderedPrompt::new(input).as_str().as_bytes(),
+                input.as_bytes()
+            );
+        }
+        assert_eq!(CharacterName::new(" Ajax \n").unwrap().as_str(), "Ajax");
+        assert!(CharacterName::new(" \n").is_err());
+    }
 
     #[test]
     fn type_names_supply_readable_error_labels() {
