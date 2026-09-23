@@ -529,9 +529,11 @@ including a zero cap, and the playable minimum is checked after exact deduplicat
 Initial-summary construction assigns distinct IDs with suffixes. Regression tests
 cover playable namesakes, NPC/playable namesakes, exact duplicates, and two NPC
 Ajaxes surviving into the summary and receiving independent updates by ID (R1).
-`WorldCast::playable_index` checks a position against one cast, but its result can
-currently be used with another cast; `GameState::start` and `restore` therefore
-do not yet enforce protagonist validity (R2). The
+`World::select` validates a requested `PlayablePosition` and returns a `SelectedWorld`
+that privately owns the world and its selection together. `GameState::start` and
+`restore` accept this aggregate; no separately transferable checked index remains.
+The world cannot be mutated through it, so subsequent access preserves the selection
+invariant. Positions exposed for saving are unchecked requests when reused (R2). The
 [2026-09-23 review](reviews/2026-09-23-domain-slice/README.md) records these findings,
 reproductions, recommended repairs, and the completed zero-NPC-cap fix.
 
@@ -550,7 +552,7 @@ goes further than the `partition_point` sketch earlier in this document, which
 assumed a stored, non-decreasing chapter number; that assumption is now
 unnecessary because there is no stored chapter index to get out of sync.
 `commit_turn` computes each post-turn summary, while `restore` accepts snapshots
-whose aggregate constraints still need validation (R2/R5). `commit_turn` has an
+whose event caps still need reconciliation (R5). `commit_turn` has an
 infallible signature because every check `validated_turn` performed in calibre is already
 carried by `StoryTurn`'s field types (a blank narrative or zero surviving quick
 actions cannot be constructed), and `rewind` takes a `TurnCount` (`NonZeroUsize`)

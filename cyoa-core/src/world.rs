@@ -110,16 +110,26 @@ impl NonPlayerCharacter {
     }
 }
 
-/// A validated index into a `WorldCast`'s playable characters. The only way
-/// to obtain one is `WorldCast::playable_index`, so it cannot go out of range
-/// so long as playables are never removed.
+/// A requested zero-based position, not proof of membership in any cast.
+/// `World::select` checks it against the world being selected.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct PlayableIndex(usize);
+pub struct PlayablePosition(usize);
 
-impl PlayableIndex {
-    fn get(self) -> usize {
+impl PlayablePosition {
+    pub fn new(position: usize) -> Self {
+        Self(position)
+    }
+
+    pub fn get(self) -> usize {
         self.0
     }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Error)]
+#[error("playable position {requested} is outside a cast of {available} characters")]
+pub struct InvalidPlayablePosition {
+    requested: usize,
+    available: usize,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Error)]
@@ -177,15 +187,6 @@ impl WorldCast {
     pub fn npcs(&self) -> &[NonPlayerCharacter] {
         &self.npcs
     }
-
-    /// The checked index type accepted by `GameState::start`.
-    pub fn playable_index(&self, index: usize) -> Option<PlayableIndex> {
-        (index < self.playable.len()).then_some(PlayableIndex(index))
-    }
-
-    pub fn playable_at(&self, index: PlayableIndex) -> &PlayerCharacter {
-        &self.playable[index.get()]
-    }
 }
 
 /// A world outline paired with its validated cast: what a game is played in.
@@ -206,6 +207,53 @@ impl World {
 
     pub fn cast(&self) -> &WorldCast {
         &self.cast
+    }
+
+    /// Validates the selection and keeps it with the exact world it belongs to.
+    pub fn select(
+        self,
+        position: PlayablePosition,
+    ) -> Result<SelectedWorld, InvalidPlayablePosition> {
+        if position.get() >= self.cast.playable.len() {
+            return Err(InvalidPlayablePosition {
+                requested: position.get(),
+                available: self.cast.playable.len(),
+            });
+        }
+        Ok(SelectedWorld {
+            world: self,
+            position,
+        })
+    }
+}
+
+/// A world and its checked protagonist selection, owned together.
+/// No mutable world access is exposed, so the selected entry cannot disappear.
+///
+/// ```compile_fail
+/// use cyoa_core::world::{SelectedWorld, World};
+/// fn replace_world(mut selected: SelectedWorld, other: World) {
+///     selected.world = other;
+/// }
+/// ```
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct SelectedWorld {
+    world: World,
+    position: PlayablePosition,
+}
+
+impl SelectedWorld {
+    pub fn world(&self) -> &World {
+        &self.world
+    }
+
+    /// For display or persistence. Reusing this position requires a fresh selection check.
+    pub fn position(&self) -> PlayablePosition {
+        self.position
+    }
+
+    pub fn protagonist(&self) -> &PlayerCharacter {
+        &self.world.cast.playable[self.position.get()]
     }
 }
 
@@ -318,10 +366,36 @@ mod tests {
     }
 
     #[test]
-    fn playable_index_is_only_constructible_in_range() {
+    fn selection_is_checked_against_the_world_it_owns() {
         let limits = Limits::default();
-        let cast = WorldCast::new([player("Alex"), player("Blair")], [], &limits).unwrap();
-        assert!(cast.playable_index(1).is_some());
-        assert!(cast.playable_index(2).is_none());
+        let outline = WorldOutline::new(
+            WorldTitle::new("Title").unwrap(),
+            WorldDescription::new("World").unwrap(),
+        );
+        let large = World::new(
+            outline.clone(),
+            WorldCast::new(
+                [player("Alex"), player("Blair"), player("Casey")],
+                [],
+                &limits,
+            )
+            .unwrap(),
+        );
+        let selected = large.select(PlayablePosition::new(2)).unwrap();
+        let small = World::new(
+            outline,
+            WorldCast::new([player("Devon"), player("Erin")], [], &limits).unwrap(),
+        );
+        assert!(small.clone().select(selected.position()).is_err());
+        assert!(
+            small
+                .clone()
+                .select(PlayablePosition::new(usize::MAX))
+                .is_err()
+        );
+        assert_eq!(selected.protagonist().name().as_str(), "Casey");
+        let small_selected = small.select(PlayablePosition::new(1)).unwrap();
+        assert_eq!(small_selected.protagonist().name().as_str(), "Erin");
+        assert_eq!(selected.clone().protagonist(), selected.protagonist());
     }
 }

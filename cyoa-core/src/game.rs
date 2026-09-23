@@ -19,7 +19,7 @@ use crate::{
     summary::{EventList, MajorEvents, StorySummary},
     text::{Brief, ChapterTitle, CharacterSituation, CurrentSituation},
     turn::{ChapterMarker, StoryTurn, TurnGenerationRecord, TurnRecord},
-    world::{PlayableIndex, World},
+    world::{SelectedWorld, World},
 };
 
 const NPC_NOT_YET_MET: &str = "Has not yet appeared in the story.";
@@ -113,28 +113,18 @@ fn chapter_title(turns: &[TurnRecord]) -> Option<&ChapterTitle> {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GameState {
     brief: Brief,
-    world: World,
-    protagonist: PlayableIndex,
+    world: SelectedWorld,
     style: StoryStyle,
     turns: Vec<TurnRecord>,
     limits: Limits,
 }
 
 impl GameState {
-    /// Starts a new game. `protagonist` must have been obtained from this
-    /// same `world`'s cast (`WorldCast::playable_index`), which is the only
-    /// way to construct one, so this cannot fail on an out-of-range index.
-    pub fn start(
-        brief: Brief,
-        world: World,
-        protagonist: PlayableIndex,
-        style: StoryStyle,
-        limits: Limits,
-    ) -> Self {
+    /// Starts a new game with a world that already owns its validated selection.
+    pub fn start(brief: Brief, world: SelectedWorld, style: StoryStyle, limits: Limits) -> Self {
         Self {
             brief,
             world,
-            protagonist,
             style,
             turns: Vec::new(),
             limits,
@@ -146,8 +136,7 @@ impl GameState {
     /// into `ChapterMarker`s before calling this.
     pub fn restore(
         brief: Brief,
-        world: World,
-        protagonist: PlayableIndex,
+        world: SelectedWorld,
         style: StoryStyle,
         limits: Limits,
         turns: Vec<TurnRecord>,
@@ -155,7 +144,6 @@ impl GameState {
         Self {
             brief,
             world,
-            protagonist,
             style,
             turns,
             limits,
@@ -167,11 +155,15 @@ impl GameState {
     }
 
     pub fn world(&self) -> &World {
+        self.world.world()
+    }
+
+    pub fn selected_world(&self) -> &SelectedWorld {
         &self.world
     }
 
     pub fn protagonist(&self) -> &crate::world::PlayerCharacter {
-        self.world.cast().playable_at(self.protagonist)
+        self.world.protagonist()
     }
 
     pub fn style(&self) -> &StoryStyle {
@@ -224,7 +216,7 @@ impl GameState {
         let mut taken: HashSet<CharacterId> = HashSet::new();
         taken.insert(protagonist_character.id().clone());
         let mut characters = vec![protagonist_character];
-        for npc in self.world.cast().npcs() {
+        for npc in self.world().cast().npcs() {
             let id = CharacterId::for_name(npc.name().as_str()).unique(|id| taken.contains(id));
             taken.insert(id.clone());
             let details = CharacterDetails::new(CharacterDetailsFields {
@@ -240,7 +232,7 @@ impl GameState {
             CharacterCast::new(characters).expect("the protagonist alone makes the cast non-empty");
 
         StorySummary::new(
-            self.world.outline().description().clone(),
+            self.world().outline().description().clone(),
             CurrentSituation::new(ADVENTURE_NOT_YET_BEGUN).expect("literal is non-blank"),
             cast,
             MajorEvents::new(EventList::default(), self.limits.max_major_events),
@@ -346,7 +338,7 @@ mod tests {
             ChapterMarker, GenerationProvenance, QuickAction, QuickActionKind, QuickActions,
             StoryTurn, TurnGenerationRecord,
         },
-        world::{NonPlayerCharacter, PlayerCharacter, WorldCast, WorldOutline},
+        world::{NonPlayerCharacter, PlayablePosition, PlayerCharacter, WorldCast, WorldOutline},
     };
 
     fn player(name: &str) -> PlayerCharacter {
@@ -373,12 +365,12 @@ mod tests {
             WorldDescription::new("A world").unwrap(),
         );
         let cast = WorldCast::new([player("Alex"), player("Blair")], npcs, &limits).unwrap();
-        let protagonist = cast.playable_index(0).unwrap();
-        let world = World::new(outline, cast);
+        let world = World::new(outline, cast)
+            .select(PlayablePosition::new(0))
+            .unwrap();
         GameState::start(
             Brief::new("brief").unwrap(),
             world,
-            protagonist,
             StoryStyle::default(),
             limits,
         )
@@ -430,6 +422,31 @@ mod tests {
             nico.details().current_state().unwrap().as_str(),
             NPC_NOT_YET_MET
         );
+    }
+
+    #[test]
+    fn start_and_restore_keep_the_selected_world_and_protagonist_together() {
+        let selected = game()
+            .world()
+            .clone()
+            .select(PlayablePosition::new(1))
+            .unwrap();
+        let started = GameState::start(
+            Brief::new("brief").unwrap(),
+            selected.clone(),
+            StoryStyle::default(),
+            Limits::default(),
+        );
+        let restored = GameState::restore(
+            Brief::new("brief").unwrap(),
+            selected,
+            StoryStyle::default(),
+            Limits::default(),
+            vec![],
+        );
+        assert_eq!(started, restored);
+        assert_eq!(restored.protagonist().name().as_str(), "Blair");
+        assert_eq!(restored.selected_world().position().get(), 1);
     }
 
     #[test]
@@ -590,11 +607,11 @@ mod tests {
                 );
                 let cast =
                     WorldCast::new([player("Alex"), player("Blair")], vec![], &limits).unwrap();
-                let protagonist = cast.playable_index(0).unwrap();
                 state = GameState::start(
                     Brief::new("brief").unwrap(),
-                    World::new(outline, cast),
-                    protagonist,
+                    World::new(outline, cast)
+                        .select(PlayablePosition::new(0))
+                        .unwrap(),
                     StoryStyle::default(),
                     limits,
                 );

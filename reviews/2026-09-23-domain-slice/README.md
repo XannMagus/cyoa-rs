@@ -23,6 +23,12 @@ and rendered prompt. These infallible wrappers preserve empty, whitespace-only,
 and Unicode input exactly. Business text retains its nonblank normalization.
 The byte-preservation regression covers all three exchange-text types.
 
+R2 is now fixed: `World::select(PlayablePosition)` returns an owning `SelectedWorld`.
+Both game construction paths require that aggregate. The transferable checked index
+and public unchecked lookup are removed. Runtime tests cover foreign/out-of-range
+positions and selection through start/restore; a compile-fail test prevents replacing
+the aggregate's world independently of its selection.
+
 | Commit | Change | Review disposition |
 | --- | --- | --- |
 | [b5fe6c0929fb83e07412afae70b82abb017132ea][limits-commit] | Typed engine limits; move `MajorEventLimit` | Sound extraction. Zero is explicitly legal for NPC and bridge limits. Consumers must honor that contract. |
