@@ -1,12 +1,11 @@
 //! Bounded story memory and its invariant-preserving delta merge.
 //! Port of calibre's `clean_text_list` and `updated_summary` (cyoa.py:1306,1374).
 
-use std::{collections::HashSet, num::NonZeroUsize};
-
-use thiserror::Error;
+use std::collections::HashSet;
 
 use crate::{
     character::{CharacterCast, CharacterDelta},
+    limits::MajorEventLimit,
     text::{CurrentSituation, EventText, WorldDescription, matching_key},
 };
 
@@ -43,31 +42,6 @@ impl EventList {
     fn retain_latest(&mut self, limit: MajorEventLimit) {
         let discard = self.events.len().saturating_sub(limit.get());
         self.events.drain(..discard);
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct MajorEventLimit(NonZeroUsize);
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Error)]
-#[error("the major event limit must be positive")]
-pub struct InvalidMajorEventLimit;
-
-impl MajorEventLimit {
-    pub fn new(limit: usize) -> Result<Self, InvalidMajorEventLimit> {
-        NonZeroUsize::new(limit)
-            .map(Self)
-            .ok_or(InvalidMajorEventLimit)
-    }
-
-    pub fn get(self) -> usize {
-        self.0.get()
-    }
-}
-
-impl Default for MajorEventLimit {
-    fn default() -> Self {
-        Self(NonZeroUsize::new(30).expect("30 is positive"))
     }
 }
 

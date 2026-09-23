@@ -7,5 +7,6 @@
 
 pub mod character;
 pub mod ids;
+pub mod limits;
 pub mod summary;
 pub mod text;

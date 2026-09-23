@@ -5,9 +5,8 @@ use cyoa_core::{
         Character, CharacterCast, CharacterDelta, CharacterDetails, MissingCharacterDetails,
     },
     ids::CharacterId,
-    summary::{
-        EventList, MajorEventLimit, MajorEvents, StorySummary, SummaryUpdate, UpcomingEventsUpdate,
-    },
+    limits::MajorEventLimit,
+    summary::{EventList, MajorEvents, StorySummary, SummaryUpdate, UpcomingEventsUpdate},
     text::{
         Backstory, CharacterDescription, CharacterName, CharacterSituation, CurrentSituation,
         Relationships, WorldDescription,
