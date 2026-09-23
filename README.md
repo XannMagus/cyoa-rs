@@ -62,9 +62,11 @@ A second slice adds `limits`, `world`, `style`, `turn`, and `game` (`GameState`)
 Every tunable bound (max major events, max generated NPCs, the prose bridge
 window, minimum playable characters) is its own type rather than a bare `usize`,
 gathered into `Limits`, which `GameState` owns and never persists. World-cast
-validation ports calibre's playable/NPC cleaning and capping rules; the only way
-to get a protagonist index is from that same cast, so `GameState::start` cannot be
-given one out of range. A turn's chapter proposal is a single
+validation ports calibre's playable/NPC cleaning and capping rules. The
+[domain review](reviews/2026-09-23-domain-slice/README.md) tracks open corrections
+for namesake preservation, binding protagonist selection to its world, exact audit
+text, and consistent restored event limits. The zero-NPC-cap defect is fixed.
+A turn's chapter proposal is a single
 `ChapterMarker::{Continue, NewChapter}` carrying an optional title, and chapter
 membership is derived from the marker sequence rather than stored — there is no
 chapter index to fall out of sync with the turn log. This also deliberately

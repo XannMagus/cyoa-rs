@@ -513,14 +513,18 @@ Python casefold. No JSON or serde dependency has been added to the domain.
 A second domain slice adds `limits.rs`, `world.rs`, `style.rs`, `turn.rs`, and
 `game.rs`. Every limit (`MajorEventLimit`, `MaxGeneratedNpcs`, `ProseBridgeTurns`,
 `MinPlayableCharacters`) is its own type, not an interchangeable `usize`, gathered
-into a `Limits` value that `GameState` owns and injects into every operation that
-needs a bound — mirroring how `MajorEvents` already carries its cap. `WorldCast`
+into a `Limits` value that `GameState` owns. `MajorEvents` also carries its cap;
+restoration does not yet reconcile those two sources (review finding R5). `WorldCast`
 ports `validated_player_characters`/`validated_npcs`/`validated_cast`: dedup by
 casefolded name (first occurrence wins), NPCs colliding with a playable name are
 dropped, NPCs are capped at `max_generated_npcs`, and construction fails only when
-fewer than `min_playable_characters` remain. The only way to obtain a
-`PlayableIndex` is `WorldCast::playable_index`, so an out-of-range protagonist
-index cannot be constructed and `GameState::start` does not need to validate one.
+fewer than `min_playable_characters` remain. This name-based deduplication conflicts
+with our namesake-preservation policy above and needs correction (R1).
+`WorldCast::playable_index` checks a position against one cast, but its result can
+currently be used with another cast; `GameState::start` and `restore` therefore
+do not yet enforce protagonist validity (R2). The
+[2026-09-23 review](reviews/2026-09-23-domain-slice/README.md) records these findings,
+reproductions, recommended repairs, and the completed zero-NPC-cap fix.
 
 `StoryTurn` carries a `ChapterMarker::{Continue { title }, NewChapter { title }}`
 rather than calibre's separate `starts_new_chapter`/`chapter_title` fields, so the
@@ -535,9 +539,10 @@ is `NewChapter` (the first turn can never open one, matching calibre), so
 marker sequence instead of a stored, `debug_assert!`-guarded chapter index. This
 goes further than the `partition_point` sketch earlier in this document, which
 assumed a stored, non-decreasing chapter number; that assumption is now
-unnecessary because there is nothing stored to get out of sync. `GameState` has no
-public constructor that can produce an invalid turn log: `commit_turn` is
-infallible because every check `validated_turn` performed in calibre is already
+unnecessary because there is no stored chapter index to get out of sync.
+`commit_turn` computes each post-turn summary, while `restore` accepts snapshots
+whose aggregate constraints still need validation (R2/R5). `commit_turn` has an
+infallible signature because every check `validated_turn` performed in calibre is already
 carried by `StoryTurn`'s field types (a blank narrative or zero surviving quick
 actions cannot be constructed), and `rewind` takes a `TurnCount` (`NonZeroUsize`)
 so its only remaining failure is "more than exist". `selected_quick_actions` is

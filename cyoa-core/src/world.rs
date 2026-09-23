@@ -163,17 +163,11 @@ impl WorldCast {
             .iter()
             .map(|c| matching_key(c.name.as_str()))
             .collect();
-        let mut selected_npcs = Vec::new();
-        for npc in npcs {
-            let key = matching_key(npc.name.as_str());
-            if !names.insert(key) {
-                continue;
-            }
-            selected_npcs.push(npc);
-            if selected_npcs.len() >= limits.max_generated_npcs.get() {
-                break;
-            }
-        }
+        let selected_npcs = npcs
+            .into_iter()
+            .filter(|npc| names.insert(matching_key(npc.name.as_str())))
+            .take(limits.max_generated_npcs.get())
+            .collect();
         Ok(Self {
             playable,
             npcs: selected_npcs,
@@ -277,6 +271,41 @@ mod tests {
         .unwrap();
         assert_eq!(cast.npcs().len(), 1);
         assert_eq!(cast.npcs()[0].name().as_str(), "Casey");
+    }
+
+    #[test]
+    fn npc_limit_applies_to_surviving_entries_including_zero() {
+        use crate::limits::MaxGeneratedNpcs;
+
+        for maximum in [0, 1, 2, 3, 8, usize::MAX] {
+            let limits = Limits {
+                max_generated_npcs: MaxGeneratedNpcs::new(maximum),
+                ..Limits::default()
+            };
+            let cast = WorldCast::new(
+                [player("Alex"), player("Blair")],
+                [npc("Alex"), npc("Casey"), npc("casey"), npc("Devon")],
+                &limits,
+            )
+            .unwrap();
+            let names: Vec<_> = cast.npcs().iter().map(|npc| npc.name().as_str()).collect();
+            assert_eq!(names, ["Casey", "Devon"][..maximum.min(2)]);
+        }
+    }
+
+    #[test]
+    fn zero_npc_limit_does_not_consume_candidates() {
+        use crate::limits::MaxGeneratedNpcs;
+
+        let limits = Limits {
+            max_generated_npcs: MaxGeneratedNpcs::new(0),
+            ..Limits::default()
+        };
+        let candidates = std::iter::from_fn(|| -> Option<NonPlayerCharacter> {
+            panic!("a zero limit must not consume NPC candidates")
+        });
+        let cast = WorldCast::new([player("Alex"), player("Blair")], candidates, &limits).unwrap();
+        assert!(cast.npcs().is_empty());
     }
 
     #[test]
