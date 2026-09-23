@@ -510,6 +510,41 @@ and defaults to 30; the bounded event collection carries its limit through merge
 Matching follows the previously accepted Unicode-lowercase approximation to
 Python casefold. No JSON or serde dependency has been added to the domain.
 
+A second domain slice adds `limits.rs`, `world.rs`, `style.rs`, `turn.rs`, and
+`game.rs`. Every limit (`MajorEventLimit`, `MaxGeneratedNpcs`, `ProseBridgeTurns`,
+`MinPlayableCharacters`) is its own type, not an interchangeable `usize`, gathered
+into a `Limits` value that `GameState` owns and injects into every operation that
+needs a bound — mirroring how `MajorEvents` already carries its cap. `WorldCast`
+ports `validated_player_characters`/`validated_npcs`/`validated_cast`: dedup by
+casefolded name (first occurrence wins), NPCs colliding with a playable name are
+dropped, NPCs are capped at `max_generated_npcs`, and construction fails only when
+fewer than `min_playable_characters` remain. The only way to obtain a
+`PlayableIndex` is `WorldCast::playable_index`, so an out-of-range protagonist
+index cannot be constructed and `GameState::start` does not need to validate one.
+
+`StoryTurn` carries a `ChapterMarker::{Continue { title }, NewChapter { title }}`
+rather than calibre's separate `starts_new_chapter`/`chapter_title` fields, so the
+two cannot disagree. This is also where the port **deliberately extends** calibre:
+calibre's `chapter_titles` reads a chapter's title only from its first turn: here,
+a chapter's effective title is the *last* `Some` title among any of its turns, so
+any turn can retitle its chapter, not only the one that opened it (`None` leaves
+the current title, or the "Chapter N" fallback, alone). Chapter membership itself
+is **not stored** anywhere: turn `i` opens a new chapter iff `i > 0` and its marker
+is `NewChapter` (the first turn can never open one, matching calibre), so
+`GameState::chapters()`/`prose_context()` derive membership directly from the
+marker sequence instead of a stored, `debug_assert!`-guarded chapter index. This
+goes further than the `partition_point` sketch earlier in this document, which
+assumed a stored, non-decreasing chapter number; that assumption is now
+unnecessary because there is nothing stored to get out of sync. `GameState` has no
+public constructor that can produce an invalid turn log: `commit_turn` is
+infallible because every check `validated_turn` performed in calibre is already
+carried by `StoryTurn`'s field types (a blank narrative or zero surviving quick
+actions cannot be constructed), and `rewind` takes a `TurnCount` (`NonZeroUsize`)
+so its only remaining failure is "more than exist". `selected_quick_actions` is
+ported as `QuickActions::select`, using `IndexMap` for the one-action-per-kind
+preference exactly as flagged in this document's porting-mismatches table.
+`apply_character_edits` is intentionally not yet ported.
+
 ### Original workspace inventory (subject to the layer boundaries above)
 
 **Cargo workspace, two crates.** The wall between engine and I/O is enforced by the

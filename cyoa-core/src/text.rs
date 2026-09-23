@@ -49,6 +49,27 @@ define_nonblank_string_type!(Backstory);
 define_nonblank_string_type!(Relationships);
 define_nonblank_string_type!(CharacterSituation);
 
+define_nonblank_string_type!(Brief);
+define_nonblank_string_type!(WorldTitle);
+define_nonblank_string_type!(PlayerInput);
+define_nonblank_string_type!(Narrative);
+define_nonblank_string_type!(QuickActionText);
+define_nonblank_string_type!(SceneDescription);
+define_nonblank_string_type!(ChapterTitle);
+define_nonblank_string_type!(RawResponse);
+define_nonblank_string_type!(ProviderName);
+define_nonblank_string_type!(ModelName);
+define_nonblank_string_type!(CurrencyCode);
+define_nonblank_string_type!(Instructions);
+define_nonblank_string_type!(RenderedPrompt);
+
+// Distinct types so a pace key cannot be passed where a tone key is expected,
+// even though all four are interchangeable strings at the storage level.
+define_nonblank_string_type!(ArtStyleKey);
+define_nonblank_string_type!(PaceKey);
+define_nonblank_string_type!(ToneKey);
+define_nonblank_string_type!(NarrationKey);
+
 fn type_label(name: &str) -> String {
     let mut label = String::new();
     let mut previous: Option<char> = None;

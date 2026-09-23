@@ -58,6 +58,23 @@ blank fields and nullable lists into these domain changes. As permitted by the
 plan, matching currently uses Unicode lowercase rather than full Python casefold
 (so, for example, `ß` and `ss` are not equivalent).
 
+A second slice adds `limits`, `world`, `style`, `turn`, and `game` (`GameState`).
+Every tunable bound (max major events, max generated NPCs, the prose bridge
+window, minimum playable characters) is its own type rather than a bare `usize`,
+gathered into `Limits`, which `GameState` owns and never persists. World-cast
+validation ports calibre's playable/NPC cleaning and capping rules; the only way
+to get a protagonist index is from that same cast, so `GameState::start` cannot be
+given one out of range. A turn's chapter proposal is a single
+`ChapterMarker::{Continue, NewChapter}` carrying an optional title, and chapter
+membership is derived from the marker sequence rather than stored — there is no
+chapter index to fall out of sync with the turn log. This also deliberately
+extends calibre: a chapter's title is the *last* title any of its turns supplied,
+not only the first, so any turn can retitle its chapter. `GameState::commit_turn`
+is infallible (every check calibre's `validated_turn` performed is already carried
+by `StoryTurn`'s field types), and `rewind`/derived views (`current_summary`,
+`chapters`, `prose_context`) are covered by ported and differential tests. Style
+and character-edit propagation (`apply_character_edits`) are not yet ported.
+
 Build and check with a stable Rust toolchain supporting edition 2024:
 
 ```sh
