@@ -14,6 +14,17 @@ use crate::{
     },
 };
 
+/// Four `Option` fields of similar-looking value objects gives positional
+/// construction no readable equivalent of a named argument, so callers build
+/// via this field-labelled struct instead of four bare positional `Option`s.
+#[derive(Debug, Default, Clone, PartialEq, Eq, Hash)]
+pub struct CharacterDetailsFields {
+    pub description: Option<CharacterDescription>,
+    pub backstory: Option<Backstory>,
+    pub relationships: Option<Relationships>,
+    pub current_state: Option<CharacterSituation>,
+}
+
 /// Valid stored details: at least one of description/backstory is present.
 /// All present values are nonblank; missing relationships/state are legitimate.
 ///
@@ -30,20 +41,15 @@ pub struct CharacterDetails {
 }
 
 impl CharacterDetails {
-    pub fn new(
-        description: Option<CharacterDescription>,
-        backstory: Option<Backstory>,
-        relationships: Option<Relationships>,
-        current_state: Option<CharacterSituation>,
-    ) -> Result<Self, MissingCharacterDetails> {
-        if description.is_none() && backstory.is_none() {
+    pub fn new(fields: CharacterDetailsFields) -> Result<Self, MissingCharacterDetails> {
+        if fields.description.is_none() && fields.backstory.is_none() {
             return Err(MissingCharacterDetails);
         }
         Ok(Self {
-            description,
-            backstory,
-            relationships,
-            current_state,
+            description: fields.description,
+            backstory: fields.backstory,
+            relationships: fields.relationships,
+            current_state: fields.current_state,
         })
     }
 
@@ -237,12 +243,12 @@ impl CharacterCast {
                 .clone()
                 .unwrap_or_else(|| CharacterId::for_name(name.as_str()))
                 .unique(|id| characters.contains_key(id));
-            let Ok(details) = CharacterDetails::new(
-                update.description.clone(),
-                update.backstory.clone(),
-                update.relationships.clone(),
-                update.current_state.clone(),
-            ) else {
+            let Ok(details) = CharacterDetails::new(CharacterDetailsFields {
+                description: update.description.clone(),
+                backstory: update.backstory.clone(),
+                relationships: update.relationships.clone(),
+                current_state: update.current_state.clone(),
+            }) else {
                 continue;
             };
             let character = Character::new(id.clone(), name.clone(), details);

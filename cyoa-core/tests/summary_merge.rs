@@ -2,7 +2,8 @@
 //! with additional invariants and same-turn alias regression cases.
 use cyoa_core::{
     character::{
-        Character, CharacterCast, CharacterDelta, CharacterDetails, MissingCharacterDetails,
+        Character, CharacterCast, CharacterDelta, CharacterDetails, CharacterDetailsFields,
+        MissingCharacterDetails,
     },
     ids::CharacterId,
     limits::MajorEventLimit,
@@ -17,12 +18,11 @@ fn character(id: &str, name: &str) -> Character {
     Character::new(
         CharacterId::new(id).unwrap(),
         CharacterName::new(name).unwrap(),
-        CharacterDetails::new(
-            CharacterDescription::new("a stubborn engineer").ok(),
-            Backstory::new("Built the mist engines.").ok(),
-            None,
-            None,
-        )
+        CharacterDetails::new(CharacterDetailsFields {
+            description: CharacterDescription::new("a stubborn engineer").ok(),
+            backstory: Backstory::new("Built the mist engines.").ok(),
+            ..Default::default()
+        })
         .unwrap(),
     )
 }
@@ -333,12 +333,11 @@ fn upcoming_events_null_is_not_empty() {
 #[test]
 fn details_establish_the_invariant_before_infallible_character_construction() {
     assert_eq!(
-        CharacterDetails::new(
-            None,
-            None,
-            Relationships::new("knows Ada").ok(),
-            CharacterSituation::new("watching").ok()
-        ),
+        CharacterDetails::new(CharacterDetailsFields {
+            relationships: Relationships::new("knows Ada").ok(),
+            current_state: CharacterSituation::new("watching").ok(),
+            ..Default::default()
+        }),
         Err(MissingCharacterDetails),
     );
     for (description, backstory) in [
@@ -348,7 +347,12 @@ fn details_establish_the_invariant_before_infallible_character_construction() {
         ),
         (None, Some(Backstory::new("grew up in the city").unwrap())),
     ] {
-        let details = CharacterDetails::new(description, backstory, None, None).unwrap();
+        let details = CharacterDetails::new(CharacterDetailsFields {
+            description,
+            backstory,
+            ..Default::default()
+        })
+        .unwrap();
         let character: Character = Character::new(
             CharacterId::protagonist(),
             CharacterName::new("Ada").unwrap(),
@@ -409,7 +413,7 @@ fn domain_constructors_reject_invalid_state() {
     assert!(CharacterName::new("\n").is_err());
     assert!(WorldDescription::new("").is_err());
     assert!(CurrentSituation::new(" ").is_err());
-    assert!(CharacterDetails::new(None, None, None, None).is_err());
+    assert!(CharacterDetails::new(CharacterDetailsFields::default()).is_err());
     assert!(CharacterCast::new(vec![]).is_err());
 }
 
@@ -420,12 +424,10 @@ fn suffixing_preserves_existing_ids_and_repaired_ids_support_future_updates() {
         Character::new(
             CharacterId::new("ajax").unwrap(),
             CharacterName::new("Ajax").unwrap(),
-            CharacterDetails::new(
-                Some(CharacterDescription::new("the other Ajax").unwrap()),
-                None,
-                None,
-                None,
-            )
+            CharacterDetails::new(CharacterDetailsFields {
+                description: Some(CharacterDescription::new("the other Ajax").unwrap()),
+                ..Default::default()
+            })
             .unwrap(),
         ),
         character("ajax-2", "Brin"),
@@ -512,45 +514,43 @@ fn exact_deduplication_includes_identity_and_all_character_details() {
         Character::new(
             base.id().clone(),
             base.name().clone(),
-            CharacterDetails::new(
-                Some(CharacterDescription::new("different description").unwrap()),
-                details.backstory().cloned(),
-                None,
-                None,
-            )
+            CharacterDetails::new(CharacterDetailsFields {
+                description: Some(CharacterDescription::new("different description").unwrap()),
+                backstory: details.backstory().cloned(),
+                ..Default::default()
+            })
             .unwrap(),
         ),
         Character::new(
             base.id().clone(),
             base.name().clone(),
-            CharacterDetails::new(
-                details.description().cloned(),
-                Some(Backstory::new("different history").unwrap()),
-                None,
-                None,
-            )
+            CharacterDetails::new(CharacterDetailsFields {
+                description: details.description().cloned(),
+                backstory: Some(Backstory::new("different history").unwrap()),
+                ..Default::default()
+            })
             .unwrap(),
         ),
         Character::new(
             base.id().clone(),
             base.name().clone(),
-            CharacterDetails::new(
-                details.description().cloned(),
-                details.backstory().cloned(),
-                Some(Relationships::new("knows Ada").unwrap()),
-                None,
-            )
+            CharacterDetails::new(CharacterDetailsFields {
+                description: details.description().cloned(),
+                backstory: details.backstory().cloned(),
+                relationships: Some(Relationships::new("knows Ada").unwrap()),
+                ..Default::default()
+            })
             .unwrap(),
         ),
         Character::new(
             base.id().clone(),
             base.name().clone(),
-            CharacterDetails::new(
-                details.description().cloned(),
-                details.backstory().cloned(),
-                None,
-                Some(CharacterSituation::new("at the gate").unwrap()),
-            )
+            CharacterDetails::new(CharacterDetailsFields {
+                description: details.description().cloned(),
+                backstory: details.backstory().cloned(),
+                current_state: Some(CharacterSituation::new("at the gate").unwrap()),
+                ..Default::default()
+            })
             .unwrap(),
         ),
     ];
