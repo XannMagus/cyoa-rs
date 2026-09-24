@@ -117,7 +117,7 @@ extension; do not infer permission to revert it from the Python source.
 
 ### ARCH-001 Dependencies point inward
 
-**Partial: dependency graph enforced, use-case implementation pending.** Domain
+**Partial: dependency graph and generation use cases enforced; other use cases pending.** Domain
 owns vendor-independent rules. Application owns orchestration and its ports.
 Presentation drives application; infrastructure implements inward-owned ports;
 main wires concrete adapters. Application must not import concrete infrastructure
@@ -155,9 +155,9 @@ architecture/domain decisions in PLAN, `6290701`, and `wire_mapping`'s tests.
 
 ### PROMPTS-001 Opening-turn identity review
 
-**Partial: rendering enforced, generation call counts pending.** `reference/prompt-additions.toml`'s `opening_identity_review` is
+**Enforced: rendering and scripted application call counts.** `reference/prompt-additions.toml`'s `opening_identity_review` is
 rendered into the opening turn's user prompt only, never repeated on a later
-turn, by `generation::prompts::turn_prompt` — the existing opening-turn call,
+turn, by `GenerationTemplates::turn_prompt` — the existing opening-turn call,
 not a separate paid LLM call. Preserves namesakes and established IDs; the
 current `SummaryUpdate` still cannot delete/consolidate existing characters,
 and prose must not act as a hidden merge command; this decision only adds the
@@ -325,3 +325,20 @@ Schemas must require both fields without imposing nonblank validation. This
 preserves the source boundary, not a backend tolerance workaround. Regressions
 also protect genuinely defaulted delta relationships/action kinds, nullable chapter
 titles, and omitted/null versus empty-list upcoming-event updates.
+
+Step 5 (2026-09-25): application-owned `StoryGenerator`, typed `TurnDirection`,
+`Generated<T>` and `GenerationFailure` isolate the domain-facing contract from
+JSON/template/backend types. `StoryUseCases` rejects pre-cancelled commands and
+commits only validated successful turns after checking cancellation again. A worker
+may operate on an owned snapshot; presentation must retain canonical state and
+never hold its lock during generation. Concurrency/stale-worker handling remains
+presentation work, not a guarantee provided by this synchronous use case.
+
+The infrastructure `GenerationEngine` performs one transport call, decodes wire
+DTOs, and applies domain constructors. `ScriptedBackend` exercises that same path
+without credentials and records complete requests. Required tests observe no
+retry, state equality on error, exact diagnostic bytes, no pre-cancel call, edited
+outline use, namesake preservation, repaired IDs in later prompts, exactly one
+opening identity instruction and no separate deduplication call. Active current
+and original restore policies reach prompts, schema descriptions and merged event
+caps. Persistence and live subprocess adapters remain pending.

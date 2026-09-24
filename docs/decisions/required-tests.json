@@ -117,6 +117,13 @@
         "tests": [
           "cast_requests_and_schemas_obey_small_caps_and_large_minimums"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "generation_use_cases",
+        "tests": [
+          "restored_limits_reach_captured_prompt_schema_and_committed_memory"
+        ]
       }
     ]
   },
@@ -144,7 +151,17 @@
   {
     "id": "ARCH-001",
     "coverage": "partial",
-    "checks": []
+    "checks": [
+      {
+        "package": "cyoa-infrastructure",
+        "target": "generation_use_cases",
+        "tests": [
+          "cancelled_commands_make_no_backend_calls_and_preserve_state",
+          "failed_turns_preserve_diagnostics_state_and_single_attempt",
+          "invalid_outline_and_insufficient_cast_are_returned_with_raw_output"
+        ]
+      }
+    ]
   },
   {
     "id": "ARCH-002",
@@ -222,13 +239,20 @@
   },
   {
     "id": "PROMPTS-001",
-    "coverage": "partial",
+    "coverage": "enforced",
     "checks": [
       {
         "package": "cyoa-infrastructure",
         "target": "prompt_rendering",
         "tests": [
           "opening_turn_prompt_includes_the_identity_review_addition_exactly_once"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "generation_use_cases",
+        "tests": [
+          "scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls"
         ]
       }
     ]

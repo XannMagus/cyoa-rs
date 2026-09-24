@@ -6,3 +6,5 @@
 
 pub mod cancellation;
 pub mod image;
+
+pub mod generation;

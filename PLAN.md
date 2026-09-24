@@ -1285,3 +1285,13 @@ with observed red/green runs before architectural refinement. The trace is in
 `reviews/2026-09-25-template-validation/README.md`. Full request snapshots cover
 opening, continuation and a chapter bridge. Required-test registrations follow
 three existing override tests into private unit scope without weakening them.
+
+Step 5 now implements typed application generation ports and synchronous
+`StoryUseCases::{generate_outline,generate_world,take_turn}`. Infrastructure owns
+`GenerationEngine` and a reusable request-recording `ScriptedBackend`. Errors and
+observed cancellation precede any turn commit; caller state remains untouched on
+failure, raw diagnostics survive, and there is no automatic retry. Captured
+lifecycle tests establish call counts, edited outlines, stable namesake IDs and
+active restored limits across prompt/schema/commit. Streaming, full acceptance,
+mutation gates, real CLI subprocesses and presentation workers remain subsequent
+steps. See `docs/decisions/phase0-acceptance.md` for their exact gates.

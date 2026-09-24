@@ -1,0 +1,157 @@
+//! Adapter from typed application generation ports to JSON transport. One call
+//! per request; decoding and domain validation happen before returning success.
+use super::{
+    templates::{GenerationTemplates, RenderError, RenderedGeneration},
+    wire::*,
+};
+use crate::backend::{Backend, BackendError, GenerationRequest, GenerationResponse};
+use cyoa_application::{cancellation::CancellationToken, generation::*};
+use cyoa_core::{
+    game::GameState,
+    limits::Limits,
+    text::{Brief, RawResponse},
+    turn::StoryTurn,
+    world::{WorldCast, WorldOutline},
+};
+
+pub struct GenerationEngine<B> {
+    backend: B,
+    templates: GenerationTemplates,
+}
+impl<B> GenerationEngine<B> {
+    pub fn new(backend: B, templates: GenerationTemplates) -> Self {
+        Self { backend, templates }
+    }
+    pub fn into_backend(self) -> B {
+        self.backend
+    }
+}
+impl<B: Backend> GenerationEngine<B> {
+    fn generate(
+        &mut self,
+        request: RenderedGeneration,
+        cancel: &CancellationToken,
+    ) -> Result<GenerationResponse, GenerationFailure> {
+        if cancel.is_cancelled() {
+            return Err(cancelled(""));
+        }
+        let mut fragments = String::new();
+        let response = self.backend.generate(
+            GenerationRequest {
+                instructions: request.instructions().as_str(),
+                prompt: request.prompt().as_str(),
+                schema: request.schema(),
+            },
+            cancel,
+            &mut |chunk| fragments.push_str(chunk),
+        );
+        let response = response.map_err(|error| match error {
+            BackendError::Cancelled => cancelled(fragments),
+            BackendError::Unavailable(message) => GenerationFailure::new(
+                FailureKind::Unavailable,
+                message,
+                RawResponse::new(fragments),
+            ),
+            BackendError::Generation {
+                message,
+                raw_response,
+            } => GenerationFailure::new(
+                FailureKind::Transport,
+                message,
+                RawResponse::new(raw_response),
+            ),
+        })?;
+        if cancel.is_cancelled() {
+            return Err(cancelled(response.raw_response()));
+        }
+        Ok(response)
+    }
+}
+fn cancelled(raw: impl Into<String>) -> GenerationFailure {
+    GenerationFailure::new(
+        FailureKind::Cancelled,
+        "generation cancelled",
+        RawResponse::new(raw),
+    )
+}
+fn configuration(error: RenderError) -> GenerationFailure {
+    GenerationFailure::new(
+        FailureKind::Configuration,
+        error.to_string(),
+        RawResponse::new(""),
+    )
+}
+fn invalid(error: impl std::fmt::Display, response: &GenerationResponse) -> GenerationFailure {
+    GenerationFailure::new(
+        FailureKind::InvalidResponse,
+        error.to_string(),
+        RawResponse::new(response.raw_response()),
+    )
+}
+fn decode<T: serde::de::DeserializeOwned>(
+    response: &GenerationResponse,
+) -> Result<T, GenerationFailure> {
+    serde_json::from_value(response.value().clone()).map_err(|error| invalid(error, response))
+}
+fn generated<T>(value: T, response: &GenerationResponse) -> Generated<T> {
+    Generated::new(
+        value,
+        RawResponse::new(response.raw_response()),
+        Default::default(),
+    )
+}
+impl<B: Backend> StoryGenerator for GenerationEngine<B> {
+    fn outline(
+        &mut self,
+        brief: &Brief,
+        cancel: &CancellationToken,
+    ) -> Result<Generated<WorldOutline>, GenerationFailure> {
+        let request = self.templates.world_request(brief).map_err(configuration)?;
+        let response = self.generate(request, cancel)?;
+        let wire: WorldOutlineWire = decode(&response)?;
+        let world = WorldOutline::try_from(wire).map_err(|error| invalid(error, &response))?;
+        Ok(generated(world, &response))
+    }
+    fn cast(
+        &mut self,
+        brief: &Brief,
+        outline: &WorldOutline,
+        limits: &Limits,
+        cancel: &CancellationToken,
+    ) -> Result<Generated<WorldCast>, GenerationFailure> {
+        let request = self
+            .templates
+            .cast_request(brief, outline, limits)
+            .map_err(configuration)?;
+        let response = self.generate(request, cancel)?;
+        let wire: GeneratedCastWire = decode(&response)?;
+        let (players, npcs) = playable_and_npcs_from_wire(wire);
+        let cast =
+            WorldCast::new(players, npcs, limits).map_err(|error| invalid(error, &response))?;
+        Ok(generated(cast, &response))
+    }
+    fn turn(
+        &mut self,
+        state: &GameState,
+        direction: &TurnDirection,
+        cancel: &CancellationToken,
+        on_narrative: &mut dyn FnMut(&str),
+    ) -> Result<Generated<StoryTurn>, GenerationFailure> {
+        let request = self
+            .templates
+            .turn_request(
+                state,
+                direction.input().map(|i| i.as_str()),
+                matches!(direction, TurnDirection::InterestingEvent),
+            )
+            .map_err(configuration)?;
+        let response = self.generate(request, cancel)?;
+        let wire: StoryTurnWire = decode(&response)?;
+        let turn = StoryTurn::try_from(wire).map_err(|error| invalid(error, &response))?;
+        on_narrative(turn.narrative().as_str());
+        if cancel.is_cancelled() {
+            return Err(cancelled(response.raw_response()));
+        }
+        Ok(generated(turn, &response))
+    }
+}

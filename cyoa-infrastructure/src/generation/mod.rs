@@ -8,8 +8,10 @@
 //! a live backend.
 
 pub mod backend_compat;
+pub mod engine;
 mod limits_context;
 mod prompts;
 mod schema;
+pub mod scripted;
 pub mod templates;
 pub mod wire;
