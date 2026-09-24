@@ -1247,3 +1247,14 @@ directory is left ready for you to do that on your own machine.
   `epubcheck` if available, and open it in a reader.
 - Re-run a saved game after adding a new optional field to confirm the
   `#[serde(default)]` forward-compatibility story actually holds.
+
+## Generation-boundary repairs (2026-09-24)
+
+The generation-boundary review's R1, R2 and R4 are repaired. Cast rendering accepts
+an outline before a cast exists. Default generation preferences remain 3–5
+playables and 3–8 NPCs, adjusted to legal configured limits as specified in
+LIMITS-001. Loaded prompts and schema descriptions permit later chapter retitling
+(CHAPTER-001); they are no longer verbatim beyond only the field-order addition.
+The copied reference files remain historical source. Registered boundary regressions
+cover construction through selection and opening prompt, limit extremes, and
+JSON retitling through commit/rewind. Application orchestration remains pending.

@@ -276,3 +276,16 @@ Generation-boundary follow-up (2026-09-24): ARCH-002 now also requires
 JSON shapes, preserves distinct namesakes, removes exact records, selects the
 actual protagonist, and checks repaired IDs reach the opening prompt. This does
 not yet establish application orchestration or backend call counts.
+
+LIMITS-001 generation request policy: playable requests range from
+`max(3, min_playable_characters)` to `max(5, min_playable_characters)`; NPC requests
+range from `min(3, max_generated_npcs)` to `max_generated_npcs`, with zero stated
+explicitly as no NPCs/an empty list. These preferences do not strengthen domain
+validation (two usable playables remain acceptable by default). Prompt and schema
+rendering share the calculation. Boundary tests cover caps 0–3 and 8, minimums
+1–4 and 6, and the maximum representable minimum without arithmetic overflow.
+Restored-limit orchestration and persistence remain pending.
+
+CHAPTER-001 also covers loaded prompt/schema instructions and JSON turn mapping
+through commit and rewind. Continuing turns can supply a new title; null preserves
+it. These loaded texts deliberately differ from the unchanged Calibre reference.

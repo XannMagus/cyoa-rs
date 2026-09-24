@@ -239,3 +239,8 @@ R1 repaired: the cast prompt accepts `WorldOutline`; the registered
 `generation_lifecycle` regression covers JSON outline → cast prompt → JSON cast →
 world selection → opening prompt, including namesakes and repaired IDs. No
 placeholder cast is needed. Application orchestration remains pending.
+
+R2 and R4 repaired: cast prompt/schema requests share limit-derived ranges, and
+zero NPCs is explicit. Loaded chapter instructions permit continuing-turn retitles.
+Registered regressions exercise configured extremes and JSON retitles through
+commit, null-title preservation, and rewind. Reference captures remain unchanged.

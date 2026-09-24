@@ -110,6 +110,13 @@
           "raising_the_limit_allows_future_events_without_recovering_discarded_ones",
           "empty_restored_games_use_the_selected_limits_for_their_opening_summary"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "prompt_rendering",
+        "tests": [
+          "cast_requests_and_schemas_obey_small_caps_and_large_minimums"
+        ]
       }
     ]
   },
@@ -123,6 +130,13 @@
         "tests": [
           "game::tests::later_turn_retitles_its_chapter_and_rewind_restores_the_earlier_title",
           "game::tests::first_turn_cannot_open_a_chapter"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "prompt_rendering",
+        "tests": [
+          "retitling_instructions_reach_wire_commit_and_rewind"
         ]
       }
     ]

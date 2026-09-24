@@ -19,9 +19,9 @@ world_description = "Detailed description of the world: its geography, factions,
 
 [GeneratedCast]
 _doc = "The cast of characters of an adventure set in a world"
-characters = "Between three and five distinct characters or character variants the player can choose to play as, with physical descriptions and brief back stories"
+characters = "Between {{ min_generated_playables }} and {{ max_generated_playables }} distinct characters or character variants the player can choose to play as, with physical descriptions and brief back stories"
 # {{ max_generated_npcs }} = 8, interpolated in the original f-string.
-npcs = "Between three and {{ max_generated_npcs }} other characters who live in this world and whom the player will meet as the story unfolds, whoever the player chooses to play as"
+npcs = "{% if max_generated_npcs == 0 %}No NPCs; return an empty list.{% else %}Between {{ min_generated_npcs }} and {{ max_generated_npcs }} other characters who live in this world and whom the player will meet as the story unfolds, whoever the player chooses to play as{% endif %}"
 
 [PlayerCharacter]
 _doc = "A character the player can choose to play as"
@@ -95,4 +95,4 @@ quick_actions = "Exactly three actions the player could plausibly take next, one
 scene_description = "A self-contained visual description of the current scene, suitable as a prompt for an image generation AI, that does not rely on knowledge of the story. Describe the current physical state of the characters, their clothing and emotional state."
 summary_update = "The changes this passage makes to the running summary of the story"
 starts_new_chapter = "True only when this turn begins a major new phase of the story, suitable as the start of a new chapter"
-chapter_title = "A title for the new chapter when starts_new_chapter is true, null otherwise"
+chapter_title = "A title for the new chapter when starts_new_chapter is true; on a continuing passage, a title may retitle the current chapter. Null keeps its existing title"

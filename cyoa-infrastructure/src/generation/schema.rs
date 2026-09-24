@@ -53,10 +53,7 @@ fn doc_text(type_name: &str, key: &str, limits: &Limits) -> Option<String> {
         return None;
     }
     let env = minijinja::Environment::new();
-    let context = minijinja::context! {
-        max_major_events => limits.max_major_events.get(),
-        max_generated_npcs => limits.max_generated_npcs.get(),
-    };
+    let context = super::limits_context::limits_context(limits);
     Some(env.render_str(raw, context).unwrap_or_else(|error| {
         panic!("schema_docs.toml[{type_name}].{key} failed to render: {error}")
     }))

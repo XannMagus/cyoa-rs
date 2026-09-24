@@ -256,7 +256,7 @@ fn rendered_limits_reflect_the_supplied_value_not_a_constant() {
     };
     let (few_instructions, _) =
         cast_generation_prompt(&Brief::new("brief").unwrap(), world.outline(), &few_npcs);
-    assert!(few_instructions.contains("between three and 3 other characters"));
+    assert!(few_instructions.contains("between 3 and 3 other characters"));
 }
 
 #[test]
@@ -354,4 +354,100 @@ fn player_input_versus_no_direction() {
 
     let undirected = turn_prompt(&state, None, false);
     assert!(undirected.contains("The reader offers no direction."));
+}
+
+#[test]
+fn cast_requests_and_schemas_obey_small_caps_and_large_minimums() {
+    use cyoa_core::limits::{MaxGeneratedNpcs, MinPlayableCharacters};
+    use cyoa_infrastructure::generation::schema::generated_cast_schema;
+    let world = world();
+    for (minimum, lower, upper) in [
+        (1, 3, 5),
+        (2, 3, 5),
+        (3, 3, 5),
+        (4, 4, 5),
+        (6, 6, 6),
+        (usize::MAX, usize::MAX, usize::MAX),
+    ] {
+        for (cap, floor) in [(0, 0), (1, 1), (2, 2), (3, 3), (8, 3)] {
+            let limits = Limits {
+                min_playable_characters: MinPlayableCharacters::new(minimum).unwrap(),
+                max_generated_npcs: MaxGeneratedNpcs::new(cap),
+                ..Limits::default()
+            };
+            let (instructions, _) =
+                cast_generation_prompt(&Brief::new("brief").unwrap(), world.outline(), &limits);
+            let schema = generated_cast_schema(&limits);
+            let players = schema["properties"]["characters"]["description"]
+                .as_str()
+                .unwrap();
+            let npcs = schema["properties"]["npcs"]["description"]
+                .as_str()
+                .unwrap();
+            let range = format!("between {lower} and {upper} distinct");
+            assert!(instructions.contains(&range));
+            assert!(players.to_lowercase().contains(&range));
+            if cap == 0 {
+                assert!(instructions.contains("Create no NPCs; return an empty npcs list."));
+                assert_eq!(npcs, "No NPCs; return an empty list.");
+                assert!(!instructions.contains("other characters who live"));
+            } else {
+                let range = format!("between {floor} and {cap} other characters");
+                assert!(instructions.contains(&range));
+                assert!(npcs.to_lowercase().contains(&range));
+            }
+        }
+    }
+}
+
+#[test]
+fn retitling_instructions_reach_wire_commit_and_rewind() {
+    use cyoa_core::game::TurnCount;
+    use cyoa_infrastructure::generation::{schema::story_turn_schema, wire::StoryTurnWire};
+    let mut state = game();
+    let instructions = turn_instructions(
+        state.style(),
+        state.world().outline(),
+        state.protagonist(),
+        &state.limits(),
+    );
+    let schema = story_turn_schema(&state.limits());
+    assert!(instructions.contains("On a continuing passage, chapter_title may retitle the current chapter; null keeps its existing title."));
+    assert_eq!(
+        schema["properties"]["chapter_title"]["description"],
+        "A title for the new chapter when starts_new_chapter is true; on a continuing passage, a title may retitle the current chapter. Null keeps its existing title"
+    );
+    for title in [Some("Original"), Some("Renamed"), None] {
+        let raw = serde_json::json!({
+            "narrative":"The harbour stirred.", "quick_actions":[{"text":"Go"}],
+            "scene_description":"", "summary_update":{"current_situation":"At the harbour"},
+            "starts_new_chapter":false, "chapter_title":title
+        })
+        .to_string();
+        let wire: StoryTurnWire = serde_json::from_str(&raw).unwrap();
+        state.commit_turn(
+            StoryTurn::try_from(wire).unwrap(),
+            TurnGenerationRecord {
+                input: None,
+                raw_response: RawResponse::new(raw),
+                provenance: GenerationProvenance::default(),
+                prompt_trace: None,
+            },
+        );
+        assert_eq!(state.chapters().len(), 1);
+    }
+    assert_eq!(
+        state.current_chapter().unwrap().title().unwrap().as_str(),
+        "Renamed"
+    );
+    state.rewind(TurnCount::new(1).unwrap()).unwrap();
+    assert_eq!(
+        state.current_chapter().unwrap().title().unwrap().as_str(),
+        "Renamed"
+    );
+    state.rewind(TurnCount::new(1).unwrap()).unwrap();
+    assert_eq!(
+        state.current_chapter().unwrap().title().unwrap().as_str(),
+        "Original"
+    );
 }

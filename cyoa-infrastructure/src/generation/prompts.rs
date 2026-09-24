@@ -122,6 +122,9 @@ pub fn startup_self_check(prompts: &toml::Table) -> Result<(), minijinja::Error>
     let ctx = context! {
         brief => "a synthetic brief",
         max_generated_npcs => 8,
+        min_generated_npcs => 3,
+        min_generated_playables => 3,
+        max_generated_playables => 5,
         max_major_events => 30,
         what => "synthetic descriptive text",
         world => context! {
@@ -322,7 +325,7 @@ pub fn cast_generation_prompt(
     let instructions = render(
         &env,
         str_at(prompts, &["cast", "instructions"]),
-        context! { max_generated_npcs => limits.max_generated_npcs.get() },
+        super::limits_context::limits_context(limits),
     );
     let prompt = render(
         &env,
