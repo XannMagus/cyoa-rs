@@ -244,3 +244,8 @@ R2 and R4 repaired: cast prompt/schema requests share limit-derived ranges, and
 zero NPCs is explicit. Loaded chapter instructions permit continuing-turn retitles.
 Registered regressions exercise configured extremes and JSON retitles through
 commit, null-title preservation, and rewind. Reference captures remain unchanged.
+
+R5 repaired: removed the two unintended serde defaults. Registered JSON/schema
+regressions require presence while accepting explicit empty strings, reject null,
+and preserve the unrelated defaulted and nullable fields. R3 and the broader
+configuration, orchestration, and test-harness gaps remain open.

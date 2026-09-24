@@ -234,3 +234,111 @@ fn world_outline_rejects_blank_title_or_description() {
         InvalidWorldOutline::BlankDescription
     );
 }
+
+#[test]
+fn required_response_text_distinguishes_missing_null_and_empty() {
+    use cyoa_core::limits::Limits;
+    use cyoa_infrastructure::generation::schema::{generated_cast_schema, story_turn_schema};
+    use serde_json::{Value, json};
+
+    let npc = json!({"name":"Ajax", "description":"A sailor", "backstory":"Grew up at sea", "relationships":""});
+    let turn = json!({
+        "narrative":"The lantern flickered.", "quick_actions":[{"text":"Go"}],
+        "scene_description":"", "summary_update":{"current_situation":"At sea"},
+        "starts_new_chapter":false, "chapter_title":null
+    });
+    for value in [
+        Value::String(String::new()),
+        Value::String("Present".into()),
+    ] {
+        let mut response = npc.clone();
+        response["relationships"] = value.clone();
+        let wire: NonPlayerCharacterWire = serde_json::from_value(response).unwrap();
+        assert_eq!(wire.relationships, value.as_str().unwrap());
+        let (_, npcs) = playable_and_npcs_from_wire(GeneratedCastWire {
+            characters: vec![],
+            npcs: vec![wire],
+        });
+        assert_eq!(npcs.len(), 1);
+        assert_eq!(
+            npcs[0].relationships().map(|text| text.as_str()),
+            value.as_str().filter(|s| !s.is_empty())
+        );
+
+        let mut response = turn.clone();
+        response["scene_description"] = value.clone();
+        let wire: StoryTurnWire = serde_json::from_value(response).unwrap();
+        let domain = StoryTurn::try_from(wire).unwrap();
+        assert_eq!(
+            domain.scene_description().map(|text| text.as_str()),
+            value.as_str().filter(|s| !s.is_empty())
+        );
+    }
+    for missing in [true, false] {
+        let mut response = npc.clone();
+        if missing {
+            response.as_object_mut().unwrap().remove("relationships");
+        } else {
+            response["relationships"] = Value::Null;
+        }
+        assert!(serde_json::from_value::<NonPlayerCharacterWire>(response).is_err());
+        let mut response = turn.clone();
+        if missing {
+            response
+                .as_object_mut()
+                .unwrap()
+                .remove("scene_description");
+        } else {
+            response["scene_description"] = Value::Null;
+        }
+        assert!(serde_json::from_value::<StoryTurnWire>(response).is_err());
+    }
+    let cast_schema = generated_cast_schema(&Limits::default());
+    let turn_schema = story_turn_schema(&Limits::default());
+    for (schema, field) in [
+        (&cast_schema["$defs"]["NonPlayerCharacter"], "relationships"),
+        (&turn_schema, "scene_description"),
+    ] {
+        assert!(
+            schema["required"]
+                .as_array()
+                .unwrap()
+                .contains(&json!(field))
+        );
+        assert_eq!(schema["properties"][field]["type"], "string");
+        assert!(schema["properties"][field].get("minLength").is_none());
+    }
+}
+
+#[test]
+fn wire_defaults_and_nullable_updates_keep_their_distinct_meanings() {
+    use cyoa_core::summary::SummaryUpdate;
+    use serde_json::json;
+    for response in [
+        json!({"current_situation":"Here"}),
+        json!({"current_situation":"Here", "upcoming_events":null}),
+    ] {
+        let wire: SummaryUpdateWire = serde_json::from_value(response).unwrap();
+        let update: SummaryUpdate = wire.into();
+        assert_eq!(update.upcoming_events, UpcomingEventsUpdate::Keep);
+    }
+    let wire: SummaryUpdateWire =
+        serde_json::from_value(json!({"current_situation":"Here", "upcoming_events":[]})).unwrap();
+    let update: SummaryUpdate = wire.into();
+    assert_eq!(
+        update.upcoming_events,
+        UpcomingEventsUpdate::Replace(Default::default())
+    );
+    let delta: CharacterDeltaWire =
+        serde_json::from_value(json!({"id":"ajax", "current_state":"Here"})).unwrap();
+    assert!(delta.relationships.is_empty());
+    let action: QuickActionWire = serde_json::from_value(json!({"text":"Go"})).unwrap();
+    assert_eq!(action.kind.to_domain(), QuickActionKind::Other);
+    let wire: StoryTurnWire = serde_json::from_value(json!({
+        "narrative":"The lantern flickered.", "quick_actions":[{"text":"Go"}],
+        "scene_description":"", "summary_update":{"current_situation":"At sea"},
+        "starts_new_chapter":false
+    }))
+    .unwrap();
+    assert!(wire.chapter_title.is_none());
+}

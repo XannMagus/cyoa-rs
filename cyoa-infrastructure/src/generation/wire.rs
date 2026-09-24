@@ -71,7 +71,6 @@ pub struct NonPlayerCharacterWire {
     pub name: String,
     pub description: String,
     pub backstory: String,
-    #[serde(default)]
     pub relationships: String,
 }
 
@@ -272,7 +271,6 @@ impl QuickActionWire {
 pub struct StoryTurnWire {
     pub narrative: String,
     pub quick_actions: Vec<QuickActionWire>,
-    #[serde(default)]
     pub scene_description: String,
     pub summary_update: SummaryUpdateWire,
     pub starts_new_chapter: bool,

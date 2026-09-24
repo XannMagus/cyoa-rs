@@ -289,3 +289,11 @@ Restored-limit orchestration and persistence remain pending.
 CHAPTER-001 also covers loaded prompt/schema instructions and JSON turn mapping
 through commit and rewind. Continuing turns can supply a new title; null preserves
 it. These loaded texts deliberately differ from the unchanged Calibre reference.
+
+ARCH-002 wire requiredness: generated NPC `relationships` and turn
+`scene_description` must be present strings. Missing and null are rejected;
+explicit empty strings remain valid and map to absent optional domain text.
+Schemas must require both fields without imposing nonblank validation. This
+preserves the source boundary, not a backend tolerance workaround. Regressions
+also protect genuinely defaulted delta relationships/action kinds, nullable chapter
+titles, and omitted/null versus empty-list upcoming-event updates.

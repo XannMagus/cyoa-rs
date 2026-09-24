@@ -190,6 +190,14 @@
         "tests": [
           "outline_to_selected_world_requires_no_placeholder_cast"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "wire_mapping",
+        "tests": [
+          "required_response_text_distinguishes_missing_null_and_empty",
+          "wire_defaults_and_nullable_updates_keep_their_distinct_meanings"
+        ]
       }
     ]
   },
