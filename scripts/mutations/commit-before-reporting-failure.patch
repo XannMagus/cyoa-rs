@@ -1,0 +1,26 @@
+--- a/cyoa-application/src/generation.rs
++++ b/cyoa-application/src/generation.rs
+@@ -142,9 +142,20 @@
+         on_narrative: &mut dyn FnMut(&str),
+     ) -> Result<(), GenerationFailure> {
+         check_cancelled(cancel, RawResponse::new(""))?;
+-        let generated = self
+-            .generator
+-            .turn(state, &direction, cancel, on_narrative)?;
++        let generated = match self.generator.turn(state, &direction, cancel, on_narrative) {
++            Ok(generated) => generated,
++            Err(error) => {
++                if let Some(previous) = state.turns().last().cloned() {
++                    state.commit_turn(previous.turn().clone(), cyoa_core::turn::TurnGenerationRecord {
++                        input: previous.input().cloned(),
++                        raw_response: previous.raw_response().clone(),
++                        provenance: previous.provenance().clone(),
++                        prompt_trace: previous.prompt_trace().cloned(),
++                    });
++                }
++                return Err(error);
++            }
++        };
+         check_cancelled(cancel, generated.raw_response().clone())?;
+         let (turn, raw_response, provenance) = generated.into_parts();
+         state.commit_turn(

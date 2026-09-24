@@ -28,6 +28,19 @@ if [[ "$documented" != "$registered" ]]; then
   exit 1
 fi
 
+documented_coverage=$(awk '
+  /^### [A-Z]+-[0-9]+ / { id=$2 }
+  id && /^\*\*(Enforced|Partial|Pending)/ {
+    state=tolower($0); sub(/^\*\*/, "", state); sub(/[^a-z].*/, "", state)
+    print id "\t" state; id=""
+  }
+' "$contract" | sort)
+registered_coverage=$(jq -r '.[] | [.id, .coverage] | @tsv' "$registry" | sort)
+if [[ "$documented_coverage" != "$registered_coverage" ]]; then
+  printf '%s\n' 'Decision coverage claims and required-test registry disagree.' >&2
+  exit 1
+fi
+
 while IFS=$'\t' read -r package target; do
   args=(-p "$package" --locked --offline)
   case "$target" in
@@ -58,4 +71,5 @@ done < <(jq -r '[.[].checks[] | [.package, .target]] | unique[] | @tsv' "$regist
 
 bash scripts/check_architecture.sh
 cargo test --workspace --locked --offline
+bash scripts/check_contract_mutations.sh
 printf '%s\n' 'Project contracts verified. Pending feature obligations remain listed in docs/decisions.'

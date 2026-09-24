@@ -1,0 +1,20 @@
+--- a/cyoa-core/src/world.rs
++++ b/cyoa-core/src/world.rs
+@@ -159,7 +159,7 @@
+         let mut seen = HashSet::new();
+         let playable: Vec<_> = playable
+             .into_iter()
+-            .filter(|c| seen.insert(c.clone()))
++            .filter(|c| seen.insert(c.name().clone()))
+             .collect();
+         let minimum = limits.min_playable_characters.get();
+         if playable.len() < minimum {
+@@ -171,7 +171,7 @@
+         let mut seen = HashSet::new();
+         let selected_npcs = npcs
+             .into_iter()
+-            .filter(|npc| seen.insert(npc.clone()))
++            .filter(|npc| seen.insert(npc.name().clone()))
+             .take(limits.max_generated_npcs.get())
+             .collect();
+         Ok(Self {

@@ -1,0 +1,12 @@
+--- a/cyoa-application/src/generation.rs
++++ b/cyoa-application/src/generation.rs
+@@ -142,6 +142,9 @@
+         on_narrative: &mut dyn FnMut(&str),
+     ) -> Result<(), GenerationFailure> {
+         check_cancelled(cancel, RawResponse::new(""))?;
++        if state.turns().is_empty() {
++            let _ = self.generator.turn(state, &direction, cancel, &mut |_| {});
++        }
+         let generated = self
+             .generator
+             .turn(state, &direction, cancel, on_narrative)?;

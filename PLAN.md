@@ -1311,3 +1311,12 @@ and one cancellation exercise both failure isolation and restored future context
 The frozen fixture preserves deliberate project deviations. The error and edge
 rewind cases are separate required tests. This completes the no-I/O scenario;
 mutation evidence and the consolidated completion gate are step 8.
+
+Step 8 completes the no-I/O acceptance gate. CI and local `check_contracts.sh` now
+check coverage claims and run isolated mutations for name-only deduplication,
+duplicate opening calls, default rather than active limits, and committing state
+before reporting an error. Each has a passing baseline and a failing registered
+behavioral test; compiler errors never count. README and agent handoff now describe
+the implemented engine rather than the old scaffold. The evidence matrix and exact
+remaining obligations are in `docs/decisions/phase0-acceptance.md`. Real subprocess
+adapters/headless play are next; arbitrary overrides remain blocked on PROMPTS-003.

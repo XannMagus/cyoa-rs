@@ -15,123 +15,67 @@ prompt/schema reference content. No calibre checkout is needed.
 
 ## Status
 
-The workspace and first domain slice are in place; gameplay is not implemented yet.
+The Phase 0 engine works through scripted generation; playable CLI/TUI flows and
+real inference adapters are still pending.
 
-- `cyoa-core`: typed characters and summary memory, validated constructors,
-  stable ids, and invariant-preserving character/event delta merging.
-- `cyoa-application`: use-case layer with cancellation and the image port.
-  Commands, queries, and story-generation ports will arrive with game types.
-- `cyoa-infrastructure`: low-level JSON backend contract, disabled image adapter,
-  and `generation/` (wire DTOs + domain mapping, JSON Schema generation, TOML
-  prompt rendering).
-- `cyoa-presentation`: terminal interface, currently help and version output.
-- `cyoa-cli`: the `cyoa` executable and composition root.
-- `reference/`: the Python source and extracted material used to guide the port.
+- `cyoa-core`: checked domain types, namesake-preserving casts and stable IDs,
+  summary deltas, typed limits, owned protagonist selection, turns, chapters and
+  rewind. Current/original restore policies preserve original settings and reapply
+  active event caps to every snapshot. Character-edit propagation is still pending.
+- `cyoa-application`: inward-owned generation ports and commands for outline, cast,
+  turns and rewind; cancellation tokens and the image port. No JSON/vendor types.
+- `cyoa-infrastructure`: validated bundled templates, schema generation, wire
+  mapping, generation orchestration, incremental narrative extraction, and
+  request-recording complete/chunked scripted transports. Claude schema adaptation
+  is isolated; neither live subprocess adapter is implemented.
+- `cyoa-presentation`: terminal help/version output; gameplay UI is pending.
+- `cyoa-cli`: executable and composition root.
+- `reference/`: source material and each backend's separate live-verification record.
 
-The port preserves Python's game behavior while using Rust ownership, borrowed
-inputs, enums, and `Result` errors. Backend calls are synchronous and take exclusive
-access to the adapter; the frontend will own canonical game state and commit only
-validated responses. There are no implemented inference adapters yet, and their
-live verification status remains recorded in the individual reference files.
+The port deliberately preserves distinct namesakes, repairs ID collisions with
+suffixes, supports later chapter retitling and configurable limits, and uses Unicode
+lowercase rather than full Python casefold. [Project contracts](docs/decisions/README.md)
+override conflicting Python behavior. Nonblank business-text types normalize input;
+audit text preserves every byte. Raw JSON and narrative previews cannot authorize a
+turn commit. Errors and observed cancellation leave the complete game unchanged;
+retry is explicit. Canonical UI ownership and stale-worker rejection remain future
+presentation work.
 
-Successful backend responses are constructed by parsing their original JSON;
-callers cannot mutate the parsed value and original text independently. Input-token
-counts enforce that cached tokens are a subset of total input. Cancellation sources
-stay with the caller while workers receive observation-only tokens. The image seam
-currently represents only the disabled outcome. JSON syntax validation is separate
-from schema and turn validation, which will arrive with the remaining engine implementation.
+`GenerationTemplates::bundled()` validates configuration structure and owns fallible
+rendering. World, cast and turn requests use the same instance. The opening identity
+review is included once in the existing opening request, without an extra model
+call. Public arbitrary overrides remain unavailable until
+[PROMPTS-003](docs/decisions/README.md#prompts-003-arbitrary-overrides-require-business-invariant-validation)'s
+semantic configuration validator is implemented; structural checks are insufficient.
 
-The domain merge is covered by ported calibre scenarios and additional regression
-tests: renames and same-turn aliases, id/name precedence, duplicate updates,
-incomplete introductions, id collisions, event consolidation and capping, and
-keeping versus clearing upcoming events. Stored domain objects expose read-only
-access; incomplete update proposals are distinct from valid stored characters.
-`CharacterDetails` checks for a description or backstory at construction, making
-`Character::new` infallible. Every character delta field uses `Option<NonblankType>`:
-`None` keeps the stored value and `Some` replaces it; blank replacements cannot be
-constructed. Stored optional details use `None` for information not yet known.
-Cast construction removes exact duplicate records first, then suffixes remaining
-id collisions while preserving distinct namesakes. This requires no LLM call.
-`reference/prompt-additions.toml` prepares an identity-check instruction for the
-opening turn; integration awaits the prompt renderer. It does not enable semantic
-merging or deletion of already stored cast members.
-There is no serde or JSON dependency in the domain. Future boundary DTOs will map
-blank fields and nullable lists into these domain changes. As permitted by the
-plan, matching currently uses Unicode lowercase rather than full Python casefold
-(so, for example, `ß` and `ss` are not equivalent).
+The complete acceptance scenario generates a world, cast and five successful turns,
+with a malformed response, explicit retry, streamed cancellation and rewind. It
+checks request counts, namesake updates, chapter continuity, bounded memory and
+exact future context. This is scripted evidence, not verification of live models,
+process cancellation, disk persistence or export.
 
-A second slice adds `limits`, `world`, `style`, `turn`, and `game` (`GameState`).
-Every tunable bound (max major events, max generated NPCs, the prose bridge
-window, minimum playable characters) is its own type rather than a bare `usize`,
-gathered into `Limits`, with original game settings retained alongside active settings. World-cast
-validation ports calibre's playable/NPC cleaning and capping rules. The
-[domain review](reviews/2026-09-23-domain-slice/README.md) records the findings and repairs.
-Restoration explicitly chooses current or original game limits and reapplies the
-event cap to every rewind snapshot. Original limits will be included in future save
-metadata; persistence and a user-facing restore flow are not implemented yet.
-`SelectedWorld` owns its validated protagonist
-selection and world together, preventing cross-cast index reuse.
-Raw responses and optional prompt traces preserve their exact text. Exact-record deduplication preserves
-distinct namesakes through world creation and summary ID assignment, deliberately
-departing from calibre's name-based filtering. The zero-NPC-cap defect is fixed.
-A turn's chapter proposal is a single
-`ChapterMarker::{Continue, NewChapter}` carrying an optional title, and chapter
-membership is derived from the marker sequence rather than stored — there is no
-chapter index to fall out of sync with the turn log. This also deliberately
-extends calibre: a chapter's title is the *last* title any of its turns supplied,
-not only the first, so any turn can retitle its chapter. `GameState::commit_turn`
-is infallible (every check calibre's `validated_turn` performed is already carried
-by `StoryTurn`'s field types), and `rewind`/derived views (`current_summary`,
-`chapters`, `prose_context`) are covered by ported and differential tests. Style
-and character-edit propagation (`apply_character_edits`) are not yet ported.
-
-A third slice adds `cyoa-infrastructure/src/generation/`: `wire.rs` (calibre-shaped
-request/response DTOs, each mapped into the matching `cyoa-core` domain type by a
-colocated `TryFrom`/`From` — the pattern behind `~/code/clocker`'s
-`TimeLogEntryDTO`, adapted since `cyoa-core` stays serde-free), `schema.rs`
-(`#[derive(JsonSchema)]` structure with `schema_docs.toml` descriptions injected
-onto it, checked field-for-field by an anti-drift test in both directions), and
-`prompts.rs` (TOML load, per-key override merge, `minijinja` rendering with
-`UndefinedBehavior::Strict`, one function per call site). `turn_prompt`'s control
-flow is transcribed directly from calibre's `turn_prompt` (cyoa.py:1081-1127), and
-the opening-turn identity-review addition (`reference/prompt-additions.toml`) is
-now actually wired in, appearing once and only on the opening turn. This slice's
-JSON schemas reference nested types via `$defs`/`$ref` (schemars' default);
-verified live against `claude -p --json-schema` (see `01-claude-cli.md`'s
-"Verified test #3") that this works, including the model reading and following
-instructions stated only in a `$ref`'d field's description. `schema.rs`'s
-generic builders keep the full, standards-compliant schema (including a root
-`"$schema"` key); `claude -p` specifically rejects that key outright, so a
-small `backend_compat::claude_cli` adapter (its own file, not a change to
-`schema.rs`) strips it right before a Claude backend would use it — the
-generic schema and any other backend's adapter are untouched by that quirk.
-A `backend_compat::codex_cli` adapter, discovered the same way against a
-real authenticated `codex exec` call, is the next backend's job — a new
-file plus one line registering it, never an edit to an existing one.
-
-Build and check with a stable Rust toolchain supporting edition 2024:
+Build and check with a stable toolchain supporting Rust edition 2024:
 
 ```sh
 cargo run -p cyoa-cli -- --help
-cargo fmt --all -- --check
+cargo fmt --all --check
 cargo clippy --workspace --all-targets --locked -- -D warnings
 bash scripts/check_contracts.sh
 ```
 
-The contract gate uses Bash and `jq`; no Python tooling is required. It verifies
-that required tests exist and are not ignored, runs workspace tests and compile-fail
-examples, and checks architecture dependencies. It uses cached dependencies after
-the build/Clippy step. [Project contracts](docs/decisions/README.md) explicitly
-override conflicting Python behavior and list remaining unimplemented obligations.
+The shared local/CI gate requires Bash, jq, Git, tar and the Rust toolchain; no
+Python is involved. It checks registered test presence, ignored tests, coverage
+claims, inward dependencies, workspace tests and compile-fail examples. It also
+copies the current source to a temporary directory and verifies that four deliberate
+regressions fail their exact registered behavioral tests. Compiler failures and
+missing tests do not count as detected regressions. The isolated build uses cached
+Cargo dependencies after Clippy; the first mutation build costs additional time.
+Run `bash scripts/check_contract_mutations.sh` for only that check.
 
-`Cargo.lock` is tracked because this workspace ships an application. CI also checks
-inward workspace dependencies, including dev/build dependencies, and rejects direct
-terminal/JSON dependencies in domain and application. The application imports only
-domain types and owns its ports; infrastructure implements them; presentation calls
-use cases. Only the composition root can depend on all layers. Remaining Phase 0
-work includes `engine.rs` (`generate_world`/`generate_cast`/`next_turn`), the
-`StreamingStringField` port, a `ScriptedBackend` test double, and application
-use cases.
+See the [acceptance sequence](docs/decisions/phase0-acceptance.md) and
+[TDD/evidence record](reviews/2026-09-25-phase0-acceptance/README.md). The next phase is
+real subprocess adapters and a playable headless loop, maintaining co-equal backend
+contracts and recording authenticated evidence separately for each vendor.
 
 ## Where to start
 
@@ -182,17 +126,3 @@ use cases.
 code (calibre's CYOA feature, © Kovid Goyal), not a choice made freely for
 this project; see `NOTICE.md` for why, and PLAN.md's "Licensing" section if
 you're ever tempted to relicense it.
-
-### Generation configuration follow-up (2026-09-25)
-
-`generation::templates::GenerationTemplates` now owns validated configuration and
-all fallible prompt/schema rendering. This supersedes the earlier status text
-about `startup_self_check` and independent default render functions. Construction
-checks source shape, style tables, template contexts and complete schema-document
-coverage. Complete request snapshots and the registered TDD regressions protect
-rendering. See the [step-4 record](reviews/2026-09-25-template-validation/README.md).
-
-Arbitrary prompt overrides remain unavailable publicly. The explicit
-[PROMPTS-003 decision](docs/decisions/README.md#prompts-003-arbitrary-overrides-require-business-invariant-validation)
-requires validation of business invariants across the effective configuration
-before that capability is enabled. Structural checks do not provide that guarantee.

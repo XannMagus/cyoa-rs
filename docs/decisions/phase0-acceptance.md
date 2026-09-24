@@ -85,3 +85,38 @@ Real CLI subprocess adapters/headless play are Phase 1; disk persistence/migrati
 are Phase 2. Arbitrary prompt overrides additionally require PROMPTS-003's semantic
 validator. Never claim these complete based on scripted transports or structural
 configuration checks. Live evidence belongs in each backend's own reference file.
+
+## Completion evidence — 2026-09-25
+
+| Step | Commit | Evidence |
+|---|---|---|
+| 4 | `04e6ad1` | Validated template instance, error/edge/nominal regressions, complete request snapshots |
+| 5 | `bf29c3a` | Inward-owned ports; captured outline/cast/turn requests, no retries, restore policies |
+| 6 | `36ade4f` | Scanner split properties, complete/chunked equivalence, failure/cancellation after preview |
+| 7 | `2e9f166` | Frozen story fixture; nine requests, five successes, explicit retry, cancellation and rewind |
+| 8 | This document's completion-gate commit | Required registry, coverage consistency, isolated mutations and shared CI command |
+
+Evidence is deliberately separated:
+
+| Concern | Domain enforcement | Boundary/application evidence | Still unverified or deferred |
+|---|---|---|---|
+| Namesakes and stable IDs | Exact-record deduplication and suffix repair | Captured lifecycle and full story; name-only mutation detected | Semantic consolidation/deletion |
+| Opening identity review | No hidden merge command | One opening instruction and one transport call; duplicate-call mutation detected | Whether real models follow identity instructions |
+| Limits | Checked types and restore snapshots | Both restore policies affect captured instructions/schema and commits; default-limit mutation detected | Persisting original limits and user-facing restore |
+| Errors and cancellation | Checked turn construction | Preview/failure leave state equal; committing on error mutation detected | Child termination, byte framing, stale-worker rejection |
+| Templates | Domain fields remain typed | Configuration structure, fallible rendering, snapshots and actual requests | PROMPTS-003 semantic validator; public arbitrary overrides |
+| Overall story | Summary/chapter/rewind rules | ACCEPTANCE-001 exercises the composed production path | Real-model fiction, disk saves, TUI and export |
+
+`bash scripts/check_contracts.sh` now includes the mutation gate. Every mutant
+must first have a passing baseline and then fail exactly its registered behavioral
+test. Neither a compile failure nor zero/ignored/different tests satisfies that
+check. Patch drift is a hard failure; update the mutation to the equivalent new
+location during a behavior-preserving refactor, never silently skip it. Mutations
+run in a copy of current tracked and nonignored new source, with a separate Cargo
+target directory; the working tree is not patched. No network/authentication is used.
+
+For subsequent phases, retain this scenario and gate unchanged in intent. Add
+boundary tests for each new adapter and integration assertions for new public
+commands. Carry each pending obligation into the implementing commit with its real
+regressions and accurate coverage status. The no-I/O engine gate is complete;
+character editing remains deferred alongside the corresponding player-edit flow.

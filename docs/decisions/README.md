@@ -90,7 +90,7 @@ protect this stronger Rust construction guarantee. Evidence: `652f0b2`.
 
 ### LIMITS-001 Typed bounds and explicit restoration policy
 
-**Partial: domain enforced, persistence/prompt integration pending.** Different
+**Partial: domain, prompts and orchestration enforced; persistence pending.** Different
 bounds have distinct types. Event cap and playable minimum must be positive;
 NPC cap and prose bridge allow zero. Zero NPC cap consumes no candidates.
 
@@ -104,8 +104,8 @@ NPC/playable bounds. The bridge uses active settings. Evidence: `b5fe6c0`, `8e18
 
 Before saves ship: persist original settings and validate selected position on load;
 test save/load with changed config and repeated rewind. Do not invent original
-metadata for old imports. Before prompts ship: use GameState's active limits in
-rendered prompts and test against both restore choices, not global defaults.
+metadata for old imports. Prompts and schema descriptions now use active limits, tested through application
+commands against both restore choices, not global defaults.
 
 ### CHAPTER-001 Later turns can retitle a chapter
 
@@ -167,8 +167,7 @@ review instruction, not consolidation itself. Evidence:
 
 ### PROMPTS-002 External templates and native structured output
 
-**Partial: configuration structure and instance rendering enforced; application
-integration, arbitrary user overrides, and both-backend satisfaction pending.**
+**Partial: configuration structure and instance rendering enforced; arbitrary user overrides and both-backend satisfaction pending.**
 `GenerationTemplates::bundled()` constructs the only public configuration entry
 point. Private source DTOs reject wrong types, missing and unknown keys. A checked
 style table has a first entry by construction; blank or duplicate keys, empty
@@ -197,8 +196,9 @@ source shapes, schema documentation, configured fallback, data-dependent errors,
 literal player text, and the same-instance path for all three request kinds.
 
 The 2026-09-25 step-4 TDD record lists observed failing and passing runs.
-Orchestration (including absence of extra paid calls), subprocess behavior,
-persistence and semantic validation of arbitrary overrides remain unclaimed.
+Application orchestration and absence of extra calls are now checked by scripted
+transports (ACCEPTANCE-001). Subprocess behavior, persistence and semantic validation
+of arbitrary overrides remain unclaimed.
 
 ### PROMPTS-003 Arbitrary overrides require business-invariant validation
 
@@ -312,7 +312,8 @@ explicitly as no NPCs/an empty list. These preferences do not strengthen domain
 validation (two usable playables remain acceptable by default). Prompt and schema
 rendering share the calculation. Boundary tests cover caps 0–3 and 8, minimums
 1–4 and 6, and the maximum representable minimum without arithmetic overflow.
-Restored-limit orchestration and persistence remain pending.
+Restored-limit orchestration is enforced by the registered application test;
+persistence remains pending.
 
 CHAPTER-001 also covers loaded prompt/schema instructions and JSON turn mapping
 through commit and rewind. Continuing turns can supply a new title; null preserves
@@ -386,3 +387,16 @@ chapter bridges, event truncation, null/empty threads, raw diagnostics, unchange
 state on failure and exact next-request context after rewind. This is evidence of
 scripted orchestration, not live backend behavior, persistence, prompt-override
 semantics or presentation cancellation. Those obligations keep their own statuses.
+
+Step 8 (2026-09-25): the shared contract gate now checks coverage declarations
+against the registry and runs four isolated behavioral mutations (see
+`scripts/mutations/manifest.json`). Each mutation names its owning decision and
+an exact registered test. A passing baseline is required; only that test's actual
+runtime failure counts as detection. Compiler failures, skipped/missing/different
+tests, stale patches and surviving mutants fail the gate. `test_mutation_outcome.sh`
+exercises the outcome checker with error, edge and nominal reports. IDENTITY-001
+now registers the real generation lifecycle as well as domain tests. ACCEPTANCE-001
+provides the composed story requirement. Domain, request, orchestration and live
+coverage are distinguished in `phase0-acceptance.md`; subprocess and persistence
+obligations remain open. These checks cannot stop an intentional rewrite of both
+contracts and assertions, so contract changes still require review.

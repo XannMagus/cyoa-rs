@@ -1,0 +1,16 @@
+--- a/cyoa-infrastructure/src/generation/templates/rendering.rs
++++ b/cyoa-infrastructure/src/generation/templates/rendering.rs
+@@ -201,11 +201,11 @@
+                 state.style(),
+                 state.world().outline(),
+                 state.protagonist(),
+-                &state.limits(),
++                &Limits::default(),
+             )?,
+             prompt: self.turn_prompt(state, input, interesting)?,
+             schema: self
+-                .schema::<super::super::wire::StoryTurnWire>("StoryTurn", &state.limits())?,
++                .schema::<super::super::wire::StoryTurnWire>("StoryTurn", &Limits::default())?,
+         })
+     }
+     pub(super) fn schema<T: JsonSchema>(

@@ -11,6 +11,13 @@
           "world::tests::exact_records_collapse_within_each_role_but_shared_names_survive",
           "game::tests::world_namesakes_survive_into_summary_and_remain_addressable_by_id"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "generation_use_cases",
+        "tests": [
+          "scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls"
+        ]
       }
     ]
   },

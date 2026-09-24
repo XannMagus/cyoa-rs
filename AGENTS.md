@@ -58,9 +58,13 @@ and queries for read-only views, without requiring a message bus, separate datab
 or event sourcing. These boundaries supersede the original module placement and
 "one layer of types" guidance in the plan.
 
-The Rust workspace and character/summary merge domain slice are in place;
-gameplay is not implemented yet — see
-`README.md`'s "Status".
+The scripted Phase 0 engine, generation use cases, streaming and complete story
+acceptance scenario are implemented. Playable UI and real subprocess adapters are
+pending — see `README.md`'s "Status". The contract gate also runs isolated behavioral
+mutations; stale patches, compiler failures and missing tests must fail the gate,
+not be counted as detected regressions. Keep domain, boundary, orchestration and
+live-backend evidence distinct. See `docs/decisions/phase0-acceptance.md` before
+starting the next phase.
 
 Avoid Python for project tooling. Prefer shell scripts for small checks or Rust
 utilities for larger tools. The copied Python under `reference/calibre/` is source

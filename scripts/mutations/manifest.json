@@ -1,0 +1,6 @@
+[
+  {"id":"name-only-deduplication","decision":"IDENTITY-001","package":"cyoa-infrastructure","target":"generation_use_cases","test":"scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls","file":"cyoa-core/src/world.rs"},
+  {"id":"duplicate-opening-request","decision":"PROMPTS-001","package":"cyoa-infrastructure","target":"generation_use_cases","test":"scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls","file":"cyoa-application/src/generation.rs"},
+  {"id":"default-instead-of-active-limits","decision":"LIMITS-001","package":"cyoa-infrastructure","target":"generation_use_cases","test":"restored_limits_reach_captured_prompt_schema_and_committed_memory","file":"cyoa-infrastructure/src/generation/templates/rendering.rs"},
+  {"id":"commit-before-reporting-failure","decision":"ACCEPTANCE-001","package":"cyoa-infrastructure","target":"phase_zero_acceptance","test":"full_story_preserves_contracts_through_failure_retry_cancellation_and_rewind","file":"cyoa-application/src/generation.rs"}
+]
