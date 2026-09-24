@@ -182,3 +182,17 @@ use cases.
 code (calibre's CYOA feature, © Kovid Goyal), not a choice made freely for
 this project; see `NOTICE.md` for why, and PLAN.md's "Licensing" section if
 you're ever tempted to relicense it.
+
+### Generation configuration follow-up (2026-09-25)
+
+`generation::templates::GenerationTemplates` now owns validated configuration and
+all fallible prompt/schema rendering. This supersedes the earlier status text
+about `startup_self_check` and independent default render functions. Construction
+checks source shape, style tables, template contexts and complete schema-document
+coverage. Complete request snapshots and the registered TDD regressions protect
+rendering. See the [step-4 record](reviews/2026-09-25-template-validation/README.md).
+
+Arbitrary prompt overrides remain unavailable publicly. The explicit
+[PROMPTS-003 decision](docs/decisions/README.md#prompts-003-arbitrary-overrides-require-business-invariant-validation)
+requires validation of business invariants across the effective configuration
+before that capability is enabled. Structural checks do not provide that guarantee.

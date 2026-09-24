@@ -5,10 +5,11 @@ use cyoa_core::{
     text::Brief,
     world::{PlayablePosition, World, WorldCast, WorldOutline},
 };
-use cyoa_infrastructure::generation::{
-    prompts::{cast_generation_prompt, turn_prompt, world_generation_prompt},
-    wire::{GeneratedCastWire, WorldOutlineWire, playable_and_npcs_from_wire},
+mod support;
+use cyoa_infrastructure::generation::wire::{
+    GeneratedCastWire, WorldOutlineWire, playable_and_npcs_from_wire,
 };
+use support::{cast_generation_prompt, turn_prompt, world_generation_prompt};
 
 #[test]
 fn outline_to_selected_world_requires_no_placeholder_cast() {

@@ -1,141 +1,101 @@
-//! JSON Schema generation: structure from `#[derive(JsonSchema)]` on the wire
-//! types in `wire.rs`, field/`_doc` descriptions injected from
-//! `schema_docs.toml`. See PLAN.md's "Schema generation" section.
-//!
-//! The builder functions below (`world_outline_schema`, etc.) are
-//! **backend-agnostic and produce the fullest, most standards-compliant
-//! schema available** — a root `"$schema"` draft declaration, and nested
-//! types via `$defs`/`$ref` (schemars' default, keyed by the
-//! `#[schemars(rename = "...")]` name on each wire struct so they line up
-//! 1:1 with `schema_docs.toml`'s `[TypeName]` tables), never trimmed for any
-//! one backend's convenience. Whatever a specific backend's CLI can't
-//! tolerate is stripped by *that backend's own* adapter in
-//! `generation::backend_compat`, starting from this full schema — this file
-//! is never touched to add a backend (`ARCH-003`).
-//!
-//! **Verified against a real `claude -p --json-schema` call** (2026-09-24,
-//! see `01-claude-cli.md`'s "Verified test #3"): `$defs`/`$ref` are resolved
-//! correctly, including following an arbitrary instruction stated only in a
-//! `$ref`'d nested field's `description` — but a root-level `"$schema"` key
-//! is rejected outright ("not a valid JSON Schema: no schema with key or ref
-//! ..."), which is `backend_compat::claude_cli::adapt_schema`'s reason to
-//! exist.
-
-use std::sync::OnceLock;
-
-use cyoa_core::limits::Limits;
-use schemars::{
-    JsonSchema,
-    generate::{SchemaGenerator, SchemaSettings},
-};
-use serde_json::Value;
-
+//! Backend-independent structure comes from Rust wire types; descriptions are
+//! supplied only by a validated GenerationTemplates instance.
 use super::wire::{GeneratedCastWire, StoryTurnWire, WorldOutlineWire};
+use schemars::JsonSchema;
+use serde_json::Value;
+use std::collections::{BTreeMap, BTreeSet};
 
-const SCHEMA_DOCS_TOML: &str = include_str!("defaults/schema_docs.toml");
-
-fn schema_docs() -> &'static toml::Table {
-    static DOCS: OnceLock<toml::Table> = OnceLock::new();
-    DOCS.get_or_init(|| {
-        SCHEMA_DOCS_TOML
-            .parse::<toml::Table>()
-            .expect("defaults/schema_docs.toml parses as TOML")
-    })
+pub(super) fn structure<T: JsonSchema>() -> Value {
+    Value::from(schemars::generate::SchemaGenerator::default().into_root_schema_for::<T>())
 }
 
-fn doc_text(type_name: &str, key: &str, limits: &Limits) -> Option<String> {
-    let raw = schema_docs()
-        .get(type_name)?
-        .as_table()?
-        .get(key)?
-        .as_str()?;
-    if raw.is_empty() {
-        return None;
-    }
-    let env = minijinja::Environment::new();
-    let context = super::limits_context::limits_context(limits);
-    Some(env.render_str(raw, context).unwrap_or_else(|error| {
-        panic!("schema_docs.toml[{type_name}].{key} failed to render: {error}")
-    }))
-}
-
-fn inject_descriptions_for(mut value: Value, type_name: &str, limits: &Limits) -> Value {
-    let Some(obj) = value.as_object_mut() else {
-        return value;
-    };
-    if let Some(doc) = doc_text(type_name, "_doc", limits) {
-        obj.insert("description".into(), Value::String(doc));
-    }
-    if let Some(properties) = obj.get_mut("properties").and_then(Value::as_object_mut) {
-        let fields: Vec<String> = properties.keys().cloned().collect();
-        for field in fields {
-            let Some(text) = doc_text(type_name, &field, limits) else {
-                continue;
-            };
-            if let Some(field_obj) = properties.get_mut(&field).and_then(Value::as_object_mut) {
-                field_obj.insert("description".into(), Value::String(text));
-            }
+pub(super) fn documentation_fields() -> BTreeMap<String, BTreeSet<String>> {
+    let mut types = BTreeMap::new();
+    for (name, schema) in [
+        ("WorldOutline", structure::<WorldOutlineWire>()),
+        ("GeneratedCast", structure::<GeneratedCastWire>()),
+        ("StoryTurn", structure::<StoryTurnWire>()),
+    ] {
+        let schemas = std::iter::once((name, &schema)).chain(
+            schema
+                .get("$defs")
+                .and_then(Value::as_object)
+                .into_iter()
+                .flat_map(|defs| defs.iter().map(|(name, schema)| (name.as_str(), schema))),
+        );
+        for (name, schema) in schemas {
+            let mut fields: BTreeSet<String> = schema
+                .get("properties")
+                .and_then(Value::as_object)
+                .into_iter()
+                .flat_map(|props| props.keys().cloned())
+                .collect();
+            fields.insert("_doc".into());
+            types.insert(name.into(), fields);
         }
     }
-    value
-}
-
-/// Every object-type schema (root and every `$defs` entry) forbids
-/// unlisted properties, matching the shape verified against a live
-/// `claude -p --json-schema` call in `01-claude-cli.md`.
-fn forbid_additional_properties(mut value: Value) -> Value {
-    if let Some(obj) = value.as_object_mut()
-        && obj.contains_key("properties")
-    {
-        obj.insert("additionalProperties".into(), Value::Bool(false));
+    // Outgoing memory is not a generated response; its serializer is separate.
+    for (name, fields) in [
+        (
+            "StorySummary",
+            &[
+                "world",
+                "major_events",
+                "characters",
+                "current_situation",
+                "upcoming_events",
+            ][..],
+        ),
+        (
+            "CharacterState",
+            &[
+                "name",
+                "description",
+                "backstory",
+                "relationships",
+                "current_state",
+                "id",
+            ][..],
+        ),
+    ] {
+        types.insert(
+            name.into(),
+            fields
+                .iter()
+                .copied()
+                .chain(["_doc"])
+                .map(str::to_owned)
+                .collect(),
+        );
     }
-    value
+    types
 }
-
-/// The generic, backend-agnostic settings: full standards compliance
-/// (a root `"$schema"` key present) and `$defs`/`$ref` for nested types
-/// (not inlined) — the richest, most complete representation. **Never strip
-/// anything here for one backend's tolerance** — that belongs in that
-/// backend's own adapter in `generation::backend_compat`, which each
-/// independently decide what *their* CLI can't handle, starting from this
-/// full schema and only ever removing what they must.
-fn generator() -> SchemaGenerator {
-    SchemaSettings::default().into_generator()
-}
-
-fn build_schema<T: JsonSchema>(root_type_name: &str, limits: &Limits) -> Value {
-    let schema = generator().into_root_schema_for::<T>();
-    let mut value = Value::from(schema);
-    value = inject_descriptions_for(value, root_type_name, limits);
-    value = forbid_additional_properties(value);
-    if let Some(defs) = value.get_mut("$defs").and_then(Value::as_object_mut) {
-        let names: Vec<String> = defs.keys().cloned().collect();
-        for name in names {
-            if let Some(def) = defs.remove(&name) {
-                let def = inject_descriptions_for(def, &name, limits);
-                let def = forbid_additional_properties(def);
-                defs.insert(name, def);
-            }
-        }
-    }
-    value
-}
-
-pub fn world_outline_schema() -> Value {
-    build_schema::<WorldOutlineWire>("WorldOutline", &Limits::default())
-}
-
-pub fn generated_cast_schema(limits: &Limits) -> Value {
-    build_schema::<GeneratedCastWire>("GeneratedCast", limits)
-}
-
-pub fn story_turn_schema(limits: &Limits) -> Value {
-    build_schema::<StoryTurnWire>("StoryTurn", limits)
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::generation::templates::GenerationTemplates;
+    use cyoa_core::limits::Limits;
+    fn schema_docs() -> toml::Table {
+        toml::from_str(include_str!("defaults/schema_docs.toml")).unwrap()
+    }
+    fn world_outline_schema() -> Value {
+        GenerationTemplates::bundled()
+            .unwrap()
+            .world_schema()
+            .unwrap()
+    }
+    fn generated_cast_schema(limits: &Limits) -> Value {
+        GenerationTemplates::bundled()
+            .unwrap()
+            .cast_schema(limits)
+            .unwrap()
+    }
+    fn story_turn_schema(limits: &Limits) -> Value {
+        GenerationTemplates::bundled()
+            .unwrap()
+            .turn_schema(limits)
+            .unwrap()
+    }
     use std::collections::BTreeSet;
 
     /// Every `TypeName` this schema generation actually covers, i.e. every
@@ -179,9 +139,10 @@ mod tests {
     fn schema_docs_cover_every_field_and_no_others() {
         let limits = Limits::default();
         let mut seen_types = BTreeSet::new();
+        let docs = schema_docs();
         for (type_name, schema) in all_object_schemas(&limits) {
             seen_types.insert(type_name.clone());
-            let doc_table = schema_docs()
+            let doc_table = docs
                 .get(&type_name)
                 .unwrap_or_else(|| panic!("schema_docs.toml is missing a [{type_name}] table"))
                 .as_table()

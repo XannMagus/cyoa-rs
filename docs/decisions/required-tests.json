@@ -222,7 +222,7 @@
   },
   {
     "id": "PROMPTS-001",
-    "coverage": "enforced",
+    "coverage": "partial",
     "checks": [
       {
         "package": "cyoa-infrastructure",
@@ -256,23 +256,47 @@
         "package": "cyoa-infrastructure",
         "target": "prompt_rendering",
         "tests": [
-          "toml_override_merges_per_key_not_per_file",
-          "undefined_template_variable_is_a_render_error",
           "loaded_instructions_contain_no_json_formatting_directive",
           "loaded_turn_instructions_ask_for_schema_field_order",
           "prose_contract_omits_tone_clause_when_tone_is_default",
-          "quick_action_instructions_change_when_kinds_table_is_overridden",
           "rendered_limits_reflect_the_supplied_value_not_a_constant",
           "world_and_cast_prompts_interpolate_the_brief_and_world",
           "turn_prompt_bridge_and_transcript_appear_only_when_nonempty",
           "interesting_event_includes_threads_only_when_present",
           "player_input_versus_no_direction"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "generation::templates::tests::malformed_sources_report_the_source_file",
+          "generation::templates::tests::prompt_shape_rejects_missing_wrong_type_and_unknown_keys",
+          "generation::templates::tests::templates_reject_syntax_wrong_context_and_nested_typos",
+          "generation::templates::tests::styles_reject_empty_tables_duplicate_keys_and_wrong_shapes",
+          "generation::templates::tests::quick_actions_reject_dangling_references_and_empty_groups",
+          "generation::templates::tests::schema_documentation_rejects_unknown_missing_and_invalid_entries",
+          "generation::templates::tests::data_dependent_render_errors_are_values_with_template_locations",
+          "generation::templates::tests::empty_schema_descriptions_remove_defaults_and_nested_overrides_apply",
+          "generation::templates::tests::unknown_styles_use_configured_first_entry_and_blank_tone_is_omitted",
+          "generation::templates::tests::configured_turn_fragments_render_once_and_player_text_is_not_a_template",
+          "generation::templates::tests::startup_checks_the_zero_npc_branch_in_prompts_and_schema_docs",
+          "generation::templates::tests::merged_configuration_drives_all_three_generation_requests",
+          "generation::templates::tests::configured_opening_continuation_and_bridge_match_complete_snapshots",
+          "generation::templates::tests::toml_override_merges_per_key_not_per_file",
+          "generation::templates::tests::undefined_template_variable_is_a_render_error",
+          "generation::templates::tests::quick_action_instructions_change_when_kinds_table_is_overridden"
+        ]
       }
     ]
   },
   {
     "id": "PRODUCT-001",
+    "coverage": "pending",
+    "checks": []
+  },
+  {
+    "id": "PROMPTS-003",
     "coverage": "pending",
     "checks": []
   }

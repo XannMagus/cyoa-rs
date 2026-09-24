@@ -1258,3 +1258,30 @@ LIMITS-001. Loaded prompts and schema descriptions permit later chapter retitlin
 The copied reference files remain historical source. Registered boundary regressions
 cover construction through selection and opening prompt, limit extremes, and
 JSON retitling through commit/rewind. Application orchestration remains pending.
+
+## Validated configuration and override authorization (2026-09-25)
+
+Step 4 replaces the earlier `startup_self_check` and default-only free renderers
+with `GenerationTemplates`. Its public constructor validates bundled configuration;
+private source DTOs and checked collections establish configuration structure.
+The instance owns compiled templates, style tables, action metadata and schema
+descriptions. World/cast/turn requests return named results containing verbatim
+`Instructions`, `RenderedPrompt` and the schema from that same instance. Rendering
+is fallible; static variable checks and representative synthetic contexts cannot
+prove all data-dependent branches safe. No renderer receives raw TOML publicly.
+
+Explicit user decision: **before arbitrary prompt overrides are authorized, add a
+configuration validator ensuring that invariants and rules remain respected even
+when arbitrary permitted parts are overridden** (PROMPTS-003). Validate the complete
+effective configuration, not files independently. The structural checks implemented
+here are not that semantic validator. Its design, adversarial semantic tests, and
+connection to any future XDG/CLI override loader remain pending. Bundled-only public
+construction is deliberate; private override fixtures exercise the preparation
+mechanism without enabling the feature. This supersedes earlier descriptions of
+an immediately available arbitrary-override loading path.
+
+Tests were developed error-first, then edge cases, then nominal complete requests,
+with observed red/green runs before architectural refinement. The trace is in
+`reviews/2026-09-25-template-validation/README.md`. Full request snapshots cover
+opening, continuation and a chapter bridge. Required-test registrations follow
+three existing override tests into private unit scope without weakening them.

@@ -249,3 +249,10 @@ R5 repaired: removed the two unintended serde defaults. Registered JSON/schema
 regressions require presence while accepting explicit empty strings, reject null,
 and preserve the unrelated defaulted and nullable fields. R3 and the broader
 configuration, orchestration, and test-harness gaps remain open.
+
+R3 repaired in step 4 (2026-09-25): `GenerationTemplates` validates source shape,
+style tables, per-template contexts and schema documentation, owns compiled
+rendering, and returns errors instead of panicking. Arbitrary override loading
+remains unavailable pending the newly required semantic invariant validator.
+See [the TDD record](../2026-09-25-template-validation/README.md). No-extra-call
+orchestration is correctly marked partial until step 5 can observe actual calls.

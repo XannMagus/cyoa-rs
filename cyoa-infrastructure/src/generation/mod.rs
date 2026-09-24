@@ -9,6 +9,7 @@
 
 pub mod backend_compat;
 mod limits_context;
-pub mod prompts;
-pub mod schema;
+mod prompts;
+mod schema;
+pub mod templates;
 pub mod wire;

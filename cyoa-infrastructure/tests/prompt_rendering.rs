@@ -18,9 +18,9 @@ use cyoa_core::{
         NonPlayerCharacter, PlayablePosition, PlayerCharacter, World, WorldCast, WorldOutline,
     },
 };
-use cyoa_infrastructure::generation::prompts::{
-    cast_generation_prompt, default_prompts, environment, merge_per_key, prose_contract,
-    quick_action_instructions, startup_self_check, turn_instructions, turn_prompt,
+mod support;
+use support::{
+    cast_generation_prompt, default_prompts, turn_instructions, turn_prompt,
     world_generation_prompt,
 };
 
@@ -91,38 +91,6 @@ fn commit(state: &mut GameState, chapter: ChapterMarker, input: Option<&str>, na
     );
 }
 
-fn parsed_override(toml_text: &str) -> toml::Value {
-    toml::Value::Table(toml_text.parse::<toml::Table>().unwrap())
-}
-
-#[test]
-fn toml_override_merges_per_key_not_per_file() {
-    let base = toml::Value::Table(default_prompts());
-    let override_ = parsed_override("[world]\ninstructions = \"Custom instructions.\"");
-    let merged = merge_per_key(base, &override_);
-    let merged = merged.as_table().unwrap();
-    let default = default_prompts();
-
-    assert_eq!(
-        merged["world"]["instructions"].as_str(),
-        Some("Custom instructions.")
-    );
-    // The sibling key is untouched...
-    assert_eq!(merged["world"]["prompt"], default["world"]["prompt"]);
-    // ...and so is an entirely different table.
-    assert_eq!(merged["cast"], default["cast"]);
-}
-
-#[test]
-fn undefined_template_variable_is_a_render_error() {
-    assert!(startup_self_check(&default_prompts()).is_ok());
-
-    let base = toml::Value::Table(default_prompts());
-    let broken = parsed_override("[world]\nprompt = \"Hello {{ nonexistent_var }}\"");
-    let merged = merge_per_key(base, &broken);
-    assert!(startup_self_check(merged.as_table().unwrap()).is_err());
-}
-
 fn scan_for_banned_phrases(value: &toml::Value, banned: &[&str]) -> Vec<String> {
     match value {
         toml::Value::String(s) => {
@@ -171,39 +139,25 @@ fn loaded_turn_instructions_ask_for_schema_field_order() {
 
 #[test]
 fn prose_contract_omits_tone_clause_when_tone_is_default() {
-    let env = environment();
-    let prompts = default_prompts();
-    let default_text = prose_contract(&env, &prompts, &StoryStyle::default());
+    let default_text = turn_instructions(
+        &StoryStyle::default(),
+        world().outline(),
+        &player("Ada"),
+        &Limits::default(),
+    );
     assert!(!default_text.to_lowercase().contains("register"));
 
     let grimdark = StoryStyle {
         tone: Some(ToneKey::new("grimdark").unwrap()),
         ..StoryStyle::default()
     };
-    let grimdark_text = prose_contract(&env, &prompts, &grimdark);
-    assert!(grimdark_text.to_lowercase().contains("grimdark register"));
-}
-
-#[test]
-fn quick_action_instructions_change_when_kinds_table_is_overridden() {
-    let default_text = quick_action_instructions(&default_prompts());
-    assert!(default_text.contains("hold back, defend"));
-
-    let base = toml::Value::Table(default_prompts());
-    let override_ = parsed_override(
-        r#"
-[quick_actions]
-requested = [["cautious"]]
-[[quick_actions.kinds]]
-key = "cautious"
-label = "Cautious"
-meaning = "TEST MEANING"
-"#,
+    let grimdark_text = turn_instructions(
+        &grimdark,
+        world().outline(),
+        &player("Ada"),
+        &Limits::default(),
     );
-    let merged = merge_per_key(base, &override_);
-    let overridden_text = quick_action_instructions(merged.as_table().unwrap());
-    assert!(overridden_text.contains("TEST MEANING"));
-    assert!(!overridden_text.contains("hold back, defend"));
+    assert!(grimdark_text.to_lowercase().contains("grimdark register"));
 }
 
 #[test]
@@ -359,7 +313,7 @@ fn player_input_versus_no_direction() {
 #[test]
 fn cast_requests_and_schemas_obey_small_caps_and_large_minimums() {
     use cyoa_core::limits::{MaxGeneratedNpcs, MinPlayableCharacters};
-    use cyoa_infrastructure::generation::schema::generated_cast_schema;
+    use support::generated_cast_schema;
     let world = world();
     for (minimum, lower, upper) in [
         (1, 3, 5),
@@ -403,7 +357,8 @@ fn cast_requests_and_schemas_obey_small_caps_and_large_minimums() {
 #[test]
 fn retitling_instructions_reach_wire_commit_and_rewind() {
     use cyoa_core::game::TurnCount;
-    use cyoa_infrastructure::generation::{schema::story_turn_schema, wire::StoryTurnWire};
+    use cyoa_infrastructure::generation::wire::StoryTurnWire;
+    use support::story_turn_schema;
     let mut state = game();
     let instructions = turn_instructions(
         state.style(),

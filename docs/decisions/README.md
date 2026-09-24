@@ -155,7 +155,7 @@ architecture/domain decisions in PLAN, `6290701`, and `wire_mapping`'s tests.
 
 ### PROMPTS-001 Opening-turn identity review
 
-**Enforced.** `reference/prompt-additions.toml`'s `opening_identity_review` is
+**Partial: rendering enforced, generation call counts pending.** `reference/prompt-additions.toml`'s `opening_identity_review` is
 rendered into the opening turn's user prompt only, never repeated on a later
 turn, by `generation::prompts::turn_prompt` — the existing opening-turn call,
 not a separate paid LLM call. Preserves namesakes and established IDs; the
@@ -167,30 +167,58 @@ review instruction, not consolidation itself. Evidence:
 
 ### PROMPTS-002 External templates and native structured output
 
-**Partial: templating and schema-description rules enforced; both-backend
-satisfaction pending.** TOML overrides merge per key, not per file
-(`toml_override_merges_per_key_not_per_file`). `UndefinedBehavior::Strict`
-turns a typo'd override variable into a render error, checked by a startup
-self-check function (`undefined_template_variable_is_a_render_error`). The
-loaded prompts contain no JSON-format directive
-(`loaded_instructions_contain_no_json_formatting_directive`) and explicitly
-ask the model to emit fields in schema order
-(`loaded_turn_instructions_ask_for_schema_field_order`) — a line PLAN.md
-calls for that does not exist in `reference/prompts.toml` and had to be
-authored. Schema descriptions are owned by `schema_docs.toml` and injected
-onto `#[derive(JsonSchema)]` structure, checked field-for-field in both
-directions by `schema_docs_cover_every_field_and_no_others`; `narrative`
-stays the first schema property; every generated object schema forbids
-additional properties. Verified live (2026-09-24) against `claude -p
---json-schema`: `$defs`/`$ref` resolve correctly, including the model
-following an instruction stated only in a `$ref`'d field's description
-(`01-claude-cli.md`'s "Verified test #3"). That call also found `claude -p`
-rejects a root `"$schema"` key outright; see `ARCH-003` for why that fix is
-scoped to a `claude_cli`-specific adapter file rather than the shared
-builders. Evidence: cyoa-infrastructure's `prompt_rendering` and `lib` tests.
-Remaining before this can be "Enforced": a `codex_cli` adapter, discovered
-the same way against a real authenticated `codex exec` call, and
-confirmation both backends satisfy the shared contract once each exists.
+**Partial: configuration structure and instance rendering enforced; application
+integration, arbitrary user overrides, and both-backend satisfaction pending.**
+`GenerationTemplates::bundled()` constructs the only public configuration entry
+point. Private source DTOs reject wrong types, missing and unknown keys. A checked
+style table has a first entry by construction; blank or duplicate keys, empty
+style tables and dangling quick-action references fail construction. Every
+compiled template has a per-call context; static variable checks include simple
+nested accesses and unexecuted branches. Representative limit contexts include
+zero NPCs and a playable minimum above five. Rendering still returns `Result`:
+representative checks cannot prove arbitrary data-dependent templates total.
+
+World, cast and turn requests obtain instructions, prompt and schema from the same
+instance. Named results use `Instructions` and `RenderedPrompt` instead of an
+interchangeable string tuple. No public raw-TOML renderer or default-only bypass
+remains. Turn requests use the game's active limits. Static JSON schema structure
+comes from wire types; documentation coverage checks both type and field sets,
+with explicit outgoing-memory types. All schemas retain their root declaration,
+`narrative` first, and forbidden extra properties. Backend quirks remain isolated
+under ARCH-003; previously recorded live evidence is not expanded by these tests.
+
+Per-key merging and configured rendering are tested internally. Arbitrary user
+configuration is not exposed through an API or XDG loader until PROMPTS-003 is
+implemented. Source-config validation is structural, not semantic approval.
+Complete, committed request snapshots cover opening, continuation and chapter
+bridge states with an overridden action meaning. They have no automatic update
+mode. The registered regressions include wrong contexts, nested typos, invalid
+source shapes, schema documentation, configured fallback, data-dependent errors,
+literal player text, and the same-instance path for all three request kinds.
+
+The 2026-09-25 step-4 TDD record lists observed failing and passing runs.
+Orchestration (including absence of extra paid calls), subprocess behavior,
+persistence and semantic validation of arbitrary overrides remain unclaimed.
+
+### PROMPTS-003 Arbitrary overrides require business-invariant validation
+
+**Pending. Explicit user decision, 2026-09-25.** Before authorizing arbitrary
+prompt overrides, add a configuration validator ensuring that project invariants
+and rules remain respected after any permitted parts are overridden. Validate the
+complete effective configuration, including interactions between instructions,
+schema descriptions and limits. Reject contradictory or unsupported configurations
+with actionable errors before generation. Structural TOML validation, template
+compilation, synthetic renders and snapshots alone do not satisfy this decision.
+
+The validator's design and supported override language remain future work; do not
+claim general semantic validation of arbitrary prose from keyword matching. Its
+acceptance suite must include superficially valid but rule-breaking overrides
+(e.g. name-only identity merging, changed stable IDs, disabled later retitling,
+contradictory limits, or changed null-versus-empty update semantics), both alone
+and combined across files, alongside permitted customizations. Application and
+CLI loading must not offer an unchecked path around it. Until then, public
+construction uses bundled defaults; internal fixtures may exercise configuration
+mechanics without exposing that capability to users.
 
 ### ARCH-003 Backend-specific tolerance lives in that backend's own adapter file
 

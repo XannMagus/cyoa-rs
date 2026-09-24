@@ -238,8 +238,8 @@ fn world_outline_rejects_blank_title_or_description() {
 #[test]
 fn required_response_text_distinguishes_missing_null_and_empty() {
     use cyoa_core::limits::Limits;
-    use cyoa_infrastructure::generation::schema::{generated_cast_schema, story_turn_schema};
     use serde_json::{Value, json};
+    use support::{generated_cast_schema, story_turn_schema};
 
     let npc = json!({"name":"Ajax", "description":"A sailor", "backstory":"Grew up at sea", "relationships":""});
     let turn = json!({
@@ -342,3 +342,5 @@ fn wire_defaults_and_nullable_updates_keep_their_distinct_meanings() {
     .unwrap();
     assert!(wire.chapter_title.is_none());
 }
+
+mod support;

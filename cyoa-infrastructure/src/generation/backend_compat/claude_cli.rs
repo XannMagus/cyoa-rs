@@ -23,12 +23,15 @@ pub fn adapt_schema(mut schema: Value) -> Value {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::generation::schema::story_turn_schema;
+    use crate::generation::templates::GenerationTemplates;
     use cyoa_core::limits::Limits;
 
     #[test]
     fn adapt_schema_strips_the_root_schema_key_and_nothing_else() {
-        let before = story_turn_schema(&Limits::default());
+        let before = GenerationTemplates::bundled()
+            .unwrap()
+            .turn_schema(&Limits::default())
+            .unwrap();
         let schema = adapt_schema(before.clone());
         assert!(schema.get("$schema").is_none());
         let mut expected = before;
