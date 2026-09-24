@@ -2,18 +2,31 @@
 //! types in `wire.rs`, field/`_doc` descriptions injected from
 //! `schema_docs.toml`. See PLAN.md's "Schema generation" section.
 //!
-//! Nested types are referenced via `$defs`/`$ref` (schemars' default), keyed
-//! by the `#[schemars(rename = "...")]` name on each wire struct so they line
-//! up 1:1 with `schema_docs.toml`'s `[TypeName]` tables. **Open risk, not
-//! resolved by this slice:** whether `claude -p --json-schema` accepts a
-//! schema with `$ref`/`$defs`, or needs everything inlined — the only real
-//! call verified in `01-claude-cli.md` used a flat, refless schema. Verify
-//! against a live call before wiring a backend to this.
+//! The builder functions below (`world_outline_schema`, etc.) are
+//! **backend-agnostic and produce the fullest, most standards-compliant
+//! schema available** — a root `"$schema"` draft declaration, and nested
+//! types via `$defs`/`$ref` (schemars' default, keyed by the
+//! `#[schemars(rename = "...")]` name on each wire struct so they line up
+//! 1:1 with `schema_docs.toml`'s `[TypeName]` tables), never trimmed for any
+//! one backend's convenience. Whatever a specific backend's CLI can't
+//! tolerate is stripped by *that backend's own* adapter in
+//! `generation::backend_compat`, starting from this full schema — this file
+//! is never touched to add a backend (`ARCH-003`).
+//!
+//! **Verified against a real `claude -p --json-schema` call** (2026-09-24,
+//! see `01-claude-cli.md`'s "Verified test #3"): `$defs`/`$ref` are resolved
+//! correctly, including following an arbitrary instruction stated only in a
+//! `$ref`'d nested field's `description` — but a root-level `"$schema"` key
+//! is rejected outright ("not a valid JSON Schema: no schema with key or ref
+//! ..."), which is `backend_compat::claude_cli::adapt`'s reason to exist.
 
 use std::sync::OnceLock;
 
 use cyoa_core::limits::Limits;
-use schemars::{JsonSchema, generate::SchemaGenerator};
+use schemars::{
+    JsonSchema,
+    generate::{SchemaGenerator, SchemaSettings},
+};
 use serde_json::Value;
 
 use super::wire::{GeneratedCastWire, StoryTurnWire, WorldOutlineWire};
@@ -79,8 +92,15 @@ fn forbid_additional_properties(value: &mut Value) {
     }
 }
 
+/// The generic, backend-agnostic settings: full standards compliance
+/// (a root `"$schema"` key present) and `$defs`/`$ref` for nested types
+/// (not inlined) — the richest, most complete representation. **Never strip
+/// anything here for one backend's tolerance** — that belongs in that
+/// backend's own adapter in `generation::backend_compat`, which each
+/// independently decide what *their* CLI can't handle, starting from this
+/// full schema and only ever removing what they must.
 fn generator() -> SchemaGenerator {
-    SchemaGenerator::default()
+    SchemaSettings::default().into_generator()
 }
 
 fn build_schema<T: JsonSchema>(root_type_name: &str, limits: &Limits) -> Value {
@@ -186,6 +206,25 @@ mod tests {
             assert!(
                 seen_types.contains(*name),
                 "{name} is listed as generated but no schema produced it"
+            );
+        }
+    }
+
+    #[test]
+    fn generic_schemas_declare_a_root_schema_key() {
+        // The generic builders are backend-agnostic and stay fully
+        // standards-compliant: they always declare which JSON Schema draft
+        // they conform to. Only a specific backend's adapter (below) may
+        // decide its own CLI can't tolerate that key.
+        let limits = Limits::default();
+        for schema in [
+            world_outline_schema(),
+            generated_cast_schema(&limits),
+            story_turn_schema(&limits),
+        ] {
+            assert!(
+                schema.get("$schema").is_some(),
+                "generic schema builders must declare a root \"$schema\" key"
             );
         }
     }

@@ -181,12 +181,50 @@ authored. Schema descriptions are owned by `schema_docs.toml` and injected
 onto `#[derive(JsonSchema)]` structure, checked field-for-field in both
 directions by `schema_docs_cover_every_field_and_no_others`; `narrative`
 stays the first schema property; every generated object schema forbids
-additional properties. Evidence: cyoa-infrastructure's `prompt_rendering`
-and `lib` tests. Remaining before this can be "Enforced": verify a live
-backend actually accepts a schema referencing `$defs`/`$ref` (open risk
-noted in `schema.rs` — the one real verified call in `01-claude-cli.md`
-used a flat, refless schema), and confirm both backends satisfy the shared
-contract once each exists.
+additional properties. Verified live (2026-09-24) against `claude -p
+--json-schema`: `$defs`/`$ref` resolve correctly, including the model
+following an instruction stated only in a `$ref`'d field's description
+(`01-claude-cli.md`'s "Verified test #3"). That call also found `claude -p`
+rejects a root `"$schema"` key outright; see `ARCH-003` for why that fix is
+scoped to a `claude_cli`-specific adapter file rather than the shared
+builders. Evidence: cyoa-infrastructure's `prompt_rendering` and `lib` tests.
+Remaining before this can be "Enforced": a `codex_cli` adapter, discovered
+the same way against a real authenticated `codex exec` call, and
+confirmation both backends satisfy the shared contract once each exists.
+
+### ARCH-003 Backend-specific tolerance lives in that backend's own adapter file
+
+**Enforced.** Code shared across backends — wire DTOs, JSON Schema
+generation, prompt rendering — stays maximal and backend-agnostic: the
+fullest, most standards-compliant representation available, never trimmed
+for one backend's convenience. A backend's own tolerance limit (a flag it
+rejects, a key it can't parse, a shape it needs different) is discovered only
+against a real, authenticated call to that specific backend (PLAN.md's
+"Backend parity and cross-agent handoff") and fixed in its own file under
+`generation::backend_compat` — e.g. `backend_compat::claude_cli` — which
+starts from the shared maximal output and removes only what it must. This is
+a **separate file per backend, not a submodule nested inside the shared
+`wire.rs`/`schema.rs`/`prompts.rs`**: adding a backend must not require
+editing any of those files, only creating a new one plus one `pub mod` line
+in `backend_compat/mod.rs` to register it. Do not fold a discovered backend
+quirk into the shared generic code path. Do not let one backend's adapter
+depend on, duplicate, or edit another's. Before treating a fix as generic,
+ask whether building the *other* backend would ever need to touch that same
+file to get its own ideal behavior; if yes, the fix is in the wrong place. A
+dynamic/plugin-style backend registry (discover and (de)activate adapters at
+runtime) was considered and deliberately deferred: with only two backends,
+one `pub mod` line per backend is simpler than the complexity is worth;
+revisit only if a third backend joins.
+
+Evidence: `backend_compat::claude_cli::adapt` strips `claude -p
+--json-schema`'s rejected root `"$schema"` key (verified live,
+`01-claude-cli.md`'s "Verified test #3"), in its own file, registered by one
+line in `backend_compat/mod.rs`. `generic_schemas_declare_a_root_schema_key`
+proves the shared builders keep the key;
+`adapt_strips_the_root_schema_key_and_nothing_else` proves the
+adapter changes only that one key. This decision predates and generalizes
+past that one example: it governs any future `wire.rs`/`prompts.rs`
+backend-specific finding too, not only schema generation.
 
 ### TOOLING-001 No Python tooling dependency
 

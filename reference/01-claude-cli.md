@@ -153,3 +153,74 @@ Observed event stream (newline-delimited JSON, condensed):
   above actually exists with the described behavior, rather than trusting
   secondhand documentation — worth doing again if the CLI's flags have
   changed by the time this is implemented.
+
+## Verified test #3 — `$defs`/`$ref` in `--json-schema` (2026-09-24)
+
+Re-checked `claude --help` first (version `2.1.281`): every flag below still
+exists with the described behavior.
+
+Cast doubt on before this test: whether `--json-schema` accepts a schema
+whose nested types are expressed as `$ref`s into a `$defs` map (schemars'
+default output shape), as opposed to needing everything inlined. Resolved:
+**it does, and it correctly uses `$ref`'d nested field descriptions to guide
+generation.**
+
+**Sub-finding first — a root `"$schema"` key is rejected outright**, not
+merely ignored:
+
+```bash
+$ echo '...' | claude -p --json-schema '{"$schema":"https://json-schema.org/draft/2020-12/schema", ...}' ...
+Error: --json-schema is not a valid JSON Schema: no schema with key or ref "https://json-schema.org/draft/2020-12/schema"
+```
+
+Removing the `"$schema"` key (leaving `$defs`/`$ref` otherwise untouched)
+fixed this immediately. This is `claude -p`'s own tolerance limit, not a
+defect in the schema or something every backend need care about — don't
+disable `"$schema"` generation globally. `cyoa-infrastructure`'s
+`generation::schema` module keeps its generic builders fully
+standards-compliant (`"$schema"` included) and strips it only in a
+`claude_cli`-specific submodule, applied immediately before a `claude -p
+--json-schema` call and nowhere else.
+
+**Canary test for `$ref` resolution:** a schema referencing `#/$defs/Detail`,
+whose *only* copy of a made-up, arbitrary formatting rule lived in the
+`$defs` entry's field `description` (never restated in the system/user
+prompt):
+
+```json
+{"type":"object","properties":{"narrative":{"type":"string","description":"One short sentence of story text."},"detail":{"$ref":"#/$defs/Detail"}},"required":["narrative","detail"],"additionalProperties":false,"$defs":{"Detail":{"type":"object","properties":{"code":{"type":"string","description":"A short tracking code. It MUST begin with the exact literal prefix 'ZQ7-' followed by exactly three digits, e.g. 'ZQ7-482'. This exact rule is stated nowhere else."}},"required":["code"],"additionalProperties":false}}}
+```
+
+System prompt said only *"narrative = one short sentence. detail = the
+requested nested object"* — no mention of the `ZQ7-` rule anywhere outside
+the `$ref`'d description. Result:
+```json
+{"narrative":"The lighthouse beam swept across the churning night sea.","detail":{"code":"ZQ7-114"}}
+```
+Repeated with a different, more unusual constraint (a `PLK-` prefix, "two
+lowercase Greek letters joined by an underscore", with a deliberately stale
+numeric example still present in the same description text) to rule out
+coincidence:
+```json
+{"narrative":"...","detail":{"code":"PLK-alpha_beta"}}
+```
+The model followed the *stated rule* over the stale example — evidence this
+is genuine comprehension of the nested description, not pattern-matching an
+example string.
+
+**End-to-end confirmation against this project's actual generated schema:**
+`generation::schema::generated_cast_schema` (with `"$schema"` now removed at
+the source) was sent as-is, with the real `cast_generation_prompt` instructions/
+prompt text for a test world ("The Mist City"). Result: a valid `GeneratedCast`
+— 4 distinct playable characters and 7 NPCs, every required field populated,
+`relationships` (a `$ref`'d, optional-with-default field two levels of
+nesting deep) filled in coherently for every NPC. `is_error: false`,
+`stop_reason: "tool_use"`.
+
+**Conclusion:** `$defs`/`$ref` schemas work with `claude -p --json-schema`,
+including nested field descriptions actually being read and followed. The
+only adaptation required — dropping the root `"$schema"` key — is scoped to
+`claude -p` alone, in `generation::backend_compat::claude_cli::adapt_schema`;
+the generic schema this project generates for any backend keeps that key
+(`generic_schemas_declare_a_root_schema_key`,
+`adapt_schema_strips_the_root_schema_key_and_nothing_else`).

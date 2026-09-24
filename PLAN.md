@@ -808,14 +808,37 @@ against the same `Limits` context prompts use) onto the generated structure, plu
 forces `additionalProperties: false` on every object schema to match the shape
 verified working in `01-claude-cli.md`.
 
-**⚠️ Open risk, not resolved by this slice:** whether `claude -p --json-schema` (or
-Codex's `--output-schema`) actually accepts a schema containing `$ref`/`$defs`, or
-needs everything inlined. The one real verified call in `01-claude-cli.md` used a
-flat, refless schema — nested types were never exercised live. Verify this with a
-real call before wiring either backend to `schema.rs`; if refs turn out to be
-rejected, switch to `SchemaSettings::default().with(|s| s.inline_subschemas = true)`
-and adjust `schema.rs`'s injector (it currently walks `$defs` by name; an inlined
-schema would need the injector called per-type at construction time instead).
+**Resolved (2026-09-24) against a real `claude -p --json-schema` call —
+see `01-claude-cli.md`'s "Verified test #3":** `$defs`/`$ref` work, including
+the model actually reading and following an arbitrary instruction stated only
+in a `$ref`'d nested field's `description` (a canary schema/rule was used
+twice, with different made-up constraints, to rule out coincidence), and the
+project's own real `generated_cast_schema` produced a valid, fully-populated
+`GeneratedCast` end to end. The one real requirement found: a root
+`"$schema"` key (which schemars emits by default) is **rejected outright**
+by `claude -p` specifically ("not a valid JSON Schema: no schema with key or
+ref ..."), not merely ignored.
+
+**This is a `claude -p` tolerance limit, not a defect in the schema itself —
+it must not be baked into the generic builders, or even into their file.**
+The generic functions (`world_outline_schema`, etc., in `schema.rs`) keep
+emitting the full, standards-compliant schema, `"$schema"` included.
+`generation::backend_compat::claude_cli` — its own file, a sibling of
+`schema.rs`, not a submodule nested inside it — strips the key immediately
+before a future `ClaudeCliBackend` would call `--json-schema`; only that
+file knows about this quirk. Building `CodexCliBackend` means adding
+`backend_compat::codex_cli` as a new file with whatever *it* turns out to
+need, discovered the same way (a real, authenticated `codex exec` call),
+plus one `pub mod` line registering it in `backend_compat/mod.rs` — never
+editing `schema.rs`, `wire.rs`, `prompts.rs`, or `claude_cli`'s file.
+Regression tests: `generic_schemas_declare_a_root_schema_key` (the generic
+contract keeps it) and
+`adapt_strips_the_root_schema_key_and_nothing_else` (the adapter, and
+only the adapter, removes it). Codex's `--output-schema` behavior remains
+unverified — this test only exercised `claude -p`. A dynamic/plugin-style
+backend registry was considered and deliberately deferred — see `ARCH-003`
+in `docs/decisions/README.md` — since one `pub mod` line per backend is
+simpler than it's worth generalizing while there are only two.
 
 ## Streaming
 

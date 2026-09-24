@@ -173,6 +173,20 @@
     ]
   },
   {
+    "id": "ARCH-003",
+    "coverage": "enforced",
+    "checks": [
+      {
+        "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "generation::schema::tests::generic_schemas_declare_a_root_schema_key",
+          "generation::backend_compat::claude_cli::tests::adapt_strips_the_root_schema_key_and_nothing_else"
+        ]
+      }
+    ]
+  },
+  {
     "id": "TOOLING-001",
     "coverage": "partial",
     "checks": []

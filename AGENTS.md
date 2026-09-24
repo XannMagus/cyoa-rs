@@ -20,6 +20,12 @@ of which coding agent you are:
    If you can resolve an open question with a real authenticated run this
    session, do, and move it into "Confirmed" with the evidence. Never mark
    something confirmed without having actually run it.
+3. When a live run reveals a backend-specific tolerance limit (a flag it
+   rejects, a shape it needs different), fix it in a small adapter scoped to
+   that backend alone — never in the shared, backend-agnostic code path
+   (wire DTOs, schema generation, prompt rendering). See `docs/decisions/README.md`'s
+   `ARCH-003`. Building your backend must never require editing code the other
+   backend's session already wrote for shared use.
 
 After `PLAN.md`, read `docs/decisions/README.md` and its required-test registry.
 Those project contracts override conflicting Calibre behavior, source notes, and

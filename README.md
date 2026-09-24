@@ -96,9 +96,18 @@ onto it, checked field-for-field by an anti-drift test in both directions), and
 flow is transcribed directly from calibre's `turn_prompt` (cyoa.py:1081-1127), and
 the opening-turn identity-review addition (`reference/prompt-additions.toml`) is
 now actually wired in, appearing once and only on the opening turn. This slice's
-JSON schemas reference nested types via `$defs`/`$ref` (schemars' default); whether
-`claude -p --json-schema` accepts that shape, or needs everything inlined, is an
-open risk not yet verified against a live call — see `schema.rs`'s doc comment.
+JSON schemas reference nested types via `$defs`/`$ref` (schemars' default);
+verified live against `claude -p --json-schema` (see `01-claude-cli.md`'s
+"Verified test #3") that this works, including the model reading and following
+instructions stated only in a `$ref`'d field's description. `schema.rs`'s
+generic builders keep the full, standards-compliant schema (including a root
+`"$schema"` key); `claude -p` specifically rejects that key outright, so a
+small `backend_compat::claude_cli` adapter (its own file, not a change to
+`schema.rs`) strips it right before a Claude backend would use it — the
+generic schema and any other backend's adapter are untouched by that quirk.
+A `backend_compat::codex_cli` adapter, discovered the same way against a
+real authenticated `codex exec` call, is the next backend's job — a new
+file plus one line registering it, never an edit to an existing one.
 
 Build and check with a stable Rust toolchain supporting edition 2024:
 
