@@ -348,5 +348,20 @@
         ]
       }
     ]
+  },
+  {
+    "id": "ACCEPTANCE-001",
+    "coverage": "enforced",
+    "checks": [
+      {
+        "package": "cyoa-infrastructure",
+        "target": "phase_zero_acceptance",
+        "tests": [
+          "invalid_rewind_is_an_error_without_state_changes_or_generation",
+          "rewinding_the_only_turn_restores_opening_context_without_an_extra_call",
+          "full_story_preserves_contracts_through_failure_retry_cancellation_and_rewind"
+        ]
+      }
+    ]
   }
 ]

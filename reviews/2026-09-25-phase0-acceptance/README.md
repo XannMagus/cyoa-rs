@@ -36,3 +36,23 @@ scalar chunk replay made both pass, including 32 seeds, no duplicate final previ
 unchanged state on cancellation and preservation of the observed raw prefix.
 Logs use `/tmp/cyoa-step6-{errors,edges,nominal,cancel,chunks}-red.log` and
 `/tmp/cyoa-step6-all-green.log`. No new dependency or real CLI invocation was needed.
+
+## Step 7 — complete story and application rewind
+
+Added tests in error → edge → nominal order. The new rewind command initially
+returned success without changing state. The invalid-rewind test failed at its
+error assertion. The first edge/nominal runs exposed a fixture omission
+(`current_situation` is required); those runs are **not** behavioral red evidence.
+After correcting the fixture, all three tests failed at their intended rewind
+assertions: invalid count accepted, last turn retained, and two rewound turns
+retained. Delegating to `GameState::rewind` made all three pass. No established
+production behavior was disabled to obtain a failure.
+
+The full scenario independently checks five successful turns, nine total requests,
+preview then malformed output, explicit retry, preview then cancellation, same-name
+NPC updates by repaired ID, unknown kind recovery, retitling, chapter bridge,
+newest events, null/empty threads, unchanged state on failures and exact request
+context after rewind. Fixture data is versioned and not regenerated from Python.
+Logs: `/tmp/cyoa-step7-corrected-red.log` and `/tmp/cyoa-step7-green.log` (session
+artifacts); the stable reproduction is `cargo test -p cyoa-infrastructure --test
+phase_zero_acceptance --locked --offline`. Registered under ACCEPTANCE-001.

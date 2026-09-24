@@ -1,0 +1,18 @@
+{
+  "outline": {"title":"Harbour","world_description":"A sheltered harbour"},
+  "cast": {"characters":[
+    {"name":"Ajax","description":"A sailor","backstory":"Grew up at sea"},
+    {"name":"Ajax","description":"A mason","backstory":"Built the wall"}
+  ],"npcs":[
+    {"name":"Ajax","description":"A merchant","backstory":"Sells sails","relationships":"Knows the sailor"},
+    {"name":"Ajax","description":"A merchant","backstory":"Sells sails","relationships":"Knows the sailor"},
+    {"name":"Ajax","description":"A guard","backstory":"Guards the wall","relationships":"Knows the mason"}
+  ]},
+  "turns": [
+    {"narrative":"Opening: the lantern flickered.","quick_actions":[{"text":"Go","kind":"unrecognized-kind"}],"scene_description":"","summary_update":{"current_situation":"","new_major_events":["A","B"],"upcoming_events":["Depart"],"character_updates":[{"id":"ajax","current_state":"At the shop"},{"id":"ajax-2","current_state":"At the gate"}]},"starts_new_chapter":true,"chapter_title":"Harbour"},
+    {"narrative":"Second: the bell rang.","quick_actions":[{"text":"Board"}],"scene_description":"","summary_update":{"current_situation":"","new_major_events":["C"],"upcoming_events":null},"starts_new_chapter":false,"chapter_title":"Retitled"},
+    {"narrative":"Voyage: the ship sailed.","quick_actions":[{"text":"Watch"}],"scene_description":"","summary_update":{"current_situation":"","new_major_events":["D"],"upcoming_events":[]},"starts_new_chapter":true,"chapter_title":"Voyage"},
+    {"narrative":"Fourth: the waves rose.","quick_actions":[{"text":"Wait"}],"scene_description":"","summary_update":{"current_situation":"","new_major_events":["E"],"upcoming_events":null},"starts_new_chapter":false,"chapter_title":"At Sea"},
+    {"narrative":"Rewritten: the ship stayed.","quick_actions":[{"text":"Land"}],"scene_description":"","summary_update":{"current_situation":"","new_major_events":["F"],"upcoming_events":null},"starts_new_chapter":false,"chapter_title":null}
+  ]
+}

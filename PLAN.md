@@ -1304,3 +1304,10 @@ preview. Complete-only transports and chunked transports produce equal committed
 state without duplicate preview text. Registered STREAM-001 tests cover scalar
 boundaries, escaped/lone surrogates, nested/late fields and error/cancellation after
 preview. CLI byte framing and forceful child cancellation remain Phase 1 work.
+
+Step 7 now adds the full scripted acceptance scenario and the application rewind
+command (ACCEPTANCE-001). Five successful turn generations, one malformed response
+and one cancellation exercise both failure isolation and restored future context.
+The frozen fixture preserves deliberate project deviations. The error and edge
+rewind cases are separate required tests. This completes the no-I/O scenario;
+mutation evidence and the consolidated completion gate are step 8.

@@ -368,3 +368,21 @@ and compare complete versus chunked committed state across 32 seeds. Failure aft
 preview and cancellation during preview leave complete state unchanged. This does
 not verify CLI byte decoding, process killing/reaping, or vendor stream events;
 each concrete backend must gain those tests and live evidence in Phase 1.
+
+### ACCEPTANCE-001 — exercise the complete engine before adding external I/O
+
+**Enforced for the scripted Phase 0 engine.** The frozen
+`cyoa-infrastructure/tests/fixtures/phase0_story.json` expresses project decisions,
+independently of the copied Python. Its acceptance target composes application
+commands, validated templates, wire mapping, streaming and domain commits. Five
+successful generations surround a malformed response, explicit retry, cancellation
+and rewind; exactly nine transport requests are made including world and cast.
+Rewind is an application command delegating to the checked domain operation and
+makes no inference call. Error/edge tests also cover invalid rewind and returning
+all the way to opening context. Never replace this scenario with direct merge tests.
+
+The scenario protects namesakes and repaired IDs, unknown action kinds, retitling,
+chapter bridges, event truncation, null/empty threads, raw diagnostics, unchanged
+state on failure and exact next-request context after rewind. This is evidence of
+scripted orchestration, not live backend behavior, persistence, prompt-override
+semantics or presentation cancellation. Those obligations keep their own statuses.

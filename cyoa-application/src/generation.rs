@@ -2,7 +2,7 @@
 //! owned game snapshot; presentation retains ownership of canonical state.
 use crate::cancellation::CancellationToken;
 use cyoa_core::{
-    game::GameState,
+    game::{GameState, InvalidRewind, TurnCount},
     limits::Limits,
     text::{Brief, PlayerInput, RawResponse},
     turn::{GenerationProvenance, StoryTurn},
@@ -108,6 +108,9 @@ impl<G: StoryGenerator> StoryUseCases<G> {
     }
     pub fn into_generator(self) -> G {
         self.generator
+    }
+    pub fn rewind(&mut self, state: &mut GameState, count: TurnCount) -> Result<(), InvalidRewind> {
+        state.rewind(count)
     }
     pub fn generate_outline(
         &mut self,
