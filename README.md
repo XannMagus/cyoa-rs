@@ -74,8 +74,9 @@ Run `bash scripts/check_contract_mutations.sh` for only that check.
 
 See the [acceptance sequence](docs/decisions/phase0-acceptance.md) and
 [TDD/evidence record](reviews/2026-09-25-phase0-acceptance/README.md). The next phase is
-real subprocess adapters and a playable headless loop, maintaining co-equal backend
-contracts and recording authenticated evidence separately for each vendor.
+[real subprocess adapters and a playable headless loop](docs/plans/phase1-headless-backends.md),
+with a detailed commit sequence, TDD cases, process-cleanup requirements and separate
+authenticated acceptance gates for the two co-equal backends.
 
 ## Where to start
 

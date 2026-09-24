@@ -10,6 +10,13 @@ or weaken a regression to make such a change pass. The required-test registry an
 `bash scripts/check_contracts.sh` guard existing coverage in CI and local work.
 The contract catalog distinguishes implemented guarantees from pending obligations.
 
+The next implementation sequence is [Phase 1: real CLI backends and headless
+play](docs/plans/phase1-headless-backends.md). It starts from the completed scripted
+engine and specifies dependent commits, error/edge/nominal TDD, process cleanup,
+backend-local compatibility, headless ownership and separate live-verification gates.
+Use that document for the next phase rather than implementing historical sketches
+below literally. Its features remain planned until their acceptance evidence exists.
+
 ## Context
 
 Calibre ships a built-in AI game, "Create your own adventure" (CYOA): an LLM-driven

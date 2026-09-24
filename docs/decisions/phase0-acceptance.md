@@ -1,5 +1,9 @@
 # Remaining Phase 0 acceptance sequence
 
+This sequence is complete through `3dfce38`. Continue with the
+[Phase 1 implementation plan](../plans/phase1-headless-backends.md); retain the
+tests and mutation gate described here throughout that work.
+
 User-approved order: steps 1–3 repaired generation boundaries; step 4 introduces
 validated configuration. Each subsequent step is its own commit with implementation,
 regressions, registry and truthful status updates. Use error → edge → nominal TDD:
