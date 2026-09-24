@@ -1,15 +1,13 @@
-# `codex exec` as a second inference backend — status: flags confirmed, streaming NOT verified
+# `codex exec` as a second inference backend — status: live cast verified, adapter incomplete
 
-Companion to `01-claude-cli.md`. That file's rigor was "checked against the real
-installed binary, not docs." This one is **half that**: the CLI and its flags were
-checked against the real installed binary (`npx @openai/codex@latest`, version
-0.155.1 at time of writing), but a real authenticated generation was **not**
-observed — `codex exec` needs an interactive `codex login` (ChatGPT OAuth) that
-couldn't be done non-interactively in the session that wrote this file. Everything
-under "Confirmed" was seen directly. Everything under "Open questions" needs a live
-run before `CodexCliBackend` gets implemented.
+Companion to `01-claude-cli.md`. The original session verified flags and an
+unauthenticated failure. On **2026-09-24**, Codex CLI **0.155.1**, logged in using
+ChatGPT, produced a real cast after a temporary schema adaptation. See the dated
+evidence below. A complete backend, incremental narrative streaming, and the other
+open behaviors are not yet verified. Everything under "Confirmed" was observed;
+one successful request does not confirm unexercised behavior.
 
-## How to reproduce / finish this verification
+## Initial minimal verification recipe
 
 ```bash
 npx @openai/codex@latest login          # interactive, OAuth — do this in a real terminal
@@ -86,33 +84,67 @@ This at least confirms the event *envelope* (`thread.started` / `turn.started` /
 `item.completed` / `turn.failed`) is real JSONL with a `type` discriminant, matching
 the general shape `01-claude-cli.md` describes for Claude's stream — but says nothing
 about what a successful `item.completed` for an agent message or a structured
-response looks like.
+response looks like. The later authenticated run below supplies that evidence.
+
+## Confirmed: authenticated cast and schema compatibility, 2026-09-24
+
+Installed `codex --version`: **0.155.1**. `codex login status`: **Logged in using
+ChatGPT**. Used `exec --json --ephemeral --sandbox read-only --ignore-user-config
+--ignore-rules --skip-git-repo-check --color never --output-schema <file>` in a
+temporary directory outside the repository, with a 50-second timeout. Neither run
+hit that timeout. Exact commands, schemas, and JSONL transcripts are retained in
+[the generation-boundary review](../reviews/2026-09-24-generation-boundary/README.md#live-codex-evidence-and-backend-handoff).
+
+- The project's unadapted generated cast schema failed, exit **1**, with HTTP 400
+  `invalid_json_schema`. The error required every property to appear in `required`
+  and specifically named missing `relationships`. Events were `thread.started`,
+  `turn.started`, `error`, and `turn.failed`.
+- A temporary copy making every object's properties required succeeded, exit **0**.
+  The root `$schema` and `$defs`/`$ref` remained present. Thus this cast schema works
+  with those features; Claude's root-key removal is not needed for this example.
+- The success stream contained `thread.started`, `turn.started`, one
+  `item.completed` with `item.type = "agent_message"` and a JSON **string** in
+  `item.text`, then `turn.completed`. No pre-parsed structured-output object or
+  partial text event appeared in this transcript.
+- `turn.completed.usage` reported `input_tokens: 13893`, `cached_input_tokens: 0`,
+  `cache_write_input_tokens: 0`, `output_tokens: 356`, and
+  `reasoning_output_tokens: 31`. There was no monetary-cost field in this stream.
+- No tool-call event appeared. This is not proof of tool disablement or complete
+  configuration isolation. No explicit model was pinned in these calls.
+
+Per ARCH-003, production schema adaptation belongs in a future
+`generation::backend_compat::codex_cli` file. The temporary cast transformation
+does not settle optional/null behavior for all DTOs and is not a shipped adapter.
+Shared wire requiredness must separately follow the business/source contract.
 
 ## Open questions — resolve before writing `CodexCliBackend`
 
 1. **Does `--output-schema` stream the structured fields incrementally?** Claude's
    backend gets this via a forced `StructuredOutput` tool call whose `input_json_delta`
    fragments are exactly the raw JSON text `StreamingStringField` wants. It is
-   *unknown* whether Codex's `--output-schema` (a) streams the final message's raw
+   still unverified whether Codex's `--output-schema` (a) can stream the final message's raw
    JSON text token-by-token as ordinary `item` deltas (which would still work with the
    same scanner, just fed from a different event field), or (b) only validates/attaches
    the parsed object once the turn completes, with no partial text available at all. If
    (b), `narrative`'s incremental reveal doesn't work for this backend in v1 — either
    accept spinner-then-reveal for Codex, or find another signal to stream from.
-2. **Exact `item.*` shapes for a successful turn** — event `type` values, whether
-   there's a `structured_output`-equivalent field on `turn.completed` /
-   `thread.completed`, whether the parsed object is handed back pre-parsed the way
-   Claude's `result.structured_output` is.
+   The short cast run above emitted only the complete message; exercise a long
+   narrative before settling the backend's incremental-progress contract.
+2. **Remaining response/schema shapes** — the successful cast message shape is
+   confirmed above. Exercise StoryTurn, nested optional/null fields, longer
+   responses, and any other item kinds the adapter must handle. Do not infer
+   universal protocol behavior from one cast response.
 3. **Does `--ignore-user-config` + `--ignore-rules` add up to full isolation**, or can
    configured MCP servers / plugins still activate during `codex exec`? Claude's
    `--safe-mode` explicitly disables MCP/plugins/hooks/skills in one flag; Codex has no
    single documented equivalent in `--help`.
 4. **Exit codes and error conventions** on failure modes that matter for this project:
-   rate limit, sandbox-denied action, malformed/unsatisfiable schema. Needed to
+   rate limit, sandbox-denied action, other malformed/unsatisfiable schemas. The
+   missing-required schema rejection is confirmed above. Needed to
    reproduce Claude backend's "never auto-retry, surface as `Result::Err`" posture.
-5. **Cost/token reporting**, if any, analogous to `total_cost_usd`/`usage` in Claude's
-   result envelope — for the "estimate, not billed" display, or omit it entirely for
-   this backend if nothing exposes it.
+5. **Remaining usage/cost behavior** — successful cast token reporting is confirmed
+   above. Failure/cancellation usage and monetary reporting, if available, remain
+   unverified. Do not treat token counts as a subscription charge.
 6. Whether `--model gpt-5.2-codex`-style model names need pinning the way `--model
    sonnet` does for Claude, or whether a config default is sufficient.
 

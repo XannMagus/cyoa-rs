@@ -188,8 +188,8 @@ authenticated, or even installed. That shapes how work on each backend proceeds:
   documentation (official CLI docs, `--help` output) rather than invented
   behavior, and mark every such assumption inline, e.g.
   `// UNVERIFIED: from OpenAI's published codex exec docs, not run live — see reference/02-codex-cli.md`.
-  This is exactly the state `CodexCliBackend` is in right now: flags are
-  confirmed to exist, but no real generation has been observed.
+  Codex's flags and one authenticated cast are now confirmed; the full adapter
+  and remaining behaviors are still incomplete (see its dated reference file).
 - **Each backend's `reference/0N-*-cli.md` file is the single source of truth for
   what's actually been verified**, split into a "Confirmed" section (only things
   actually run and observed against a live call) and an "Open questions" section
@@ -307,19 +307,15 @@ keeping only the semantic field rules. The Markdown formatting instructions
 
 ## Backend: `codex exec` (OpenAI Codex CLI headless mode)
 
-**Status: flags confirmed, live generation not yet verified.** Codex CLI
-(`npm i -g @openai/codex`, or `npx @openai/codex`) ships an analogous headless
-mode, `codex exec`, confirmed against the real installed binary's `--help` output
-— but not yet run end-to-end against a real model response, because that needs an
-interactive `codex login` (ChatGPT OAuth) no session has performed yet. Per
-"Backend parity and cross-agent handoff" above, this is expected: whoever
-implements/finishes this backend from a session with `codex` actually
-authenticated should run the live tests `01-claude-cli.md` ran for the other
-backend, and update `reference/02-codex-cli.md` accordingly. Until then, treat
-everything below as "flags exist and take these forms, scaffolded from published
-docs/`--help`", not "behavior verified".
+**Status: one live cast verified on 2026-09-24; full adapter incomplete.** Codex
+CLI 0.155.1 generated a cast using ChatGPT login after a temporary adaptation
+making all object properties required. Root `$schema` and `$defs`/`$ref` remained
+accepted in that call. The unadapted schema failed with `invalid_json_schema`.
+`reference/02-codex-cli.md` records the exact confirmed response/usage shape,
+transcripts, and remaining open questions. Incremental narrative streaming,
+full isolation, StoryTurn compatibility, and the complete adapter are not verified.
 
-### The invocation (flags confirmed to exist; not yet run against a live model)
+### The invocation (flags confirmed; exact live invocation in the reference file)
 
 ```
 codex exec \
@@ -366,16 +362,15 @@ invocation itself prevents it.
    only validates the final message, `narrative`-first + `StreamingStringField` may
    need a different feed path for this backend (e.g. treat plain `item.completed`
    agent-message deltas as the raw stream instead of tool-call JSON deltas).
-2. Exact `item.*` event shapes during a real multi-turn generation (only
-   `thread.started` / `turn.started` / `turn.failed` were observed here, from a request
-   that failed at auth before producing content).
+2. Remaining `item.*` shapes and StoryTurn compatibility. A successful cast's
+   complete `agent_message` JSON string is now confirmed in the reference file.
 3. Whether `--ignore-user-config` + `--ignore-rules` is a complete isolation story, or
    whether MCP servers / plugins configured for the account still load during `exec`.
-4. Exit code and `is_error`-equivalent conventions on failure (rate limit, sandbox
-   violation, malformed schema) — needed for the same "never auto-retry, surface as a
-   value" posture as the Claude backend.
-5. Token/cost reporting equivalent to `total_cost_usd`, if any, for the "estimate, not
-   billed" display.
+4. Remaining failure conventions (rate limit, sandbox violation, other malformed
+   schemas). Missing-required schema rejection with exit 1 is confirmed; preserve
+   the same "never auto-retry, surface as a value" posture as the Claude backend.
+5. Usage on failure/cancellation and monetary reporting, if available. Successful
+   cast token usage is confirmed; no monetary-cost field appeared in that stream.
 
 The `Backend` trait impl, config wiring, and invocation-building for
 `CodexCliBackend` can be **scaffolded now** from the confirmed `--help` flags
@@ -851,8 +846,9 @@ editing `schema.rs`, `wire.rs`, `prompts.rs`, or `claude_cli`'s file.
 Regression tests: `generic_schemas_declare_a_root_schema_key` (the generic
 contract keeps it) and
 `adapt_schema_strips_the_root_schema_key_and_nothing_else` (the adapter, and
-only the adapter, removes it). Codex's `--output-schema` behavior remains
-unverified — this test only exercised `claude -p`. A dynamic/plugin-style
+only the adapter, removes it). This test only exercised `claude -p`; the subsequent
+Codex cast probe accepted the root key but required a different adaptation (see
+`reference/02-codex-cli.md`). A dynamic/plugin-style
 backend registry was considered and deliberately deferred — see `ARCH-003`
 in `docs/decisions/README.md` — since one `pub mod` line per backend is
 simpler than it's worth generalizing while there are only two.
