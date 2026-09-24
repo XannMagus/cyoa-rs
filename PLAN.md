@@ -1295,3 +1295,12 @@ lifecycle tests establish call counts, edited outlines, stable namesake IDs and
 active restored limits across prompt/schema/commit. Streaming, full acceptance,
 mutation gates, real CLI subprocesses and presentation workers remain subsequent
 steps. See `docs/decisions/phase0-acceptance.md` for their exact gates.
+
+Step 6 now provides `generation::stream::StreamingStringField` and a seeded
+`ChunkedBackend`. Raw JSON fragments become decoded narrative previews inside
+infrastructure; the application port receives prose only. Final DTO/domain
+validation remains authoritative, and failed/cancelled streams never commit their
+preview. Complete-only transports and chunked transports produce equal committed
+state without duplicate preview text. Registered STREAM-001 tests cover scalar
+boundaries, escaped/lone surrogates, nested/late fields and error/cancellation after
+preview. CLI byte framing and forceful child cancellation remain Phase 1 work.

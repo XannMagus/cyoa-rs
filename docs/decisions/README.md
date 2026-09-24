@@ -342,3 +342,29 @@ outline use, namesake preservation, repaired IDs in later prompts, exactly one
 opening identity instruction and no separate deduplication call. Active current
 and original restore policies reach prompts, schema descriptions and merged event
 caps. Persistence and live subprocess adapters remain pending.
+
+### STREAM-001 Preview text never authorizes a state commit
+
+**Partial: scanner and scripted generation enforced; real subprocess framing and
+cancellation pending.** `StreamingStringField` extracts only the requested root
+string, across valid UTF-8 chunks. It is a preview scanner, not JSON validation.
+Escapes and surrogate pairs are decoded; lone surrogate halves become U+FFFD
+because Rust cannot represent them as scalar values. Truncated escape sequences
+remain incomplete rather than inventing final text. Leading fences can be skipped
+for preview without making an invalid final response acceptable.
+
+The generation adapter forwards decoded narrative previews through the inward port,
+then independently decodes and validates the authoritative final JSON response.
+On failure/cancellation, preview text does not enter state; diagnostics retain the
+available raw text. Complete-only transports emit the narrative once, and streamed
+prefixes are not duplicated on success. Presentation must replace transient preview
+with the authoritative committed turn (including normalization); the preview is not
+an audit record or authoritative prose.
+
+A seeded ChunkedBackend replays scalar-sized fragments through the same adapter.
+Required tests compare every two-part scalar split and deterministic multi-part
+splits with independently known narrative text, cover escapes/nesting/surrogates,
+and compare complete versus chunked committed state across 32 seeds. Failure after
+preview and cancellation during preview leave complete state unchanged. This does
+not verify CLI byte decoding, process killing/reaping, or vendor stream events;
+each concrete backend must gain those tests and live evidence in Phase 1.

@@ -328,3 +328,129 @@ fn scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_ext
     assert_eq!(game.turns()[1].input().unwrap().as_str(), "Go to the gate");
     assert!(game.turns()[1].prompt_trace().is_none());
 }
+
+#[test]
+fn preview_then_transport_failure_leaves_state_untouched() {
+    struct BrokenStream;
+    impl Backend for BrokenStream {
+        fn generate(
+            &mut self,
+            _: GenerationRequest<'_>,
+            _: &cyoa_application::cancellation::CancellationToken,
+            on_json: &mut dyn FnMut(&str),
+        ) -> Result<GenerationResponse, BackendError> {
+            let partial = "{\"narrative\":\"Visible preview";
+            on_json(partial);
+            Err(BackendError::Generation {
+                message: "stream failed".into(),
+                raw_response: partial.into(),
+            })
+        }
+    }
+    let mut use_cases = StoryUseCases::new(GenerationEngine::new(
+        BrokenStream,
+        GenerationTemplates::bundled().unwrap(),
+    ));
+    let source = CancellationSource::default();
+    let mut game = game();
+    let before = game.clone();
+    let mut preview = String::new();
+    let error = use_cases
+        .take_turn(
+            &mut game,
+            TurnDirection::Continue,
+            &source.token(),
+            &mut |text| preview.push_str(text),
+        )
+        .unwrap_err();
+    assert_eq!(preview, "Visible preview");
+    assert_eq!(
+        error.raw_response().as_str(),
+        "{\"narrative\":\"Visible preview"
+    );
+    assert_eq!(game, before);
+}
+
+#[test]
+fn cancelling_after_a_streamed_preview_preserves_state_and_partial_diagnostics() {
+    use cyoa_infrastructure::generation::scripted::ChunkedBackend;
+    let raw = turn_json().to_string();
+    let backend = ChunkedBackend::new([Ok(raw.clone())], 42);
+    let mut use_cases = StoryUseCases::new(GenerationEngine::new(
+        backend,
+        GenerationTemplates::bundled().unwrap(),
+    ));
+    let source = CancellationSource::default();
+    let mut game = game();
+    let before = game.clone();
+    let mut preview = String::new();
+    let error = use_cases
+        .take_turn(
+            &mut game,
+            TurnDirection::Continue,
+            &source.token(),
+            &mut |text| {
+                preview.push_str(text);
+                source.cancel()
+            },
+        )
+        .unwrap_err();
+    assert_eq!(error.kind(), FailureKind::Cancelled);
+    assert!(!preview.is_empty());
+    assert!("The lantern flickered.".starts_with(&preview));
+    assert!(raw.starts_with(error.raw_response().as_str()));
+    assert!(error.raw_response().as_str().len() < raw.len());
+    assert_eq!(game, before);
+    assert_eq!(
+        use_cases.into_generator().into_backend().requests().len(),
+        1
+    );
+}
+
+#[test]
+fn chunked_and_complete_transports_commit_the_same_turn_without_duplicate_preview() {
+    use cyoa_infrastructure::generation::scripted::ChunkedBackend;
+    let narrative = "A \"quoted\" scene: 🎭\n界.";
+    let mut value = turn_json();
+    value["narrative"] = narrative.into();
+    let raw = value.to_string();
+    let source = CancellationSource::default();
+    let mut whole = use_cases([Ok(raw.clone())]);
+    let mut expected = game();
+    let mut preview = String::new();
+    whole
+        .take_turn(
+            &mut expected,
+            TurnDirection::Continue,
+            &source.token(),
+            &mut |text| preview.push_str(text),
+        )
+        .unwrap();
+    assert_eq!(preview, narrative);
+    for seed in 0..32 {
+        let backend = ChunkedBackend::new([Ok(raw.clone())], seed);
+        let mut cases = StoryUseCases::new(GenerationEngine::new(
+            backend,
+            GenerationTemplates::bundled().unwrap(),
+        ));
+        let mut actual = game();
+        let mut preview = String::new();
+        let mut chunks = 0;
+        cases
+            .take_turn(
+                &mut actual,
+                TurnDirection::Continue,
+                &source.token(),
+                &mut |text| {
+                    preview.push_str(text);
+                    chunks += 1
+                },
+            )
+            .unwrap();
+        assert!(chunks > 1, "seed {seed} must exercise incremental output");
+        assert_eq!(preview, narrative);
+        assert_eq!(actual, expected);
+        assert_eq!(actual.turns()[0].raw_response().as_str(), raw);
+        assert_eq!(cases.into_generator().into_backend().requests().len(), 1);
+    }
+}

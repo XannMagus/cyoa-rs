@@ -13,5 +13,6 @@ mod limits_context;
 mod prompts;
 mod schema;
 pub mod scripted;
+pub mod stream;
 pub mod templates;
 pub mod wire;

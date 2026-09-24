@@ -55,3 +55,57 @@ impl Backend for ScriptedBackend {
         GenerationResponse::from_json(raw, TokenUsage::default())
     }
 }
+
+/// Deterministic scalar-sized replay of a scripted response.
+pub struct ChunkedBackend {
+    inner: ScriptedBackend,
+    seed: u64,
+}
+impl ChunkedBackend {
+    pub fn new(
+        responses: impl IntoIterator<Item = Result<String, BackendError>>,
+        seed: u64,
+    ) -> Self {
+        Self {
+            inner: ScriptedBackend::new(responses),
+            seed,
+        }
+    }
+    pub fn requests(&self) -> &[CapturedRequest] {
+        self.inner.requests()
+    }
+}
+impl Backend for ChunkedBackend {
+    fn generate(
+        &mut self,
+        r: GenerationRequest<'_>,
+        cancel: &CancellationToken,
+        on_json: &mut dyn FnMut(&str),
+    ) -> Result<GenerationResponse, BackendError> {
+        let result = self.inner.generate(r, cancel, &mut |_| {});
+        let raw = match &result {
+            Ok(response) => response.raw_response(),
+            Err(BackendError::Generation { raw_response, .. }) => raw_response.as_str(),
+            _ => return result,
+        };
+        let boundaries = raw
+            .char_indices()
+            .map(|(index, _)| index)
+            .chain([raw.len()])
+            .collect::<Vec<_>>();
+        let mut start = 0;
+        while start + 1 < boundaries.len() {
+            if cancel.is_cancelled() {
+                return Err(BackendError::Cancelled);
+            }
+            self.seed = self.seed.wrapping_mul(6364136223846793005).wrapping_add(1);
+            let end = (start + 1 + (self.seed as usize % 17)).min(boundaries.len() - 1);
+            on_json(&raw[boundaries[start]..boundaries[end]]);
+            start = end;
+        }
+        if cancel.is_cancelled() {
+            return Err(BackendError::Cancelled);
+        }
+        result
+    }
+}

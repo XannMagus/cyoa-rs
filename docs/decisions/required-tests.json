@@ -323,5 +323,30 @@
     "id": "PROMPTS-003",
     "coverage": "pending",
     "checks": []
+  },
+  {
+    "id": "STREAM-001",
+    "coverage": "partial",
+    "checks": [
+      {
+        "package": "cyoa-infrastructure",
+        "target": "streaming",
+        "tests": [
+          "truncated_and_invalid_json_only_yield_available_preview_text",
+          "surrogate_pairs_lone_halves_and_escapes_survive_single_character_chunks",
+          "only_the_requested_top_level_string_is_streamed",
+          "arbitrary_scalar_splits_match_the_independent_narrative"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "generation_use_cases",
+        "tests": [
+          "preview_then_transport_failure_leaves_state_untouched",
+          "cancelling_after_a_streamed_preview_preserves_state_and_partial_diagnostics",
+          "chunked_and_complete_transports_commit_the_same_turn_without_duplicate_preview"
+        ]
+      }
+    ]
   }
 ]

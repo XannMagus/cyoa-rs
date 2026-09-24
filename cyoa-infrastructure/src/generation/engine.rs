@@ -31,6 +31,7 @@ impl<B: Backend> GenerationEngine<B> {
         &mut self,
         request: RenderedGeneration,
         cancel: &CancellationToken,
+        on_json: &mut dyn FnMut(&str),
     ) -> Result<GenerationResponse, GenerationFailure> {
         if cancel.is_cancelled() {
             return Err(cancelled(""));
@@ -43,7 +44,12 @@ impl<B: Backend> GenerationEngine<B> {
                 schema: request.schema(),
             },
             cancel,
-            &mut |chunk| fragments.push_str(chunk),
+            &mut |chunk| {
+                fragments.push_str(chunk);
+                if !cancel.is_cancelled() {
+                    on_json(chunk);
+                }
+            },
         );
         let response = response.map_err(|error| match error {
             BackendError::Cancelled => cancelled(fragments),
@@ -107,7 +113,7 @@ impl<B: Backend> StoryGenerator for GenerationEngine<B> {
         cancel: &CancellationToken,
     ) -> Result<Generated<WorldOutline>, GenerationFailure> {
         let request = self.templates.world_request(brief).map_err(configuration)?;
-        let response = self.generate(request, cancel)?;
+        let response = self.generate(request, cancel, &mut |_| {})?;
         let wire: WorldOutlineWire = decode(&response)?;
         let world = WorldOutline::try_from(wire).map_err(|error| invalid(error, &response))?;
         Ok(generated(world, &response))
@@ -123,7 +129,7 @@ impl<B: Backend> StoryGenerator for GenerationEngine<B> {
             .templates
             .cast_request(brief, outline, limits)
             .map_err(configuration)?;
-        let response = self.generate(request, cancel)?;
+        let response = self.generate(request, cancel, &mut |_| {})?;
         let wire: GeneratedCastWire = decode(&response)?;
         let (players, npcs) = playable_and_npcs_from_wire(wire);
         let cast =
@@ -145,10 +151,22 @@ impl<B: Backend> StoryGenerator for GenerationEngine<B> {
                 matches!(direction, TurnDirection::InterestingEvent),
             )
             .map_err(configuration)?;
-        let response = self.generate(request, cancel)?;
+        let mut scanner = super::stream::StreamingStringField::new("narrative");
+        let mut preview = String::new();
+        let response = self.generate(request, cancel, &mut |chunk| {
+            let text = scanner.feed(chunk);
+            if !text.is_empty() {
+                preview.push_str(&text);
+                on_narrative(&text);
+            }
+        })?;
         let wire: StoryTurnWire = decode(&response)?;
         let turn = StoryTurn::try_from(wire).map_err(|error| invalid(error, &response))?;
-        on_narrative(turn.narrative().as_str());
+        if let Some(remainder) = turn.narrative().as_str().strip_prefix(&preview)
+            && !remainder.is_empty()
+        {
+            on_narrative(remainder);
+        }
         if cancel.is_cancelled() {
             return Err(cancelled(response.raw_response()));
         }
