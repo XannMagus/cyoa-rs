@@ -232,3 +232,10 @@ For the documentation-coverage probe, export reviewed HEAD to a temporary tree,
 append the unknown TOML table described above to its schema documentation, and run
 `cargo test -p cyoa-infrastructure schema_docs_cover_every_field_and_no_others`.
 The reviewed implementation passes despite that stale table.
+
+## Repair follow-up
+
+R1 repaired: the cast prompt accepts `WorldOutline`; the registered
+`generation_lifecycle` regression covers JSON outline → cast prompt → JSON cast →
+world selection → opening prompt, including namesakes and repaired IDs. No
+placeholder cast is needed. Application orchestration remains pending.

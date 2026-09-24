@@ -169,6 +169,13 @@
           "new_chapter_marker_carries_a_blank_filtered_title_and_so_does_continue",
           "world_outline_rejects_blank_title_or_description"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "generation_lifecycle",
+        "tests": [
+          "outline_to_selected_world_requires_no_placeholder_cast"
+        ]
       }
     ]
   },

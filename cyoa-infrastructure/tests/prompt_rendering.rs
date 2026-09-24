@@ -255,7 +255,7 @@ fn rendered_limits_reflect_the_supplied_value_not_a_constant() {
         ..Limits::default()
     };
     let (few_instructions, _) =
-        cast_generation_prompt(&Brief::new("brief").unwrap(), &world, &few_npcs);
+        cast_generation_prompt(&Brief::new("brief").unwrap(), world.outline(), &few_npcs);
     assert!(few_instructions.contains("between three and 3 other characters"));
 }
 
@@ -267,7 +267,7 @@ fn world_and_cast_prompts_interpolate_the_brief_and_world() {
     let world = world();
     let (_, cast_prompt) = cast_generation_prompt(
         &Brief::new("a rain-soaked city").unwrap(),
-        &world,
+        world.outline(),
         &Limits::default(),
     );
     assert!(cast_prompt.contains("The Mist City"));

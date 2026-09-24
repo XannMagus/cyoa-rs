@@ -269,3 +269,10 @@ Historical review probes are evidence of old defects, not current acceptance tes
 Changing tests and CI together can bypass any repository-local guard. Human review
 and making the CI job a required branch check are the final controls; this change
 does not configure remote branch protection or invent a reviewer identity.
+
+Generation-boundary follow-up (2026-09-24): ARCH-002 now also requires
+`outline_to_selected_world_requires_no_placeholder_cast`. Cast prompts consume
+`WorldOutline`, before any cast exists. The boundary regression deserializes real
+JSON shapes, preserves distinct namesakes, removes exact records, selects the
+actual protagonist, and checks repaired IDs reach the opening prompt. This does
+not yet establish application orchestration or backend call counts.

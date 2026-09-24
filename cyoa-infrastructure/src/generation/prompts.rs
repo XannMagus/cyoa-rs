@@ -12,7 +12,7 @@ use cyoa_core::{
     summary::StorySummary,
     text::Brief,
     turn::TurnRecord,
-    world::{PlayerCharacter, World, WorldOutline},
+    world::{PlayerCharacter, WorldOutline},
 };
 use minijinja::{Environment, UndefinedBehavior, context, value::Value as JinjaValue};
 use serde::Deserialize;
@@ -312,7 +312,11 @@ pub fn world_generation_prompt(brief: &Brief) -> (String, String) {
 
 /// LLM call #2 (calibre `cast_generation_prompt`, cyoa.py:948-954):
 /// `(instructions, prompt)`.
-pub fn cast_generation_prompt(brief: &Brief, world: &World, limits: &Limits) -> (String, String) {
+pub fn cast_generation_prompt(
+    brief: &Brief,
+    world: &WorldOutline,
+    limits: &Limits,
+) -> (String, String) {
     let prompts = cached_prompts();
     let env = environment();
     let instructions = render(
@@ -325,8 +329,8 @@ pub fn cast_generation_prompt(brief: &Brief, world: &World, limits: &Limits) -> 
         str_at(prompts, &["cast", "prompt"]),
         context! {
             world => context! {
-                title => world.outline().title().as_str(),
-                world_description => world.outline().description().as_str(),
+                title => world.title().as_str(),
+                world_description => world.description().as_str(),
             },
             brief => brief.as_str(),
         },
