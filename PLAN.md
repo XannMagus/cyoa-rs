@@ -788,6 +788,35 @@ you enable `serde_json/preserve_order`. `narrative` must be the first property o
 is pointless — alphabetically it would be third. Enable the feature and add a test asserting
 `StoryTurn`'s first property is `narrative`.
 
+**Implemented** in `cyoa-infrastructure/src/generation/{wire,schema}.rs` (not
+`cyoa-core`: `schemars`/`toml`/`minijinja` are architecture-check-forbidden there,
+per the "Project layout" Clean Architecture decision — the generic JSON `backend.rs`
+was scaffolding for exactly this boundary, not the final domain-facing API). `wire.rs`
+holds calibre-shaped request/response DTOs (`WorldOutlineWire`, `GeneratedCastWire`,
+`StoryTurnWire`, etc., each `#[schemars(rename = "...")]`d to calibre's own name so
+`$defs` keys line up 1:1 with `schema_docs.toml`'s tables) **and** their `TryFrom`/`From`
+mapping into `cyoa-core` domain types, colocated per struct rather than in a separate
+parsing function — the pattern is `~/code/clocker/src/timelog/timelogentry.rs`'s
+`TimeLogEntryDTO`, adapted because `cyoa-core` can't carry `#[serde(into/from)]` itself.
+This makes `wire.rs` the Rust home of calibre's `validated_world`/
+`validated_player_characters`/`validated_npcs`/`validated_turn` — `engine.rs` (not yet
+built) only orchestrates: call the backend, feed the stream scanner, call these
+conversions, call `GameState::commit_turn`. `schema.rs` builds each schema via
+`SchemaGenerator::default()` (schemars' default settings: `$defs`/`$ref` for nested
+types, not inlined) and injects `schema_docs.toml` descriptions (minijinja-rendered
+against the same `Limits` context prompts use) onto the generated structure, plus
+forces `additionalProperties: false` on every object schema to match the shape
+verified working in `01-claude-cli.md`.
+
+**⚠️ Open risk, not resolved by this slice:** whether `claude -p --json-schema` (or
+Codex's `--output-schema`) actually accepts a schema containing `$ref`/`$defs`, or
+needs everything inlined. The one real verified call in `01-claude-cli.md` used a
+flat, refless schema — nested types were never exercised live. Verify this with a
+real call before wiring either backend to `schema.rs`; if refs turn out to be
+rejected, switch to `SchemaSettings::default().with(|s| s.inline_subschemas = true)`
+and adjust `schema.rs`'s injector (it currently walks `$defs` by name; an inlined
+schema would need the injector called per-type at construction time instead).
+
 ## Streaming
 
 **Hand-roll the scanner; port `StreamingStringField` near line-for-line.** No crate fits:
@@ -925,6 +954,25 @@ Because we use `--json-schema`, there must be **no** "respond with only valid JS
 
 Do add one line: *"Emit the fields of the JSON object in the order they appear in the
 schema."* Calibre gets ordering free from Python field order; here it should be asked for.
+
+**Implemented** in `cyoa-infrastructure/src/generation/prompts.rs`, alongside
+`schema.rs` above (same crate, same layering reason). `defaults/prompts.toml`
+is the loaded, ready-to-use file (`reference/prompts.toml` stays the honest
+verbatim capture to diff against); it adds exactly one line beyond the
+reference capture — the schema-field-order sentence above — and was verified
+to contain no JSON-formatting directive already (a spot-check found none to
+strip, confirmed by an executable scan test, not left as a one-time visual
+check). `[quick_actions]`'s instructions render dynamically from its
+`kinds`/`requested` tables (a Rust loop reading the parsed TOML directly,
+not a minijinja `{% for %}` loop as originally sketched — editing a kind's
+meaning in TOML still changes the rendered text, which is the actual
+requirement) rather than the file's leftover `rendered_instructions` string,
+which is unused. `turn_prompt`'s branch logic is transcribed directly from
+`cyoa.py:1081-1127`, line-for-line, not reconstructed from the prose summary
+earlier in this document. XDG file loading itself (`$XDG_CONFIG_HOME/cyoa/...`)
+is **not yet wired** — `merge_per_key`/`startup_self_check` are pure functions
+over `toml::Value`, ready for `cyoa-cli`'s future `config.rs` to call once
+that exists; today's render functions always use the bundled defaults only.
 
 ## Persistence
 

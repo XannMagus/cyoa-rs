@@ -4,4 +4,5 @@
 //! this boundary; neither the domain nor application depends on this crate.
 
 pub mod backend;
+pub mod generation;
 pub mod image;

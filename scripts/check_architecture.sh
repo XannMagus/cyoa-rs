@@ -24,7 +24,7 @@ errors=$(cargo metadata --format-version 1 --no-deps --locked | jq -r '
             ($allowed[$name] | index($target)) == null) then
           "Forbidden dependency: \($name) -> \($target)"
         elif ((["cyoa-core", "cyoa-application"] | index($name)) != null and
-              (["clap", "ratatui", "crossterm", "serde_json"] | index($target)) != null) then
+              (["clap", "ratatui", "crossterm", "serde_json", "schemars", "toml", "minijinja"] | index($target)) != null) then
           "Outer-layer dependency in \($name): \($target)"
         else empty end
     end

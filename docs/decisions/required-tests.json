@@ -155,6 +155,20 @@
           "summary::StorySummary",
           "game::GameState"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "wire_mapping",
+        "tests": [
+          "blank_wire_fields_map_to_none_across_every_optional_field",
+          "upcoming_events_null_is_keep_empty_list_is_replace_with_no_threads",
+          "incomplete_generated_characters_are_dropped_not_erroring_the_whole_cast",
+          "unknown_quick_action_kind_deserializes_to_other_not_an_error",
+          "blank_quick_action_text_is_filtered_before_selection_not_a_hard_error",
+          "blank_narrative_is_rejected_but_blank_scene_description_is_not",
+          "new_chapter_marker_carries_a_blank_filtered_title_and_so_does_continue",
+          "world_outline_rejects_blank_title_or_description"
+        ]
       }
     ]
   },
@@ -165,8 +179,16 @@
   },
   {
     "id": "PROMPTS-001",
-    "coverage": "pending",
-    "checks": []
+    "coverage": "enforced",
+    "checks": [
+      {
+        "package": "cyoa-infrastructure",
+        "target": "prompt_rendering",
+        "tests": [
+          "opening_turn_prompt_includes_the_identity_review_addition_exactly_once"
+        ]
+      }
+    ]
   },
   {
     "id": "BACKENDS-001",
@@ -175,8 +197,36 @@
   },
   {
     "id": "PROMPTS-002",
-    "coverage": "pending",
-    "checks": []
+    "coverage": "partial",
+    "checks": [
+      {
+        "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "generation::schema::tests::schema_docs_cover_every_field_and_no_others",
+          "generation::schema::tests::story_turn_schema_lists_narrative_first",
+          "generation::schema::tests::schema_docs_placeholders_render_against_supplied_limits",
+          "generation::schema::tests::every_generated_object_schema_forbids_additional_properties"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "prompt_rendering",
+        "tests": [
+          "toml_override_merges_per_key_not_per_file",
+          "undefined_template_variable_is_a_render_error",
+          "loaded_instructions_contain_no_json_formatting_directive",
+          "loaded_turn_instructions_ask_for_schema_field_order",
+          "prose_contract_omits_tone_clause_when_tone_is_default",
+          "quick_action_instructions_change_when_kinds_table_is_overridden",
+          "rendered_limits_reflect_the_supplied_value_not_a_constant",
+          "world_and_cast_prompts_interpolate_the_brief_and_world",
+          "turn_prompt_bridge_and_transcript_appear_only_when_nonempty",
+          "interesting_event_includes_threads_only_when_present",
+          "player_input_versus_no_direction"
+        ]
+      }
+    ]
   },
   {
     "id": "PRODUCT-001",

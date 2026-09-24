@@ -1,0 +1,7 @@
+# Project-specific additions; reference/prompts.toml remains verbatim calibre.
+# Integrate into the opening-turn prompt only when the prompt renderer is ported.
+# This requests an identity-consistency check, not permission to remove stored ids:
+# the current SummaryUpdate schema has no character consolidation operation.
+
+[turn.prompt_parts]
+opening_identity_review = """Before writing the opening scene, check the supplied cast for accidental duplicate identities. Compare descriptions, backstories and relationships, not just names. Distinct people may share a name: preserve those namesakes and distinguish them using their stable ids and established details. Do not introduce an existing character again under an alias or a newly invented id. Use the supplied ids consistently and never change, swap or reuse them; send at most one update for each character."""

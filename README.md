@@ -21,7 +21,9 @@ The workspace and first domain slice are in place; gameplay is not implemented y
   stable ids, and invariant-preserving character/event delta merging.
 - `cyoa-application`: use-case layer with cancellation and the image port.
   Commands, queries, and story-generation ports will arrive with game types.
-- `cyoa-infrastructure`: low-level JSON backend contract and disabled image adapter.
+- `cyoa-infrastructure`: low-level JSON backend contract, disabled image adapter,
+  and `generation/` (wire DTOs + domain mapping, JSON Schema generation, TOML
+  prompt rendering).
 - `cyoa-presentation`: terminal interface, currently help and version output.
 - `cyoa-cli`: the `cyoa` executable and composition root.
 - `reference/`: the Python source and extracted material used to guide the port.
@@ -83,6 +85,21 @@ by `StoryTurn`'s field types), and `rewind`/derived views (`current_summary`,
 `chapters`, `prose_context`) are covered by ported and differential tests. Style
 and character-edit propagation (`apply_character_edits`) are not yet ported.
 
+A third slice adds `cyoa-infrastructure/src/generation/`: `wire.rs` (calibre-shaped
+request/response DTOs, each mapped into the matching `cyoa-core` domain type by a
+colocated `TryFrom`/`From` — the pattern behind `~/code/clocker`'s
+`TimeLogEntryDTO`, adapted since `cyoa-core` stays serde-free), `schema.rs`
+(`#[derive(JsonSchema)]` structure with `schema_docs.toml` descriptions injected
+onto it, checked field-for-field by an anti-drift test in both directions), and
+`prompts.rs` (TOML load, per-key override merge, `minijinja` rendering with
+`UndefinedBehavior::Strict`, one function per call site). `turn_prompt`'s control
+flow is transcribed directly from calibre's `turn_prompt` (cyoa.py:1081-1127), and
+the opening-turn identity-review addition (`reference/prompt-additions.toml`) is
+now actually wired in, appearing once and only on the opening turn. This slice's
+JSON schemas reference nested types via `$defs`/`$ref` (schemars' default); whether
+`claude -p --json-schema` accepts that shape, or needs everything inlined, is an
+open risk not yet verified against a live call — see `schema.rs`'s doc comment.
+
 Build and check with a stable Rust toolchain supporting edition 2024:
 
 ```sh
@@ -103,8 +120,9 @@ inward workspace dependencies, including dev/build dependencies, and rejects dir
 terminal/JSON dependencies in domain and application. The application imports only
 domain types and owns its ports; infrastructure implements them; presentation calls
 use cases. Only the composition root can depend on all layers. Remaining Phase 0
-work includes boundary DTO validation, application use cases, prompts, schemas,
-streaming, and a scripted generation adapter.
+work includes `engine.rs` (`generate_world`/`generate_cast`/`next_turn`), the
+`StreamingStringField` port, a `ScriptedBackend` test double, and application
+use cases.
 
 ## Where to start
 

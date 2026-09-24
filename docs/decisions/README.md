@@ -133,7 +133,8 @@ tests; the original Python module layout and old two-crate plan are not preceden
 
 ### ARCH-002 Domain types establish invariants
 
-**Partial: current constructors checked, future DTO/use-case mappings pending.**
+**Partial: constructors and wire-boundary DTO mappings checked, use-case
+mappings pending.**
 Prefer domain newtypes over interchangeable primitives; aliases are semantic only.
 Use checked construction for constraints and enums/typestate for legal alternatives.
 Do not assume valid fields imply a valid aggregate. Keep fields private when
@@ -144,9 +145,48 @@ callers to know tuple storage. String declaration macros must name their purpose
 
 Required tests include invalid constructors, independently typed values, selection
 ownership, and nonblank deltas; compile-fail tests complement runtime regressions.
-Future vendor/save DTOs must preserve tolerant wire defaults and null-vs-empty
-semantics while mapping through those constructors. Test boundary conversion before
-calling it complete. Evidence: architecture/domain decisions in PLAN, `6290701`.
+`cyoa-infrastructure`'s `generation::wire` now maps calibre-shaped request/response
+DTOs into these domain types, colocated per struct (the `clocker` `TimeLogEntryDTO`
+pattern): blank wire strings map to `None`, `upcoming_events`' null-vs-empty
+distinction survives the mapping, incomplete generated characters are dropped
+rather than failing the whole cast, and an unrecognized `QuickActionKind` maps to
+`Other` rather than erroring. Save DTOs remain future work. Evidence:
+architecture/domain decisions in PLAN, `6290701`, and `wire_mapping`'s tests.
+
+### PROMPTS-001 Opening-turn identity review
+
+**Enforced.** `reference/prompt-additions.toml`'s `opening_identity_review` is
+rendered into the opening turn's user prompt only, never repeated on a later
+turn, by `generation::prompts::turn_prompt` — the existing opening-turn call,
+not a separate paid LLM call. Preserves namesakes and established IDs; the
+current `SummaryUpdate` still cannot delete/consolidate existing characters,
+and prose must not act as a hidden merge command; this decision only adds the
+review instruction, not consolidation itself. Evidence:
+`opening_turn_prompt_includes_the_identity_review_addition_exactly_once`
+(cyoa-infrastructure).
+
+### PROMPTS-002 External templates and native structured output
+
+**Partial: templating and schema-description rules enforced; both-backend
+satisfaction pending.** TOML overrides merge per key, not per file
+(`toml_override_merges_per_key_not_per_file`). `UndefinedBehavior::Strict`
+turns a typo'd override variable into a render error, checked by a startup
+self-check function (`undefined_template_variable_is_a_render_error`). The
+loaded prompts contain no JSON-format directive
+(`loaded_instructions_contain_no_json_formatting_directive`) and explicitly
+ask the model to emit fields in schema order
+(`loaded_turn_instructions_ask_for_schema_field_order`) — a line PLAN.md
+calls for that does not exist in `reference/prompts.toml` and had to be
+authored. Schema descriptions are owned by `schema_docs.toml` and injected
+onto `#[derive(JsonSchema)]` structure, checked field-for-field in both
+directions by `schema_docs_cover_every_field_and_no_others`; `narrative`
+stays the first schema property; every generated object schema forbids
+additional properties. Evidence: cyoa-infrastructure's `prompt_rendering`
+and `lib` tests. Remaining before this can be "Enforced": verify a live
+backend actually accepts a schema referencing `$defs`/`$ref` (open risk
+noted in `schema.rs` — the one real verified call in `01-claude-cli.md`
+used a flat, refless schema), and confirm both backends satisfy the shared
+contract once each exists.
 
 ### TOOLING-001 No Python tooling dependency
 
@@ -158,17 +198,6 @@ a build/test dependency violates this decision even if the source uses it.
 
 ## Required future behavior — not implemented or claimed tested
 
-### PROMPTS-001 Opening-turn identity review
-
-**Pending.** Exact deduplication stays local. Add the prepared
-`reference/prompt-additions.toml` identity check to the existing opening-turn call,
-not a separate paid LLM call. Preserve namesakes and established IDs. The current
-SummaryUpdate cannot delete/consolidate existing characters; prose must not act as
-a hidden merge command. Acceptance: rendered opening prompt contains the addition,
-subsequent prompts do not repeat it, and a scripted generator observes one call.
-Any real semantic consolidation needs an explicitly approved schema/domain change.
-Evidence: `7a98aca` and the user's cast-construction decision.
-
 ### BACKENDS-001 Two co-equal subscription CLI backends
 
 **Pending.** Claude and Codex are peers behind inward-owned ports, not primary and
@@ -179,16 +208,6 @@ the other backend remains explicitly unverified when auth is unavailable. Option
 list-price estimates are not subscription charges. CLI flag facts come from each
 reference file's evidence, not inference from the other vendor. No fabricated live
 tests and no credentials/network required by this contract gate.
-
-### PROMPTS-002 External templates and native structured output
-
-**Pending.** TOML overrides merge per key. Strict undefined-variable handling and
-startup rendering checks are required. Port semantic instructions and Markdown
-prose rules; remove JSON-format directives that conflict with native schemas.
-Keep narrative first in schema/request order. Acceptance: template snapshots,
-override/default merge tests, schema-description coverage, field-order tests, and
-malformed template failure before generation. "Verbatim port" never overrides these
-explicit adaptations. Both backends must satisfy the shared schema contract.
 
 ### PRODUCT-001 Standalone TUI, persistence, export, and image boundary
 
