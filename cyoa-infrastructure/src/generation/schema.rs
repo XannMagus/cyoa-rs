@@ -18,7 +18,8 @@
 //! correctly, including following an arbitrary instruction stated only in a
 //! `$ref`'d nested field's `description` — but a root-level `"$schema"` key
 //! is rejected outright ("not a valid JSON Schema: no schema with key or ref
-//! ..."), which is `backend_compat::claude_cli::adapt`'s reason to exist.
+//! ..."), which is `backend_compat::claude_cli::adapt_schema`'s reason to
+//! exist.
 
 use std::sync::OnceLock;
 
@@ -61,9 +62,9 @@ fn doc_text(type_name: &str, key: &str, limits: &Limits) -> Option<String> {
     }))
 }
 
-fn inject_descriptions_for(value: &mut Value, type_name: &str, limits: &Limits) {
+fn inject_descriptions_for(mut value: Value, type_name: &str, limits: &Limits) -> Value {
     let Some(obj) = value.as_object_mut() else {
-        return;
+        return value;
     };
     if let Some(doc) = doc_text(type_name, "_doc", limits) {
         obj.insert("description".into(), Value::String(doc));
@@ -79,17 +80,19 @@ fn inject_descriptions_for(value: &mut Value, type_name: &str, limits: &Limits) 
             }
         }
     }
+    value
 }
 
 /// Every object-type schema (root and every `$defs` entry) forbids
 /// unlisted properties, matching the shape verified against a live
 /// `claude -p --json-schema` call in `01-claude-cli.md`.
-fn forbid_additional_properties(value: &mut Value) {
+fn forbid_additional_properties(mut value: Value) -> Value {
     if let Some(obj) = value.as_object_mut()
         && obj.contains_key("properties")
     {
         obj.insert("additionalProperties".into(), Value::Bool(false));
     }
+    value
 }
 
 /// The generic, backend-agnostic settings: full standards compliance
@@ -106,14 +109,15 @@ fn generator() -> SchemaGenerator {
 fn build_schema<T: JsonSchema>(root_type_name: &str, limits: &Limits) -> Value {
     let schema = generator().into_root_schema_for::<T>();
     let mut value = Value::from(schema);
-    inject_descriptions_for(&mut value, root_type_name, limits);
-    forbid_additional_properties(&mut value);
+    value = inject_descriptions_for(value, root_type_name, limits);
+    value = forbid_additional_properties(value);
     if let Some(defs) = value.get_mut("$defs").and_then(Value::as_object_mut) {
         let names: Vec<String> = defs.keys().cloned().collect();
         for name in names {
-            if let Some(def) = defs.get_mut(&name) {
-                inject_descriptions_for(def, &name, limits);
-                forbid_additional_properties(def);
+            if let Some(def) = defs.remove(&name) {
+                let def = inject_descriptions_for(def, &name, limits);
+                let def = forbid_additional_properties(def);
+                defs.insert(name, def);
             }
         }
     }

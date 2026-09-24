@@ -13,10 +13,11 @@ use serde_json::Value;
 /// `--json-schema` — never inside `generation::schema`'s generic builders,
 /// which other backends also call and which may have no objection to the
 /// key.
-pub fn adapt(schema: &mut Value) {
+pub fn adapt_schema(mut schema: Value) -> Value {
     if let Some(obj) = schema.as_object_mut() {
         obj.remove("$schema");
     }
+    schema
 }
 
 #[cfg(test)]
@@ -26,13 +27,12 @@ mod tests {
     use cyoa_core::limits::Limits;
 
     #[test]
-    fn adapt_strips_the_root_schema_key_and_nothing_else() {
-        let mut schema = story_turn_schema(&Limits::default());
-        let before = schema.clone();
-        adapt(&mut schema);
+    fn adapt_schema_strips_the_root_schema_key_and_nothing_else() {
+        let before = story_turn_schema(&Limits::default());
+        let schema = adapt_schema(before.clone());
         assert!(schema.get("$schema").is_none());
         let mut expected = before;
         expected.as_object_mut().unwrap().remove("$schema");
-        assert_eq!(schema, expected, "adapt must change nothing else");
+        assert_eq!(schema, expected, "adapt_schema must change nothing else");
     }
 }

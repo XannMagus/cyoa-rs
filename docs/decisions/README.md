@@ -216,12 +216,12 @@ runtime) was considered and deliberately deferred: with only two backends,
 one `pub mod` line per backend is simpler than the complexity is worth;
 revisit only if a third backend joins.
 
-Evidence: `backend_compat::claude_cli::adapt` strips `claude -p
+Evidence: `backend_compat::claude_cli::adapt_schema` strips `claude -p
 --json-schema`'s rejected root `"$schema"` key (verified live,
 `01-claude-cli.md`'s "Verified test #3"), in its own file, registered by one
 line in `backend_compat/mod.rs`. `generic_schemas_declare_a_root_schema_key`
 proves the shared builders keep the key;
-`adapt_strips_the_root_schema_key_and_nothing_else` proves the
+`adapt_schema_strips_the_root_schema_key_and_nothing_else` proves the
 adapter changes only that one key. This decision predates and generalizes
 past that one example: it governs any future `wire.rs`/`prompts.rs`
 backend-specific finding too, not only schema generation.

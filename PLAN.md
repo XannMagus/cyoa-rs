@@ -648,6 +648,23 @@ general architectural requirement, not just a request for runtime validation.
   parameterize every state machine.
 - Derive redundant data from a single source where possible. When retaining both
   raw and parsed data, construct them together and prevent independent mutation.
+- **Prefer functions that consume a value and return the transformed result
+  over functions that mutate through `&mut`.** A caller should be able to read
+  `let x = f(x, ..)` as "the new `x`", not have to trust that some other
+  function silently changed the `x` it already had. This applies to free
+  functions and helpers operating on a value someone just built or already
+  owns outright (schema/DTO adapters, TOML merges, prose accumulators, a
+  bounded collection's own `retain`/rebind operations). It does not apply to
+  `&mut self` methods on the type's own inherent `impl` (e.g. `GameState`'s
+  `commit_turn`/`rewind`/`set_style`, or a backend adapter's `&mut self`
+  handle to a live resource): a method is owned by the struct it mutates, so
+  it is context-aware by definition — the type's own invariants bound what
+  it can do to itself — which makes it legible and not prone to the "did
+  something silently change this?" bug class a free function's `&mut`
+  parameter invites. The value being transformed does not need to be small
+  for the free-function rule to apply: taking it by value only moves it, it
+  never clones it, so there is no performance cost to weigh against the
+  clarity gain.
 - Validate untrusted input at boundaries. Static guarantees begin after that
   validation; a typed backend response alone does not establish schema or game
   validity. Preserve raw diagnostics on failure and the engine's error-as-value,
@@ -833,7 +850,7 @@ plus one `pub mod` line registering it in `backend_compat/mod.rs` — never
 editing `schema.rs`, `wire.rs`, `prompts.rs`, or `claude_cli`'s file.
 Regression tests: `generic_schemas_declare_a_root_schema_key` (the generic
 contract keeps it) and
-`adapt_strips_the_root_schema_key_and_nothing_else` (the adapter, and
+`adapt_schema_strips_the_root_schema_key_and_nothing_else` (the adapter, and
 only the adapter, removes it). Codex's `--output-schema` behavior remains
 unverified — this test only exercised `claude -p`. A dynamic/plugin-style
 backend registry was considered and deliberately deferred — see `ARCH-003`

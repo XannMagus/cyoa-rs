@@ -305,8 +305,10 @@ impl TurnRecord {
         self.prompt_trace.as_ref()
     }
 
-    pub(crate) fn set_major_event_limit(&mut self, limit: MajorEventLimit) {
-        self.summary.set_major_event_limit(limit);
+    #[must_use = "rebinding a limit returns a new value; use the result to commit it"]
+    pub(crate) fn with_major_event_limit(mut self, limit: MajorEventLimit) -> Self {
+        self.summary = self.summary.with_major_event_limit(limit);
+        self
     }
 }
 

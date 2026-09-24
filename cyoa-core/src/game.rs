@@ -145,12 +145,13 @@ impl GameState {
         style: StoryStyle,
         original_limits: Limits,
         limit_policy: RestoreLimits,
-        mut turns: Vec<TurnRecord>,
+        turns: Vec<TurnRecord>,
     ) -> Self {
         let limits = limit_policy.resolve(original_limits);
-        for turn in &mut turns {
-            turn.set_major_event_limit(limits.max_major_events);
-        }
+        let turns = turns
+            .into_iter()
+            .map(|turn| turn.with_major_event_limit(limits.max_major_events))
+            .collect();
         Self {
             brief,
             world,

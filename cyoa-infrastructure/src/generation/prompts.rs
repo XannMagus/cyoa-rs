@@ -18,6 +18,15 @@ use minijinja::{Environment, UndefinedBehavior, context, value::Value as JinjaVa
 use serde::Deserialize;
 use serde_json::{Value as JsonValue, json};
 
+// These are the shipped *defaults* — compiled into the binary so it always
+// works out of the box and a corrupt/partial user config can never leave the
+// game with zero prompts. They are deliberately not meant to be hand-edited
+// for live tuning: that's what `$XDG_CONFIG_HOME/cyoa/{prompts,styles}.toml`
+// is for (PLAN.md's "TOML prompt externalization"), read from disk at
+// runtime and deep-merged over these defaults via `merge_per_key` — no
+// recompile needed for that path. That runtime loading isn't wired up yet
+// (it belongs to `cyoa-cli`'s future `config.rs`); `merge_per_key`/
+// `startup_self_check` below are the pure functions it will call.
 const PROMPTS_TOML: &str = include_str!("defaults/prompts.toml");
 const STYLES_TOML: &str = include_str!("defaults/styles.toml");
 const PROMPT_ADDITIONS_TOML: &str = include_str!("defaults/prompt_additions.toml");
@@ -41,10 +50,12 @@ fn cached_prompts() -> &'static toml::Table {
 }
 
 #[derive(Debug, Deserialize)]
+// `styles.toml` entries also carry a human-readable `name` (e.g. "Grimdark")
+// for a future style-picker UI (PLAN.md's Phase 6 style overlay); serde
+// ignores it here since nothing reads it yet, so it isn't a struct field —
+// add it back with a real accessor when that UI needs it.
 struct StyleEntry {
     key: String,
-    #[allow(dead_code)]
-    name: String,
     prompt: String,
 }
 
@@ -74,19 +85,19 @@ fn style_for_key<'a>(table: &'a [StyleEntry], key: Option<&str>) -> &'a StyleEnt
 /// a leaf value one turn deep in `base` that `override_` never mentions is
 /// left untouched, no matter how many sibling keys `override_` does set
 /// (PLAN.md: "merge per-key, not per-file").
-pub fn merge_per_key(base: &mut toml::Value, override_: &toml::Value) {
+pub fn merge_per_key(base: toml::Value, override_: &toml::Value) -> toml::Value {
     match (base, override_) {
-        (toml::Value::Table(base_table), toml::Value::Table(override_table)) => {
+        (toml::Value::Table(mut base_table), toml::Value::Table(override_table)) => {
             for (key, value) in override_table {
-                match base_table.get_mut(key) {
+                let merged = match base_table.remove(key) {
                     Some(existing) => merge_per_key(existing, value),
-                    None => {
-                        base_table.insert(key.clone(), value.clone());
-                    }
-                }
+                    None => value.clone(),
+                };
+                base_table.insert(key.clone(), merged);
             }
+            toml::Value::Table(base_table)
         }
-        (slot, value) => *slot = value.clone(),
+        (_, value) => value.clone(),
     }
 }
 
@@ -137,6 +148,10 @@ pub fn startup_self_check(prompts: &toml::Table) -> Result<(), minijinja::Error>
     Ok(())
 }
 
+/// `toml::Value::Table`/`Array` are TOML's equivalents of a JSON
+/// object/array (a `[section]`/inline `{ k = v }` vs. a `[ ... ]` list) —
+/// recurse through both so every leaf string anywhere in the tree gets
+/// rendered against the synthetic context.
 fn check_value(
     env: &Environment<'_>,
     value: &toml::Value,
@@ -388,7 +403,7 @@ fn summary_as_json(summary: &StorySummary) -> JsonValue {
     })
 }
 
-fn add_prose(parts: &mut Vec<String>, turns: &[TurnRecord]) {
+fn add_prose(mut parts: Vec<String>, turns: &[TurnRecord]) -> Vec<String> {
     for turn in turns {
         if let Some(input) = turn.input() {
             parts.push(format!("[The reader directs: {}]", input.as_str()));
@@ -397,6 +412,7 @@ fn add_prose(parts: &mut Vec<String>, turns: &[TurnRecord]) {
         parts.push(turn.turn().narrative().as_str().to_string());
         parts.push(String::new());
     }
+    parts
 }
 
 /// The user message sent with every turn (calibre `turn_prompt`,
@@ -421,12 +437,12 @@ pub fn turn_prompt(
     if !bridge.is_empty() {
         parts.push(str_at(prompts, &["turn", "prompt_parts", "bridge_header"]).to_string());
         parts.push(String::new());
-        add_prose(&mut parts, bridge);
+        parts = add_prose(parts, bridge);
     }
     if !transcript.is_empty() {
         parts.push(str_at(prompts, &["turn", "prompt_parts", "transcript_header"]).to_string());
         parts.push(String::new());
-        add_prose(&mut parts, transcript);
+        parts = add_prose(parts, transcript);
     }
 
     let input = player_input.filter(|text| !text.trim().is_empty());

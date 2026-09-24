@@ -97,9 +97,9 @@ fn parsed_override(toml_text: &str) -> toml::Value {
 
 #[test]
 fn toml_override_merges_per_key_not_per_file() {
-    let mut merged = toml::Value::Table(default_prompts());
+    let base = toml::Value::Table(default_prompts());
     let override_ = parsed_override("[world]\ninstructions = \"Custom instructions.\"");
-    merge_per_key(&mut merged, &override_);
+    let merged = merge_per_key(base, &override_);
     let merged = merged.as_table().unwrap();
     let default = default_prompts();
 
@@ -117,33 +117,31 @@ fn toml_override_merges_per_key_not_per_file() {
 fn undefined_template_variable_is_a_render_error() {
     assert!(startup_self_check(&default_prompts()).is_ok());
 
-    let mut merged = toml::Value::Table(default_prompts());
+    let base = toml::Value::Table(default_prompts());
     let broken = parsed_override("[world]\nprompt = \"Hello {{ nonexistent_var }}\"");
-    merge_per_key(&mut merged, &broken);
+    let merged = merge_per_key(base, &broken);
     assert!(startup_self_check(merged.as_table().unwrap()).is_err());
 }
 
-fn scan_for_banned_phrases(value: &toml::Value, banned: &[&str], hits: &mut Vec<String>) {
+fn scan_for_banned_phrases(value: &toml::Value, banned: &[&str]) -> Vec<String> {
     match value {
         toml::Value::String(s) => {
             let lower = s.to_lowercase();
-            for phrase in banned {
-                if lower.contains(phrase) {
-                    hits.push(s.clone());
-                }
+            if banned.iter().any(|phrase| lower.contains(phrase)) {
+                vec![s.clone()]
+            } else {
+                Vec::new()
             }
         }
-        toml::Value::Table(t) => {
-            for v in t.values() {
-                scan_for_banned_phrases(v, banned, hits);
-            }
-        }
-        toml::Value::Array(a) => {
-            for v in a {
-                scan_for_banned_phrases(v, banned, hits);
-            }
-        }
-        _ => {}
+        toml::Value::Table(t) => t
+            .values()
+            .flat_map(|v| scan_for_banned_phrases(v, banned))
+            .collect(),
+        toml::Value::Array(a) => a
+            .iter()
+            .flat_map(|v| scan_for_banned_phrases(v, banned))
+            .collect(),
+        _ => Vec::new(),
     }
 }
 
@@ -156,8 +154,7 @@ fn loaded_instructions_contain_no_json_formatting_directive() {
         "reply as json",
         "output only json",
     ];
-    let mut hits = Vec::new();
-    scan_for_banned_phrases(&toml::Value::Table(default_prompts()), &banned, &mut hits);
+    let hits = scan_for_banned_phrases(&toml::Value::Table(default_prompts()), &banned);
     assert!(hits.is_empty(), "found banned phrasing: {hits:?}");
 }
 
@@ -192,7 +189,7 @@ fn quick_action_instructions_change_when_kinds_table_is_overridden() {
     let default_text = quick_action_instructions(&default_prompts());
     assert!(default_text.contains("hold back, defend"));
 
-    let mut merged = toml::Value::Table(default_prompts());
+    let base = toml::Value::Table(default_prompts());
     let override_ = parsed_override(
         r#"
 [quick_actions]
@@ -203,7 +200,7 @@ label = "Cautious"
 meaning = "TEST MEANING"
 "#,
     );
-    merge_per_key(&mut merged, &override_);
+    let merged = merge_per_key(base, &override_);
     let overridden_text = quick_action_instructions(merged.as_table().unwrap());
     assert!(overridden_text.contains("TEST MEANING"));
     assert!(!overridden_text.contains("hold back, defend"));

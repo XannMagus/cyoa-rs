@@ -39,9 +39,11 @@ impl EventList {
         self.events.iter()
     }
 
-    fn retain_latest(&mut self, limit: MajorEventLimit) {
+    #[must_use = "retaining events returns a new list; use the result"]
+    fn retain_latest(mut self, limit: MajorEventLimit) -> Self {
         let discard = self.events.len().saturating_sub(limit.get());
         self.events.drain(..discard);
+        self
     }
 }
 
@@ -53,9 +55,11 @@ pub struct MajorEvents {
 }
 
 impl MajorEvents {
-    pub fn new(mut events: EventList, limit: MajorEventLimit) -> Self {
-        events.retain_latest(limit);
-        Self { events, limit }
+    pub fn new(events: EventList, limit: MajorEventLimit) -> Self {
+        Self {
+            events: events.retain_latest(limit),
+            limit,
+        }
     }
 
     pub fn events(&self) -> &EventList {
@@ -63,6 +67,14 @@ impl MajorEvents {
     }
     pub fn limit(&self) -> MajorEventLimit {
         self.limit
+    }
+
+    /// Rebinds this bounded list to a different limit, reapplying retention
+    /// immediately — a lower limit discards older events right away, and
+    /// raising it again cannot recover what was already discarded.
+    #[must_use = "rebinding a limit returns a new value; use the result to commit it"]
+    pub(crate) fn with_limit(self, limit: MajorEventLimit) -> Self {
+        Self::new(self.events, limit)
     }
 
     fn updated(&self, consolidated: &EventList, new: &EventList) -> Self {
@@ -146,9 +158,10 @@ impl StorySummary {
         &self.upcoming_events
     }
 
-    pub(crate) fn set_major_event_limit(&mut self, limit: MajorEventLimit) {
-        self.major_events.events.retain_latest(limit);
-        self.major_events.limit = limit;
+    #[must_use = "rebinding a limit returns a new value; use the result to commit it"]
+    pub(crate) fn with_major_event_limit(mut self, limit: MajorEventLimit) -> Self {
+        self.major_events = self.major_events.with_limit(limit);
+        self
     }
 
     /// Infallible after construction: no delta can erase required summary fields
