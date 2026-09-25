@@ -160,6 +160,51 @@ pub fn scenario_full(
     report_path: Option<&std::path::Path>,
     spawn_descendant_holding_stdout_ms: Option<u64>,
 ) -> String {
+    scenario_hanging(
+        stdout,
+        stderr,
+        exit_code,
+        drain_stdin,
+        report_path,
+        spawn_descendant_holding_stdout_ms,
+        None,
+    )
+}
+
+/// A single chunk written `repeat` times, for backpressure tests that need
+/// to exceed a pipe's buffer without an oversized argv (argv has its own OS
+/// size limit).
+pub fn repeated_chunk_scenario(
+    bytes: &[u8],
+    repeat: u32,
+    exit_code: i32,
+    report_path: Option<&std::path::Path>,
+) -> String {
+    serde_json::json!({
+        "stdout": [{"bytes": bytes, "wait_for_stdin_byte_first": false, "repeat": repeat}],
+        "stderr": [],
+        "drain_stdin": false,
+        "spawn_descendant_holding_stdout_ms": null,
+        "report_path": report_path.map(|p| p.to_string_lossy().into_owned()),
+        "exit_code": exit_code,
+    })
+    .to_string()
+}
+
+/// Full builder including `hang_ms`: the fixture sleeps this long after
+/// writing its report (if any) and before writing output/exiting, giving a
+/// test a real handshake for "the child is alive and idle" instead of a
+/// fixed sleep guessing at timing.
+#[allow(clippy::too_many_arguments)]
+pub fn scenario_hanging(
+    stdout: &[&[u8]],
+    stderr: &[&[u8]],
+    exit_code: i32,
+    drain_stdin: bool,
+    report_path: Option<&std::path::Path>,
+    spawn_descendant_holding_stdout_ms: Option<u64>,
+    hang_ms: Option<u64>,
+) -> String {
     let chunk = |bytes: &[u8]| {
         serde_json::json!({
             "bytes": bytes,
@@ -172,6 +217,7 @@ pub fn scenario_full(
         "drain_stdin": drain_stdin,
         "spawn_descendant_holding_stdout_ms": spawn_descendant_holding_stdout_ms,
         "report_path": report_path.map(|p| p.to_string_lossy().into_owned()),
+        "hang_ms": hang_ms,
         "exit_code": exit_code,
     })
     .to_string()
@@ -193,7 +239,7 @@ pub struct Report {
     pub argv: Vec<String>,
     pub stdin: Vec<u8>,
     #[serde(default)]
-    pub env: std::collections::BTreeMap<String, String>,
+    pub env_keys: std::collections::BTreeSet<String>,
     #[serde(default)]
     pub pid: u32,
     #[serde(default)]

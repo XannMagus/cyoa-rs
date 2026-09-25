@@ -17,7 +17,7 @@
 //! inherited and retained the pipes gets cleaned up, per the plan's
 //! process-group cleanup requirement.
 
-use super::{OutputStream, ProcessOutcome, ProcessSpec, SupervisorError};
+use super::{Lifecycle, OutputStream, ProcessOutcome, ProcessSpec, SupervisorError};
 use cyoa_application::cancellation::CancellationToken;
 use cyoa_core::text::TransportDiagnostics;
 use rustix::event::{PollFd, PollFlags, Timespec, poll};
@@ -59,37 +59,59 @@ fn kill_group_best_effort(pid: u32) {
     }
 }
 
-/// Owns the launched child. If `run` returns through any path that marks
-/// `reaped = true`, `Drop` is a no-op; otherwise (a panic unwinding out of
-/// `run`, or a future early-return this module forgets to route through
-/// cleanup) `Drop` itself kills the process group and best-effort reaps
-/// within [`REAP_GRACE`]. This is the guard the plan's "every exit path"
-/// requirement actually needs: normal-path cleanup happens in [`finish`],
-/// this is the backstop for the abnormal paths `finish` never runs on.
+/// Owns the launched child and its explicit lifecycle state. If `run`
+/// returns through any path that reaches [`ChildGuard::kill_and_reap`] (and
+/// so leaves `state` at [`Lifecycle::Reaped`]), `Drop` is a no-op;
+/// otherwise (a panic unwinding out of `run`, or a future early-return this
+/// module forgets to route through cleanup) `Drop` itself performs the same
+/// kill-and-reap as a backstop. This is the guard the plan's "every exit
+/// path" requirement actually needs: normal-path cleanup happens in
+/// [`finish`] (via this same method), this is the backstop for the
+/// abnormal paths `finish` never runs on.
 struct ChildGuard {
     child: Child,
-    reaped: bool,
+    state: Lifecycle,
 }
 
 impl ChildGuard {
-    fn pid(&self) -> u32 {
-        self.child.id()
+    /// Kills the whole process group, then best-effort reaps within
+    /// [`REAP_GRACE`], advancing `state` through `Stopping` -> `Reaped` (or
+    /// straight to `Reaped` if `try_wait` had already observed the exit
+    /// before this call). Idempotent: a second call is a cheap no-op.
+    fn kill_and_reap(&mut self) {
+        if self.state == Lifecycle::Reaped {
+            return;
+        }
+        if self.state == Lifecycle::Spawned {
+            self.state = Lifecycle::Stopping;
+        }
+        kill_group_best_effort(self.child.id());
+        let deadline = Instant::now() + REAP_GRACE;
+        loop {
+            match self.child.try_wait() {
+                Ok(Some(_)) => {
+                    self.state = Lifecycle::Reaped;
+                    return;
+                }
+                Err(_) => {
+                    // Can't observe the outcome further; leave `state` at
+                    // `Stopping`/`Exited` rather than falsely claiming Reaped.
+                    return;
+                }
+                Ok(None) => {
+                    if Instant::now() >= deadline {
+                        return; // REAP_GRACE expired without a confirmed reap
+                    }
+                    std::thread::sleep(Duration::from_millis(5));
+                }
+            }
+        }
     }
 }
 
 impl Drop for ChildGuard {
     fn drop(&mut self) {
-        if self.reaped {
-            return;
-        }
-        kill_group_best_effort(self.child.id());
-        let deadline = Instant::now() + REAP_GRACE;
-        while Instant::now() < deadline {
-            match self.child.try_wait() {
-                Ok(Some(_)) | Err(_) => return,
-                Ok(None) => std::thread::sleep(Duration::from_millis(5)),
-            }
-        }
+        self.kill_and_reap();
     }
 }
 
@@ -172,18 +194,10 @@ fn finish(
     mut stderr_diag: Vec<u8>,
     ending: Ending,
 ) -> Result<ProcessOutcome, SupervisorError> {
-    kill_group_best_effort(guard.pid());
     let mut discard = Vec::new();
     drain_into(&stdout, &mut stdout_diag, &mut discard, usize::MAX);
     drain_into(&stderr, &mut stderr_diag, &mut discard, usize::MAX);
-    let deadline = Instant::now() + REAP_GRACE;
-    while Instant::now() < deadline {
-        match guard.child.try_wait() {
-            Ok(Some(_)) | Err(_) => break,
-            Ok(None) => std::thread::sleep(Duration::from_millis(5)),
-        }
-    }
-    guard.reaped = true;
+    guard.kill_and_reap();
     let diagnostics = TransportDiagnostics::new(stdout_diag, stderr_diag);
     match ending {
         Ending::Cancelled => Err(SupervisorError::Cancelled { diagnostics }),
@@ -253,7 +267,7 @@ pub fn run(
     // panic unwinding through this function) reaches `ChildGuard::drop`.
     let mut guard = ChildGuard {
         child,
-        reaped: false,
+        state: Lifecycle::Spawned,
     };
 
     // Non-blocking so a full stdin pipe never needs a dedicated blocking
@@ -431,6 +445,7 @@ pub fn run(
         // Exit alone never wakes the poll set if a descendant still holds a
         // pipe open, so check every tick regardless of poll()'s result.
         if let Ok(Some(status)) = guard.child.try_wait() {
+            guard.state = Lifecycle::Exited;
             // One last non-blocking drain (into diagnostics AND the record
             // accumulator, in lockstep — see `drain_into`'s doc) before we
             // drop these fds for good.
@@ -449,7 +464,18 @@ pub fn run(
             }
             {
                 let mut discard = Vec::new();
-                drain_into(&stderr, &mut stderr_diag, &mut discard, stderr_bound);
+                if let DrainOutcome::BoundExceeded =
+                    drain_into(&stderr, &mut stderr_diag, &mut discard, stderr_bound)
+                {
+                    return finish(
+                        &mut guard,
+                        &stdout,
+                        &stderr,
+                        stdout_diag,
+                        stderr_diag,
+                        Ending::OutputBound(OutputStream::Stderr),
+                    );
+                }
             }
 
             match dispatch_records(&mut stdout_acc, on_record, cancel) {

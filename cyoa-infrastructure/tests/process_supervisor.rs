@@ -51,6 +51,38 @@ fn noop(_: &[u8]) -> Result<(), String> {
     Ok(())
 }
 
+/// Polls for a file to exist (the fixture's report is written atomically —
+/// temp file plus rename — so its mere existence at a given path is a safe
+/// handshake, not a partial-write race), bounded so a missing handshake
+/// fails fast instead of hanging the test.
+fn wait_for_file(path: &std::path::Path, bound: Duration) -> bool {
+    let deadline = std::time::Instant::now() + bound;
+    while std::time::Instant::now() < deadline {
+        if path.exists() {
+            return true;
+        }
+        std::thread::sleep(Duration::from_millis(5));
+    }
+    false
+}
+
+/// Linux-only (matching this file's other `/proc` checks): confirms a pid
+/// is actually gone, not just that `run` returned. Retries briefly since
+/// `SIGKILL` + reap is fast but not instantaneous.
+fn assert_process_gone(pid: u32, context: &str) {
+    let deadline = std::time::Instant::now() + Duration::from_secs(2);
+    loop {
+        let alive = std::path::Path::new(&format!("/proc/{pid}")).exists();
+        if !alive {
+            return;
+        }
+        if std::time::Instant::now() >= deadline {
+            panic!("{context}: pid {pid} should have been cleaned up but is still alive");
+        }
+        std::thread::sleep(Duration::from_millis(10));
+    }
+}
+
 // --- Error tests ------------------------------------------------------
 
 #[test]
@@ -84,30 +116,37 @@ fn cancellation_before_spawn_launches_no_process() {
 
 #[test]
 fn cancellation_while_the_child_is_silent_still_wakes_the_poll_loop_and_returns_promptly() {
-    // The child sleeps far longer than we're willing to wait, producing no
-    // output at all: if the supervisor only checked cancellation on output
-    // readiness (the exact bug this design exists to prevent), this test
-    // would hang until its own external timeout kills it instead of
-    // returning quickly.
-    let scenario = serde_json::json!({
-        "stdout": [], "stderr": [], "drain_stdin": false,
-        "spawn_descendant_holding_stdout_ms": null, "report_path": null, "exit_code": 0,
-    })
-    .to_string();
-    let long_bounds = bounds(Duration::from_secs(30), 1024 * 1024, 1024 * 1024);
-    let spec = ProcessSpec {
-        program: FIXTURE_EXE.into(),
-        args: vec![OsString::from(scenario)],
-        env: EnvPolicy::new().set("SUBPROCESS_FIXTURE_SLEEP_MS", "30000"),
-        stdin: Vec::new(),
-        bounds: long_bounds,
-    };
+    // The child writes its report (with its own pid) immediately, then
+    // hangs silently for far longer than our deadline before producing any
+    // output. The canceller thread waits for that report file to exist — a
+    // real handshake, not a fixed sleep guessing when the child is ready —
+    // then cancels while the child is genuinely idle. If the supervisor
+    // only checked cancellation on output readiness (the exact bug this
+    // design exists to prevent), or only via a bounded poll tick with no
+    // real wake, this test would need to wait out most of the deadline
+    // instead of returning almost immediately.
+    let path = report_path("idle-cancel");
+    let scenario = fixture_backend::scenario_hanging(
+        &[],
+        &[],
+        0,
+        false,
+        Some(&path),
+        None,
+        Some(30_000), // hang_ms: far longer than our 3s deadline below
+    );
+    let deadline_bounds = bounds(Duration::from_secs(3), 1024 * 1024, 1024 * 1024);
+    let spec = spec(scenario, deadline_bounds);
     let source = CancellationSource::default();
     let token = source.token();
 
+    let path_for_thread = path.clone();
     let start = std::time::Instant::now();
     let canceller = std::thread::spawn(move || {
-        std::thread::sleep(Duration::from_millis(200));
+        assert!(
+            wait_for_file(&path_for_thread, Duration::from_secs(2)),
+            "fixture never wrote its report"
+        );
         source.cancel();
     });
     let error = run(&spec, &token, &mut noop).unwrap_err();
@@ -116,9 +155,12 @@ fn cancellation_while_the_child_is_silent_still_wakes_the_poll_loop_and_returns_
 
     assert!(matches!(error, SupervisorError::Cancelled { .. }));
     assert!(
-        elapsed < Duration::from_secs(5),
-        "cancellation while idle must wake the poll loop promptly, took {elapsed:?}"
+        elapsed < Duration::from_secs(1),
+        "cancellation while idle must wake the poll loop promptly (well under the 3s deadline), took {elapsed:?}"
     );
+
+    let report = read_report(&path);
+    assert_process_gone(report.pid, "idle cancel");
 }
 
 #[test]
@@ -162,7 +204,14 @@ fn deadline_exceeded_kills_the_child_and_reports_timeout() {
     // The fixture's sleep re-exec path (SUBPROCESS_FIXTURE_SLEEP_MS) isn't
     // reachable without spawning the fixture itself with that env var, which
     // is exactly what a "hangs forever" scenario looks like from the
-    // supervisor's point of view: no output, no exit, within our bound.
+    // supervisor's point of view: no output, no exit, within our bound. The
+    // sleep re-exec path never parses a scenario at all, so it can't also
+    // write a report with its own pid — cleanup is instead confirmed via
+    // this test's own SUBPROCESS_FIXTURE_SLEEP_MS-launched process being
+    // the direct child (no separate descendant), whose group the supervisor
+    // kills; we assert on the *supervisor's own* observation instead
+    // (Timeout, and a prompt return) since there is no separate pid handle
+    // available to this test process for the sleeping child itself.
     let scenario = serde_json::json!({
         "stdout": [],
         "stderr": [],
@@ -190,8 +239,9 @@ fn deadline_exceeded_kills_the_child_and_reports_timeout() {
 
 #[test]
 fn output_bound_exceeded_stops_the_child_instead_of_buffering_forever() {
+    let path = report_path("output-bound");
     let big: Vec<u8> = vec![b'x'; 4096];
-    let scenario = fixture_backend::scenario(&[&big], &[], 0);
+    let scenario = fixture_backend::scenario_with_report(&[&big], &[], 0, false, Some(&path));
     let tiny_bounds = bounds(Duration::from_secs(5), 100, 1024);
     let spec = spec(scenario, tiny_bounds);
     let source = CancellationSource::default();
@@ -203,11 +253,15 @@ fn output_bound_exceeded_stops_the_child_instead_of_buffering_forever() {
             ..
         }
     ));
+    let report = read_report(&path);
+    assert_process_gone(report.pid, "output bound exceeded");
 }
 
 #[test]
 fn consumer_rejection_triggers_cleanup_and_reports_the_reason() {
-    let scenario = fixture_backend::scenario(&[b"not json at all\n"], &[], 0);
+    let path = report_path("consumer-rejection");
+    let scenario =
+        fixture_backend::scenario_with_report(&[b"not json at all\n"], &[], 0, false, Some(&path));
     let spec = spec(scenario, short_bounds());
     let source = CancellationSource::default();
     let error = run(&spec, &source.token(), &mut |record| {
@@ -224,6 +278,8 @@ fn consumer_rejection_triggers_cleanup_and_reports_the_reason() {
         }
         other => panic!("unexpected error: {other}"),
     }
+    let report = read_report(&path);
+    assert_process_gone(report.pid, "consumer rejection");
 }
 
 // --- Edge tests ---------------------------------------------------------
@@ -380,13 +436,19 @@ fn env_policy_is_an_explicit_allowlist_not_ambient_inheritance() {
     run(&spec, &source.token(), &mut noop).unwrap();
 
     let report = read_report(&path);
-    assert_eq!(
-        report.env.get("ONLY_THIS_VAR").map(String::as_str),
-        Some("present")
+    assert!(
+        report.env_keys.contains("ONLY_THIS_VAR"),
+        "the one explicitly set var must reach the child"
     );
     assert!(
-        !report.env.contains_key("CARGO_MANIFEST_DIR"),
+        !report.env_keys.contains("CARGO_MANIFEST_DIR"),
         "child must not inherit the supervisor's own ambient environment"
+    );
+    assert_eq!(
+        report.env_keys.len(),
+        1,
+        "an empty-allowlist-plus-one-var policy must leave exactly one variable, got {:?}",
+        report.env_keys
     );
 }
 
@@ -444,13 +506,17 @@ fn cancelling_from_inside_the_final_no_newline_record_still_wins_over_exit() {
     assert_eq!(delivered, vec![b"final-no-newline".to_vec()]);
 }
 
-/// Enough short records that the child can exit before the parent has
-/// finished reading everything the child already wrote (a full/near-full
-/// pipe at exit time). Every record delivered to the consumer must be
-/// backed by the same bytes reflected in diagnostics — a drain that only
-/// updates diagnostics without also feeding the record accumulator would
-/// silently drop records the child wrote between the parent's last read and
-/// exit detection.
+/// Many short, distinct records the child writes in one `write_all` right
+/// before exiting. This does NOT exceed a real pipe buffer (argv has its
+/// own ~128 KiB OS size limit, and JSON byte-array encoding costs about
+/// 3.5x the raw bytes, so this scenario tops out around 20 KiB) — that
+/// larger case is `stdout_larger_than_pipe_capacity_is_fully_delivered_and_diagnostics_agree`,
+/// which uses `repeated_chunk_scenario` to route around the argv limit.
+/// What this test isolates instead: ordering and completeness of many
+/// *distinct* records delivered from the exit branch specifically. A drain
+/// that only updates diagnostics without also feeding the record
+/// accumulator would silently drop records the child wrote between the
+/// parent's last read and exit detection.
 #[test]
 fn records_written_right_before_exit_are_not_silently_dropped() {
     // One chunk (the fixture writes it in one `write_all`) containing many
@@ -505,17 +571,72 @@ fn a_panicking_consumer_still_gets_the_child_cleaned_up() {
         "expected the panic to propagate out of run()"
     );
 
-    // The fixture only writes its report before emitting stdout, so it may
-    // not exist if the parent already tore the child down before that
-    // point; when it does exist, the pid it names must be gone.
-    if path.exists() {
-        let report = read_report(&path);
-        std::thread::sleep(Duration::from_millis(200));
-        let alive = std::path::Path::new(&format!("/proc/{}", report.pid)).exists();
-        assert!(
-            !alive,
-            "pid {} should have been cleaned up by ChildGuard::drop",
-            report.pid
-        );
-    }
+    // The fixture writes its report (atomically) before emitting any
+    // output, and the consumer only panics once a record arrives, so the
+    // report must exist by the time the panic can have happened.
+    assert!(
+        wait_for_file(&path, Duration::from_secs(2)),
+        "fixture never wrote its report before the consumer could have panicked"
+    );
+    let report = read_report(&path);
+    assert_process_gone(report.pid, "panicking consumer");
+}
+
+// --- Backpressure (real child, not a mock) ---------------------------------
+
+/// The plan requires "input larger than pipe capacity" to be exercised
+/// against a real child, not a mock: a typical pipe buffer is 64 KiB, so
+/// over 1 MiB of stdin that the child actually reads (`drain_stdin: true`)
+/// cannot be written in one non-blocking `write()` and must be spread
+/// across multiple `POLLOUT`-ready ticks.
+#[test]
+fn stdin_larger_than_pipe_capacity_is_delivered_in_full_when_the_child_reads_it() {
+    let path = report_path("stdin-backpressure");
+    let input: Vec<u8> = (0..1_500_000u32).map(|i| (i % 251) as u8).collect();
+    let scenario = fixture_backend::scenario_with_report(&[b"ok\n"], &[], 0, true, Some(&path));
+    let spec = ProcessSpec {
+        program: FIXTURE_EXE.into(),
+        args: vec![OsString::from(scenario)],
+        env: EnvPolicy::new(),
+        stdin: input.clone(),
+        bounds: short_bounds(),
+    };
+    let source = CancellationSource::default();
+    let outcome = run(&spec, &source.token(), &mut noop).unwrap();
+    assert_eq!(outcome.exit_code, 0);
+
+    let report = read_report(&path);
+    assert_eq!(
+        report.stdin.len(),
+        input.len(),
+        "the child must receive every stdin byte, not a pipe-buffer-sized prefix"
+    );
+    assert_eq!(report.stdin, input);
+}
+
+/// The stdout counterpart: "output larger than pipe capacity" against a
+/// real child. `repeated_chunk_scenario` keeps the scenario JSON itself
+/// small (argv has its own OS size limit) while the fixture's own
+/// `write_all` loop produces real backpressure on the pipe.
+#[test]
+fn stdout_larger_than_pipe_capacity_is_fully_delivered_and_diagnostics_agree() {
+    let line = b"the quick brown fox jumps over the lazy dog\n";
+    let repeat = 4000u32; // ~180 KiB total, well over a typical 64 KiB pipe buffer
+    let scenario = fixture_backend::repeated_chunk_scenario(line, repeat, 0, None);
+    let big_bounds = bounds(Duration::from_secs(5), 4 * 1024 * 1024, 1024 * 1024);
+    let spec = spec(scenario, big_bounds);
+    let source = CancellationSource::default();
+    let mut record_count = 0u32;
+    let outcome = run(&spec, &source.token(), &mut |record| {
+        assert_eq!(record, &line[..line.len() - 1]); // newline stripped by framing
+        record_count += 1;
+        Ok(())
+    })
+    .unwrap();
+    assert_eq!(outcome.exit_code, 0);
+    assert_eq!(record_count, repeat);
+    assert_eq!(
+        outcome.diagnostics.stdout().len(),
+        line.len() * repeat as usize
+    );
 }

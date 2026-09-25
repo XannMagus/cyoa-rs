@@ -395,7 +395,9 @@
           "cancelling_from_inside_the_record_consumer_wins_over_a_same_tick_exit",
           "cancelling_from_inside_the_final_no_newline_record_still_wins_over_exit",
           "records_written_right_before_exit_are_not_silently_dropped",
-          "a_panicking_consumer_still_gets_the_child_cleaned_up"
+          "a_panicking_consumer_still_gets_the_child_cleaned_up",
+          "stdin_larger_than_pipe_capacity_is_delivered_in_full_when_the_child_reads_it",
+          "stdout_larger_than_pipe_capacity_is_fully_delivered_and_diagnostics_agree"
         ]
       },
       {

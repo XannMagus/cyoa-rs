@@ -42,9 +42,18 @@ struct Scenario {
     /// true, the exact bytes read from stdin) to this file path before
     /// exiting. A handshake file, not a timing-based proof: lets a test
     /// confirm exactly what the child received, matching item 2's own
-    /// "can report argv/stdin" requirement.
+    /// "can report argv/stdin" requirement. Written atomically (temp file
+    /// plus rename) so a test polling for its existence never observes a
+    /// partial write.
     #[serde(default)]
     report_path: Option<String>,
+    /// If set, sleep this many milliseconds after writing the report (if
+    /// any) and before writing any output/exiting. Gives a test a real
+    /// handshake for "the child is alive and idle, waiting to be
+    /// cancelled" instead of a fixed sleep guessing at timing (the plan
+    /// forbids "timing-only sleeps as proof a child started/stopped").
+    #[serde(default)]
+    hang_ms: Option<u64>,
     exit_code: i32,
 }
 
@@ -52,13 +61,14 @@ struct Scenario {
 struct Report {
     argv: Vec<String>,
     stdin: Vec<u8>,
-    /// This process's own environment, so a test can assert the supervisor's
-    /// `EnvPolicy` is an explicit allowlist rather than silent inheritance
-    /// of the calling process's full environment (item 3, Decision 3). Built
-    /// from `vars_os` with a lossy string conversion rather than `vars()`,
-    /// which panics on any non-UTF-8 value — a real risk on a developer's
-    /// actual environment, not just a theoretical one.
-    env: std::collections::BTreeMap<String, String>,
+    /// This process's own environment variable NAMES ONLY (never values), so
+    /// a test can assert the supervisor's `EnvPolicy` is an explicit
+    /// allowlist rather than silent inheritance of the calling process's
+    /// full environment (item 3, Decision 3), without ever writing a real
+    /// environment's values (host tokens/credentials) into a report file
+    /// on disk. Built from `vars_os` (never `vars()`, which panics on any
+    /// non-UTF-8 value) with a lossy string conversion for the keys only.
+    env_keys: std::collections::BTreeSet<String>,
     /// This process's own pid, so a test can confirm cleanup actually
     /// terminated (and, once the reap grace period elapses, reaped) this
     /// exact process rather than only observing that `run` returned.
@@ -79,6 +89,16 @@ struct Chunk {
     /// chunk, letting a test control ordering against the parent's writes.
     #[serde(default)]
     wait_for_stdin_byte_first: bool,
+    /// Write `bytes` this many times in a row. Lets a small JSON scenario
+    /// (argv has its own OS size limit — `MAX_ARG_STRLEN` on Linux) still
+    /// produce enough total output to exceed a pipe's buffer, for real
+    /// backpressure tests.
+    #[serde(default = "one")]
+    repeat: u32,
+}
+
+fn one() -> u32 {
+    1
 }
 
 /// Recognized by a descendant re-exec (see `spawn_descendant_holding_stdout_ms`):
@@ -126,19 +146,22 @@ fn main() {
         let report = Report {
             argv,
             stdin: received_stdin,
-            env: std::env::vars_os()
-                .map(|(k, v)| {
-                    (
-                        k.to_string_lossy().into_owned(),
-                        v.to_string_lossy().into_owned(),
-                    )
-                })
+            env_keys: std::env::vars_os()
+                .map(|(k, _)| k.to_string_lossy().into_owned())
                 .collect(),
             pid: std::process::id(),
             descendant_pid,
         };
         let json = serde_json::to_string(&report).expect("serialize report");
-        let _ = std::fs::write(report_path, json);
+        // Write-then-rename: a test polling for this file's existence must
+        // never observe a partially written report.
+        let tmp_path = format!("{report_path}.tmp");
+        let _ = std::fs::write(&tmp_path, json);
+        let _ = std::fs::rename(&tmp_path, report_path);
+    }
+
+    if let Some(hang_ms) = scenario.hang_ms {
+        std::thread::sleep(std::time::Duration::from_millis(hang_ms));
     }
 
     write_chunks(&scenario.stdout, std::io::stdout().lock());
@@ -153,7 +176,9 @@ fn write_chunks(chunks: &[Chunk], mut out: impl Write) {
             let mut ack = [0u8; 1];
             let _ = std::io::stdin().read_exact(&mut ack);
         }
-        let _ = out.write_all(&chunk.bytes);
+        for _ in 0..chunk.repeat.max(1) {
+            let _ = out.write_all(&chunk.bytes);
+        }
         let _ = out.flush();
     }
 }
