@@ -494,6 +494,13 @@
           "request_files_live_through_execution_and_are_removed_on_every_outcome",
           "request_workspace_is_private_and_unique"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "backends::process::unix_impl::fault_tests::self_pipe_wakes_a_long_poll_without_removing_token_checks"
+        ]
       }
     ]
   },

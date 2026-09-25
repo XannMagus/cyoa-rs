@@ -1,0 +1,11 @@
+--- a/cyoa-infrastructure/src/backends/process/unix_impl.rs
++++ b/cyoa-infrastructure/src/backends/process/unix_impl.rs
+@@ -234,7 +234,7 @@
+             }),
+             Self::Exited => {
+                 let exit_code = status.and_then(|s| s.code()).unwrap_or(-1);
+-                if exit_code == 0 {
++                if exit_code == 0 || exit_code == 3 {
+                     Ok(ProcessOutcome {
+                         exit_code,
+                         diagnostics,

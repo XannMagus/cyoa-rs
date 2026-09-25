@@ -20,14 +20,18 @@ const CLEANUP_GRACE: Duration = Duration::from_secs(2);
 const READ_CHUNK: usize = 8192;
 
 /// Narrow fault seam: production always uses the real safe syscall APIs.
-#[derive(Default, Clone, Copy)]
+#[derive(Default, Clone)]
 struct Operations {
     #[cfg(test)]
     fault: Option<IoOperation>,
+    #[cfg(test)]
+    poll_tick: Option<Duration>,
+    #[cfg(test)]
+    poll_started: Option<std::sync::mpsc::SyncSender<()>>,
 }
 
 impl Operations {
-    fn check(self, operation: IoOperation) -> Result<(), IoFailure> {
+    fn check(&self, operation: IoOperation) -> Result<(), IoFailure> {
         #[cfg(test)]
         if self.fault == Some(operation) {
             return Err(Self::failure(
@@ -44,12 +48,12 @@ impl Operations {
             source: source.into(),
         }
     }
-    fn nonblocking(self, fd: impl AsFd) -> Result<(), IoFailure> {
+    fn nonblocking(&self, fd: impl AsFd) -> Result<(), IoFailure> {
         self.check(IoOperation::Nonblocking)?;
         let result = fcntl_getfl(&fd).and_then(|flags| fcntl_setfl(&fd, flags | OFlags::NONBLOCK));
         result.map_err(|e| Self::failure(IoOperation::Nonblocking, e))
     }
-    fn exited(self, child: &Child) -> Result<bool, IoFailure> {
+    fn exited(&self, child: &Child) -> Result<bool, IoFailure> {
         self.check(IoOperation::ObserveExit)?;
         // WNOWAIT retains the child's PID until group signaling is complete;
         // try_wait here would reap it and permit PID reuse before killpg.
@@ -60,7 +64,7 @@ impl Operations {
         .map(|status| status.is_some())
         .map_err(|e| Self::failure(IoOperation::ObserveExit, e))
     }
-    fn kill(self, child: &Child) -> Result<(), IoFailure> {
+    fn kill(&self, child: &Child) -> Result<(), IoFailure> {
         self.check(IoOperation::KillGroup)?;
         match kill_process_group(
             Pid::from_raw(child.id() as i32).expect("child PID"),
@@ -78,7 +82,7 @@ struct ChildGuard {
 }
 
 impl ChildGuard {
-    fn stop(&mut self, ops: Operations) -> Result<ExitStatus, IoFailure> {
+    fn stop(&mut self, ops: &Operations) -> Result<ExitStatus, IoFailure> {
         self.state = Lifecycle::Stopping;
         ops.kill(&self.child)?;
         let start = Instant::now();
@@ -111,7 +115,7 @@ impl ChildGuard {
 impl Drop for ChildGuard {
     fn drop(&mut self) {
         if self.state != Lifecycle::Reaped {
-            let _ = self.stop(Operations::default());
+            let _ = self.stop(&Operations::default());
         }
     }
 }
@@ -144,14 +148,14 @@ impl Capture {
             nonblocking: false,
         }
     }
-    fn configure(&mut self, ops: Operations) -> Result<(), IoFailure> {
+    fn configure(&mut self, ops: &Operations) -> Result<(), IoFailure> {
         ops.nonblocking(&self.fd)?;
         self.nonblocking = true;
         Ok(())
     }
     /// At most one small read per tick. One excess byte detects truncation;
     /// only the permitted prefix is retained, including during cleanup.
-    fn read_once(&mut self, ops: Operations) -> Result<bool, Ending> {
+    fn read_once(&mut self, ops: &Operations) -> Result<bool, Ending> {
         if !self.nonblocking || self.state != CaptureState::Open {
             return Ok(false);
         }
@@ -261,8 +265,8 @@ struct Supervisor<'a> {
 
 impl Supervisor<'_> {
     fn configure(&mut self) -> Result<(), IoFailure> {
-        self.stdout.configure(self.ops)?;
-        self.stderr.configure(self.ops)?;
+        self.stdout.configure(&self.ops)?;
+        self.stderr.configure(&self.ops)?;
         if let Some(stdin) = &self.stdin {
             self.ops.nonblocking(stdin)?;
         }
@@ -311,7 +315,10 @@ impl Supervisor<'_> {
             let Some(remaining) = self.spec.bounds.deadline().checked_sub(start.elapsed()) else {
                 return Err(Ending::Timeout);
             };
-            let tick = POLL_TICK.min(remaining);
+            let tick = POLL_TICK;
+            #[cfg(test)]
+            let tick = self.ops.poll_tick.unwrap_or(tick);
+            let tick = tick.min(remaining);
             let ts = Timespec {
                 tv_sec: tick.as_secs() as i64,
                 tv_nsec: tick.subsec_nanos() as i64,
@@ -334,6 +341,10 @@ impl Supervisor<'_> {
                     i
                 });
                 self.ops.check(IoOperation::Poll).map_err(Ending::Io)?;
+                #[cfg(test)]
+                if let Some(ready) = self.ops.poll_started.take() {
+                    ready.send(()).expect("test canceller is listening");
+                }
                 match poll(&mut fds, Some(&ts)) {
                     Ok(_) => {}
                     Err(rustix::io::Errno::INTR) => continue,
@@ -354,11 +365,11 @@ impl Supervisor<'_> {
                 self.write_once()?;
             }
             if ready[0] {
-                self.stdout.read_once(self.ops)?;
+                self.stdout.read_once(&self.ops)?;
                 self.dispatch(false)?;
             }
             if ready[1] {
-                self.stderr.read_once(self.ops)?;
+                self.stderr.read_once(&self.ops)?;
             }
             if self.ops.exited(&self.guard.child).map_err(Ending::Io)? {
                 return Ok(());
@@ -370,7 +381,7 @@ impl Supervisor<'_> {
         // Stop before collecting buffered tail bytes. Keep the zombie PID
         // reserved until group signaling, then verify the direct child's reap.
         let mut failures = Vec::new();
-        let status = match self.guard.stop(self.ops) {
+        let status = match self.guard.stop(&self.ops) {
             Ok(status) => Some(status),
             Err(error) => {
                 failures.push(error);
@@ -381,7 +392,7 @@ impl Supervisor<'_> {
         loop {
             let mut progress = false;
             for capture in [&mut self.stdout, &mut self.stderr] {
-                match capture.read_once(self.ops) {
+                match capture.read_once(&self.ops) {
                     Ok(read) => progress |= read,
                     Err(Ending::Io(error)) => failures.push(error),
                     Err(error) => {
@@ -537,6 +548,45 @@ fn run_with(
 #[cfg(test)]
 mod fault_tests {
     use super::*;
+    #[test]
+    fn self_pipe_wakes_a_long_poll_without_removing_token_checks() {
+        let mut request = spec();
+        request.program = "/bin/sleep".into();
+        request.args = vec!["30".into()];
+        request.stdin.clear();
+        request.bounds = super::super::ProcessBounds::new(
+            Duration::from_secs(5),
+            super::super::MaxStdoutBytes::new(100).unwrap(),
+            super::super::MaxStderrBytes::new(100).unwrap(),
+        )
+        .unwrap();
+        let source = cyoa_application::cancellation::CancellationSource::default();
+        let token = source.token();
+        let (ready, waiter) = std::sync::mpsc::sync_channel(1);
+        let canceller = std::thread::spawn(move || {
+            waiter
+                .recv_timeout(Duration::from_secs(5))
+                .expect("supervisor reached poll");
+            source.cancel();
+        });
+        let start = Instant::now();
+        let result = run_with(
+            &request,
+            &token,
+            &mut |_| Ok(()),
+            Operations {
+                poll_tick: Some(Duration::from_secs(2)),
+                poll_started: Some(ready),
+                ..Operations::default()
+            },
+        );
+        canceller.join().unwrap();
+        assert!(matches!(result, Err(SupervisorError::Cancelled { .. })));
+        assert!(
+            start.elapsed() < Duration::from_secs(1),
+            "waited for the two-second poll tick instead of the self-pipe"
+        );
+    }
     fn spec() -> ProcessSpec {
         ProcessSpec {
             workspace: super::super::RequestWorkspace::new().unwrap(),
@@ -568,6 +618,7 @@ mod fault_tests {
                 &mut |_| Ok(()),
                 Operations {
                     fault: Some(operation),
+                    ..Operations::default()
                 },
             )
             .unwrap_err();
@@ -594,6 +645,7 @@ mod fault_tests {
                 &mut |_| Err("bad record".into()),
                 Operations {
                     fault: Some(operation),
+                    ..Operations::default()
                 },
             )
             .unwrap_err();
@@ -619,9 +671,9 @@ mod fault_tests {
     fn fatal_read_error_is_not_treated_as_would_block() {
         let (_read, write) = pipe_with(PipeFlags::NONBLOCK).unwrap();
         let mut capture = Capture::new(write, 100, OutputStream::Stdout);
-        capture.configure(Operations::default()).unwrap();
+        capture.configure(&Operations::default()).unwrap();
         assert!(matches!(
-            capture.read_once(Operations::default()),
+            capture.read_once(&Operations::default()),
             Err(Ending::Io(_))
         ));
     }

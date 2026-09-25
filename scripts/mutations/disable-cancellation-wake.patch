@@ -1,0 +1,13 @@
+--- a/cyoa-infrastructure/src/backends/process/unix_impl.rs
++++ b/cyoa-infrastructure/src/backends/process/unix_impl.rs
+@@ -498,9 +498,7 @@
+     let (wake, writer) = pipe_with(PipeFlags::CLOEXEC | PipeFlags::NONBLOCK)
+         .map_err(|e| SupervisorError::Spawn(e.into()))?;
+     let writer = Arc::new(writer);
+-    let _wake_registration = cancel.subscribe(move || {
+-        let _ = rustix::io::write(writer.as_ref(), &[1]);
+-    });
++    let _keep_writer = writer;
+     let mut command = Command::new(&spec.program);
+     command
+         .args(&spec.args)

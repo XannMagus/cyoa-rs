@@ -1,0 +1,15 @@
+--- a/cyoa-infrastructure/src/backends/process/unix_impl.rs
++++ b/cyoa-infrastructure/src/backends/process/unix_impl.rs
+@@ -213,11 +213,7 @@
+         diagnostics: TransportDiagnostics,
+     ) -> Result<ProcessOutcome, SupervisorError> {
+         match self {
+-            Self::IncompleteInput { written, expected } => Err(SupervisorError::IncompleteInput {
+-                written,
+-                expected,
+-                diagnostics,
+-            }),
++            Self::IncompleteInput { .. } => Ok(ProcessOutcome { exit_code: 0, diagnostics }),
+             Self::Io(failure) => Err(SupervisorError::Io {
+                 failure,
+                 diagnostics,

@@ -87,3 +87,23 @@ asserts it disappeared. All process-existence assertions query the kernel with
 signal 0; absent Linux procfs cannot produce a false pass. Runtime evidence in this
 repair session is Linux only. Unix platforms lacking rustix's WNOWAIT waitid API
 return Unsupported instead of compiling a weaker cleanup path.
+
+## Persistent process mutations
+
+The shared gate now requires eleven mutations: the original four Phase 0 cases
+plus cap overflow, accepting incomplete input, ignoring the cancelled flag,
+accepting a failed process, swallowing a fatal reader error, disabling the wake
+subscription, and discarding the initiating cleanup cause. Each must compile and
+fail its exact registered test between passing baseline/restored runs. The runner
+now supports exact library unit tests as well as integration targets.
+
+A controlled test temporarily uses a two-second poll interval and signals a
+canceller only after the token check immediately preceding the poll. With silent
+pipes, the wake must return within one second; the normal 25 ms fallback and all
+authoritative flag checks remain unchanged. This test was added green-first and
+then proved red through the retained mutation, not presented as earlier TDD.
+The initial mutation merely removed the write and correctly survived: destruction
+of the callback closed the only writer, producing POLLHUP, another valid wake.
+The final mutation removes registration and holds the writer open, genuinely
+removing wake delivery. All eleven runtime mutations were detected in
+`/tmp/cyoa-fix-six-mutations.log`; compiler errors never count.

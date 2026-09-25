@@ -7,11 +7,14 @@ bash scripts/test_mutation_outcome.sh
 manifest=scripts/mutations/manifest.json
 registry=docs/decisions/required-tests.json
 jq -e --slurpfile registry "$registry" '
-  type == "array" and length >= 4
+  type == "array" and length >= 11
   and ([.[].id] | length == (unique | length))
   and ([.[].id] as $ids | all([
     "name-only-deduplication", "duplicate-opening-request",
-    "default-instead-of-active-limits", "commit-before-reporting-failure"
+    "default-instead-of-active-limits", "commit-before-reporting-failure",
+    "capture-past-limit", "accept-incomplete-input", "ignore-cancelled-token",
+    "accept-failed-process", "swallow-reader-error", "disable-cancellation-wake",
+    "discard-cleanup-cause"
   ][]; . as $id | $ids | index($id) != null))
   and all(.[];
     (.id | test("^[a-z-]+$"))
@@ -32,7 +35,9 @@ export CARGO_TARGET_DIR="$mutation_root/target"
 
 run_test() {
   local expected=$1 package=$2 target=$3 name=$4 log=$5 status=0
-  (cd "$mutation_root/work" && cargo test -p "$package" --test "$target" \
+  local -a target_args=(--test "$target")
+  if [[ "$target" == lib ]]; then target_args=(--lib); fi
+  (cd "$mutation_root/work" && cargo test -p "$package" "${target_args[@]}" \
     --locked --offline --color never -- "$name" --exact --test-threads=1) > "$log" 2>&1 || status=$?
   if ! assert_test_outcome "$expected" "$status" "$name" "$log"; then
     cat "$log" >&2

@@ -1,0 +1,11 @@
+--- a/cyoa-infrastructure/src/backends/process/unix_impl.rs
++++ b/cyoa-infrastructure/src/backends/process/unix_impl.rs
+@@ -183,7 +183,7 @@
+             Err(rustix::io::Errno::AGAIN | rustix::io::Errno::INTR) => Ok(false),
+             Err(e) => {
+                 self.state = CaptureState::Failed;
+-                Err(Ending::Io(Operations::failure(IoOperation::Read, e)))
++                { let _ = e; Ok(false) }
+             }
+         }
+     }

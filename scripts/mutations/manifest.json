@@ -1,6 +1,90 @@
 [
-  {"id":"name-only-deduplication","decision":"IDENTITY-001","package":"cyoa-infrastructure","target":"generation_use_cases","test":"scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls","file":"cyoa-core/src/world.rs"},
-  {"id":"duplicate-opening-request","decision":"PROMPTS-001","package":"cyoa-infrastructure","target":"generation_use_cases","test":"scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls","file":"cyoa-application/src/generation.rs"},
-  {"id":"default-instead-of-active-limits","decision":"LIMITS-001","package":"cyoa-infrastructure","target":"generation_use_cases","test":"restored_limits_reach_captured_prompt_schema_and_committed_memory","file":"cyoa-infrastructure/src/generation/templates/rendering.rs"},
-  {"id":"commit-before-reporting-failure","decision":"ACCEPTANCE-001","package":"cyoa-infrastructure","target":"phase_zero_acceptance","test":"full_story_preserves_contracts_through_failure_retry_cancellation_and_rewind","file":"cyoa-application/src/generation.rs"}
+  {
+    "id": "name-only-deduplication",
+    "decision": "IDENTITY-001",
+    "package": "cyoa-infrastructure",
+    "target": "generation_use_cases",
+    "test": "scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls",
+    "file": "cyoa-core/src/world.rs"
+  },
+  {
+    "id": "duplicate-opening-request",
+    "decision": "PROMPTS-001",
+    "package": "cyoa-infrastructure",
+    "target": "generation_use_cases",
+    "test": "scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls",
+    "file": "cyoa-application/src/generation.rs"
+  },
+  {
+    "id": "default-instead-of-active-limits",
+    "decision": "LIMITS-001",
+    "package": "cyoa-infrastructure",
+    "target": "generation_use_cases",
+    "test": "restored_limits_reach_captured_prompt_schema_and_committed_memory",
+    "file": "cyoa-infrastructure/src/generation/templates/rendering.rs"
+  },
+  {
+    "id": "commit-before-reporting-failure",
+    "decision": "ACCEPTANCE-001",
+    "package": "cyoa-infrastructure",
+    "target": "phase_zero_acceptance",
+    "test": "full_story_preserves_contracts_through_failure_retry_cancellation_and_rewind",
+    "file": "cyoa-application/src/generation.rs"
+  },
+  {
+    "id": "capture-past-limit",
+    "target": "process_supervisor",
+    "test": "captured_output_never_exceeds_either_configured_bound",
+    "decision": "STREAM-001",
+    "package": "cyoa-infrastructure",
+    "file": "cyoa-infrastructure/src/backends/process/unix_impl.rs"
+  },
+  {
+    "id": "accept-incomplete-input",
+    "target": "process_supervisor",
+    "test": "incomplete_request_delivery_cannot_report_success",
+    "decision": "STREAM-001",
+    "package": "cyoa-infrastructure",
+    "file": "cyoa-infrastructure/src/backends/process/unix_impl.rs"
+  },
+  {
+    "id": "ignore-cancelled-token",
+    "target": "process_supervisor",
+    "test": "cancelled_token_wins_even_before_its_notifier_runs",
+    "decision": "STREAM-001",
+    "package": "cyoa-infrastructure",
+    "file": "cyoa-infrastructure/src/backends/process/unix_impl.rs"
+  },
+  {
+    "id": "accept-failed-process",
+    "target": "process_supervisor",
+    "test": "failure_after_a_candidate_record_still_reports_nonzero_exit_not_success",
+    "decision": "STREAM-001",
+    "package": "cyoa-infrastructure",
+    "file": "cyoa-infrastructure/src/backends/process/unix_impl.rs"
+  },
+  {
+    "id": "swallow-reader-error",
+    "target": "lib",
+    "test": "backends::process::unix_impl::fault_tests::fatal_read_error_is_not_treated_as_would_block",
+    "decision": "STREAM-001",
+    "package": "cyoa-infrastructure",
+    "file": "cyoa-infrastructure/src/backends/process/unix_impl.rs"
+  },
+  {
+    "id": "disable-cancellation-wake",
+    "target": "lib",
+    "test": "backends::process::unix_impl::fault_tests::self_pipe_wakes_a_long_poll_without_removing_token_checks",
+    "decision": "STREAM-001",
+    "package": "cyoa-infrastructure",
+    "file": "cyoa-infrastructure/src/backends/process/unix_impl.rs"
+  },
+  {
+    "id": "discard-cleanup-cause",
+    "target": "lib",
+    "test": "backends::process::unix_impl::fault_tests::cleanup_failures_preserve_the_initiating_error",
+    "decision": "STREAM-001",
+    "package": "cyoa-infrastructure",
+    "file": "cyoa-infrastructure/src/backends/process/unix_impl.rs"
+  }
 ]

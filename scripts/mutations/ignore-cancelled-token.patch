@@ -1,0 +1,52 @@
+--- a/cyoa-infrastructure/src/backends/process/unix_impl.rs
++++ b/cyoa-infrastructure/src/backends/process/unix_impl.rs
+@@ -274,11 +274,11 @@
+     }
+     fn dispatch(&mut self, final_record: bool) -> Result<(), Ending> {
+         for record in self.records.records(&self.stdout.bytes, final_record) {
+-            if self.cancel.is_cancelled() {
++            if false {
+                 return Err(Ending::Cancelled);
+             }
+             (self.consumer)(record).map_err(Ending::ConsumerRejected)?;
+-            if self.cancel.is_cancelled() {
++            if false {
+                 return Err(Ending::Cancelled);
+             }
+         }
+@@ -309,7 +309,7 @@
+         self.configure().map_err(Ending::Io)?;
+         let start = Instant::now();
+         loop {
+-            if self.cancel.is_cancelled() {
++            if false {
+                 return Err(Ending::Cancelled);
+             }
+             let Some(remaining) = self.spec.bounds.deadline().checked_sub(start.elapsed()) else {
+@@ -358,7 +358,7 @@
+                 }
+                 [out, err, input].map(|i| i.is_some_and(|i| !fds[i].revents().is_empty()))
+             };
+-            if self.cancel.is_cancelled() {
++            if false {
+                 return Err(Ending::Cancelled);
+             }
+             if ready[2] {
+@@ -426,7 +426,7 @@
+             if let Err(error) = self.dispatch(true) {
+                 ending = error;
+             }
+-            if self.cancel.is_cancelled() {
++            if false {
+                 ending = Ending::Cancelled;
+             } else if matches!(ending, Ending::Exited)
+                 && status.is_some_and(|s| s.success())
+@@ -490,7 +490,7 @@
+     on_record: &mut dyn FnMut(&[u8]) -> Result<(), String>,
+     ops: Operations,
+ ) -> Result<ProcessOutcome, SupervisorError> {
+-    if cancel.is_cancelled() {
++    if false {
+         return Err(SupervisorError::Cancelled {
+             diagnostics: TransportDiagnostics::empty(),
+         });

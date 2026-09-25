@@ -499,3 +499,9 @@ must confirm actual PID disappearance, including timeout, through kernel livenes
 checks; absence of `/proc` is not evidence of cleanup. The exercised platform is
 Linux; other waitid-capable Unix builds remain unverified, and platforms without
 that primitive return `Unsupported`.
+
+The process gate also retains seven STREAM-001 mutations alongside the four
+Phase 0 mutations. The wake mutation disables registration while holding the pipe
+writer open, so neither a byte nor EOF can wake the poll; an isolated long-poll
+test distinguishes the wake from periodic token checks. Production correctness
+checks must never be removed simply to make a redundant mechanism testable.

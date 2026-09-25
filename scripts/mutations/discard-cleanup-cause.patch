@@ -1,0 +1,11 @@
+--- a/cyoa-infrastructure/src/backends/process/unix_impl.rs
++++ b/cyoa-infrastructure/src/backends/process/unix_impl.rs
+@@ -456,7 +456,7 @@
+                     .map(Box::new)
+             };
+             Err(SupervisorError::Cleanup {
+-                initial,
++                initial: None,
+                 failures,
+                 diagnostics,
+             })

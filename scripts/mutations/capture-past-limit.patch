@@ -1,0 +1,11 @@
+--- a/cyoa-infrastructure/src/backends/process/unix_impl.rs
++++ b/cyoa-infrastructure/src/backends/process/unix_impl.rs
+@@ -172,7 +172,7 @@
+                 Ok(false)
+             }
+             Ok(n) => {
+-                self.bytes.extend_from_slice(&chunk[..n.min(remaining)]);
++                self.bytes.extend_from_slice(&chunk[..n]);
+                 if n > remaining {
+                     self.state = CaptureState::Truncated;
+                     Err(Ending::OutputBound(self.stream))
