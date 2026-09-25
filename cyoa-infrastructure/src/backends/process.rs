@@ -183,6 +183,17 @@ pub struct ProcessOutcome {
 
 #[derive(Debug, thiserror::Error)]
 pub enum SupervisorError {
+    #[error("process I/O failed: {failure}")]
+    Io {
+        failure: IoFailure,
+        diagnostics: TransportDiagnostics,
+    },
+    #[error("process cleanup failed: {failures:?}; initiating failure: {initial:?}")]
+    Cleanup {
+        initial: Option<Box<SupervisorError>>,
+        failures: Vec<IoFailure>,
+        diagnostics: TransportDiagnostics,
+    },
     #[error("request delivery incomplete: wrote {written} of {expected} bytes")]
     IncompleteInput {
         written: usize,
@@ -224,6 +235,8 @@ impl SupervisorError {
                 TransportDiagnostics::empty()
             }
             SupervisorError::Cancelled { diagnostics }
+            | SupervisorError::Io { diagnostics, .. }
+            | SupervisorError::Cleanup { diagnostics, .. }
             | SupervisorError::IncompleteInput { diagnostics, .. }
             | SupervisorError::Timeout { diagnostics }
             | SupervisorError::NonzeroExit { diagnostics, .. }
@@ -233,73 +246,89 @@ impl SupervisorError {
     }
 }
 
-/// Splits complete newline-terminated records off the front of `buf`,
-/// leaving any trailing partial record in place. Pure, vendor-blind byte
-/// framing: `\n` is the only delimiter; a preceding `\r` (CRLF framing)
-/// stays attached to its record rather than being stripped, since this
-/// layer must not assume vendor content shape.
-fn split_records(buf: &mut Vec<u8>) -> Vec<Vec<u8>> {
-    let mut records = Vec::new();
-    let mut start = 0;
-    while let Some(offset) = buf[start..].iter().position(|&b| b == b'\n') {
-        let end = start + offset;
-        records.push(buf[start..end].to_vec());
-        start = end + 1;
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum IoOperation {
+    Nonblocking,
+    Read,
+    Write,
+    Poll,
+    ObserveExit,
+    KillGroup,
+    Reap,
+}
+
+#[derive(Debug, thiserror::Error)]
+#[error("{operation:?}: {source}")]
+pub struct IoFailure {
+    pub operation: IoOperation,
+    #[source]
+    pub source: std::io::Error,
+}
+
+/// Offsets into the owned stdout capture: framing never duplicates its buffer.
+#[derive(Default)]
+struct RecordFramer {
+    start: usize,
+    scanned: usize,
+}
+
+impl RecordFramer {
+    fn records<'a>(&mut self, bytes: &'a [u8], final_record: bool) -> Vec<&'a [u8]> {
+        let mut records = Vec::new();
+        for (offset, byte) in bytes[self.scanned..].iter().enumerate() {
+            if *byte == b'\n' {
+                let end = self.scanned + offset;
+                records.push(&bytes[self.start..end]);
+                self.start = end + 1;
+            }
+        }
+        self.scanned = bytes.len();
+        if final_record && self.start < bytes.len() {
+            records.push(&bytes[self.start..]);
+            self.start = bytes.len();
+        }
+        records
     }
-    buf.drain(0..start);
-    records
 }
 
 #[cfg(test)]
 mod split_record_tests {
-    use super::split_records;
-
+    use super::RecordFramer;
     #[test]
     fn empty_buffer_yields_no_records_and_stays_empty() {
-        let mut buf = Vec::new();
-        assert_eq!(split_records(&mut buf), Vec::<Vec<u8>>::new());
-        assert!(buf.is_empty());
+        assert!(RecordFramer::default().records(b"", false).is_empty());
     }
-
     #[test]
     fn a_single_complete_record_is_extracted_and_removed() {
-        let mut buf = b"hello\n".to_vec();
-        assert_eq!(split_records(&mut buf), vec![b"hello".to_vec()]);
-        assert!(buf.is_empty());
+        let mut framer = RecordFramer::default();
+        assert_eq!(framer.records(b"hello\n", false), vec![b"hello"]);
+        assert!(framer.records(b"hello\n", true).is_empty());
     }
-
     #[test]
     fn a_trailing_partial_record_without_newline_remains_buffered() {
-        let mut buf = b"one\ntwo".to_vec();
-        assert_eq!(split_records(&mut buf), vec![b"one".to_vec()]);
-        assert_eq!(buf, b"two".to_vec());
+        let mut framer = RecordFramer::default();
+        assert_eq!(framer.records(b"one\ntwo", false), vec![b"one"]);
+        assert_eq!(framer.records(b"one\ntwo", true), vec![b"two"]);
     }
-
     #[test]
     fn crlf_records_keep_the_carriage_return_attached_to_the_record() {
-        let mut buf = b"one\r\ntwo\r\n".to_vec();
         assert_eq!(
-            split_records(&mut buf),
-            vec![b"one\r".to_vec(), b"two\r".to_vec()]
+            RecordFramer::default().records(b"one\r\ntwo\r\n", false),
+            vec![b"one\r", b"two\r"]
         );
-        assert!(buf.is_empty());
     }
-
     #[test]
     fn an_empty_record_between_two_newlines_is_preserved_as_empty() {
-        let mut buf = b"a\n\nb\n".to_vec();
         assert_eq!(
-            split_records(&mut buf),
-            vec![b"a".to_vec(), Vec::new(), b"b".to_vec()]
+            RecordFramer::default().records(b"a\n\nb\n", false),
+            vec![b"a".as_slice(), b"", b"b"]
         );
     }
-
     #[test]
     fn feeding_bytes_across_multiple_calls_reassembles_a_split_record() {
-        let mut buf = b"hel".to_vec();
-        assert_eq!(split_records(&mut buf), Vec::<Vec<u8>>::new());
-        buf.extend_from_slice(b"lo\n");
-        assert_eq!(split_records(&mut buf), vec![b"hello".to_vec()]);
+        let mut framer = RecordFramer::default();
+        assert!(framer.records(b"hel", false).is_empty());
+        assert_eq!(framer.records(b"hello\n", false), vec![b"hello"]);
     }
 }
 

@@ -685,3 +685,113 @@ fn cancelled_token_wins_even_before_its_notifier_runs() {
         "cancelled token yielded {result:?}"
     );
 }
+
+#[test]
+fn captured_output_never_exceeds_either_configured_bound() {
+    for stderr in [false, true] {
+        let path = report_path(if stderr { "stderr-cap" } else { "stdout-cap" });
+        let bytes = vec![b'x'; 4096];
+        let scenario = if stderr {
+            fixture_backend::scenario_with_report(&[], &[&bytes], 0, false, Some(&path))
+        } else {
+            fixture_backend::scenario_with_report(&[&bytes], &[], 0, false, Some(&path))
+        };
+        let spec = spec(scenario, bounds(Duration::from_secs(2), 100, 100));
+        let error = run(&spec, &CancellationSource::default().token(), &mut noop).unwrap_err();
+        assert!(matches!(error, SupervisorError::OutputBoundExceeded { .. }));
+        let diagnostics = error.diagnostics();
+        let capture = if stderr {
+            diagnostics.stderr_capture()
+        } else {
+            diagnostics.stdout_capture()
+        };
+        assert_eq!(
+            capture.completeness(),
+            cyoa_application::diagnostics::CaptureCompleteness::Prefix
+        );
+        let captured = if stderr {
+            diagnostics.stderr()
+        } else {
+            diagnostics.stdout()
+        };
+        let report = read_report(&path);
+        assert_process_gone(report.pid, "capture limit");
+        assert_eq!(captured, vec![b'x'; 100]);
+    }
+}
+
+#[test]
+fn capture_at_the_exact_bound_is_complete_and_preserves_arbitrary_bytes() {
+    use cyoa_application::diagnostics::CaptureCompleteness;
+    let bytes = [0xff, b'\r', b'\n', 0xfe];
+    let scenario = fixture_backend::scenario(&[&bytes], &[&bytes], 0);
+    let outcome = run(
+        &spec(scenario, bounds(Duration::from_secs(5), 4, 4)),
+        &CancellationSource::default().token(),
+        &mut noop,
+    )
+    .unwrap();
+    assert_eq!(outcome.diagnostics.stdout(), bytes);
+    assert_eq!(outcome.diagnostics.stderr(), bytes);
+    assert_eq!(
+        outcome.diagnostics.stdout_capture().completeness(),
+        CaptureCompleteness::Complete
+    );
+    assert_eq!(
+        outcome.diagnostics.stderr_capture().completeness(),
+        CaptureCompleteness::Complete
+    );
+}
+
+#[test]
+fn cancellation_and_deadline_stop_continuous_writers_with_bounded_diagnostics() {
+    for stderr in [false, true] {
+        for cancel in [false, true] {
+            let path = report_path(&format!("continuous-{stderr}-{cancel}"));
+            let chunks = serde_json::json!([{"bytes": vec![b'x'; 1024], "repeat": u32::MAX, "repeat_delay_ms": if cancel { 0 } else { 1 }}]);
+            let scenario = serde_json::json!({
+                "stdout": if stderr { serde_json::json!([]) } else {chunks.clone()},
+                "stderr": if stderr { chunks } else {serde_json::json!([])},
+                "report_path": path, "exit_code": 0,
+            })
+            .to_string();
+            let source = CancellationSource::default();
+            let token = source.token();
+            let handshake = path.clone();
+            let canceller = cancel.then(|| {
+                std::thread::spawn(move || {
+                    assert!(wait_for_file(&handshake, Duration::from_secs(2)));
+                    source.cancel();
+                })
+            });
+            let start = std::time::Instant::now();
+            let error = run(
+                &spec(
+                    scenario,
+                    bounds(
+                        Duration::from_millis(80),
+                        64 * 1024 * 1024,
+                        64 * 1024 * 1024,
+                    ),
+                ),
+                &token,
+                &mut noop,
+            )
+            .unwrap_err();
+            if let Some(canceller) = canceller {
+                canceller.join().unwrap();
+            }
+            assert!(
+                matches!(
+                    error,
+                    SupervisorError::Cancelled { .. } | SupervisorError::Timeout { .. }
+                ),
+                "{error}"
+            );
+            assert!(start.elapsed() < Duration::from_secs(2));
+            assert!(error.diagnostics().stdout().len() <= 64 * 1024 * 1024);
+            assert!(error.diagnostics().stderr().len() <= 64 * 1024 * 1024);
+            assert_process_gone(read_report(&path).pid, "continuous writer");
+        }
+    }
+}

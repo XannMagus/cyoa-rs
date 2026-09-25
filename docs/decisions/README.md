@@ -470,3 +470,16 @@ bytes are known to be undelivered. The earlier broken-stdin success test encoded
 incorrect policy and is replaced with a failure assertion, per the authorized review
 repair. Cancellation state is authoritative; wake notifications are only an
 optimization and delayed callbacks cannot override an already-cancelled token.
+
+### Supervisor repair decisions (2026-09-25)
+
+STREAM-001/TEXT-001 require finite work per readiness iteration and capped capture
+on every exit path. Diagnostics retain exact available bytes up to each configured
+bound, with explicit `Complete` versus `Prefix` metadata; a prefix never invents a
+missing-byte count. Group shutdown precedes final capture. Observing exit must not
+reap/release the child's PID before signaling its group. Success requires verified
+reaping, complete input delivery and no fatal I/O/cleanup failure. Initiating and
+cleanup failures remain independently inspectable. The guard's best-effort Drop
+is only an unwinding backstop. Resource-owning capture/framer/supervisor methods
+implement these transitions; callers cannot bypass them through mutable buffers.
+See the [repair evidence](../../reviews/2026-09-25-supervisor-repairs/README.md).

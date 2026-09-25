@@ -458,6 +458,24 @@
           "incomplete_request_delivery_cannot_report_success",
           "cancelled_token_wins_even_before_its_notifier_runs"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "process_supervisor",
+        "tests": [
+          "captured_output_never_exceeds_either_configured_bound",
+          "capture_at_the_exact_bound_is_complete_and_preserves_arbitrary_bytes",
+          "cancellation_and_deadline_stop_continuous_writers_with_bounded_diagnostics"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "backends::process::unix_impl::fault_tests::fatal_read_error_is_not_treated_as_would_block",
+          "backends::process::unix_impl::fault_tests::setup_write_read_poll_and_exit_observation_failures_are_errors",
+          "backends::process::unix_impl::fault_tests::cleanup_failures_preserve_the_initiating_error"
+        ]
       }
     ]
   },

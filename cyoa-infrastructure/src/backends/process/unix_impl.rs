@@ -1,103 +1,108 @@
-//! Real Unix process supervisor: `Command` + a synchronous poll loop over
-//! stdout/stderr/self-pipe readiness and non-blocking stdin write-readiness,
-//! per `docs/plans/phase1-headless-backends.md`'s "Cancellation and cleanup
-//! must work without output" contract.
-//!
-//! Known undelivered input is a failure even if the child exits zero.
-//!
-//! Every exit path (including ordinary success, and a panic unwinding out of
-//! this function via [`ChildGuard`]'s `Drop`) sends `SIGKILL` to the whole
-//! process group before returning: this is how a descendant that has
-//! inherited and retained the pipes gets cleaned up, per the plan's
-//! process-group cleanup requirement.
+//! Synchronous, fair pipe polling. The child group is stopped before final
+//! bounded capture and the direct child is reaped before success is possible.
 
-use super::{Lifecycle, OutputStream, ProcessOutcome, ProcessSpec, SupervisorError};
+use super::{
+    IoFailure, IoOperation, Lifecycle, OutputStream, ProcessOutcome, ProcessSpec, SupervisorError,
+};
 use cyoa_application::cancellation::CancellationToken;
-use cyoa_application::diagnostics::TransportDiagnostics;
+use cyoa_application::diagnostics::{CapturedBytes, TransportDiagnostics};
 use rustix::event::{PollFd, PollFlags, Timespec, poll};
 use rustix::fs::{OFlags, fcntl_getfl, fcntl_setfl};
 use rustix::pipe::{PipeFlags, pipe_with};
-use rustix::process::{Pid, Signal, kill_process_group};
-use std::os::fd::AsFd;
-use std::process::{Child, ChildStdin, Command, Stdio};
+use rustix::process::{Pid, Signal, WaitId, WaitIdOptions, kill_process_group, waitid};
+use std::os::fd::{AsFd, OwnedFd};
+use std::process::{Child, ChildStdin, Command, ExitStatus, Stdio};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 
-/// How long a single `poll()` call waits before we re-check the deadline and
-/// call `Child::try_wait()` again. Exit alone never wakes the poll set (a
-/// descendant can hold the pipe open with no `POLLHUP`), so this tick is the
-/// portable fallback the plan explicitly sanctions in place of a Linux-only
-/// pidfd: bounded, and short enough that deadline/exit detection stays
-/// responsive without busy-looping.
 const POLL_TICK: Duration = Duration::from_millis(25);
+const CLEANUP_GRACE: Duration = Duration::from_secs(2);
+const READ_CHUNK: usize = 8192;
 
-/// How long we keep polling `try_wait()` for the reap to land after sending
-/// `SIGKILL`, before giving up. A killed process should be reaped almost
-/// immediately; this is a safety bound, not an expected wait. If this
-/// expires the child may still be a zombie; the caller only learns this if
-/// it separately checks the pid (see the supervisor's own tests) — `run`
-/// itself still returns the outcome its transport observation earned.
-const REAP_GRACE: Duration = Duration::from_secs(2);
+/// Narrow fault seam: production always uses the real safe syscall APIs.
+#[derive(Default, Clone, Copy)]
+struct Operations {
+    #[cfg(test)]
+    fault: Option<IoOperation>,
+}
 
-fn nonblocking(fd: impl AsFd) {
-    if let Ok(flags) = fcntl_getfl(&fd) {
-        let _ = fcntl_setfl(&fd, flags | OFlags::NONBLOCK);
+impl Operations {
+    fn check(self, operation: IoOperation) -> Result<(), IoFailure> {
+        #[cfg(test)]
+        if self.fault == Some(operation) {
+            return Err(Self::failure(
+                operation,
+                std::io::Error::other("injected syscall failure"),
+            ));
+        }
+        let _ = operation;
+        Ok(())
+    }
+    fn failure(operation: IoOperation, source: impl Into<std::io::Error>) -> IoFailure {
+        IoFailure {
+            operation,
+            source: source.into(),
+        }
+    }
+    fn nonblocking(self, fd: impl AsFd) -> Result<(), IoFailure> {
+        self.check(IoOperation::Nonblocking)?;
+        let result = fcntl_getfl(&fd).and_then(|flags| fcntl_setfl(&fd, flags | OFlags::NONBLOCK));
+        result.map_err(|e| Self::failure(IoOperation::Nonblocking, e))
+    }
+    fn exited(self, child: &Child) -> Result<bool, IoFailure> {
+        self.check(IoOperation::ObserveExit)?;
+        // WNOWAIT retains the child's PID until group signaling is complete;
+        // try_wait here would reap it and permit PID reuse before killpg.
+        waitid(
+            WaitId::Pid(Pid::from_raw(child.id() as i32).expect("child PID")),
+            WaitIdOptions::EXITED | WaitIdOptions::NOHANG | WaitIdOptions::NOWAIT,
+        )
+        .map(|status| status.is_some())
+        .map_err(|e| Self::failure(IoOperation::ObserveExit, e))
+    }
+    fn kill(self, child: &Child) -> Result<(), IoFailure> {
+        self.check(IoOperation::KillGroup)?;
+        match kill_process_group(
+            Pid::from_raw(child.id() as i32).expect("child PID"),
+            Signal::KILL,
+        ) {
+            Ok(()) | Err(rustix::io::Errno::SRCH) => Ok(()),
+            Err(e) => Err(Self::failure(IoOperation::KillGroup, e)),
+        }
     }
 }
 
-/// Best-effort: a process that already exited is a benign ESRCH, not an
-/// error worth surfacing over the outcome we already have.
-fn kill_group_best_effort(pid: u32) {
-    if let Some(pid) = Pid::from_raw(pid as i32) {
-        let _ = kill_process_group(pid, Signal::KILL);
-    }
-}
-
-/// Owns the launched child and its explicit lifecycle state. If `run`
-/// returns through any path that reaches [`ChildGuard::kill_and_reap`] (and
-/// so leaves `state` at [`Lifecycle::Reaped`]), `Drop` is a no-op;
-/// otherwise (a panic unwinding out of `run`, or a future early-return this
-/// module forgets to route through cleanup) `Drop` itself performs the same
-/// kill-and-reap as a backstop. This is the guard the plan's "every exit
-/// path" requirement actually needs: normal-path cleanup happens in
-/// [`finish`] (via this same method), this is the backstop for the
-/// abnormal paths `finish` never runs on.
 struct ChildGuard {
     child: Child,
     state: Lifecycle,
 }
 
 impl ChildGuard {
-    /// Kills the whole process group, then best-effort reaps within
-    /// [`REAP_GRACE`], advancing `state` through `Stopping` -> `Reaped` (or
-    /// straight to `Reaped` if `try_wait` had already observed the exit
-    /// before this call). Idempotent: a second call is a cheap no-op.
-    fn kill_and_reap(&mut self) {
-        if self.state == Lifecycle::Reaped {
-            return;
-        }
-        if self.state == Lifecycle::Spawned {
-            self.state = Lifecycle::Stopping;
-        }
-        kill_group_best_effort(self.child.id());
-        let deadline = Instant::now() + REAP_GRACE;
+    fn stop(&mut self, ops: Operations) -> Result<ExitStatus, IoFailure> {
+        self.state = Lifecycle::Stopping;
+        ops.kill(&self.child)?;
+        let start = Instant::now();
         loop {
+            ops.check(IoOperation::Reap)?;
             match self.child.try_wait() {
-                Ok(Some(_)) => {
+                Ok(Some(status)) => {
                     self.state = Lifecycle::Reaped;
-                    return;
+                    return Ok(status);
                 }
-                Err(_) => {
-                    // Can't observe the outcome further; leave `state` at
-                    // `Stopping`/`Exited` rather than falsely claiming Reaped.
-                    return;
+                Ok(None) if start.elapsed() < CLEANUP_GRACE => {
+                    std::thread::sleep(Duration::from_millis(5))
                 }
                 Ok(None) => {
-                    if Instant::now() >= deadline {
-                        return; // REAP_GRACE expired without a confirmed reap
-                    }
-                    std::thread::sleep(Duration::from_millis(5));
+                    return Err(Operations::failure(
+                        IoOperation::Reap,
+                        std::io::Error::new(
+                            std::io::ErrorKind::TimedOut,
+                            "child not reaped within cleanup grace",
+                        ),
+                    ));
                 }
+                Err(e) if e.kind() == std::io::ErrorKind::Interrupted => continue,
+                Err(e) => return Err(Operations::failure(IoOperation::Reap, e)),
             }
         }
     }
@@ -105,119 +110,346 @@ impl ChildGuard {
 
 impl Drop for ChildGuard {
     fn drop(&mut self) {
-        self.kill_and_reap();
+        if self.state != Lifecycle::Reaped {
+            let _ = self.stop(Operations::default());
+        }
     }
 }
 
-/// Reads everything currently available on a non-blocking fd without
-/// blocking for EOF, appending to both `diag` (the full retained transport
-/// record) and `acc` (bytes not yet split into records) in lockstep, so a
-/// record delivered from this drain is always backed by the same bytes the
-/// diagnostics report — draining into diagnostics alone would silently drop
-/// records the child wrote between the last read and exit detection.
-enum DrainOutcome {
+#[derive(PartialEq, Eq)]
+enum CaptureState {
+    Open,
     Eof,
-    WouldBlockOrDone,
-    BoundExceeded,
+    Truncated,
+    Failed,
 }
 
-fn drain_into(fd: impl AsFd, diag: &mut Vec<u8>, acc: &mut Vec<u8>, bound: usize) -> DrainOutcome {
-    let mut chunk = [0u8; 64 * 1024];
-    loop {
-        match rustix::io::read(&fd, &mut chunk[..]) {
-            Ok(0) => return DrainOutcome::Eof,
+struct Capture {
+    fd: OwnedFd,
+    bytes: Vec<u8>,
+    bound: usize,
+    stream: OutputStream,
+    state: CaptureState,
+    nonblocking: bool,
+}
+
+impl Capture {
+    fn new(fd: OwnedFd, bound: usize, stream: OutputStream) -> Self {
+        Self {
+            fd,
+            bytes: Vec::new(),
+            bound,
+            stream,
+            state: CaptureState::Open,
+            nonblocking: false,
+        }
+    }
+    fn configure(&mut self, ops: Operations) -> Result<(), IoFailure> {
+        ops.nonblocking(&self.fd)?;
+        self.nonblocking = true;
+        Ok(())
+    }
+    /// At most one small read per tick. One excess byte detects truncation;
+    /// only the permitted prefix is retained, including during cleanup.
+    fn read_once(&mut self, ops: Operations) -> Result<bool, Ending> {
+        if !self.nonblocking || self.state != CaptureState::Open {
+            return Ok(false);
+        }
+        if let Err(e) = ops.check(IoOperation::Read) {
+            self.state = CaptureState::Failed;
+            return Err(Ending::Io(e));
+        }
+        let mut chunk = [0; READ_CHUNK];
+        let remaining = self.bound - self.bytes.len();
+        let length = remaining.saturating_add(1).min(chunk.len());
+        match rustix::io::read(&self.fd, &mut chunk[..length]) {
+            Ok(0) => {
+                self.state = CaptureState::Eof;
+                Ok(false)
+            }
             Ok(n) => {
-                diag.extend_from_slice(&chunk[..n]);
-                acc.extend_from_slice(&chunk[..n]);
-                if diag.len() > bound {
-                    return DrainOutcome::BoundExceeded;
+                self.bytes.extend_from_slice(&chunk[..n.min(remaining)]);
+                if n > remaining {
+                    self.state = CaptureState::Truncated;
+                    Err(Ending::OutputBound(self.stream))
+                } else {
+                    Ok(true)
                 }
             }
-            Err(rustix::io::Errno::INTR) => continue,
-            Err(_) => return DrainOutcome::WouldBlockOrDone, // AGAIN or a real error either way
+            Err(rustix::io::Errno::AGAIN | rustix::io::Errno::INTR) => Ok(false),
+            Err(e) => {
+                self.state = CaptureState::Failed;
+                Err(Ending::Io(Operations::failure(IoOperation::Read, e)))
+            }
+        }
+    }
+    fn into_diagnostics(self) -> CapturedBytes {
+        if self.state == CaptureState::Eof {
+            CapturedBytes::complete(self.bytes)
+        } else {
+            CapturedBytes::prefix(self.bytes)
         }
     }
 }
 
-enum DispatchOutcome {
-    Continue,
-    Rejected(String),
-    Cancelled,
-}
-
-/// Splits complete records off `acc` and delivers each to `on_record`,
-/// re-checking cancellation after every call — the consumer runs
-/// synchronously and may cancel from inside itself (e.g. "stop after the
-/// record I care about"), which must win over a same-tick successful exit
-/// rather than waiting for the next self-pipe wake.
-fn dispatch_records(
-    acc: &mut Vec<u8>,
-    on_record: &mut dyn FnMut(&[u8]) -> Result<(), String>,
-    cancel: &CancellationToken,
-) -> DispatchOutcome {
-    for record in super::split_records(acc) {
-        if let Err(reason) = on_record(&record) {
-            return DispatchOutcome::Rejected(reason);
-        }
-        if cancel.is_cancelled() {
-            return DispatchOutcome::Cancelled;
-        }
-    }
-    DispatchOutcome::Continue
-}
-
-/// Why the loop is ending, decided at the point of the decisive observation.
 enum Ending {
     IncompleteInput { written: usize, expected: usize },
+    Io(IoFailure),
     Cancelled,
     Timeout,
     OutputBound(OutputStream),
     ConsumerRejected(String),
-    Exited(i32),
+    Exited,
 }
 
-/// Every exit path funnels through here: kill the whole process group
-/// (covers any descendant holding the pipes), drain whatever is currently
-/// readable without waiting for EOF, reap within a bounded grace period,
-/// mark the guard reaped so its `Drop` is a no-op, then map to the final
-/// outcome.
-fn finish(
-    guard: &mut ChildGuard,
-    stdout: impl AsFd,
-    stderr: impl AsFd,
-    mut stdout_diag: Vec<u8>,
-    mut stderr_diag: Vec<u8>,
-    ending: Ending,
-) -> Result<ProcessOutcome, SupervisorError> {
-    let mut discard = Vec::new();
-    drain_into(&stdout, &mut stdout_diag, &mut discard, usize::MAX);
-    drain_into(&stderr, &mut stderr_diag, &mut discard, usize::MAX);
-    guard.kill_and_reap();
-    let diagnostics = TransportDiagnostics::new(stdout_diag, stderr_diag);
-    match ending {
-        Ending::IncompleteInput { written, expected } => Err(SupervisorError::IncompleteInput {
-            written,
-            expected,
-            diagnostics,
-        }),
-        Ending::Cancelled => Err(SupervisorError::Cancelled { diagnostics }),
-        Ending::Timeout => Err(SupervisorError::Timeout { diagnostics }),
-        Ending::OutputBound(stream) => Err(SupervisorError::OutputBoundExceeded {
-            stream,
-            diagnostics,
-        }),
-        Ending::ConsumerRejected(reason) => Err(SupervisorError::ConsumerRejected {
-            reason,
-            diagnostics,
-        }),
-        Ending::Exited(exit_code) if exit_code != 0 => Err(SupervisorError::NonzeroExit {
-            exit_code,
-            diagnostics,
-        }),
-        Ending::Exited(exit_code) => Ok(ProcessOutcome {
-            exit_code,
-            diagnostics,
-        }),
+impl Ending {
+    fn outcome(
+        self,
+        status: Option<ExitStatus>,
+        diagnostics: TransportDiagnostics,
+    ) -> Result<ProcessOutcome, SupervisorError> {
+        match self {
+            Self::IncompleteInput { written, expected } => Err(SupervisorError::IncompleteInput {
+                written,
+                expected,
+                diagnostics,
+            }),
+            Self::Io(failure) => Err(SupervisorError::Io {
+                failure,
+                diagnostics,
+            }),
+            Self::Cancelled => Err(SupervisorError::Cancelled { diagnostics }),
+            Self::Timeout => Err(SupervisorError::Timeout { diagnostics }),
+            Self::OutputBound(stream) => Err(SupervisorError::OutputBoundExceeded {
+                stream,
+                diagnostics,
+            }),
+            Self::ConsumerRejected(reason) => Err(SupervisorError::ConsumerRejected {
+                reason,
+                diagnostics,
+            }),
+            Self::Exited => {
+                let exit_code = status.and_then(|s| s.code()).unwrap_or(-1);
+                if exit_code == 0 {
+                    Ok(ProcessOutcome {
+                        exit_code,
+                        diagnostics,
+                    })
+                } else {
+                    Err(SupervisorError::NonzeroExit {
+                        exit_code,
+                        diagnostics,
+                    })
+                }
+            }
+        }
+    }
+}
+
+struct Supervisor<'a> {
+    guard: ChildGuard,
+    stdin: Option<ChildStdin>,
+    written: usize,
+    stdout: Capture,
+    stderr: Capture,
+    records: super::RecordFramer,
+    spec: &'a ProcessSpec,
+    cancel: &'a CancellationToken,
+    consumer: &'a mut dyn FnMut(&[u8]) -> Result<(), String>,
+    ops: Operations,
+}
+
+impl Supervisor<'_> {
+    fn configure(&mut self) -> Result<(), IoFailure> {
+        self.stdout.configure(self.ops)?;
+        self.stderr.configure(self.ops)?;
+        if let Some(stdin) = &self.stdin {
+            self.ops.nonblocking(stdin)?;
+        }
+        Ok(())
+    }
+    fn dispatch(&mut self, final_record: bool) -> Result<(), Ending> {
+        for record in self.records.records(&self.stdout.bytes, final_record) {
+            if self.cancel.is_cancelled() {
+                return Err(Ending::Cancelled);
+            }
+            (self.consumer)(record).map_err(Ending::ConsumerRejected)?;
+            if self.cancel.is_cancelled() {
+                return Err(Ending::Cancelled);
+            }
+        }
+        Ok(())
+    }
+    fn write_once(&mut self) -> Result<(), Ending> {
+        let Some(stdin) = &self.stdin else {
+            return Ok(());
+        };
+        self.ops.check(IoOperation::Write).map_err(Ending::Io)?;
+        match rustix::io::write(stdin, &self.spec.stdin[self.written..]) {
+            Ok(n) => {
+                self.written += n;
+                if self.written == self.spec.stdin.len() {
+                    self.stdin = None;
+                }
+                Ok(())
+            }
+            Err(rustix::io::Errno::AGAIN | rustix::io::Errno::INTR) => Ok(()),
+            Err(rustix::io::Errno::PIPE) => Err(Ending::IncompleteInput {
+                written: self.written,
+                expected: self.spec.stdin.len(),
+            }),
+            Err(e) => Err(Ending::Io(Operations::failure(IoOperation::Write, e))),
+        }
+    }
+    fn supervise(&mut self, wake: &OwnedFd) -> Result<(), Ending> {
+        self.configure().map_err(Ending::Io)?;
+        let start = Instant::now();
+        loop {
+            if self.cancel.is_cancelled() {
+                return Err(Ending::Cancelled);
+            }
+            let Some(remaining) = self.spec.bounds.deadline().checked_sub(start.elapsed()) else {
+                return Err(Ending::Timeout);
+            };
+            let tick = POLL_TICK.min(remaining);
+            let ts = Timespec {
+                tv_sec: tick.as_secs() as i64,
+                tv_nsec: tick.subsec_nanos() as i64,
+            };
+            let ready = {
+                let mut fds = vec![PollFd::new(wake, PollFlags::IN)];
+                let out = (self.stdout.state == CaptureState::Open).then(|| {
+                    let i = fds.len();
+                    fds.push(PollFd::new(&self.stdout.fd, PollFlags::IN));
+                    i
+                });
+                let err = (self.stderr.state == CaptureState::Open).then(|| {
+                    let i = fds.len();
+                    fds.push(PollFd::new(&self.stderr.fd, PollFlags::IN));
+                    i
+                });
+                let input = self.stdin.as_ref().map(|s| {
+                    let i = fds.len();
+                    fds.push(PollFd::new(s, PollFlags::OUT));
+                    i
+                });
+                self.ops.check(IoOperation::Poll).map_err(Ending::Io)?;
+                match poll(&mut fds, Some(&ts)) {
+                    Ok(_) => {}
+                    Err(rustix::io::Errno::INTR) => continue,
+                    Err(e) => return Err(Ending::Io(Operations::failure(IoOperation::Poll, e))),
+                }
+                if fds.iter().any(|fd| fd.revents().contains(PollFlags::NVAL)) {
+                    return Err(Ending::Io(Operations::failure(
+                        IoOperation::Poll,
+                        std::io::Error::other("invalid descriptor in poll set"),
+                    )));
+                }
+                [out, err, input].map(|i| i.is_some_and(|i| !fds[i].revents().is_empty()))
+            };
+            if self.cancel.is_cancelled() {
+                return Err(Ending::Cancelled);
+            }
+            if ready[2] {
+                self.write_once()?;
+            }
+            if ready[0] {
+                self.stdout.read_once(self.ops)?;
+                self.dispatch(false)?;
+            }
+            if ready[1] {
+                self.stderr.read_once(self.ops)?;
+            }
+            if self.ops.exited(&self.guard.child).map_err(Ending::Io)? {
+                return Ok(());
+            }
+        }
+    }
+    fn finish(mut self, mut ending: Ending) -> Result<ProcessOutcome, SupervisorError> {
+        self.stdin = None;
+        // Stop before collecting buffered tail bytes. Keep the zombie PID
+        // reserved until group signaling, then verify the direct child's reap.
+        let mut failures = Vec::new();
+        let status = match self.guard.stop(self.ops) {
+            Ok(status) => Some(status),
+            Err(error) => {
+                failures.push(error);
+                None
+            }
+        };
+        let start = Instant::now();
+        loop {
+            let mut progress = false;
+            for capture in [&mut self.stdout, &mut self.stderr] {
+                match capture.read_once(self.ops) {
+                    Ok(read) => progress |= read,
+                    Err(Ending::Io(error)) => failures.push(error),
+                    Err(error) => {
+                        if matches!(ending, Ending::Exited) {
+                            ending = error;
+                        }
+                    }
+                }
+            }
+            let pending = [&self.stdout, &self.stderr]
+                .iter()
+                .any(|capture| capture.nonblocking && capture.state == CaptureState::Open);
+            if !pending {
+                break;
+            }
+            if start.elapsed() >= CLEANUP_GRACE {
+                failures.push(Operations::failure(
+                    IoOperation::Read,
+                    std::io::Error::new(
+                        std::io::ErrorKind::TimedOut,
+                        "capture did not reach EOF within cleanup grace",
+                    ),
+                ));
+                break;
+            }
+            if !progress {
+                std::thread::sleep(Duration::from_millis(5));
+            }
+        }
+        if matches!(ending, Ending::Exited) && failures.is_empty() {
+            if let Err(error) = self.dispatch(true) {
+                ending = error;
+            }
+            if self.cancel.is_cancelled() {
+                ending = Ending::Cancelled;
+            } else if matches!(ending, Ending::Exited)
+                && status.is_some_and(|s| s.success())
+                && self.written < self.spec.stdin.len()
+            {
+                ending = Ending::IncompleteInput {
+                    written: self.written,
+                    expected: self.spec.stdin.len(),
+                };
+            }
+        }
+        let diagnostics = TransportDiagnostics::from_captures(
+            self.stdout.into_diagnostics(),
+            self.stderr.into_diagnostics(),
+        );
+        if failures.is_empty() {
+            ending.outcome(status, diagnostics)
+        } else {
+            // A failed reap is not a fabricated nonzero exit. Preserve any
+            // actual initiating failure alongside all observed cleanup faults.
+            let initial = if matches!(ending, Ending::Exited) {
+                None
+            } else {
+                ending
+                    .outcome(status, diagnostics.clone())
+                    .err()
+                    .map(Box::new)
+            };
+            Err(SupervisorError::Cleanup {
+                initial,
+                failures,
+                diagnostics,
+            })
+        }
     }
 }
 
@@ -226,322 +458,157 @@ pub fn run(
     cancel: &CancellationToken,
     on_record: &mut dyn FnMut(&[u8]) -> Result<(), String>,
 ) -> Result<ProcessOutcome, SupervisorError> {
+    run_with(spec, cancel, on_record, Operations::default())
+}
+
+fn run_with(
+    spec: &ProcessSpec,
+    cancel: &CancellationToken,
+    on_record: &mut dyn FnMut(&[u8]) -> Result<(), String>,
+    ops: Operations,
+) -> Result<ProcessOutcome, SupervisorError> {
     if cancel.is_cancelled() {
         return Err(SupervisorError::Cancelled {
             diagnostics: TransportDiagnostics::empty(),
         });
     }
-
-    // Created before spawning so a self-pipe failure never leaves a live
-    // child behind with no guard watching it.
-    let (self_read, self_write) = pipe_with(PipeFlags::CLOEXEC | PipeFlags::NONBLOCK)
-        .map_err(|e| SupervisorError::Spawn(std::io::Error::from_raw_os_error(e.raw_os_error())))?;
-    let self_write = Arc::new(self_write);
-    {
-        let self_write = Arc::clone(&self_write);
-        cancel.on_cancel(move || {
-            let _ = rustix::io::write(self_write.as_ref(), &[1u8]);
-        });
-    }
-
+    let (wake, writer) = pipe_with(PipeFlags::CLOEXEC | PipeFlags::NONBLOCK)
+        .map_err(|e| SupervisorError::Spawn(e.into()))?;
+    let writer = Arc::new(writer);
+    cancel.on_cancel(move || {
+        let _ = rustix::io::write(writer.as_ref(), &[1]);
+    });
     let mut command = Command::new(&spec.program);
     command
         .args(&spec.args)
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
-        .stderr(Stdio::piped());
-    command.env_clear();
+        .stderr(Stdio::piped())
+        .env_clear();
     for (key, value) in spec.env.vars() {
         command.env(key, value);
     }
-    {
-        use std::os::unix::process::CommandExt;
-        command.process_group(0);
-    }
-
+    use std::os::unix::process::CommandExt;
+    command.process_group(0);
     let mut child = command.spawn().map_err(SupervisorError::Spawn)?;
-    let mut stdin: Option<ChildStdin> = child.stdin.take();
-    let stdout = child.stdout.take().expect("piped stdout");
-    let stderr = child.stderr.take().expect("piped stderr");
-    // From here on, `guard` owns the child: any early return (including a
-    // panic unwinding through this function) reaches `ChildGuard::drop`.
-    let mut guard = ChildGuard {
-        child,
-        state: Lifecycle::Spawned,
+    let stdin = child.stdin.take().filter(|_| !spec.stdin.is_empty());
+    let stdout = Capture::new(
+        child.stdout.take().expect("piped stdout").into(),
+        spec.bounds.max_stdout_bytes(),
+        OutputStream::Stdout,
+    );
+    let stderr = Capture::new(
+        child.stderr.take().expect("piped stderr").into(),
+        spec.bounds.max_stderr_bytes(),
+        OutputStream::Stderr,
+    );
+    let mut supervisor = Supervisor {
+        guard: ChildGuard {
+            child,
+            state: Lifecycle::Spawned,
+        },
+        stdin,
+        written: 0,
+        stdout,
+        stderr,
+        records: super::RecordFramer::default(),
+        spec,
+        cancel,
+        consumer: on_record,
+        ops,
     };
+    let ending = supervisor.supervise(&wake).err().unwrap_or(Ending::Exited);
+    supervisor.finish(ending)
+}
 
-    // Non-blocking so a full stdin pipe never needs a dedicated blocking
-    // writer thread, and reads never block the single supervisor thread.
-    if let Some(ref s) = stdin {
-        nonblocking(s);
+#[cfg(test)]
+mod fault_tests {
+    use super::*;
+    fn spec() -> ProcessSpec {
+        ProcessSpec {
+            program: "/bin/sh".into(),
+            args: vec!["-c".into(), "printf 'ready\n'; sleep 30".into()],
+            env: super::super::EnvPolicy::new(),
+            stdin: b"request".to_vec(),
+            bounds: super::super::ProcessBounds::new(
+                Duration::from_millis(50),
+                super::super::MaxStdoutBytes::new(100).unwrap(),
+                super::super::MaxStderrBytes::new(100).unwrap(),
+            )
+            .unwrap(),
+        }
     }
-    nonblocking(&stdout);
-    nonblocking(&stderr);
-
-    let mut stdout_acc: Vec<u8> = Vec::new(); // bytes not yet split into records
-    let mut stdout_diag: Vec<u8> = Vec::new(); // full retained stdout, for diagnostics
-    let mut stderr_diag: Vec<u8> = Vec::new(); // full retained stderr
-    let mut stdout_eof = false;
-    let mut stderr_eof = false;
-    let mut stdin_pos = 0usize;
-    if stdin.as_ref().is_some_and(|_| spec.stdin.is_empty()) {
-        stdin = None; // nothing to write: close immediately so the child sees EOF
-    }
-
-    let stdout_bound = spec.bounds.max_stdout_bytes();
-    let stderr_bound = spec.bounds.max_stderr_bytes();
-    let start = Instant::now();
-
-    loop {
-        let elapsed = start.elapsed();
-        if elapsed >= spec.bounds.deadline() {
-            return finish(
-                &mut guard,
-                &stdout,
-                &stderr,
-                stdout_diag,
-                stderr_diag,
-                Ending::Timeout,
-            );
-        }
-        let tick = POLL_TICK.min(spec.bounds.deadline() - elapsed);
-        let ts = Timespec {
-            tv_sec: tick.as_secs() as i64,
-            tv_nsec: tick.subsec_nanos() as i64,
-        };
-
-        let mut close_stdin = false;
-        let cancelled;
-        let mut cancelled_during_record = false;
-        let mut rejected: Option<String> = None;
-        let mut bound_exceeded: Option<OutputStream> = None;
-
-        {
-            let mut fds: Vec<PollFd<'_>> = Vec::with_capacity(4);
-            let self_read_idx = fds.len();
-            fds.push(PollFd::new(&self_read, PollFlags::IN));
-            let stdout_idx = (!stdout_eof).then(|| {
-                let i = fds.len();
-                fds.push(PollFd::new(&stdout, PollFlags::IN));
-                i
-            });
-            let stderr_idx = (!stderr_eof).then(|| {
-                let i = fds.len();
-                fds.push(PollFd::new(&stderr, PollFlags::IN));
-                i
-            });
-            let stdin_idx = stdin.as_ref().map(|s| {
-                let i = fds.len();
-                fds.push(PollFd::new(s, PollFlags::OUT));
-                i
-            });
-
-            while let Err(rustix::io::Errno::INTR) = poll(&mut fds, Some(&ts)) {}
-
-            // The token is authoritative; readiness only accelerates observation.
-            cancelled =
-                cancel.is_cancelled() || fds[self_read_idx].revents().contains(PollFlags::IN);
-
-            if !cancelled && let Some(i) = stdin_idx {
-                let ready = fds[i]
-                    .revents()
-                    .intersects(PollFlags::OUT | PollFlags::ERR | PollFlags::HUP);
-                if ready {
-                    let s = stdin.as_ref().expect("stdin_idx implies stdin is Some");
-                    match rustix::io::write(s, &spec.stdin[stdin_pos..]) {
-                        Ok(n) if n > 0 => {
-                            stdin_pos += n;
-                            if stdin_pos >= spec.stdin.len() {
-                                close_stdin = true;
-                            }
-                        }
-                        Ok(_) | Err(rustix::io::Errno::AGAIN | rustix::io::Errno::INTR) => {}
-                        Err(_) => close_stdin = true, // broken pipe: abandon delivery, not fatal
-                    }
-                }
-            }
-
-            if !cancelled && let Some(i) = stdout_idx {
-                let ready = fds[i]
-                    .revents()
-                    .intersects(PollFlags::IN | PollFlags::HUP | PollFlags::ERR);
-                if ready {
-                    match drain_into(&stdout, &mut stdout_diag, &mut stdout_acc, stdout_bound) {
-                        DrainOutcome::Eof => stdout_eof = true,
-                        DrainOutcome::WouldBlockOrDone => {}
-                        DrainOutcome::BoundExceeded => {
-                            bound_exceeded = Some(OutputStream::Stdout);
-                        }
-                    }
-                    if bound_exceeded.is_none() {
-                        match dispatch_records(&mut stdout_acc, on_record, cancel) {
-                            DispatchOutcome::Continue => {}
-                            DispatchOutcome::Rejected(reason) => rejected = Some(reason),
-                            DispatchOutcome::Cancelled => cancelled_during_record = true,
-                        }
-                    }
-                }
-            }
-
-            if !cancelled
-                && !cancelled_during_record
-                && rejected.is_none()
-                && bound_exceeded.is_none()
-                && let Some(i) = stderr_idx
-            {
-                let ready = fds[i]
-                    .revents()
-                    .intersects(PollFlags::IN | PollFlags::HUP | PollFlags::ERR);
-                if ready {
-                    let mut discard = Vec::new();
-                    match drain_into(&stderr, &mut stderr_diag, &mut discard, stderr_bound) {
-                        DrainOutcome::Eof => stderr_eof = true,
-                        DrainOutcome::WouldBlockOrDone => {}
-                        DrainOutcome::BoundExceeded => {
-                            bound_exceeded = Some(OutputStream::Stderr);
-                        }
-                    }
-                }
-            }
-        } // `fds` (and its borrows of stdin/stdout/stderr/self_read) end here
-
-        if close_stdin {
-            stdin = None; // dropping ChildStdin closes the write end (EOF)
-        }
-
-        if cancelled || cancelled_during_record {
-            return finish(
-                &mut guard,
-                &stdout,
-                &stderr,
-                stdout_diag,
-                stderr_diag,
-                Ending::Cancelled,
-            );
-        }
-        if let Some(stream) = bound_exceeded {
-            return finish(
-                &mut guard,
-                &stdout,
-                &stderr,
-                stdout_diag,
-                stderr_diag,
-                Ending::OutputBound(stream),
-            );
-        }
-        if let Some(reason) = rejected {
-            return finish(
-                &mut guard,
-                &stdout,
-                &stderr,
-                stdout_diag,
-                stderr_diag,
-                Ending::ConsumerRejected(reason),
-            );
-        }
-
-        // Exit alone never wakes the poll set if a descendant still holds a
-        // pipe open, so check every tick regardless of poll()'s result.
-        if let Ok(Some(status)) = guard.child.try_wait() {
-            guard.state = Lifecycle::Exited;
-            // One last non-blocking drain (into diagnostics AND the record
-            // accumulator, in lockstep — see `drain_into`'s doc) before we
-            // drop these fds for good.
-            match drain_into(&stdout, &mut stdout_diag, &mut stdout_acc, stdout_bound) {
-                DrainOutcome::BoundExceeded => {
-                    return finish(
-                        &mut guard,
-                        &stdout,
-                        &stderr,
-                        stdout_diag,
-                        stderr_diag,
-                        Ending::OutputBound(OutputStream::Stdout),
-                    );
-                }
-                DrainOutcome::Eof | DrainOutcome::WouldBlockOrDone => {}
-            }
-            {
-                let mut discard = Vec::new();
-                if let DrainOutcome::BoundExceeded =
-                    drain_into(&stderr, &mut stderr_diag, &mut discard, stderr_bound)
-                {
-                    return finish(
-                        &mut guard,
-                        &stdout,
-                        &stderr,
-                        stdout_diag,
-                        stderr_diag,
-                        Ending::OutputBound(OutputStream::Stderr),
-                    );
-                }
-            }
-
-            match dispatch_records(&mut stdout_acc, on_record, cancel) {
-                DispatchOutcome::Continue => {}
-                DispatchOutcome::Rejected(reason) => {
-                    return finish(
-                        &mut guard,
-                        &stdout,
-                        &stderr,
-                        stdout_diag,
-                        stderr_diag,
-                        Ending::ConsumerRejected(reason),
-                    );
-                }
-                DispatchOutcome::Cancelled => {
-                    return finish(
-                        &mut guard,
-                        &stdout,
-                        &stderr,
-                        stdout_diag,
-                        stderr_diag,
-                        Ending::Cancelled,
-                    );
-                }
-            }
-            if !stdout_acc.is_empty() {
-                // Final record without a trailing newline.
-                let record = std::mem::take(&mut stdout_acc);
-                if let Err(reason) = on_record(&record) {
-                    return finish(
-                        &mut guard,
-                        &stdout,
-                        &stderr,
-                        stdout_diag,
-                        stderr_diag,
-                        Ending::ConsumerRejected(reason),
-                    );
-                }
-                if cancel.is_cancelled() {
-                    return finish(
-                        &mut guard,
-                        &stdout,
-                        &stderr,
-                        stdout_diag,
-                        stderr_diag,
-                        Ending::Cancelled,
-                    );
-                }
-            }
-            let exit_code = status.code().unwrap_or(-1);
-            let ending = if cancel.is_cancelled() {
-                Ending::Cancelled
-            } else if exit_code == 0 && stdin_pos < spec.stdin.len() {
-                Ending::IncompleteInput {
-                    written: stdin_pos,
-                    expected: spec.stdin.len(),
-                }
-            } else {
-                Ending::Exited(exit_code)
+    #[test]
+    fn setup_write_read_poll_and_exit_observation_failures_are_errors() {
+        for operation in [
+            IoOperation::Nonblocking,
+            IoOperation::Write,
+            IoOperation::Read,
+            IoOperation::Poll,
+            IoOperation::ObserveExit,
+        ] {
+            let source = cyoa_application::cancellation::CancellationSource::default();
+            let error = run_with(
+                &spec(),
+                &source.token(),
+                &mut |_| Ok(()),
+                Operations {
+                    fault: Some(operation),
+                },
+            )
+            .unwrap_err();
+            let initial = match &error {
+                SupervisorError::Cleanup {
+                    initial: Some(initial),
+                    ..
+                } => initial.as_ref(),
+                other => other,
             };
-            return finish(
-                &mut guard,
-                &stdout,
-                &stderr,
-                stdout_diag,
-                stderr_diag,
-                ending,
+            assert!(
+                matches!(initial, SupervisorError::Io { failure, .. } if failure.operation == operation),
+                "{error:?}"
             );
         }
+    }
+    #[test]
+    fn cleanup_failures_preserve_the_initiating_error() {
+        for operation in [IoOperation::KillGroup, IoOperation::Reap] {
+            let source = cyoa_application::cancellation::CancellationSource::default();
+            let error = run_with(
+                &spec(),
+                &source.token(),
+                &mut |_| Err("bad record".into()),
+                Operations {
+                    fault: Some(operation),
+                },
+            )
+            .unwrap_err();
+            match error {
+                SupervisorError::Cleanup {
+                    initial: Some(initial),
+                    failures,
+                    diagnostics,
+                } => {
+                    assert!(matches!(*initial, SupervisorError::ConsumerRejected { .. }));
+                    assert!(
+                        failures
+                            .iter()
+                            .any(|failure| failure.operation == operation)
+                    );
+                    assert_eq!(diagnostics.stdout(), b"ready\n");
+                }
+                other => panic!("{other:?}"),
+            }
+        }
+    }
+    #[test]
+    fn fatal_read_error_is_not_treated_as_would_block() {
+        let (_read, write) = pipe_with(PipeFlags::NONBLOCK).unwrap();
+        let mut capture = Capture::new(write, 100, OutputStream::Stdout);
+        capture.configure(Operations::default()).unwrap();
+        assert!(matches!(
+            capture.read_once(Operations::default()),
+            Err(Ending::Io(_))
+        ));
     }
 }

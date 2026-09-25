@@ -82,6 +82,8 @@ struct Report {
 
 #[derive(Debug, Deserialize)]
 struct Chunk {
+    #[serde(default)]
+    repeat_delay_ms: u64,
     /// Raw bytes as a JSON array of u8, so arbitrary bytes (including invalid
     /// UTF-8) round-trip through JSON/argv cleanly with no extra dependency.
     bytes: Vec<u8>,
@@ -178,6 +180,9 @@ fn write_chunks(chunks: &[Chunk], mut out: impl Write) {
         }
         for _ in 0..chunk.repeat.max(1) {
             let _ = out.write_all(&chunk.bytes);
+            if chunk.repeat_delay_ms > 0 {
+                std::thread::sleep(std::time::Duration::from_millis(chunk.repeat_delay_ms));
+            }
         }
         let _ = out.flush();
     }
