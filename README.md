@@ -15,19 +15,33 @@ prompt/schema reference content. No calibre checkout is needed.
 
 ## Status
 
-The Phase 0 engine works through scripted generation; playable CLI/TUI flows and
-real inference adapters are still pending.
+The Phase 0 engine works through scripted generation. Phase 1 items 1–3 are
+complete (2026-09-25, commits `c8c7f8b`..`a28ba66`): refreshed live Claude
+evidence with a confirmed advisor-tool-suppression finding, transport outcome
+types plus a real-subprocess test fixture, and a Unix-only vendor-neutral
+process supervisor (poll-based, cancellation-aware, group-kill on cleanup).
+See [the Phase 1 plan](docs/plans/phase1-headless-backends.md)'s per-item
+status lines for exact commits and honest TDD accounting. Playable CLI/TUI
+flows and a real vendor codec (Claude's or Codex's own event-stream
+interpretation, item 4/5) are still pending — the supervisor is vendor-blind
+by design and doesn't talk to either CLI's actual protocol yet. Codex has no
+live-refreshed evidence yet; `reference/02-codex-cli.md`'s own "Open
+questions" section is where that starts.
 
 - `cyoa-core`: checked domain types, namesake-preserving casts and stable IDs,
   summary deltas, typed limits, owned protagonist selection, turns, chapters and
   rewind. Current/original restore policies preserve original settings and reapply
   active event caps to every snapshot. Character-edit propagation is still pending.
 - `cyoa-application`: inward-owned generation ports and commands for outline, cast,
-  turns and rewind; cancellation tokens and the image port. No JSON/vendor types.
+  turns and rewind; cancellation tokens (now with a race-free wake/notifier
+  mechanism, not just polling) and the image port. No JSON/vendor types.
 - `cyoa-infrastructure`: validated bundled templates, schema generation, wire
-  mapping, generation orchestration, incremental narrative extraction, and
-  request-recording complete/chunked scripted transports. Claude schema adaptation
-  is isolated; neither live subprocess adapter is implemented.
+  mapping, generation orchestration, incremental narrative extraction,
+  request-recording complete/chunked scripted transports, transport-diagnostic
+  types, and a real Unix process supervisor exercised against an in-repo
+  subprocess fixture. Claude schema adaptation and its advisor-suppression flag
+  are isolated in `backend_compat::claude_cli`; no live vendor `Backend`
+  (Claude's or Codex's own protocol) is implemented yet.
 - `cyoa-presentation`: terminal help/version output; gameplay UI is pending.
 - `cyoa-cli`: executable and composition root.
 - `reference/`: source material and each backend's separate live-verification record.
@@ -73,10 +87,11 @@ Cargo dependencies after Clippy; the first mutation build costs additional time.
 Run `bash scripts/check_contract_mutations.sh` for only that check.
 
 See the [acceptance sequence](docs/decisions/phase0-acceptance.md) and
-[TDD/evidence record](reviews/2026-09-25-phase0-acceptance/README.md). The next phase is
-[real subprocess adapters and a playable headless loop](docs/plans/phase1-headless-backends.md),
-with a detailed commit sequence, TDD cases, process-cleanup requirements and separate
-authenticated acceptance gates for the two co-equal backends.
+[TDD/evidence record](reviews/2026-09-25-phase0-acceptance/README.md). Phase 1
+is [real subprocess adapters and a playable headless loop](docs/plans/phase1-headless-backends.md)
+— items 1–3 (evidence, transport types, the process supervisor) are done; item
+4 (a real vendor codec/`Backend` implementation, Claude or Codex) is next, with
+separate authenticated acceptance gates for the two co-equal backends.
 
 ## Where to start
 

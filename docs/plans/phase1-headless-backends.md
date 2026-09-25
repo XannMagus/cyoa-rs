@@ -1,6 +1,15 @@
 # Phase 1 — real CLI backends and headless play
 
-Status: **planned, not implemented**. Written 2026-09-25 against `3dfce38`.
+Status: **items 1–3 complete, item 4 next.** Written 2026-09-25 against
+`3dfce38`. Items 1–3 landed 2026-09-25 in commits `c8c7f8b`..`a28ba66`
+(evidence refresh + advisor-tool suppression finding, transport outcome
+types + subprocess fixture, the vendor-neutral process supervisor) — see
+each item's own status line below for its commit and what it actually
+covers. Item 1's evidence refresh was Claude-side only; Codex has no
+equivalent live refresh yet (`reference/02-codex-cli.md`'s own "Open
+questions" section is the starting checklist for that). Item 4/5 may
+proceed in either order depending on which backend's session picks this up
+next — neither is primary.
 This is the next implementation sequence after
 [Phase 0 acceptance](../decisions/phase0-acceptance.md). It refines
 [PLAN.md](../../PLAN.md)'s walking-skeleton phase; project contracts and explicit
@@ -216,6 +225,14 @@ must never become a reason to disable mutation checks.
 
 ### 1. Refresh backend evidence and freeze protocol fixtures
 
+**Status: Claude side complete** (`c8c7f8b`, `431c0f3`) — `reference/01-claude-cli.md`
+restructured into Confirmed/Historical/Open questions against real bundled
+requests; a permanent, org-policy-enforced advisor-tool call was found and a
+suppression flag confirmed for `backend_compat::claude_cli` (item 4). **Codex
+side not started** — `reference/02-codex-cli.md`'s existing evidence predates
+this refresh and is explicitly labeled as needing its own live pass; do that
+first if starting item 4/5 from the Codex side.
+
 Read both reference files, re-check installed CLI help/version/auth mode, then use
 bounded authenticated probes for the available backend. Use the actual bundled
 world/cast/turn requests and current schemas; label any temporary adaptation.
@@ -248,6 +265,15 @@ evidence before code depending on newly discovered quirks.
 
 ### 2. Establish transport outcome types and the subprocess test harness
 
+**Status: complete** (`fadb4f1`, `64991cd`) — `TransportDiagnostics` (byte-backed,
+`cyoa-core::text`), `BackendError`'s `Cancelled`/`Unavailable`/`Timeout`/`Generation`
+variants carrying it, `subprocess_fixture` (ungated `[[bin]]` in
+`cyoa-infrastructure`), and the test-only `FixtureBackend`. Known gap left open
+here and closed in item 3 instead: a successful `GenerationResponse` carried no
+diagnostics, so post-success cancellation reported empty diagnostics. TDD
+discipline was not fully red-first for `fadb4f1`; see that commit's message and
+`64991cd`'s for the honest accounting.
+
 Extend low-level errors/results and application mapping only where the contracts
 above require it: payload versus diagnostics, cancellation evidence, timeout and
 provider/model provenance. Preserve all existing error behavior and tests. Normalize
@@ -273,6 +299,22 @@ Nominal request/response capture proves quoted/newline/Unicode text survives.
 credentials or network. Application still has no outer-layer dependency.
 
 ### 3. Implement the vendor-neutral process supervisor
+
+**Status: complete, Unix-only** (`059aeef`, `a28ba66`) —
+`cyoa-infrastructure/src/backends/process.rs` + `process/unix_impl.rs`: a
+`rustix::event::poll` readiness loop, explicit `EnvPolicy` allowlist,
+`process_group(0)` + `killpg`, a self-pipe cancellation wake wired through
+`CancellationSource`/`Token`'s new notifier mechanism (`cyoa-application/src/cancellation.rs`),
+checked output bounds and deadline, and a real `Lifecycle` (`Spawned → Stopping/Exited
+→ Reaped`) enum actually driven by a `Drop`-guarded child. Does not implement
+`Backend` — vendor-blind, hands back raw byte records; item 4/5 wraps it. Closes
+item 2's deferred `GenerationResponse` diagnostics gap. Non-Windows only, stated
+explicitly (`SupervisorError::Unsupported` elsewhere, nothing platform-specific
+attempted). `a28ba66` is a self-review pass that found and fixed three real
+correctness bugs `059aeef`'s green suite missed, plus a `Lifecycle`-enum plan
+violation in `059aeef` itself — read `a28ba66`'s commit message for the full,
+deliberately-honest TDD accounting (most tests were green-first, not red-first;
+each fix was verified by reverting it and confirming a deterministic failure).
 
 Launch using executable plus argument vector (`Command`), never `sh -c` or joined
 shell text. Write the request to stdin and close it. Use an isolated working
