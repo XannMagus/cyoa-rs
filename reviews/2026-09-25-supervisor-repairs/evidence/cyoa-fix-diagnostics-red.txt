@@ -1,0 +1,24 @@
+   Compiling cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.42s
+     Running tests/generation_use_cases.rs (target/debug/deps/generation_use_cases-c169099c0a03aac9)
+
+running 1 test
+test validation_failures_retain_transport_diagnostics_for_every_request_kind ... FAILED
+
+failures:
+
+---- validation_failures_retain_transport_diagnostics_for_every_request_kind stdout ----
+
+thread 'validation_failures_retain_transport_diagnostics_for_every_request_kind' (160) panicked at cyoa-infrastructure/tests/generation_use_cases.rs:591:9:
+assertion `left == right` failed
+  left: []
+ right: [101, 118, 101, 110, 116, 115]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    validation_failures_retain_transport_diagnostics_for_every_request_kind
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p cyoa-infrastructure --test generation_use_cases`

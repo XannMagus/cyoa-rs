@@ -1,0 +1,41 @@
+Final implementation: 60af2cc (2026-09-25)
+cargo fmt --all --check: passed
+cargo clippy --workspace --all-targets --locked --offline -- -D warnings: passed
+bash scripts/check_contracts.sh: passed
+191 Rust tests including doctests; 11 behavioral mutations.
+Workspace dependency boundaries verified.
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 26 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 33 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.02s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.34s
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+test result: ok. 30 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.51s
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Detected mutation: name-only-deduplication (generation_use_cases/scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls)
+Detected mutation: duplicate-opening-request (generation_use_cases/scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls)
+Detected mutation: default-instead-of-active-limits (generation_use_cases/restored_limits_reach_captured_prompt_schema_and_committed_memory)
+Detected mutation: commit-before-reporting-failure (phase_zero_acceptance/full_story_preserves_contracts_through_failure_retry_cancellation_and_rewind)
+Detected mutation: capture-past-limit (process_supervisor/captured_output_never_exceeds_either_configured_bound)
+Detected mutation: accept-incomplete-input (process_supervisor/incomplete_request_delivery_cannot_report_success)
+Detected mutation: ignore-cancelled-token (process_supervisor/cancelled_token_wins_even_before_its_notifier_runs)
+Detected mutation: accept-failed-process (process_supervisor/failure_after_a_candidate_record_still_reports_nonzero_exit_not_success)
+Detected mutation: swallow-reader-error (lib/backends::process::unix_impl::fault_tests::fatal_read_error_is_not_treated_as_would_block)
+Detected mutation: disable-cancellation-wake (lib/backends::process::unix_impl::fault_tests::self_pipe_wakes_a_long_poll_without_removing_token_checks)
+Detected mutation: discard-cleanup-cause (lib/backends::process::unix_impl::fault_tests::cleanup_failures_preserve_the_initiating_error)
+All required behavioral mutations detected.
+Project contracts verified. Pending feature obligations remain listed in docs/decisions.

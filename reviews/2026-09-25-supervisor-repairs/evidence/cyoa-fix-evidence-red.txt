@@ -1,0 +1,56 @@
+warning: method `check_cancelled` is never used
+  --> cyoa-application/src/generation.rs:87:8
+   |
+62 | impl<T> Generated<T> {
+   | -------------------- method in this implementation
+...
+87 |     fn check_cancelled(&self, cancel: &CancellationToken) -> Result<(), GenerationFailure> {
+   |        ^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `cyoa-application` (lib) generated 1 warning
+   Compiling cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.91s
+     Running tests/generation_use_cases.rs (target/debug/deps/generation_use_cases-c169099c0a03aac9)
+
+running 13 tests
+test application_cancellation_after_generation_preserves_evidence ... FAILED
+test cancelled_commands_make_no_backend_calls_and_preserve_state ... ok
+test cancelling_after_a_streamed_preview_preserves_state_and_partial_diagnostics ... ok
+test invalid_outline_and_insufficient_cast_are_returned_with_raw_output ... ok
+test successful_generation_preserves_observed_provenance_and_diagnostics ... FAILED
+test success_diagnostics_reach_generation_failure_when_turns_own_post_decode_check_cancels ... ok
+test scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls ... ok
+test preview_then_transport_failure_leaves_state_untouched ... ok
+test success_diagnostics_reach_generation_failure_when_outline_cancels_right_after_transport ... ok
+test restored_limits_reach_captured_prompt_schema_and_committed_memory ... ok
+test failed_turns_preserve_diagnostics_state_and_single_attempt ... ok
+test validation_failures_retain_transport_diagnostics_for_every_request_kind ... ok
+test chunked_and_complete_transports_commit_the_same_turn_without_duplicate_preview ... ok
+
+failures:
+
+---- application_cancellation_after_generation_preserves_evidence stdout ----
+
+thread 'application_cancellation_after_generation_preserves_evidence' (520) panicked at cyoa-infrastructure/tests/generation_use_cases.rs:633:9:
+assertion `left == right` failed
+  left: []
+ right: [119, 97, 114, 110, 105, 110, 103]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- successful_generation_preserves_observed_provenance_and_diagnostics stdout ----
+
+thread 'successful_generation_preserves_observed_provenance_and_diagnostics' (531) panicked at cyoa-infrastructure/tests/generation_use_cases.rs:642:5:
+assertion `left == right` failed
+  left: []
+ right: [101, 118, 101, 110, 116, 115]
+
+
+failures:
+    application_cancellation_after_generation_preserves_evidence
+    successful_generation_preserves_observed_provenance_and_diagnostics
+
+test result: FAILED. 11 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.35s
+
+error: test failed, to rerun pass `-p cyoa-infrastructure --test generation_use_cases`

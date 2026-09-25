@@ -1,0 +1,21 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/process_supervisor.rs (target/debug/deps/process_supervisor-be25874fc2542e86)
+
+running 1 test
+test cancelled_token_wins_even_before_its_notifier_runs ... FAILED
+
+failures:
+
+---- cancelled_token_wins_even_before_its_notifier_runs stdout ----
+
+thread 'cancelled_token_wins_even_before_its_notifier_runs' (174) panicked at cyoa-infrastructure/tests/process_supervisor.rs:675:5:
+cancelled token yielded Ok(ProcessOutcome { exit_code: 0, diagnostics: TransportDiagnostics { stdout: [], stderr: [] } })
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    cancelled_token_wins_even_before_its_notifier_runs
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 23 filtered out; finished in 0.20s
+
+error: test failed, to rerun pass `-p cyoa-infrastructure --test process_supervisor`

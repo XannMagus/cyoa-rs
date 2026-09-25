@@ -71,7 +71,7 @@ Raw diagnostics are not proof of a valid StoryTurn. Evidence: `5050fb4`; the
 restoration tests also preserve audit records through state reconstruction.
 
 The payload and its transport diagnostics are separate concerns. `TransportDiagnostics`
-(`cyoa-core::text`) is a byte-backed (not `String`-backed) type retaining a
+(`cyoa-application::diagnostics`) is a byte-backed (not `String`-backed) type retaining a
 subprocess's captured stdout/stderr separately, because a diagnostic stream may
 contain invalid UTF-8 and lossy display must never replace the retained bytes.
 `BackendError`'s `Cancelled`/`Unavailable`/`Timeout`/`Generation` variants each
@@ -400,11 +400,11 @@ preview and cancellation during preview leave complete state unchanged. This doe
 not verify CLI byte decoding, process killing/reaping, or vendor stream events;
 each concrete backend must gain those tests and live evidence in Phase 1.
 
-Phase 1 item 3 (`cyoa-infrastructure/src/backends/process.rs`, Unix-only)
+Phase 1 item 3 (`cyoa-infrastructure/src/backends/process.rs`, Linux-tested)
 closes the "real subprocess framing and cancellation" gap above at the
 vendor-neutral transport layer: a real `Command`-launched child, an explicit
 argv/environment (never ambient inheritance), stdout split into opaque byte
-records via a pure `split_records` function, non-blocking stdin/stdout/stderr
+records via an owning offset framer, non-blocking stdin/stdout/stderr
 polled alongside a self-pipe cancellation wake so an idle child cannot hang
 the observation of `cancel()`, checked/finite output-byte and deadline
 bounds, and process-group `SIGKILL` cleanup on every exit path (including
@@ -413,7 +413,7 @@ open, including via a `ChildGuard` whose `Drop` kills-and-reaps as a backstop
 for any exit path (a panic unwinding out of the supervisor's consumer
 callback, or a future early return this module forgets to route through
 cleanup) that never reaches its own normal-path cleanup.
-`CancellationToken::on_cancel` (`cyoa-application/src/cancellation.rs`)
+`CancellationToken::subscribe` (`cyoa-application/src/cancellation.rs`)
 gained a race-free wake-notifier registration: a notifier registered after
 `cancel()` already fired still runs immediately, closing the exact
 lost-wakeup case this design exists to prevent.
@@ -447,7 +447,7 @@ scripted orchestration, not live backend behavior, persistence, prompt-override
 semantics or presentation cancellation. Those obligations keep their own statuses.
 
 Step 8 (2026-09-25): the shared contract gate now checks coverage declarations
-against the registry and runs four isolated behavioral mutations (see
+against the registry and runs eleven isolated behavioral mutations (see
 `scripts/mutations/manifest.json`). Each mutation names its owning decision and
 an exact registered test. A passing baseline is required; only that test's actual
 runtime failure counts as detection. Compiler failures, skipped/missing/different

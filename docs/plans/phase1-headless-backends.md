@@ -1,15 +1,12 @@
 # Phase 1 — real CLI backends and headless play
 
-Status: **items 1–3 complete, item 4 next.** Written 2026-09-25 against
-`3dfce38`. Items 1–3 landed 2026-09-25 in commits `c8c7f8b`..`a28ba66`
-(evidence refresh + advisor-tool suppression finding, transport outcome
-types + subprocess fixture, the vendor-neutral process supervisor) — see
-each item's own status line below for its commit and what it actually
-covers. Item 1's evidence refresh was Claude-side only; Codex has no
-equivalent live refresh yet (`reference/02-codex-cli.md`'s own "Open
-questions" section is the starting checklist for that). Item 4/5 may
-proceed in either order depending on which backend's session picks this up
-next — neither is primary.
+Status: **transport foundations repaired; vendor adapters and headless play pending.**
+Written 2026-09-25 against `3dfce38`; implementation initially landed in
+`c8c7f8b`..`a28ba66`, then underwent the [process-supervisor review](../../reviews/2026-09-25-process-supervisor/README.md)
+and [documented repairs](../../reviews/2026-09-25-supervisor-repairs/README.md).
+Item 1's fresh evidence is Claude-side only; Codex retains its separately recorded
+2026-09-24 cast and outstanding questions. Transport tests exercise Linux, not a
+live vendor protocol. Items 4/5 may proceed in either order; neither is primary.
 This is the next implementation sequence after
 [Phase 0 acceptance](../decisions/phase0-acceptance.md). It refines
 [PLAN.md](../../PLAN.md)'s walking-skeleton phase; project contracts and explicit
@@ -265,14 +262,15 @@ evidence before code depending on newly discovered quirks.
 
 ### 2. Establish transport outcome types and the subprocess test harness
 
-**Status: complete** (`fadb4f1`, `64991cd`) — `TransportDiagnostics` (byte-backed,
-`cyoa-core::text`), `BackendError`'s `Cancelled`/`Unavailable`/`Timeout`/`Generation`
-variants carrying it, `subprocess_fixture` (ungated `[[bin]]` in
-`cyoa-infrastructure`), and the test-only `FixtureBackend`. Known gap left open
-here and closed in item 3 instead: a successful `GenerationResponse` carried no
-diagnostics, so post-success cancellation reported empty diagnostics. TDD
-discipline was not fully red-first for `fadb4f1`; see that commit's message and
-`64991cd`'s for the honest accounting.
+**Status: implemented; diagnostic propagation repaired in `d7a4af8`.**
+The initial `fadb4f1`/`64991cd` types and fixture did not establish end-to-end
+evidence preservation. `TransportDiagnostics` now belongs to
+`cyoa-application::diagnostics`, outside the story domain. Success, decode/domain
+validation failure and application post-generation cancellation preserve attached
+bytes; observed provider/model provenance is propagated rather than defaulted.
+Unknown provenance stays unknown. The supervisor adds explicit complete/prefix
+capture metadata. Vendor-specific error and telemetry mapping remain codec work.
+See the repair record for runtime-red evidence and the separate green-first cases.
 
 Extend low-level errors/results and application mapping only where the contracts
 above require it: payload versus diagnostics, cancellation evidence, timeout and
@@ -300,21 +298,24 @@ credentials or network. Application still has no outer-layer dependency.
 
 ### 3. Implement the vendor-neutral process supervisor
 
-**Status: complete, Unix-only** (`059aeef`, `a28ba66`) —
-`cyoa-infrastructure/src/backends/process.rs` + `process/unix_impl.rs`: a
-`rustix::event::poll` readiness loop, explicit `EnvPolicy` allowlist,
-`process_group(0)` + `killpg`, a self-pipe cancellation wake wired through
-`CancellationSource`/`Token`'s new notifier mechanism (`cyoa-application/src/cancellation.rs`),
-checked output bounds and deadline, and a real `Lifecycle` (`Spawned → Stopping/Exited
-→ Reaped`) enum actually driven by a `Drop`-guarded child. Does not implement
-`Backend` — vendor-blind, hands back raw byte records; item 4/5 wraps it. Closes
-item 2's deferred `GenerationResponse` diagnostics gap. Non-Windows only, stated
-explicitly (`SupervisorError::Unsupported` elsewhere, nothing platform-specific
-attempted). `a28ba66` is a self-review pass that found and fixed three real
-correctness bugs `059aeef`'s green suite missed, plus a `Lifecycle`-enum plan
-violation in `059aeef` itself — read `a28ba66`'s commit message for the full,
-deliberately-honest TDD accounting (most tests were green-first, not red-first;
-each fix was verified by reverting it and confirming a deterministic failure).
+**Status: implemented and tested on Linux after review repairs.**
+`059aeef`/`a28ba66` introduced the poll loop; `644b270`, `71606e9`,
+`ccec5c1` and `dc11b6f` repair input delivery, cancellation, capture/cleanup,
+notifier ownership and isolated request directories. `f5170ce` also applies the
+reap deadline across interrupted calls. The shared gate retains
+real-child regressions, syscall faults and seven process mutations. Its record
+framer owns offsets into capped byte captures; stderr has no discarded duplicate
+buffer. Group signaling precedes final capture and reap, with WNOWAIT preserving
+the child's PID until signaling. Fatal I/O and cleanup errors are observable;
+success cannot conceal undelivered input, cancellation or cleanup failure.
+
+`RequestWorkspace` owns prepared files and the process cwd; `run` consumes the
+request and cleans the directory after every outcome. Normal cleanup errors are
+reported; Drop protects unwinding. The synchronous record consumer must return
+promptly: subprocess deadlines do not preempt arbitrary callback code. Runtime
+verification is Linux-only; other waitid-capable Unix platforms are unverified,
+and unavailable platforms return `Unsupported`. This is not a `Backend` and
+interprets no vendor events. JSONL semantics/UTF-8 validation belong to items 4/5.
 
 Launch using executable plus argument vector (`Command`), never `sh -c` or joined
 shell text. Write the request to stdin and close it. Use an isolated working
@@ -461,9 +462,11 @@ claims added to help/README.
 
 ### 8. Extend the contract gate across the process and presentation boundaries
 
-Retain all Phase 0 tests and four mutations. Add implemented tests to the owning
+Retain all Phase 0 tests and their four mutations, plus the seven process mutations
+introduced by the supervisor repairs (`ce66e3e`). Add implemented tests to the owning
 contracts as they land; do not pre-register hypothetical names from this plan.
-Extend mutations with focused cases for: accepting success before nonzero exit,
+The existing process cases cover premature success, cancellation and byte capture.
+Extend mutations with codec/headless cases for: accepting success before nonzero exit,
 ignoring cancellation while output is idle, and accepting a stale worker completion.
 An idle-cancellation mutant must cause a bounded assertion failure with cleanup,
 not hang the gate until CI kills it. Keep exact-test outcome checks: compilation,

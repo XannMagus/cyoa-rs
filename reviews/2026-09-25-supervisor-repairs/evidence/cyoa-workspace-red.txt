@@ -1,0 +1,31 @@
+   Compiling libc v0.2.189
+   Compiling getrandom v0.4.3
+   Compiling rustix v1.1.5
+   Compiling cfg-if v1.0.5
+   Compiling once_cell v1.21.4
+   Compiling fastrand v2.5.0
+   Compiling tempfile v3.27.0
+   Compiling cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.70s
+     Running tests/process_supervisor.rs (target/debug/deps/process_supervisor-c8eef9635b53a88b)
+
+running 1 test
+test requests_do_not_inherit_the_repository_working_directory ... FAILED
+
+failures:
+
+---- requests_do_not_inherit_the_repository_working_directory stdout ----
+
+thread 'requests_do_not_inherit_the_repository_working_directory' (698) panicked at cyoa-infrastructure/tests/process_supervisor.rs:807:5:
+assertion `left != right` failed: the child inherited the repository
+  left: "/home/xann/cyoa-rs/cyoa-infrastructure"
+ right: "/home/xann/cyoa-rs/cyoa-infrastructure"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    requests_do_not_inherit_the_repository_working_directory
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 27 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p cyoa-infrastructure --test process_supervisor`

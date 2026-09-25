@@ -1,0 +1,39 @@
+   Compiling cyoa-application v0.1.0 (/home/xann/cyoa-rs/cyoa-application)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.21s
+     Running tests/cancellation.rs (target/debug/deps/cancellation-0d91cabdce33133c)
+
+running 5 tests
+test a_panicking_notifier_does_not_skip_later_notifiers_or_poison_state ... FAILED
+test dropping_a_subscription_releases_resources_without_waiting_for_cancellation ... FAILED
+test notifier_registered_after_cancel_already_fired_still_runs_immediately ... ok
+test notifier_registered_before_cancel_runs_once_when_cancel_fires ... ok
+test cancellation_is_shared_across_threads_and_isolated_between_requests ... ok
+
+failures:
+
+---- a_panicking_notifier_does_not_skip_later_notifiers_or_poison_state stdout ----
+
+thread 'a_panicking_notifier_does_not_skip_later_notifiers_or_poison_state' (120) panicked at cyoa-application/tests/cancellation.rs:69:24:
+observer failed
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'a_panicking_notifier_does_not_skip_later_notifiers_or_poison_state' (120) panicked at cyoa-application/tests/cancellation.rs:75:5:
+assertion `left == right` failed
+  left: 0
+ right: 1
+
+---- dropping_a_subscription_releases_resources_without_waiting_for_cancellation stdout ----
+
+thread 'dropping_a_subscription_releases_resources_without_waiting_for_cancellation' (122) panicked at cyoa-application/tests/cancellation.rs:89:5:
+assertion `left == right` failed
+  left: 2
+ right: 1
+
+
+failures:
+    a_panicking_notifier_does_not_skip_later_notifiers_or_poison_state
+    dropping_a_subscription_releases_resources_without_waiting_for_cancellation
+
+test result: FAILED. 3 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p cyoa-application --test cancellation`

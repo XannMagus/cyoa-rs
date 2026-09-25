@@ -124,3 +124,40 @@ successful JSON decoding. A real-child regression reproduced empty stdout/stderr
 on that path; success now attaches both streams as failures already did. This
 keeps the test adapter an accurate example for future vendor adapters rather than
 teaching the evidence-loss bug. Log: `/tmp/cyoa-fixture-diagnostics-red.log`.
+
+## Resolution map and final verification
+
+| Finding | Repair commits | Result |
+|---|---|---|
+| R1: unbounded shutdown/capture | `71606e9` | Stop before final collection; fair reads, exact caps and explicit prefix metadata |
+| R2: incomplete request accepted | `644b270` | Known undelivered input is a typed failure |
+| R3: notifier mistaken for truth | `644b270`, `ccec5c1` | Authoritative flag checks, scoped registrations and defined panic policy |
+| R4: diagnostics/provenance lost | `d7a4af8`, `60af2cc` | Evidence survives validation/application cancellation and fixture success; observed provenance propagates |
+| R5: swallowed I/O/cleanup failures | `71606e9`, `f5170ce` | Typed failures retain initiating/cleanup evidence; interruption cannot defeat the reap deadline |
+| Architecture and resource ownership | `d7a4af8`, `71606e9`, `dc11b6f` | Application-owned diagnostics, owning capture/framer/supervisor methods, consumed isolated request workspace |
+| Weak cleanup proofs and absent mutations | `dc11b6f`, `ce66e3e` | Real PID checks including timeout; eleven required mutations, with the original four preserved |
+| Overstated status | This documentation commit | README/Phase 1 plan distinguish repaired transport, vendor evidence and pending adapters/headless work |
+
+Affected contracts: TEXT-001, STREAM-001, ARCH-001 and ARCH-002. No story identity,
+merge, limit, prompt or source-divergence decision changed. All previous required
+regressions remain registered; the broken-stdin expectation was deliberately
+corrected under R2, rather than preserving its erroneous success policy.
+
+Final validation of `60af2cc` and the accompanying status documentation:
+`cargo fmt --all --check`, workspace Clippy with warnings denied, and
+`bash scripts/check_contracts.sh` passed. **191 Rust tests including doctests**,
+architecture/registry/coverage checks and **eleven isolated runtime mutations**.
+The mutation runner verifies passing baseline, failing mutant and passing restored
+code. A compiler failure or missing test is never counted as a detected defect.
+
+Observed runtime-red logs are retained in [evidence/](evidence/) rather than only
+in the temporary paths named above. [verification.txt](evidence/verification.txt)
+records the final test summaries and mutation results. Additional tests that were
+first green, and the initially ineffective wake mutation, are explicitly identified
+above; this work does not claim strict red-first history for every expanded check.
+
+All review findings are addressed. Vendor codecs, real backend `Backend`
+implementations and headless play remain the next planned work, with independent
+live acceptance gates for Claude and Codex. These repairs add no live-backend
+verification claim. Process runtime evidence is Linux-only; other platforms must
+supply their own evidence before their status is promoted.

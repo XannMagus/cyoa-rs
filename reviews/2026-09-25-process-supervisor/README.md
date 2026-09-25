@@ -235,3 +235,9 @@ Each repair is its own coherent commit with observed failing tests before the fi
 updated contract registration and the existing gate intact. Nothing here authorizes
 namesake/ID/limit/prompt semantics to change. No production code was fixed in this
 review, and the green gate should not be described as proof these findings are fixed.
+
+## Resolution
+
+The subsequent [repair record](../2026-09-25-supervisor-repairs/README.md) maps these
+findings to atomic commits, retained regressions, mutation checks and verification.
+The findings and probes above remain the historical assessment of `ae8cece`.
