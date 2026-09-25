@@ -236,6 +236,7 @@ pub fn report_path(label: &str) -> std::path::PathBuf {
 
 #[derive(Debug, serde::Deserialize)]
 pub struct Report {
+    pub cwd: std::path::PathBuf,
     pub argv: Vec<String>,
     pub stdin: Vec<u8>,
     #[serde(default)]

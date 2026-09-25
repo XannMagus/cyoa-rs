@@ -454,11 +454,23 @@ impl Supervisor<'_> {
 }
 
 pub fn run(
-    spec: &ProcessSpec,
+    spec: ProcessSpec,
     cancel: &CancellationToken,
     on_record: &mut dyn FnMut(&[u8]) -> Result<(), String>,
 ) -> Result<ProcessOutcome, SupervisorError> {
-    run_with(spec, cancel, on_record, Operations::default())
+    let result = run_with(&spec, cancel, on_record, Operations::default());
+    if let Err(error) = spec.workspace.close() {
+        let diagnostics = match &result {
+            Ok(outcome) => outcome.diagnostics.clone(),
+            Err(error) => error.diagnostics(),
+        };
+        return Err(SupervisorError::Cleanup {
+            initial: result.err().map(Box::new),
+            failures: vec![Operations::failure(IoOperation::WorkspaceCleanup, error)],
+            diagnostics,
+        });
+    }
+    result
 }
 
 fn run_with(
@@ -481,6 +493,7 @@ fn run_with(
     let mut command = Command::new(&spec.program);
     command
         .args(&spec.args)
+        .current_dir(spec.workspace.path())
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
@@ -526,6 +539,7 @@ mod fault_tests {
     use super::*;
     fn spec() -> ProcessSpec {
         ProcessSpec {
+            workspace: super::super::RequestWorkspace::new().unwrap(),
             program: "/bin/sh".into(),
             args: vec!["-c".into(), "printf 'ready\n'; sleep 30".into()],
             env: super::super::EnvPolicy::new(),

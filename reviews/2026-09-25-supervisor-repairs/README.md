@@ -68,3 +68,22 @@ Callers must keep callbacks short; a blocking callback cannot hide cancellation
 from the supervisor's flag checks. Edge coverage for slot reuse, reentrant callback
 registration and late subscriptions was added after the error fixes and passed on
 its first run. Logs: `/tmp/cyoa-cancellation-lifetime-{red,green}.log`.
+
+## Isolation and real cleanup evidence
+
+The child inherited the repo cwd in an observed failing test; it now starts in a
+private, unique `RequestWorkspace` owned by its `ProcessSpec`. `run` consumes that
+spec, preserving any prepared schema files until process cleanup and explicitly
+reporting directory cleanup failure. RAII covers panic unwinding. A second observed
+red test caught tempfile's default directory permissions; construction now requests
+Unix mode 0700. `tempfile` owns directory creation/removal rather than introducing
+project-specific temporary-directory tooling. Logs: `/tmp/cyoa-workspace-red.log`,
+`/tmp/cyoa-workspace-permissions-red.log`.
+
+Added post-fix coverage for file lifetime/removal after success, nonzero exit,
+consumer rejection/panic, cap, timeout, pre-cancellation and spawn failure. The
+existing timeout test now obtains the child's PID through a handshake report and
+asserts it disappeared. All process-existence assertions query the kernel with
+signal 0; absent Linux procfs cannot produce a false pass. Runtime evidence in this
+repair session is Linux only. Unix platforms lacking rustix's WNOWAIT waitid API
+return Unsupported instead of compiling a weaker cleanup path.

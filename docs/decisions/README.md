@@ -490,3 +490,12 @@ waiting for source destruction. The flag is the source of truth. A callback pani
 does not skip later callbacks: notifications run outside the lock and the first
 panic resumes after all callbacks are attempted. Callbacks must finish promptly;
 deregistration cannot undo a callback already taken by concurrent cancellation.
+
+Each process request owns a unique scratch directory (`RequestWorkspace`, Unix
+mode 0700); the supervisor consumes its `ProcessSpec`, uses that cwd without
+changing global cwd, keeps prepared files through child cleanup and removes them
+on completion/unwinding. Normal directory-cleanup errors are observable. Tests
+must confirm actual PID disappearance, including timeout, through kernel liveness
+checks; absence of `/proc` is not evidence of cleanup. The exercised platform is
+Linux; other waitid-capable Unix builds remain unverified, and platforms without
+that primitive return `Unsupported`.

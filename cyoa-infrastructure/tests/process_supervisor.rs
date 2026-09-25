@@ -6,7 +6,15 @@
 //!
 //! Unix-only: the supervisor itself is `#[cfg(unix)]`-gated and this test
 //! file is not compiled or run on any other platform.
-#![cfg(unix)]
+#![cfg(all(
+    unix,
+    not(any(
+        target_os = "cygwin",
+        target_os = "horizon",
+        target_os = "openbsd",
+        target_os = "redox"
+    ))
+))]
 
 mod support;
 use support::fixture_backend::{self, read_report, report_path};
@@ -22,6 +30,7 @@ const FIXTURE_EXE: &str = env!("CARGO_BIN_EXE_subprocess_fixture");
 
 fn spec(scenario_json: String, bounds: ProcessBounds) -> ProcessSpec {
     ProcessSpec {
+        workspace: cyoa_infrastructure::backends::process::RequestWorkspace::new().unwrap(),
         program: FIXTURE_EXE.into(),
         args: vec![OsString::from(scenario_json)],
         env: EnvPolicy::new(),
@@ -66,18 +75,20 @@ fn wait_for_file(path: &std::path::Path, bound: Duration) -> bool {
     false
 }
 
-/// Linux-only (matching this file's other `/proc` checks): confirms a pid
-/// is actually gone, not just that `run` returned. Retries briefly since
-/// `SIGKILL` + reap is fast but not instantaneous.
+/// Ask the kernel whether this PID exists; missing Linux procfs must never
+/// make a Unix cleanup assertion pass vacuously.
 fn assert_process_gone(pid: u32, context: &str) {
     let deadline = std::time::Instant::now() + Duration::from_secs(2);
     loop {
-        let alive = std::path::Path::new(&format!("/proc/{pid}")).exists();
-        if !alive {
-            return;
+        let pid = rustix::process::Pid::from_raw(pid.try_into().expect("PID fits i32"))
+            .expect("nonzero PID");
+        match rustix::process::test_kill_process(pid) {
+            Err(rustix::io::Errno::SRCH) => return,
+            Ok(()) => {}
+            Err(error) => panic!("{context}: unable to establish process liveness: {error}"),
         }
         if std::time::Instant::now() >= deadline {
-            panic!("{context}: pid {pid} should have been cleaned up but is still alive");
+            panic!("{context}: pid {pid:?} should have been cleaned up but is still alive");
         }
         std::thread::sleep(Duration::from_millis(10));
     }
@@ -88,6 +99,7 @@ fn assert_process_gone(pid: u32, context: &str) {
 #[test]
 fn missing_executable_is_a_spawn_error_not_a_panic() {
     let spec = ProcessSpec {
+        workspace: cyoa_infrastructure::backends::process::RequestWorkspace::new().unwrap(),
         program: "/definitely/not/a/real/executable-cyoa-test".into(),
         args: vec![],
         env: EnvPolicy::new(),
@@ -95,7 +107,7 @@ fn missing_executable_is_a_spawn_error_not_a_panic() {
         bounds: short_bounds(),
     };
     let source = CancellationSource::default();
-    let error = run(&spec, &source.token(), &mut noop).unwrap_err();
+    let error = run(spec, &source.token(), &mut noop).unwrap_err();
     assert!(matches!(error, SupervisorError::Spawn(_)));
 }
 
@@ -106,7 +118,7 @@ fn cancellation_before_spawn_launches_no_process() {
     let spec = spec(scenario, short_bounds());
     let source = CancellationSource::default();
     source.cancel();
-    let error = run(&spec, &source.token(), &mut noop).unwrap_err();
+    let error = run(spec, &source.token(), &mut noop).unwrap_err();
     assert!(matches!(error, SupervisorError::Cancelled { .. }));
     assert!(
         !path.exists(),
@@ -149,7 +161,7 @@ fn cancellation_while_the_child_is_silent_still_wakes_the_poll_loop_and_returns_
         );
         source.cancel();
     });
-    let error = run(&spec, &token, &mut noop).unwrap_err();
+    let error = run(spec, &token, &mut noop).unwrap_err();
     canceller.join().unwrap();
     let elapsed = start.elapsed();
 
@@ -168,7 +180,7 @@ fn nonzero_exit_is_reported_with_diagnostics() {
     let scenario = fixture_backend::scenario(&[], &[b"boom"], 7);
     let spec = spec(scenario, short_bounds());
     let source = CancellationSource::default();
-    let error = run(&spec, &source.token(), &mut noop).unwrap_err();
+    let error = run(spec, &source.token(), &mut noop).unwrap_err();
     match error {
         SupervisorError::NonzeroExit {
             exit_code,
@@ -187,7 +199,7 @@ fn failure_after_a_candidate_record_still_reports_nonzero_exit_not_success() {
     let spec = spec(scenario, short_bounds());
     let source = CancellationSource::default();
     let mut records = Vec::new();
-    let error = run(&spec, &source.token(), &mut |record| {
+    let error = run(spec, &source.token(), &mut |record| {
         records.push(record.to_vec());
         Ok(())
     })
@@ -201,40 +213,17 @@ fn failure_after_a_candidate_record_still_reports_nonzero_exit_not_success() {
 
 #[test]
 fn deadline_exceeded_kills_the_child_and_reports_timeout() {
-    // The fixture's sleep re-exec path (SUBPROCESS_FIXTURE_SLEEP_MS) isn't
-    // reachable without spawning the fixture itself with that env var, which
-    // is exactly what a "hangs forever" scenario looks like from the
-    // supervisor's point of view: no output, no exit, within our bound. The
-    // sleep re-exec path never parses a scenario at all, so it can't also
-    // write a report with its own pid — cleanup is instead confirmed via
-    // this test's own SUBPROCESS_FIXTURE_SLEEP_MS-launched process being
-    // the direct child (no separate descendant), whose group the supervisor
-    // kills; we assert on the *supervisor's own* observation instead
-    // (Timeout, and a prompt return) since there is no separate pid handle
-    // available to this test process for the sleeping child itself.
-    let scenario = serde_json::json!({
-        "stdout": [],
-        "stderr": [],
-        "drain_stdin": false,
-        "spawn_descendant_holding_stdout_ms": null,
-        "report_path": null,
-        "exit_code": 0,
-    })
-    .to_string();
-    let tight_bounds = bounds(Duration::from_millis(150), 1024, 1024);
-    let spec = ProcessSpec {
-        program: FIXTURE_EXE.into(),
-        args: vec![OsString::from(scenario)],
-        env: EnvPolicy::new().set("SUBPROCESS_FIXTURE_SLEEP_MS", "60000"),
-        stdin: Vec::new(),
-        bounds: tight_bounds,
-    };
+    let path = report_path("deadline-cleanup");
+    let scenario =
+        fixture_backend::scenario_hanging(&[], &[], 0, false, Some(&path), None, Some(60_000));
+    let spec = spec(scenario, bounds(Duration::from_millis(150), 1024, 1024));
     let source = CancellationSource::default();
     let start = std::time::Instant::now();
-    let error = run(&spec, &source.token(), &mut noop).unwrap_err();
+    let error = run(spec, &source.token(), &mut noop).unwrap_err();
     let elapsed = start.elapsed();
     assert!(matches!(error, SupervisorError::Timeout { .. }));
     assert!(elapsed < Duration::from_secs(5), "took {elapsed:?}");
+    assert_process_gone(read_report(&path).pid, "deadline cleanup");
 }
 
 #[test]
@@ -245,7 +234,7 @@ fn output_bound_exceeded_stops_the_child_instead_of_buffering_forever() {
     let tiny_bounds = bounds(Duration::from_secs(5), 100, 1024);
     let spec = spec(scenario, tiny_bounds);
     let source = CancellationSource::default();
-    let error = run(&spec, &source.token(), &mut noop).unwrap_err();
+    let error = run(spec, &source.token(), &mut noop).unwrap_err();
     assert!(matches!(
         error,
         SupervisorError::OutputBoundExceeded {
@@ -264,7 +253,7 @@ fn consumer_rejection_triggers_cleanup_and_reports_the_reason() {
         fixture_backend::scenario_with_report(&[b"not json at all\n"], &[], 0, false, Some(&path));
     let spec = spec(scenario, short_bounds());
     let source = CancellationSource::default();
-    let error = run(&spec, &source.token(), &mut |record| {
+    let error = run(spec, &source.token(), &mut |record| {
         if record == b"not json at all" {
             Err("rejected: not valid JSON".into())
         } else {
@@ -290,7 +279,7 @@ fn final_record_without_a_trailing_newline_is_still_delivered() {
     let spec = spec(scenario, short_bounds());
     let source = CancellationSource::default();
     let mut records = Vec::new();
-    let outcome = run(&spec, &source.token(), &mut |record| {
+    let outcome = run(spec, &source.token(), &mut |record| {
         records.push(record.to_vec());
         Ok(())
     })
@@ -305,7 +294,7 @@ fn crlf_records_are_delivered_with_the_carriage_return_intact() {
     let spec = spec(scenario, short_bounds());
     let source = CancellationSource::default();
     let mut records = Vec::new();
-    run(&spec, &source.token(), &mut |record| {
+    run(spec, &source.token(), &mut |record| {
         records.push(record.to_vec());
         Ok(())
     })
@@ -326,7 +315,7 @@ fn a_descendant_retaining_the_inherited_pipe_does_not_hang_the_supervisor() {
     let spec = spec(scenario, bounds);
     let source = CancellationSource::default();
     let start = std::time::Instant::now();
-    let outcome = run(&spec, &source.token(), &mut noop).unwrap();
+    let outcome = run(spec, &source.token(), &mut noop).unwrap();
     let elapsed = start.elapsed();
     assert_eq!(outcome.exit_code, 0);
     assert!(
@@ -338,14 +327,8 @@ fn a_descendant_retaining_the_inherited_pipe_does_not_hang_the_supervisor() {
     let descendant_pid = report
         .descendant_pid
         .expect("fixture reports the descendant pid");
-    // Give the group-kill a brief moment to land, then confirm the
-    // descendant is actually gone (not just that `run` returned).
-    std::thread::sleep(Duration::from_millis(200));
-    let alive = std::path::Path::new(&format!("/proc/{descendant_pid}")).exists();
-    assert!(
-        !alive,
-        "descendant pid {descendant_pid} should have been killed with the group"
-    );
+    assert_process_gone(report.pid, "direct child with descendant");
+    assert_process_gone(descendant_pid, "descendant retaining pipes");
 }
 
 #[test]
@@ -356,6 +339,7 @@ fn broken_stdin_delivery_is_reported_without_hanging() {
     let large_stdin = vec![b'a'; 2 * 1024 * 1024];
     let scenario = fixture_backend::scenario(&[b"done\n"], &[], 0);
     let spec = ProcessSpec {
+        workspace: cyoa_infrastructure::backends::process::RequestWorkspace::new().unwrap(),
         program: FIXTURE_EXE.into(),
         args: vec![OsString::from(scenario)],
         env: EnvPolicy::new(),
@@ -364,7 +348,7 @@ fn broken_stdin_delivery_is_reported_without_hanging() {
     };
     let source = CancellationSource::default();
     let start = std::time::Instant::now();
-    let error = run(&spec, &source.token(), &mut noop).unwrap_err();
+    let error = run(spec, &source.token(), &mut noop).unwrap_err();
     assert!(matches!(error, SupervisorError::IncompleteInput { .. }));
     assert!(start.elapsed() < Duration::from_secs(5));
 }
@@ -373,6 +357,7 @@ fn broken_stdin_delivery_is_reported_without_hanging() {
 fn a_child_that_never_reads_stdin_still_completes() {
     let scenario = fixture_backend::scenario(&[b"ok\n"], &[], 0);
     let spec = ProcessSpec {
+        workspace: cyoa_infrastructure::backends::process::RequestWorkspace::new().unwrap(),
         program: FIXTURE_EXE.into(),
         args: vec![OsString::from(scenario)],
         env: EnvPolicy::new(),
@@ -380,7 +365,7 @@ fn a_child_that_never_reads_stdin_still_completes() {
         bounds: short_bounds(),
     };
     let source = CancellationSource::default();
-    let outcome = run(&spec, &source.token(), &mut noop).unwrap();
+    let outcome = run(spec, &source.token(), &mut noop).unwrap();
     assert_eq!(outcome.exit_code, 0);
 }
 
@@ -397,6 +382,7 @@ fn exact_argv_and_stdin_reach_the_child_and_both_pipes_are_drained() {
         Some(&path),
     );
     let spec = ProcessSpec {
+        workspace: cyoa_infrastructure::backends::process::RequestWorkspace::new().unwrap(),
         program: FIXTURE_EXE.into(),
         args: vec![OsString::from(scenario)],
         env: EnvPolicy::new(),
@@ -405,7 +391,7 @@ fn exact_argv_and_stdin_reach_the_child_and_both_pipes_are_drained() {
     };
     let source = CancellationSource::default();
     let mut records = Vec::new();
-    let outcome = run(&spec, &source.token(), &mut |record| {
+    let outcome = run(spec, &source.token(), &mut |record| {
         records.push(record.to_vec());
         Ok(())
     })
@@ -426,6 +412,7 @@ fn env_policy_is_an_explicit_allowlist_not_ambient_inheritance() {
     let path = report_path("env-policy");
     let scenario = fixture_backend::scenario_with_report(&[], &[], 0, false, Some(&path));
     let spec = ProcessSpec {
+        workspace: cyoa_infrastructure::backends::process::RequestWorkspace::new().unwrap(),
         program: FIXTURE_EXE.into(),
         args: vec![OsString::from(scenario)],
         env: EnvPolicy::new().set("ONLY_THIS_VAR", "present"),
@@ -433,7 +420,7 @@ fn env_policy_is_an_explicit_allowlist_not_ambient_inheritance() {
         bounds: short_bounds(),
     };
     let source = CancellationSource::default();
-    run(&spec, &source.token(), &mut noop).unwrap();
+    run(spec, &source.token(), &mut noop).unwrap();
 
     let report = read_report(&path);
     assert!(
@@ -458,7 +445,7 @@ fn multiple_records_are_delivered_in_order_and_success_requires_zero_exit() {
     let spec = spec(scenario, short_bounds());
     let source = CancellationSource::default();
     let mut records = Vec::new();
-    let outcome = run(&spec, &source.token(), &mut |record| {
+    let outcome = run(spec, &source.token(), &mut |record| {
         records.push(String::from_utf8(record.to_vec()).unwrap());
         Ok(())
     })
@@ -473,7 +460,7 @@ fn cancelling_from_inside_the_record_consumer_wins_over_a_same_tick_exit() {
     let spec = spec(scenario, short_bounds());
     let source = CancellationSource::default();
     let token = source.token();
-    let error = run(&spec, &token, &mut |_record| {
+    let error = run(spec, &token, &mut |_record| {
         source.cancel();
         Ok(())
     })
@@ -493,7 +480,7 @@ fn cancelling_from_inside_the_final_no_newline_record_still_wins_over_exit() {
     let source = CancellationSource::default();
     let token = source.token();
     let mut delivered = Vec::new();
-    let error = run(&spec, &token, &mut |record| {
+    let error = run(spec, &token, &mut |record| {
         delivered.push(record.to_vec());
         source.cancel();
         Ok(())
@@ -534,7 +521,7 @@ fn records_written_right_before_exit_are_not_silently_dropped() {
     let spec = spec(scenario, short_bounds());
     let source = CancellationSource::default();
     let mut records = Vec::new();
-    let outcome = run(&spec, &source.token(), &mut |record| {
+    let outcome = run(spec, &source.token(), &mut |record| {
         records.push(String::from_utf8(record.to_vec()).unwrap());
         Ok(())
     })
@@ -550,9 +537,7 @@ fn records_written_right_before_exit_are_not_silently_dropped() {
 
 /// A consumer that panics must not leak the child: `ChildGuard::drop` is the
 /// backstop for exactly this case (a `finish()`-routed exit path never
-/// runs). Uses `/proc/<pid>` (Linux-only, matching this test file's other
-/// process-existence checks) rather than a second rustix dependency in the
-/// test crate.
+/// runs). Checks process existence through the same kernel probe as normal exits.
 #[test]
 fn a_panicking_consumer_still_gets_the_child_cleaned_up() {
     let path = report_path("panicking-consumer");
@@ -562,7 +547,7 @@ fn a_panicking_consumer_still_gets_the_child_cleaned_up() {
     let source = CancellationSource::default();
 
     let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-        run(&spec, &source.token(), &mut |_record| {
+        run(spec, &source.token(), &mut |_record| {
             panic!("consumer panics mid-record");
         })
     }));
@@ -595,6 +580,7 @@ fn stdin_larger_than_pipe_capacity_is_delivered_in_full_when_the_child_reads_it(
     let input: Vec<u8> = (0..1_500_000u32).map(|i| (i % 251) as u8).collect();
     let scenario = fixture_backend::scenario_with_report(&[b"ok\n"], &[], 0, true, Some(&path));
     let spec = ProcessSpec {
+        workspace: cyoa_infrastructure::backends::process::RequestWorkspace::new().unwrap(),
         program: FIXTURE_EXE.into(),
         args: vec![OsString::from(scenario)],
         env: EnvPolicy::new(),
@@ -602,7 +588,7 @@ fn stdin_larger_than_pipe_capacity_is_delivered_in_full_when_the_child_reads_it(
         bounds: short_bounds(),
     };
     let source = CancellationSource::default();
-    let outcome = run(&spec, &source.token(), &mut noop).unwrap();
+    let outcome = run(spec, &source.token(), &mut noop).unwrap();
     assert_eq!(outcome.exit_code, 0);
 
     let report = read_report(&path);
@@ -627,7 +613,7 @@ fn stdout_larger_than_pipe_capacity_is_fully_delivered_and_diagnostics_agree() {
     let spec = spec(scenario, big_bounds);
     let source = CancellationSource::default();
     let mut record_count = 0u32;
-    let outcome = run(&spec, &source.token(), &mut |record| {
+    let outcome = run(spec, &source.token(), &mut |record| {
         assert_eq!(record, &line[..line.len() - 1]); // newline stripped by framing
         record_count += 1;
         Ok(())
@@ -644,13 +630,14 @@ fn stdout_larger_than_pipe_capacity_is_fully_delivered_and_diagnostics_agree() {
 #[test]
 fn incomplete_request_delivery_cannot_report_success() {
     let spec = ProcessSpec {
+        workspace: cyoa_infrastructure::backends::process::RequestWorkspace::new().unwrap(),
         program: FIXTURE_EXE.into(),
         args: vec![fixture_backend::scenario(&[b"{\"ok\":true}\n"], &[], 0).into()],
         env: EnvPolicy::new(),
         stdin: vec![b'a'; 2 * 1024 * 1024],
         bounds: short_bounds(),
     };
-    let result = run(&spec, &CancellationSource::default().token(), &mut noop);
+    let result = run(spec, &CancellationSource::default().token(), &mut noop);
     assert!(
         result.is_err(),
         "known undelivered request bytes must not produce success"
@@ -673,7 +660,7 @@ fn cancelled_token_wins_even_before_its_notifier_runs() {
     });
     let scenario =
         serde_json::json!({"stdout":[],"report_path":path,"hang_ms":200,"exit_code":0}).to_string();
-    let result = run(&spec(scenario, short_bounds()), &token, &mut noop);
+    let result = run(spec(scenario, short_bounds()), &token, &mut noop);
     let signalled = token.is_cancelled();
     release.send(()).unwrap();
     canceller.join().unwrap();
@@ -697,7 +684,7 @@ fn captured_output_never_exceeds_either_configured_bound() {
             fixture_backend::scenario_with_report(&[&bytes], &[], 0, false, Some(&path))
         };
         let spec = spec(scenario, bounds(Duration::from_secs(2), 100, 100));
-        let error = run(&spec, &CancellationSource::default().token(), &mut noop).unwrap_err();
+        let error = run(spec, &CancellationSource::default().token(), &mut noop).unwrap_err();
         assert!(matches!(error, SupervisorError::OutputBoundExceeded { .. }));
         let diagnostics = error.diagnostics();
         let capture = if stderr {
@@ -726,7 +713,7 @@ fn capture_at_the_exact_bound_is_complete_and_preserves_arbitrary_bytes() {
     let bytes = [0xff, b'\r', b'\n', 0xfe];
     let scenario = fixture_backend::scenario(&[&bytes], &[&bytes], 0);
     let outcome = run(
-        &spec(scenario, bounds(Duration::from_secs(5), 4, 4)),
+        spec(scenario, bounds(Duration::from_secs(5), 4, 4)),
         &CancellationSource::default().token(),
         &mut noop,
     )
@@ -766,7 +753,7 @@ fn cancellation_and_deadline_stop_continuous_writers_with_bounded_diagnostics() 
             });
             let start = std::time::Instant::now();
             let error = run(
-                &spec(
+                spec(
                     scenario,
                     bounds(
                         Duration::from_millis(80),
@@ -794,4 +781,99 @@ fn cancellation_and_deadline_stop_continuous_writers_with_bounded_diagnostics() 
             assert_process_gone(read_report(&path).pid, "continuous writer");
         }
     }
+}
+
+#[test]
+fn requests_do_not_inherit_the_repository_working_directory() {
+    let parent = std::env::current_dir().unwrap();
+    let path = report_path("cwd-isolation");
+    let scenario = fixture_backend::scenario_with_report(&[], &[], 0, false, Some(&path));
+    run(
+        spec(scenario, short_bounds()),
+        &CancellationSource::default().token(),
+        &mut noop,
+    )
+    .unwrap();
+    let report = read_report(&path);
+    assert_eq!(
+        std::env::current_dir().unwrap(),
+        parent,
+        "global cwd must not change"
+    );
+    assert_ne!(report.cwd, parent, "the child inherited the repository");
+    assert!(
+        !report.cwd.exists(),
+        "request directory must be removed after completion"
+    );
+}
+
+#[test]
+fn request_files_live_through_execution_and_are_removed_on_every_outcome() {
+    for ending in [
+        "success", "nonzero", "reject", "panic", "bound", "timeout", "cancel", "spawn",
+    ] {
+        let scenario = fixture_backend::scenario_hanging(
+            &[b"record\n"],
+            &[],
+            if ending == "nonzero" { 7 } else { 0 },
+            false,
+            None,
+            None,
+            (ending == "timeout").then_some(30_000),
+        );
+        let mut spec = spec(
+            scenario,
+            bounds(
+                Duration::from_millis(150),
+                if ending == "bound" { 1 } else { 100 },
+                100,
+            ),
+        );
+        if ending == "spawn" {
+            spec.program = "/not/a/cyoa-executable".into();
+        }
+        let directory = spec.workspace.path().to_owned();
+        let schema = directory.join("request.schema.json");
+        std::fs::write(&schema, b"{}").unwrap();
+        let source = CancellationSource::default();
+        if ending == "cancel" {
+            source.cancel();
+        }
+        let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            run(spec, &source.token(), &mut |_| {
+                assert_eq!(std::fs::read(&schema).unwrap(), b"{}");
+                match ending {
+                    "panic" => panic!("consumer panic"),
+                    "reject" => Err("consumer rejected".into()),
+                    _ => Ok(()),
+                }
+            })
+        }));
+        if ending == "panic" {
+            assert!(result.is_err());
+        } else {
+            assert_eq!(result.unwrap().is_ok(), ending == "success", "{ending}");
+        }
+        assert!(
+            !directory.exists(),
+            "scratch directory leaked after {ending}"
+        );
+    }
+}
+
+#[test]
+fn request_workspace_is_private_and_unique() {
+    use cyoa_infrastructure::backends::process::RequestWorkspace;
+    use std::os::unix::fs::PermissionsExt;
+    let first = RequestWorkspace::new().unwrap();
+    let second = RequestWorkspace::new().unwrap();
+    assert_ne!(first.path(), second.path());
+    assert_eq!(
+        std::fs::metadata(first.path())
+            .unwrap()
+            .permissions()
+            .mode()
+            & 0o077,
+        0
+    );
 }

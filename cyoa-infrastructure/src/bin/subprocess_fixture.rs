@@ -59,6 +59,7 @@ struct Scenario {
 
 #[derive(Debug, serde::Serialize)]
 struct Report {
+    cwd: std::path::PathBuf,
     argv: Vec<String>,
     stdin: Vec<u8>,
     /// This process's own environment variable NAMES ONLY (never values), so
@@ -146,6 +147,7 @@ fn main() {
 
     if let Some(report_path) = &scenario.report_path {
         let report = Report {
+            cwd: std::env::current_dir().expect("fixture working directory"),
             argv,
             stdin: received_stdin,
             env_keys: std::env::vars_os()

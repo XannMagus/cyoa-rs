@@ -8,9 +8,9 @@
 //! event names; that interpretation belongs to `backends::claude_cli`/
 //! `codex_cli` (Phase 1 items 4/5), built on top of this supervisor.
 //!
-//! Unix-only. `run` on a non-Unix target returns
-//! [`SupervisorError::Unsupported`] without attempting anything platform
-//! specific; this module makes no portability claim beyond that.
+//! Linux-tested; enabled on Unix targets with rustix's WNOWAIT waitid API.
+//! Other targets return [`SupervisorError::Unsupported`]. Other Unix targets
+//! have no live verification claim. Each request owns its isolated cwd.
 
 use cyoa_application::diagnostics::TransportDiagnostics;
 use std::ffi::OsString;
@@ -147,13 +147,38 @@ impl ProcessBounds {
 
 /// One generation call's launch parameters. `stdin` is written in full, then
 /// the write end is closed. Known incomplete delivery cannot produce success.
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ProcessSpec {
+    pub workspace: RequestWorkspace,
     pub program: PathBuf,
     pub args: Vec<OsString>,
     pub env: EnvPolicy,
     pub stdin: Vec<u8>,
     pub bounds: ProcessBounds,
+}
+
+/// Owned scratch directory, including any schema files prepared by an adapter.
+/// `run` consumes its request, keeping this directory alive through cleanup.
+#[derive(Debug)]
+pub struct RequestWorkspace(tempfile::TempDir);
+
+impl RequestWorkspace {
+    pub fn new() -> std::io::Result<Self> {
+        let mut builder = tempfile::Builder::new();
+        builder.prefix("cyoa-request-");
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            builder.permissions(std::fs::Permissions::from_mode(0o700));
+        }
+        builder.tempdir().map(Self)
+    }
+    pub fn path(&self) -> &std::path::Path {
+        self.0.path()
+    }
+    fn close(self) -> std::io::Result<()> {
+        self.0.close()
+    }
 }
 
 /// Which captured stream exceeded its configured bound.
@@ -248,6 +273,7 @@ impl SupervisorError {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum IoOperation {
+    WorkspaceCleanup,
     Nonblocking,
     Read,
     Write,
@@ -332,16 +358,40 @@ mod split_record_tests {
     }
 }
 
-#[cfg(unix)]
+#[cfg(all(
+    unix,
+    not(any(
+        target_os = "cygwin",
+        target_os = "horizon",
+        target_os = "openbsd",
+        target_os = "redox"
+    ))
+))]
 mod unix_impl;
-#[cfg(unix)]
+#[cfg(all(
+    unix,
+    not(any(
+        target_os = "cygwin",
+        target_os = "horizon",
+        target_os = "openbsd",
+        target_os = "redox"
+    ))
+))]
 pub use unix_impl::run;
 
-#[cfg(not(unix))]
+#[cfg(not(all(
+    unix,
+    not(any(
+        target_os = "cygwin",
+        target_os = "horizon",
+        target_os = "openbsd",
+        target_os = "redox"
+    ))
+)))]
 /// Records the requested record consumer's type without ever compiling
 /// platform-specific code: `run` always returns [`SupervisorError::Unsupported`].
 pub fn run(
-    _spec: &ProcessSpec,
+    _spec: ProcessSpec,
     _cancel: &cyoa_application::cancellation::CancellationToken,
     _on_record: &mut dyn FnMut(&[u8]) -> Result<(), String>,
 ) -> Result<ProcessOutcome, SupervisorError> {

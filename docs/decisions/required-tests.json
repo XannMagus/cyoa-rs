@@ -485,6 +485,15 @@
           "dropping_a_subscription_releases_resources_without_waiting_for_cancellation",
           "scoped_notifications_handle_reuse_late_registration_and_reentrant_callbacks"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "process_supervisor",
+        "tests": [
+          "requests_do_not_inherit_the_repository_working_directory",
+          "request_files_live_through_execution_and_are_removed_on_every_outcome",
+          "request_workspace_is_private_and_unique"
+        ]
       }
     ]
   },

@@ -12,6 +12,7 @@ minijinja = "2.24.0"
 schemars = "1.2.2"
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json.workspace = true
+tempfile = "3"
 thiserror.workspace = true
 toml = "1.1.6"
 
