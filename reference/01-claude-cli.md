@@ -58,22 +58,49 @@ a genuine second model call (to `claude-opus-5-5`, visible in
 `usage.iterations`), adding real latency (the world-request probe took 60.9s
 total) and its own token cost.
 
-Three independent attempts to suppress it all failed — stripped environment,
+Three independent *availability* attempts all failed — stripped environment,
 `--settings` override, and the experimental-advisor env var set to `0`. Root
 cause per `claude doctor`: `Organization policy: Loaded from
-api.anthropic.com` — this is enforced server-side by Anthropic for the
-authenticated org, not controllable via any local flag/setting/environment.
-See the linked review's "Confirmed findings" section for each attempt and its
-evidence file.
+api.anthropic.com` — the tool's *availability* is enforced server-side by
+Anthropic for the authenticated org, not controllable via any local
+flag/setting/environment. See the linked review's "Confirmed findings"
+section for each attempt and its evidence file.
 
-**Consequence for this project:** every `claude -p` structured-output call on
-this account carries a ~60s+ baseline before generation even starts, plus an
-extra, currently-unaccounted-for token cost. Item 2's timeout defaults and
-item 9's live-acceptance cost accounting must budget for this. It does not
-change the adapter's architecture: `advisor`/`advisor_tool_result` blocks are
-simply more instances of the "unrelated tool block" case content-block
-identity handling must already ignore (see below) — this account's evidence
-just makes that case load-bearing on every single call, not a rare edge case.
+**A fourth lever, suppressing the model's *choice* to invoke it rather than
+its availability, works:**
+
+```
+--append-system-prompt "Do not consult the advisor tool for this task. Answer directly."
+```
+
+Confirmed on both the world request and the opening-turn request (repeated
+independently, not the same call): zero `server_tool_use`/`advisor_tool_result`
+blocks in either transcript, `is_error: false`, valid structured output, no
+stray `text` block ahead of `StructuredOutput` either (content blocks went
+straight `thinking` → `tool_use`). No bleed-through of the appended
+instruction's wording into generated narrative/description text (checked for
+"advisor" in both). Duration dropped from the 60.9s advisor-inclusive baseline
+to 29–31s, consistent with the advisor round-trip being the source of the
+extra time, not a coincidence. Evidence:
+`reviews/2026-09-25-claude-cli-refresh/evidence/{p1-world-append,p3-opening-append}.jsonl`.
+
+**Architectural placement:** this is unambiguously a `claude -p`-specific
+tolerance adjustment — Codex has no advisor tool, so this instruction can
+never be shared/generic. Per ARCH-003, it belongs in
+`generation::backend_compat::claude_cli` alongside `adapt_schema`, appended to
+the invocation only when building a `ClaudeCliBackend` call — never mixed into
+`GenerationTemplates`'s backend-agnostic `instructions` string that the Codex
+adapter also consumes. Not yet implemented (the invocation builder itself is
+Phase 1 item 3/4 work); recorded here as a confirmed requirement for that
+item.
+
+**Consequence for this project:** with the appended instruction in place at
+implementation time, the advisor tax should not apply in practice — but the
+underlying org-level *availability* remains permanent and account-specific
+(see above), so item 2's timeout defaults should still budget generously
+rather than assume the suppression instruction is bulletproof against every
+possible request shape, and item 9's live-acceptance run should confirm it
+holds across the full turn sequence, not just these two isolated probes.
 
 ### Content-block identity: text and tool blocks that are not the payload
 

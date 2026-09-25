@@ -313,7 +313,12 @@ reconciles terminal protocol state with process completion. Complete-only mode
 emits a complete payload at most once; do not simulate token streaming with sleeps.
 Map only the documented/observed final structured message, not arbitrary assistant
 text or reasoning. Use the confirmed invocation and explicit subscription-preserving
-flags. Account/tool isolation still requires its own evidence.
+flags. Account/tool isolation still requires its own evidence. For `claude_cli`
+specifically, the invocation must include the confirmed
+`--append-system-prompt "Do not consult the advisor tool for this task. Answer
+directly."` argument (`reference/01-claude-cli.md`'s advisor section) — a
+`backend_compat::claude_cli`-local addition alongside `adapt_schema`, never
+folded into the shared `GenerationTemplates` instructions Codex also consumes.
 
 **TDD errors:** error terminal with exit zero; success terminal with nonzero exit;
 malformed event; missing payload; conflicting results; unrelated tool/message
