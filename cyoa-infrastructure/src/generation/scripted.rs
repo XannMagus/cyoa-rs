@@ -1,6 +1,7 @@
 //! Deterministic, credential-free transport for integration tests and future demos.
 use crate::backend::*;
 use cyoa_application::cancellation::CancellationToken;
+use cyoa_core::text::TransportDiagnostics;
 use std::collections::VecDeque;
 #[derive(Debug)]
 pub struct CapturedRequest {
@@ -42,16 +43,22 @@ impl Backend for ScriptedBackend {
         _: &mut dyn FnMut(&str),
     ) -> Result<GenerationResponse, BackendError> {
         if cancel.is_cancelled() {
-            return Err(BackendError::Cancelled);
+            return Err(BackendError::Cancelled {
+                diagnostics: TransportDiagnostics::empty(),
+            });
         }
         self.requests.push(CapturedRequest {
             instructions: r.instructions.into(),
             prompt: r.prompt.into(),
             schema: r.schema.clone(),
         });
-        let raw = self.responses.pop_front().ok_or_else(|| {
-            BackendError::Unavailable("script exhausted: unexpected generation call".into())
-        })??;
+        let raw = self
+            .responses
+            .pop_front()
+            .ok_or_else(|| BackendError::Unavailable {
+                message: "script exhausted: unexpected generation call".into(),
+                diagnostics: TransportDiagnostics::empty(),
+            })??;
         GenerationResponse::from_json(raw, TokenUsage::default())
     }
 }
@@ -96,7 +103,9 @@ impl Backend for ChunkedBackend {
         let mut start = 0;
         while start + 1 < boundaries.len() {
             if cancel.is_cancelled() {
-                return Err(BackendError::Cancelled);
+                return Err(BackendError::Cancelled {
+                    diagnostics: TransportDiagnostics::empty(),
+                });
             }
             self.seed = self.seed.wrapping_mul(6364136223846793005).wrapping_add(1);
             let end = (start + 1 + (self.seed as usize % 17)).min(boundaries.len() - 1);
@@ -104,7 +113,9 @@ impl Backend for ChunkedBackend {
             start = end;
         }
         if cancel.is_cancelled() {
-            return Err(BackendError::Cancelled);
+            return Err(BackendError::Cancelled {
+                diagnostics: TransportDiagnostics::empty(),
+            });
         }
         result
     }

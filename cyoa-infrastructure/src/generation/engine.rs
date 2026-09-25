@@ -9,7 +9,7 @@ use cyoa_application::{cancellation::CancellationToken, generation::*};
 use cyoa_core::{
     game::GameState,
     limits::Limits,
-    text::{Brief, RawResponse},
+    text::{Brief, RawResponse, TransportDiagnostics},
     turn::StoryTurn,
     world::{WorldCast, WorldOutline},
 };
@@ -34,7 +34,7 @@ impl<B: Backend> GenerationEngine<B> {
         on_json: &mut dyn FnMut(&str),
     ) -> Result<GenerationResponse, GenerationFailure> {
         if cancel.is_cancelled() {
-            return Err(cancelled(""));
+            return Err(cancelled("", TransportDiagnostics::empty()));
         }
         let mut fragments = String::new();
         let response = self.backend.generate(
@@ -52,32 +52,51 @@ impl<B: Backend> GenerationEngine<B> {
             },
         );
         let response = response.map_err(|error| match error {
-            BackendError::Cancelled => cancelled(fragments),
-            BackendError::Unavailable(message) => GenerationFailure::new(
+            BackendError::Cancelled { diagnostics } => cancelled(fragments, diagnostics),
+            BackendError::Unavailable {
+                message,
+                diagnostics,
+            } => GenerationFailure::new(
                 FailureKind::Unavailable,
                 message,
                 RawResponse::new(fragments),
+                diagnostics,
+            ),
+            BackendError::Timeout { diagnostics } => GenerationFailure::new(
+                FailureKind::Timeout,
+                "generation timed out",
+                RawResponse::new(fragments),
+                diagnostics,
             ),
             BackendError::Generation {
                 message,
                 raw_response,
+                diagnostics,
             } => GenerationFailure::new(
                 FailureKind::Transport,
                 message,
                 RawResponse::new(raw_response),
+                diagnostics,
             ),
         })?;
         if cancel.is_cancelled() {
-            return Err(cancelled(response.raw_response()));
+            // The transport succeeded, so there is no separate diagnostics
+            // capture attached to a `GenerationResponse` yet (a known gap;
+            // see this commit's report). Empty is honest, not fabricated.
+            return Err(cancelled(
+                response.raw_response(),
+                TransportDiagnostics::empty(),
+            ));
         }
         Ok(response)
     }
 }
-fn cancelled(raw: impl Into<String>) -> GenerationFailure {
+fn cancelled(raw: impl Into<String>, diagnostics: TransportDiagnostics) -> GenerationFailure {
     GenerationFailure::new(
         FailureKind::Cancelled,
         "generation cancelled",
         RawResponse::new(raw),
+        diagnostics,
     )
 }
 fn configuration(error: RenderError) -> GenerationFailure {
@@ -85,6 +104,7 @@ fn configuration(error: RenderError) -> GenerationFailure {
         FailureKind::Configuration,
         error.to_string(),
         RawResponse::new(""),
+        TransportDiagnostics::empty(),
     )
 }
 fn invalid(error: impl std::fmt::Display, response: &GenerationResponse) -> GenerationFailure {
@@ -92,6 +112,7 @@ fn invalid(error: impl std::fmt::Display, response: &GenerationResponse) -> Gene
         FailureKind::InvalidResponse,
         error.to_string(),
         RawResponse::new(response.raw_response()),
+        TransportDiagnostics::empty(),
     )
 }
 fn decode<T: serde::de::DeserializeOwned>(
@@ -168,7 +189,10 @@ impl<B: Backend> StoryGenerator for GenerationEngine<B> {
             on_narrative(remainder);
         }
         if cancel.is_cancelled() {
-            return Err(cancelled(response.raw_response()));
+            return Err(cancelled(
+                response.raw_response(),
+                TransportDiagnostics::empty(),
+            ));
         }
         Ok(generated(turn, &response))
     }

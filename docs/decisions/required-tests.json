@@ -47,7 +47,8 @@
         "package": "cyoa-core",
         "target": "lib",
         "tests": [
-          "text::tests::exchange_text_preserves_every_byte_including_empty_and_whitespace"
+          "text::tests::exchange_text_preserves_every_byte_including_empty_and_whitespace",
+          "text::tests::transport_diagnostics_preserve_non_utf8_bytes_exactly_and_lossy_display_never_panics"
         ]
       },
       {
@@ -55,7 +56,17 @@
         "target": "backend_contract",
         "tests": [
           "successful_response_retains_the_exact_json_it_parsed",
-          "malformed_response_is_an_error_with_original_diagnostics"
+          "malformed_response_is_an_error_with_original_diagnostics",
+          "every_backend_error_variant_maps_to_its_failure_kind_with_exact_diagnostics",
+          "nonzero_exit_with_no_stdout_maps_to_unavailable_with_exact_stderr_bytes",
+          "nonzero_exit_after_emitting_stdout_maps_to_generation_not_unavailable",
+          "cancelling_from_inside_the_streamed_callback_returns_cancelled_with_diagnostics_seen_so_far",
+          "empty_stdout_with_exit_zero_does_not_construct_a_false_success",
+          "crlf_in_diagnostics_is_preserved_without_normalization",
+          "non_utf8_stderr_diagnostics_survive_the_process_boundary_and_lossy_display_does_not_panic",
+          "invalid_cache_accounting_from_a_real_process_normalizes_to_unknown_not_a_rejected_response",
+          "normalize_input_tokens_distinguishes_unknown_from_zero_and_repairs_only_invalid_cache",
+          "fixture_round_trips_quotes_newlines_and_unicode_through_a_real_process_boundary"
         ]
       }
     ]

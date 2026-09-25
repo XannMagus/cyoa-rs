@@ -100,6 +100,7 @@ fn failed_turns_preserve_diagnostics_state_and_single_attempt() {
             Err(BackendError::Generation {
                 message: "network failed".into(),
                 raw_response: " \r\npartial 🎭 ".into(),
+                diagnostics: TransportDiagnostics::empty(),
             }),
             FailureKind::Transport,
             " \r\npartial 🎭 ".into(),
@@ -344,6 +345,7 @@ fn preview_then_transport_failure_leaves_state_untouched() {
             Err(BackendError::Generation {
                 message: "stream failed".into(),
                 raw_response: partial.into(),
+                diagnostics: TransportDiagnostics::empty(),
             })
         }
     }

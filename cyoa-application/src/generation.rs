@@ -4,7 +4,7 @@ use crate::cancellation::CancellationToken;
 use cyoa_core::{
     game::{GameState, InvalidRewind, TurnCount},
     limits::Limits,
-    text::{Brief, PlayerInput, RawResponse},
+    text::{Brief, PlayerInput, RawResponse, TransportDiagnostics},
     turn::{GenerationProvenance, StoryTurn},
     world::{World, WorldCast, WorldOutline},
 };
@@ -14,6 +14,7 @@ use thiserror::Error;
 pub enum FailureKind {
     Cancelled,
     Unavailable,
+    Timeout,
     Transport,
     InvalidResponse,
     Configuration,
@@ -24,13 +25,20 @@ pub struct GenerationFailure {
     kind: FailureKind,
     message: String,
     raw_response: RawResponse,
+    diagnostics: TransportDiagnostics,
 }
 impl GenerationFailure {
-    pub fn new(kind: FailureKind, message: impl Into<String>, raw_response: RawResponse) -> Self {
+    pub fn new(
+        kind: FailureKind,
+        message: impl Into<String>,
+        raw_response: RawResponse,
+        diagnostics: TransportDiagnostics,
+    ) -> Self {
         Self {
             kind,
             message: message.into(),
             raw_response,
+            diagnostics,
         }
     }
     pub fn kind(&self) -> FailureKind {
@@ -38,6 +46,9 @@ impl GenerationFailure {
     }
     pub fn raw_response(&self) -> &RawResponse {
         &self.raw_response
+    }
+    pub fn diagnostics(&self) -> &TransportDiagnostics {
+        &self.diagnostics
     }
 }
 #[derive(Debug)]
@@ -168,6 +179,7 @@ fn check_cancelled(
             FailureKind::Cancelled,
             "generation cancelled",
             raw_response,
+            TransportDiagnostics::empty(),
         ))
     } else {
         Ok(())

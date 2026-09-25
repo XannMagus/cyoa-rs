@@ -527,6 +527,10 @@ String newtypes distinguish normalized business text from verbatim exchange text
 `define_verbatim_string_type!` preserves every UTF-8 byte, including empty input,
 and is used only for `RawResponse`, `Instructions`, and `RenderedPrompt`.
 These diagnostic fields do not establish turn validity; typed turn fields do.
+Transport stdout/stderr are a distinct, byte-backed (not `String`-backed) type,
+`TransportDiagnostics`, since a subprocess's diagnostic streams may contain
+invalid UTF-8; `BackendError`'s variants each carry it separately from
+`Generation`'s `raw_response` payload (Phase 1 item 2; see TEXT-001).
 
 A second domain slice adds `limits.rs`, `world.rs`, `style.rs`, `turn.rs`, and
 `game.rs`. Every limit (`MajorEventLimit`, `MaxGeneratedNpcs`, `ProseBridgeTurns`,

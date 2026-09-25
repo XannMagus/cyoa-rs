@@ -15,5 +15,12 @@ serde_json.workspace = true
 thiserror.workspace = true
 toml = "1.1.6"
 
+# Test-support subprocess used by this crate's own integration tests (and, via
+# escargot, by cyoa-cli's binary tests) to exercise the real process boundary
+# without an installed vendor CLI. Never wired into the shipped command surface.
+[[bin]]
+name = "subprocess_fixture"
+path = "src/bin/subprocess_fixture.rs"
+
 [lints]
 workspace = true

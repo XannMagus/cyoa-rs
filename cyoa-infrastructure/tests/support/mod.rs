@@ -1,6 +1,11 @@
 //! Convenience adapters for retained regressions. Production exposes fallible,
 //! instance-owned rendering only; unwraps here fail the test on any render error.
 #![allow(dead_code)]
+
+/// Real-process test harness for `backend_contract.rs` only (needs
+/// `CARGO_BIN_EXE_subprocess_fixture`, set only for this crate's own tests).
+pub mod fixture_backend;
+
 use cyoa_core::{
     game::GameState,
     limits::Limits,

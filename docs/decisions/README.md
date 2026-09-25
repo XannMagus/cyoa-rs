@@ -70,6 +70,16 @@ whitespace-only input, CRLF, and Unicode. No blanket String-wrapper normalizatio
 Raw diagnostics are not proof of a valid StoryTurn. Evidence: `5050fb4`; the
 restoration tests also preserve audit records through state reconstruction.
 
+The payload and its transport diagnostics are separate concerns. `TransportDiagnostics`
+(`cyoa-core::text`) is a byte-backed (not `String`-backed) type retaining a
+subprocess's captured stdout/stderr separately, because a diagnostic stream may
+contain invalid UTF-8 and lossy display must never replace the retained bytes.
+`BackendError`'s `Cancelled`/`Unavailable`/`Timeout`/`Generation` variants each
+carry it, distinct from `Generation`'s `raw_response` (the actual structured
+payload). A real process boundary (the `subprocess_fixture` test binary in
+`cyoa-infrastructure`) proves CRLF, non-UTF-8 bytes, and exact quoted/Unicode
+payloads all survive unmodified. Evidence: `cyoa-infrastructure/tests/backend_contract.rs`.
+
 ### TEXT-002 Unicode lowercase is the matching policy
 
 **Enforced.** For name fallback, event/action deduplication and generated IDs, use

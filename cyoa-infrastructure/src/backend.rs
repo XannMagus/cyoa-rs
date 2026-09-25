@@ -4,6 +4,7 @@
 //! domain-facing requests and results through this internal transport boundary.
 
 use cyoa_application::cancellation::CancellationToken;
+use cyoa_core::text::TransportDiagnostics;
 
 use serde_json::Value;
 use thiserror::Error;
@@ -40,6 +41,7 @@ impl GenerationResponse {
             serde_json::from_str(&raw_response).map_err(|error| BackendError::Generation {
                 message: format!("invalid structured response: {error}"),
                 raw_response: raw_response.clone(),
+                diagnostics: TransportDiagnostics::empty(),
             })?;
         Ok(Self {
             value,
@@ -94,6 +96,19 @@ pub struct InvalidTokenUsage {
     cached: u64,
 }
 
+/// Normalizes a vendor-reported cached-token count that contradicts the total.
+///
+/// A backend's own miscounted telemetry is not evidence the generation itself
+/// failed: invalid cache accounting is treated as unknown cache information
+/// (`cached: None`), not as a rejected response. `InputTokens::new` keeps
+/// rejecting the invalid pair for direct, already-validated construction;
+/// this normalizer is the boundary policy for raw vendor-reported counts.
+pub fn normalize_input_tokens(total: u64, cached: Option<u64>) -> InputTokens {
+    InputTokens::new(total, cached)
+        .or_else(|_| InputTokens::new(total, None))
+        .expect("total alone is always valid")
+}
+
 /// Missing counts differ from reported zero. There is one representation of
 /// unavailable usage: `TokenUsage::default()`, without an outer `Option`.
 /// Adapters must normalize provider-specific accounting before constructing it.
@@ -106,14 +121,20 @@ pub struct TokenUsage {
 #[derive(Debug, Error)]
 pub enum BackendError {
     #[error("generation cancelled")]
-    Cancelled,
-    #[error("backend unavailable: {0}")]
-    Unavailable(String),
+    Cancelled { diagnostics: TransportDiagnostics },
+    #[error("backend unavailable: {message}")]
+    Unavailable {
+        message: String,
+        diagnostics: TransportDiagnostics,
+    },
+    #[error("generation timed out")]
+    Timeout { diagnostics: TransportDiagnostics },
     #[error("generation failed: {message}")]
     Generation {
         message: String,
         /// Preserve diagnostics for the frontend's error details.
         raw_response: String,
+        diagnostics: TransportDiagnostics,
     },
 }
 
