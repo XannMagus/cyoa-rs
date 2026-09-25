@@ -76,9 +76,17 @@ subprocess's captured stdout/stderr separately, because a diagnostic stream may
 contain invalid UTF-8 and lossy display must never replace the retained bytes.
 `BackendError`'s `Cancelled`/`Unavailable`/`Timeout`/`Generation` variants each
 carry it, distinct from `Generation`'s `raw_response` (the actual structured
-payload). A real process boundary (the `subprocess_fixture` test binary in
-`cyoa-infrastructure`) proves CRLF, non-UTF-8 bytes, and exact quoted/Unicode
-payloads all survive unmodified. Evidence: `cyoa-infrastructure/tests/backend_contract.rs`.
+payload). A real process boundary — `subprocess_fixture`, an ungated `[[bin]]`
+of `cyoa-infrastructure` never wired into `cyoa-cli`'s command surface, driven
+by the test-only `FixtureBackend` in `tests/support/fixture_backend.rs` — proves
+CRLF, non-UTF-8 bytes, and exact quoted/Unicode payloads all survive
+unmodified, and that the fixture's reported argv/stdin match exactly what its
+caller sent. Evidence: `cyoa-infrastructure/tests/backend_contract.rs`.
+`FixtureBackend`'s "no stdout at all" (`Unavailable`) versus "stdout present
+but the process still failed" (`Generation`) split on nonzero exit is this
+harness's own adapter policy, not yet production-owned code; Phase 1 item 3's
+process supervisor and item 4/5's vendor codecs are expected to adopt the same
+distinction, not a claim that a real `claude`/`codex` process already does.
 
 ### TEXT-002 Unicode lowercase is the matching policy
 
@@ -162,6 +170,17 @@ distinction survives the mapping, incomplete generated characters are dropped
 rather than failing the whole cast, and an unrecognized `QuickActionKind` maps to
 `Other` rather than erroring. Save DTOs remain future work. Evidence:
 architecture/domain decisions in PLAN, `6290701`, and `wire_mapping`'s tests.
+
+Invalid telemetry policy (2026-09-25, Phase 1 item 2): a vendor-reported
+cached-token count that exceeds its own reported total is boundary-invalid
+input, not evidence the generation itself failed. `normalize_input_tokens`
+(`cyoa-infrastructure::backend`) treats it as unknown cache information
+(`cached: None`) rather than rejecting an otherwise valid response; direct,
+already-validated construction via `InputTokens::new` keeps rejecting the
+same invalid pair outright, since that path is for values already known
+trustworthy. Evidence:
+`normalize_input_tokens_distinguishes_unknown_from_zero_and_repairs_only_invalid_cache`
+and `adapter_reported_invalid_cache_accounting_normalizes_to_unknown_over_a_real_process_boundary`.
 
 ### PROMPTS-001 Opening-turn identity review
 

@@ -244,7 +244,7 @@ fn non_utf8_stderr_diagnostics_survive_the_process_boundary_and_lossy_display_do
 }
 
 #[test]
-fn invalid_cache_accounting_from_a_real_process_normalizes_to_unknown_not_a_rejected_response() {
+fn adapter_reported_invalid_cache_accounting_normalizes_to_unknown_over_a_real_process_boundary() {
     let payload: &[u8] = br#"{"narrative":"ok"}"#;
     let scenario = fixture_backend::scenario(&[payload], &[], 0);
     let mut backend =
@@ -280,6 +280,29 @@ fn normalize_input_tokens_distinguishes_unknown_from_zero_and_repairs_only_inval
 }
 
 // --- Nominal ---------------------------------------------------------------
+
+#[test]
+fn fixture_reports_the_exact_argv_and_stdin_prompt_bytes_it_received() {
+    let payload: &[u8] = br#"{"narrative":"ok"}"#;
+    let report_path = fixture_backend::report_path("argv-stdin");
+    let scenario =
+        fixture_backend::scenario_with_report(&[payload], &[], 0, true, Some(&report_path));
+    let mut backend = fixture_backend::FixtureBackend::new(scenario.clone());
+    let source = CancellationSource::default();
+    let prompt = "line one\nline two \"quoted\" \u{1F600} caf\u{e9}\r\n";
+    let request = GenerationRequest {
+        instructions: "",
+        prompt,
+        schema: &json!({}),
+    };
+    backend
+        .generate(request, &source.token(), &mut |_| {})
+        .unwrap();
+
+    let report = fixture_backend::read_report(&report_path);
+    assert_eq!(report.argv.get(1), Some(&scenario));
+    assert_eq!(report.stdin, prompt.as_bytes());
+}
 
 #[test]
 fn fixture_round_trips_quotes_newlines_and_unicode_through_a_real_process_boundary() {

@@ -32,7 +32,20 @@ struct Scenario {
     /// tests, but implemented now so the field is not dead protocol surface.
     #[serde(default)]
     spawn_descendant_holding_stdout_ms: Option<u64>,
+    /// If set, write a `Report` (this process's argv and, if `drain_stdin` is
+    /// true, the exact bytes read from stdin) to this file path before
+    /// exiting. A handshake file, not a timing-based proof: lets a test
+    /// confirm exactly what the child received, matching item 2's own
+    /// "can report argv/stdin" requirement.
+    #[serde(default)]
+    report_path: Option<String>,
     exit_code: i32,
+}
+
+#[derive(Debug, serde::Serialize)]
+struct Report {
+    argv: Vec<String>,
+    stdin: Vec<u8>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -58,8 +71,10 @@ fn main() {
         std::process::exit(0);
     }
 
-    let scenario_json = std::env::args()
-        .nth(1)
+    let argv: Vec<String> = std::env::args().collect();
+    let scenario_json = argv
+        .get(1)
+        .cloned()
         .expect("subprocess_fixture requires a JSON scenario as argv[1]");
     let scenario: Scenario =
         serde_json::from_str(&scenario_json).expect("argv[1] must be a valid Scenario JSON");
@@ -76,9 +91,18 @@ fn main() {
         // can outlive this process while still holding the inherited pipes.
     }
 
+    let mut received_stdin = Vec::new();
     if scenario.drain_stdin {
-        let mut discarded = Vec::new();
-        let _ = std::io::stdin().read_to_end(&mut discarded);
+        let _ = std::io::stdin().read_to_end(&mut received_stdin);
+    }
+
+    if let Some(report_path) = &scenario.report_path {
+        let report = Report {
+            argv,
+            stdin: received_stdin,
+        };
+        let json = serde_json::to_string(&report).expect("serialize report");
+        let _ = std::fs::write(report_path, json);
     }
 
     write_chunks(&scenario.stdout, std::io::stdout().lock());

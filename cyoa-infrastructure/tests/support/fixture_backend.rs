@@ -10,7 +10,13 @@ use cyoa_infrastructure::backend::{
     Backend, BackendError, GenerationRequest, GenerationResponse, TokenUsage,
     normalize_input_tokens,
 };
+use std::io::Write;
 use std::process::{Command, Stdio};
+
+/// Compile-time, per the standard convention (`std::env::var` at runtime only
+/// happens to work because cargo sets this for every test binary of the
+/// owning crate).
+const FIXTURE_EXE: &str = env!("CARGO_BIN_EXE_subprocess_fixture");
 
 /// Vendor-reported usage the fixture "backend" applies to a successful
 /// response, exercising `normalize_input_tokens` over the real process path.
@@ -43,23 +49,25 @@ impl FixtureBackend {
 impl Backend for FixtureBackend {
     fn generate(
         &mut self,
-        _request: GenerationRequest<'_>,
+        request: GenerationRequest<'_>,
         cancel: &cyoa_application::cancellation::CancellationToken,
         on_json: &mut dyn FnMut(&str),
     ) -> Result<GenerationResponse, BackendError> {
-        let exe = std::env::var("CARGO_BIN_EXE_subprocess_fixture")
-            .expect("cargo sets CARGO_BIN_EXE_subprocess_fixture for this crate's tests");
-        let mut child = Command::new(exe)
+        let mut child = Command::new(FIXTURE_EXE)
             .arg(&self.scenario_json)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .spawn()
             .expect("spawn subprocess_fixture");
-        // Item 2's fixture backend does not drive scenarios needing an
-        // acknowledgement byte; close stdin immediately so a `drain_stdin`
-        // scenario is not left blocked waiting for input.
-        drop(child.stdin.take());
+        // Real backends write the request to stdin and close it (see
+        // PLAN.md's confirmed `claude -p`/`codex exec` invocations); mirror
+        // that here so a scenario with `drain_stdin`/`report_path` set can
+        // prove the exact prompt bytes it received, not just its own output.
+        if let Some(mut stdin) = child.stdin.take() {
+            let _ = stdin.write_all(request.prompt.as_bytes());
+            // Dropping `stdin` here closes the write end.
+        }
         let output = child
             .wait_with_output()
             .expect("wait for subprocess_fixture");
@@ -125,6 +133,18 @@ impl Backend for FixtureBackend {
 /// `subprocess_fixture`'s `Scenario`/`Chunk` shape without pulling its
 /// (private, bin-local) types into this test crate.
 pub fn scenario(stdout: &[&[u8]], stderr: &[&[u8]], exit_code: i32) -> String {
+    scenario_with_report(stdout, stderr, exit_code, false, None)
+}
+
+/// Same as `scenario`, additionally asking the fixture to drain stdin and
+/// report exactly what it received (argv and stdin bytes) to `report_path`.
+pub fn scenario_with_report(
+    stdout: &[&[u8]],
+    stderr: &[&[u8]],
+    exit_code: i32,
+    drain_stdin: bool,
+    report_path: Option<&std::path::Path>,
+) -> String {
     let chunk = |bytes: &[u8]| {
         serde_json::json!({
             "bytes": bytes,
@@ -134,9 +154,34 @@ pub fn scenario(stdout: &[&[u8]], stderr: &[&[u8]], exit_code: i32) -> String {
     serde_json::json!({
         "stdout": stdout.iter().map(|b| chunk(b)).collect::<Vec<_>>(),
         "stderr": stderr.iter().map(|b| chunk(b)).collect::<Vec<_>>(),
-        "drain_stdin": false,
+        "drain_stdin": drain_stdin,
         "spawn_descendant_holding_stdout_ms": null,
+        "report_path": report_path.map(|p| p.to_string_lossy().into_owned()),
         "exit_code": exit_code,
     })
     .to_string()
+}
+
+/// A unique path in the system temp directory for one test's report file.
+/// Test-only scratch data, removed by `read_report` once read.
+pub fn report_path(label: &str) -> std::path::PathBuf {
+    static COUNTER: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+    let n = COUNTER.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+    std::env::temp_dir().join(format!(
+        "cyoa-subprocess-fixture-report-{label}-{}-{n}.json",
+        std::process::id()
+    ))
+}
+
+#[derive(Debug, serde::Deserialize)]
+pub struct Report {
+    pub argv: Vec<String>,
+    pub stdin: Vec<u8>,
+}
+
+/// Reads and deletes the report file written by a `report_path` scenario.
+pub fn read_report(path: &std::path::Path) -> Report {
+    let json = std::fs::read_to_string(path).expect("subprocess_fixture wrote its report");
+    let _ = std::fs::remove_file(path);
+    serde_json::from_str(&json).expect("report is valid JSON")
 }
