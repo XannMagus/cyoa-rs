@@ -1,0 +1,2 @@
+Warning: Advisor disabled — base model 'not-a-real-model-xyz' has no advisor rank in the model catalog. Switch to a public model alias (opus, sonnet, fable) or set CLAUDE_CODE_ENABLE_EXPERIMENTAL_ADVISOR_TOOL=1.
+[claude-code:unrecognized_model] {"model":"not-a-real-model-xyz","query_source":"sdk"}

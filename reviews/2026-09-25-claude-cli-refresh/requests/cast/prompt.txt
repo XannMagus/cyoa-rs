@@ -1,0 +1,7 @@
+Create the cast of characters for an adventure game set in this world:
+
+# Harbour
+
+A sheltered harbour
+
+The player described the world they wanted as: Two Ajaxes, a harbour and a voyage

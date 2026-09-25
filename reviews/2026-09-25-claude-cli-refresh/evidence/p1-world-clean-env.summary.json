@@ -1,0 +1,1 @@
+{"content_block_types":[{"i":0,"t":"thinking","name":null},{"i":1,"t":"text","name":null},{"i":2,"t":"server_tool_use","name":"advisor"},{"i":3,"t":"advisor_tool_result","name":null},{"i":4,"t":"thinking","name":null},{"i":5,"t":"tool_use","name":"StructuredOutput"}],"is_error":false}

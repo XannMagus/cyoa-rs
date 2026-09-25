@@ -1,0 +1,21 @@
+{
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "A short, evocative title for this adventure"
+    },
+    "world_description": {
+      "type": "string",
+      "description": "Detailed description of the world: its geography, factions, atmosphere, central conflict and stakes"
+    }
+  },
+  "required": [
+    "title",
+    "world_description"
+  ],
+  "description": "A detailed game world generated from a brief description",
+  "title": "WorldOutline",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false
+}
