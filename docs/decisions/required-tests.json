@@ -501,6 +501,13 @@
         "tests": [
           "backends::process::unix_impl::fault_tests::self_pipe_wakes_a_long_poll_without_removing_token_checks"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "backends::process::unix_impl::fault_tests::interrupted_reaping_still_has_a_finite_deadline"
+        ]
       }
     ]
   },

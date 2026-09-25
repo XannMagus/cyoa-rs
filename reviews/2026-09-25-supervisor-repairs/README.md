@@ -107,3 +107,12 @@ of the callback closed the only writer, producing POLLHUP, another valid wake.
 The final mutation removes registration and holds the writer open, genuinely
 removing wake delivery. All eleven runtime mutations were detected in
 `/tmp/cyoa-fix-six-mutations.log`; compiler errors never count.
+
+## Cleanup audit follow-up — interrupted reaping
+
+A final audit found that repeated EINTR could bypass the reap deadline because its
+check lived only in the no-exit branch. A bounded injection returning interruptions
+for longer than the grace period reproduced a runtime failure: the old loop later
+returned success. The deadline now applies before every attempt, regardless of the
+previous result. The regression also checks that the Drop backstop reaps the actual
+child after the explicit timeout. Log: `/tmp/cyoa-reap-interrupt-red.log`.

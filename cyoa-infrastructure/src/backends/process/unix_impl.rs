@@ -28,6 +28,8 @@ struct Operations {
     poll_tick: Option<Duration>,
     #[cfg(test)]
     poll_started: Option<std::sync::mpsc::SyncSender<()>>,
+    #[cfg(test)]
+    interrupt_reap_until: Option<Instant>,
 }
 
 impl Operations {
@@ -82,29 +84,38 @@ struct ChildGuard {
 }
 
 impl ChildGuard {
+    fn try_reap(&mut self, _ops: &Operations) -> std::io::Result<Option<ExitStatus>> {
+        #[cfg(test)]
+        if _ops
+            .interrupt_reap_until
+            .is_some_and(|until| Instant::now() < until)
+        {
+            std::thread::sleep(Duration::from_millis(5));
+            return Err(std::io::ErrorKind::Interrupted.into());
+        }
+        self.child.try_wait()
+    }
     fn stop(&mut self, ops: &Operations) -> Result<ExitStatus, IoFailure> {
         self.state = Lifecycle::Stopping;
         ops.kill(&self.child)?;
         let start = Instant::now();
         loop {
+            if start.elapsed() >= CLEANUP_GRACE {
+                return Err(Operations::failure(
+                    IoOperation::Reap,
+                    std::io::Error::new(
+                        std::io::ErrorKind::TimedOut,
+                        "child not reaped within cleanup grace",
+                    ),
+                ));
+            }
             ops.check(IoOperation::Reap)?;
-            match self.child.try_wait() {
+            match self.try_reap(ops) {
                 Ok(Some(status)) => {
                     self.state = Lifecycle::Reaped;
                     return Ok(status);
                 }
-                Ok(None) if start.elapsed() < CLEANUP_GRACE => {
-                    std::thread::sleep(Duration::from_millis(5))
-                }
-                Ok(None) => {
-                    return Err(Operations::failure(
-                        IoOperation::Reap,
-                        std::io::Error::new(
-                            std::io::ErrorKind::TimedOut,
-                            "child not reaped within cleanup grace",
-                        ),
-                    ));
-                }
+                Ok(None) => std::thread::sleep(Duration::from_millis(5)),
                 Err(e) if e.kind() == std::io::ErrorKind::Interrupted => continue,
                 Err(e) => return Err(Operations::failure(IoOperation::Reap, e)),
             }
@@ -548,6 +559,32 @@ fn run_with(
 #[cfg(test)]
 mod fault_tests {
     use super::*;
+    #[test]
+    fn interrupted_reaping_still_has_a_finite_deadline() {
+        use std::os::unix::process::CommandExt;
+        let child = Command::new("/bin/sleep")
+            .arg("30")
+            .process_group(0)
+            .spawn()
+            .unwrap();
+        let pid = Pid::from_raw(child.id() as i32).unwrap();
+        let mut guard = ChildGuard {
+            child,
+            state: Lifecycle::Spawned,
+        };
+        let result = guard.stop(&Operations {
+            interrupt_reap_until: Some(Instant::now() + CLEANUP_GRACE + Duration::from_millis(300)),
+            ..Operations::default()
+        });
+        drop(guard);
+        assert_eq!(
+            rustix::process::test_kill_process(pid),
+            Err(rustix::io::Errno::SRCH)
+        );
+        assert!(
+            matches!(result, Err(IoFailure { operation: IoOperation::Reap, source }) if source.kind() == std::io::ErrorKind::TimedOut)
+        );
+    }
     #[test]
     fn self_pipe_wakes_a_long_poll_without_removing_token_checks() {
         let mut request = spec();
