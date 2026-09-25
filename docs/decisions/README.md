@@ -483,3 +483,10 @@ cleanup failures remain independently inspectable. The guard's best-effort Drop
 is only an unwinding backstop. Resource-owning capture/framer/supervisor methods
 implement these transitions; callers cannot bypass them through mutable buffers.
 See the [repair evidence](../../reviews/2026-09-25-supervisor-repairs/README.md).
+
+Cancellation wake registrations own their callback lifetime. Request-scoped
+subscriptions are removed on drop, releasing their pipe descriptors without
+waiting for source destruction. The flag is the source of truth. A callback panic
+does not skip later callbacks: notifications run outside the lock and the first
+panic resumes after all callbacks are attempted. Callbacks must finish promptly;
+deregistration cannot undo a callback already taken by concurrent cancellation.

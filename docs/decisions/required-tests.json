@@ -476,6 +476,15 @@
           "backends::process::unix_impl::fault_tests::setup_write_read_poll_and_exit_observation_failures_are_errors",
           "backends::process::unix_impl::fault_tests::cleanup_failures_preserve_the_initiating_error"
         ]
+      },
+      {
+        "package": "cyoa-application",
+        "target": "cancellation",
+        "tests": [
+          "a_panicking_notifier_does_not_skip_later_notifiers_or_poison_state",
+          "dropping_a_subscription_releases_resources_without_waiting_for_cancellation",
+          "scoped_notifications_handle_reuse_late_registration_and_reentrant_callbacks"
+        ]
       }
     ]
   },

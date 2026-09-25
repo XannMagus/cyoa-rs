@@ -54,3 +54,17 @@ unpaced deadline fixture hit its byte bound before the deadline; pacing that cas
 makes the intended deadline assertion independent of machine throughput. The
 cancellation fixture remains unpaced. Existing framing regressions now exercise
 the owning offset framer. No vendor protocol or story behavior changed.
+
+## R3 follow-up — notifier lifetime and panic policy
+
+Two runtime-red cases established that one panicking observer skipped later wake
+callbacks and that a scoped subscription implemented using the old persistent
+registration retained captured resources after scope exit. Implemented removable
+registration ownership; the supervisor holds its registration only while running.
+The flag is set before notification and remains authoritative. Notifications run
+outside the mutex; all callbacks are attempted, then the first panic resumes.
+Dropping a registration does not retract a callback cancellation already took.
+Callers must keep callbacks short; a blocking callback cannot hide cancellation
+from the supervisor's flag checks. Edge coverage for slot reuse, reentrant callback
+registration and late subscriptions was added after the error fixes and passed on
+its first run. Logs: `/tmp/cyoa-cancellation-lifetime-{red,green}.log`.

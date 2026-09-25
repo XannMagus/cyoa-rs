@@ -475,7 +475,7 @@ fn run_with(
     let (wake, writer) = pipe_with(PipeFlags::CLOEXEC | PipeFlags::NONBLOCK)
         .map_err(|e| SupervisorError::Spawn(e.into()))?;
     let writer = Arc::new(writer);
-    cancel.on_cancel(move || {
+    let _wake_registration = cancel.subscribe(move || {
         let _ = rustix::io::write(writer.as_ref(), &[1]);
     });
     let mut command = Command::new(&spec.program);

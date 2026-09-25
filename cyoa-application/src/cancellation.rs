@@ -1,6 +1,6 @@
 //! Cooperative cancellation shared by use cases and adapters.
 
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, Mutex, Weak};
 
 /// The flag and its wake notifiers share one lock, so there is no window
 /// where `cancel()` can finish flipping the flag without a concurrently
@@ -10,7 +10,7 @@ use std::sync::{Arc, Mutex};
 #[derive(Default)]
 struct Inner {
     cancelled: bool,
-    notifiers: Vec<Box<dyn Fn() + Send>>,
+    notifiers: Vec<Option<Box<dyn Fn() + Send>>>,
 }
 
 impl std::fmt::Debug for Inner {
@@ -31,7 +31,8 @@ impl CancellationSource {
         CancellationToken(Arc::clone(&self.0))
     }
 
-    /// Idempotent: a second call is a no-op, and notifiers run at most once.
+    /// Idempotent. All callbacks run outside the lock, even if one panics;
+    /// the first panic resumes after the remaining callbacks have run.
     pub fn cancel(&self) {
         let drained = {
             let mut inner = self.0.lock().unwrap();
@@ -41,8 +42,14 @@ impl CancellationSource {
             inner.cancelled = true;
             std::mem::take(&mut inner.notifiers)
         };
-        for notify in drained {
-            notify();
+        let mut first_panic = None;
+        for notify in drained.into_iter().flatten() {
+            if let Err(panic) = std::panic::catch_unwind(std::panic::AssertUnwindSafe(notify)) {
+                first_panic.get_or_insert(panic);
+            }
+        }
+        if let Some(panic) = first_panic {
+            std::panic::resume_unwind(panic);
         }
     }
 }
@@ -63,6 +70,15 @@ impl CancellationSource {
 pub struct CancellationToken(Arc<Mutex<Inner>>);
 
 impl CancellationToken {
+    /// Scoped wake notification. Dropping the registration releases its
+    /// resources and removes the callback unless cancellation already took it.
+    /// Callbacks must finish promptly; the token flag remains authoritative.
+    pub fn subscribe(&self, notify: impl Fn() + Send + 'static) -> CancellationRegistration {
+        CancellationRegistration {
+            inner: Arc::downgrade(&self.0),
+            slot: self.register(notify),
+        }
+    }
     pub fn is_cancelled(&self) -> bool {
         self.0.lock().unwrap().cancelled
     }
@@ -70,16 +86,53 @@ impl CancellationToken {
     /// Registers a wake callback invoked at most once, when cancellation
     /// fires. If cancellation has already fired, calls it immediately
     /// (outside the lock) instead of registering — the lost-wakeup case
-    /// this method exists to prevent. A supervisor registers exactly one
-    /// notifier per request; deregistration isn't needed because each
-    /// request gets a fresh `CancellationSource` whose lifetime matches it.
+    /// this method exists to prevent. This registration persists until
+    /// cancellation or source/token destruction; use `subscribe` for resources
+    /// whose lifetime is shorter than that of their cancellation source.
     pub fn on_cancel(&self, notify: impl Fn() + Send + 'static) {
+        self.register(notify);
+    }
+
+    fn register(&self, notify: impl Fn() + Send + 'static) -> Option<usize> {
         let mut inner = self.0.lock().unwrap();
         if inner.cancelled {
             drop(inner);
             notify();
+            None
         } else {
-            inner.notifiers.push(Box::new(notify));
+            let slot = inner
+                .notifiers
+                .iter()
+                .position(Option::is_none)
+                .unwrap_or(inner.notifiers.len());
+            if slot == inner.notifiers.len() {
+                inner.notifiers.push(None);
+            }
+            inner.notifiers[slot] = Some(Box::new(notify));
+            Some(slot)
+        }
+    }
+}
+
+#[must_use = "hold this registration while its wake callback is needed"]
+pub struct CancellationRegistration {
+    inner: Weak<Mutex<Inner>>,
+    slot: Option<usize>,
+}
+
+impl Drop for CancellationRegistration {
+    fn drop(&mut self) {
+        if let (Some(inner), Some(slot)) = (self.inner.upgrade(), self.slot) {
+            // Destruction can invoke user-owned Drop code; keep it outside the lock.
+            let callback = {
+                inner
+                    .lock()
+                    .unwrap()
+                    .notifiers
+                    .get_mut(slot)
+                    .and_then(Option::take)
+            };
+            drop(callback);
         }
     }
 }
