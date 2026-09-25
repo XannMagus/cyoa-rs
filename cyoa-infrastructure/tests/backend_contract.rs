@@ -343,3 +343,20 @@ fn fixture_round_trips_quotes_newlines_and_unicode_through_a_real_process_bounda
         "He said \"hello\"\nnext line: \u{1F600} \u{2014} caf\u{e9}."
     );
 }
+
+#[test]
+fn successful_fixture_transport_attaches_both_captured_streams() {
+    let raw = b" {\"ok\":true}\r\n";
+    let stderr = b"diagnostic\xff\r\n";
+    let scenario = fixture_backend::scenario(&[raw], &[stderr], 0);
+    let mut backend = fixture_backend::FixtureBackend::new(scenario);
+    let response = backend
+        .generate(
+            blank_request(&json!({})),
+            &CancellationSource::default().token(),
+            &mut |_| {},
+        )
+        .unwrap();
+    assert_eq!(response.diagnostics().stdout(), raw);
+    assert_eq!(response.diagnostics().stderr(), stderr);
+}

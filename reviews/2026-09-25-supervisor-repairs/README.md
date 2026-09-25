@@ -116,3 +116,11 @@ for longer than the grace period reproduced a runtime failure: the old loop late
 returned success. The deadline now applies before every attempt, regardless of the
 previous result. The regression also checks that the Drop backstop reaps the actual
 child after the explicit timeout. Log: `/tmp/cyoa-reap-interrupt-red.log`.
+
+## Fixture audit follow-up — success diagnostics
+
+The test-only `FixtureBackend` still dropped its locally captured diagnostics on
+successful JSON decoding. A real-child regression reproduced empty stdout/stderr
+on that path; success now attaches both streams as failures already did. This
+keeps the test adapter an accurate example for future vendor adapters rather than
+teaching the evidence-loss bug. Log: `/tmp/cyoa-fixture-diagnostics-red.log`.

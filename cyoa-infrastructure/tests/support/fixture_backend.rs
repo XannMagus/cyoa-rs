@@ -114,18 +114,20 @@ impl Backend for FixtureBackend {
             )),
             output: self.usage.output,
         };
-        GenerationResponse::from_json(raw, usage).map_err(|error| match error {
-            BackendError::Generation {
-                message,
-                raw_response,
-                ..
-            } => BackendError::Generation {
-                message,
-                raw_response,
-                diagnostics,
-            },
-            other => other,
-        })
+        GenerationResponse::from_json(raw, usage)
+            .map(|response| response.with_diagnostics(diagnostics.clone()))
+            .map_err(|error| match error {
+                BackendError::Generation {
+                    message,
+                    raw_response,
+                    ..
+                } => BackendError::Generation {
+                    message,
+                    raw_response,
+                    diagnostics,
+                },
+                other => other,
+            })
     }
 }
 

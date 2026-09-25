@@ -82,6 +82,13 @@
           "application_cancellation_after_generation_preserves_evidence",
           "successful_generation_preserves_observed_provenance_and_diagnostics"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "backend_contract",
+        "tests": [
+          "successful_fixture_transport_attaches_both_captured_streams"
+        ]
       }
     ]
   },
