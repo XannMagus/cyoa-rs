@@ -145,6 +145,21 @@ pub fn scenario_with_report(
     drain_stdin: bool,
     report_path: Option<&std::path::Path>,
 ) -> String {
+    scenario_full(stdout, stderr, exit_code, drain_stdin, report_path, None)
+}
+
+/// Full builder, additionally able to ask the fixture to spawn a detached
+/// descendant that holds the inherited stdout/stderr pipes open for
+/// `spawn_descendant_holding_stdout_ms` after this process exits — used by
+/// the process supervisor's inherited-pipe/group-cleanup tests.
+pub fn scenario_full(
+    stdout: &[&[u8]],
+    stderr: &[&[u8]],
+    exit_code: i32,
+    drain_stdin: bool,
+    report_path: Option<&std::path::Path>,
+    spawn_descendant_holding_stdout_ms: Option<u64>,
+) -> String {
     let chunk = |bytes: &[u8]| {
         serde_json::json!({
             "bytes": bytes,
@@ -155,7 +170,7 @@ pub fn scenario_with_report(
         "stdout": stdout.iter().map(|b| chunk(b)).collect::<Vec<_>>(),
         "stderr": stderr.iter().map(|b| chunk(b)).collect::<Vec<_>>(),
         "drain_stdin": drain_stdin,
-        "spawn_descendant_holding_stdout_ms": null,
+        "spawn_descendant_holding_stdout_ms": spawn_descendant_holding_stdout_ms,
         "report_path": report_path.map(|p| p.to_string_lossy().into_owned()),
         "exit_code": exit_code,
     })
@@ -177,6 +192,12 @@ pub fn report_path(label: &str) -> std::path::PathBuf {
 pub struct Report {
     pub argv: Vec<String>,
     pub stdin: Vec<u8>,
+    #[serde(default)]
+    pub env: std::collections::BTreeMap<String, String>,
+    #[serde(default)]
+    pub pid: u32,
+    #[serde(default)]
+    pub descendant_pid: Option<u32>,
 }
 
 /// Reads and deletes the report file written by a `report_path` scenario.

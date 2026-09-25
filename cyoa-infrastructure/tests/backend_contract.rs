@@ -43,6 +43,23 @@ fn successful_response_retains_the_exact_json_it_parsed() {
 }
 
 #[test]
+fn with_diagnostics_attaches_transport_bytes_to_an_otherwise_successful_response() {
+    let raw = "{ \"narrative\": \"A light in the dark.\" }";
+    let diagnostics = TransportDiagnostics::new(b"stdout bytes".to_vec(), b"stderr bytes".to_vec());
+    let response = GenerationResponse::from_json(raw.into(), TokenUsage::default())
+        .unwrap()
+        .with_diagnostics(diagnostics.clone());
+    assert_eq!(response.diagnostics().stdout(), diagnostics.stdout());
+    assert_eq!(response.diagnostics().stderr(), diagnostics.stderr());
+}
+
+#[test]
+fn a_response_with_no_attached_diagnostics_reports_empty() {
+    let response = GenerationResponse::from_json("{}".into(), TokenUsage::default()).unwrap();
+    assert!(response.diagnostics().is_empty());
+}
+
+#[test]
 fn malformed_response_is_an_error_with_original_diagnostics() {
     let raw = "{\"narrative\": \"unfinished";
     let error = GenerationResponse::from_json(raw.into(), TokenUsage::default()).unwrap_err();

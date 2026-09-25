@@ -7,9 +7,15 @@
 //! tests). It is never invoked by `cyoa-cli`'s shipped commands.
 //!
 //! Scenario protocol: one JSON scenario document passed as argv[1] (never a
-//! shell string). Kept intentionally minimal for Phase 1 item 2 — no polling,
-//! no cancellation wake, no incremental streaming control beyond an optional
-//! stdin acknowledgement per chunk.
+//! shell string). Originally kept intentionally minimal for Phase 1 item 2
+//! (no polling/cancellation wake of its own — this process is the *child*
+//! under test, not a supervisor); item 3 added `spawn_descendant_holding_stdout_ms`
+//! exercise, this process's own pid, and its full environment to the
+//! `Report`, for the vendor-neutral process supervisor's inherited-pipe,
+//! process-group-cleanup and env-policy tests. A `report_path` file is
+//! test-only scratch data the reading test deletes immediately
+//! (`read_report`) — this binary is never installed by `cargo install
+//! cyoa-cli`, so its environment dump never reaches a shipped artifact.
 
 use serde::Deserialize;
 use std::io::{Read, Write};
@@ -46,6 +52,22 @@ struct Scenario {
 struct Report {
     argv: Vec<String>,
     stdin: Vec<u8>,
+    /// This process's own environment, so a test can assert the supervisor's
+    /// `EnvPolicy` is an explicit allowlist rather than silent inheritance
+    /// of the calling process's full environment (item 3, Decision 3). Built
+    /// from `vars_os` with a lossy string conversion rather than `vars()`,
+    /// which panics on any non-UTF-8 value — a real risk on a developer's
+    /// actual environment, not just a theoretical one.
+    env: std::collections::BTreeMap<String, String>,
+    /// This process's own pid, so a test can confirm cleanup actually
+    /// terminated (and, once the reap grace period elapses, reaped) this
+    /// exact process rather than only observing that `run` returned.
+    pid: u32,
+    /// The PID of the descendant spawned for
+    /// `spawn_descendant_holding_stdout_ms`, if any, so a test can confirm
+    /// the supervisor's process-group cleanup actually terminated it
+    /// instead of only observing that the call returned.
+    descendant_pid: Option<u32>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -79,14 +101,18 @@ fn main() {
     let scenario: Scenario =
         serde_json::from_str(&scenario_json).expect("argv[1] must be a valid Scenario JSON");
 
+    let mut descendant_pid = None;
     if let Some(sleep_ms) = scenario.spawn_descendant_holding_stdout_ms {
         let exe = std::env::current_exe().expect("resolve current_exe for descendant re-exec");
-        let _ = std::process::Command::new(exe)
+        if let Ok(child) = std::process::Command::new(exe)
             .env(SLEEP_MS_ENV, sleep_ms.to_string())
             .stdin(std::process::Stdio::null())
             .stdout(std::process::Stdio::inherit())
             .stderr(std::process::Stdio::inherit())
-            .spawn();
+            .spawn()
+        {
+            descendant_pid = Some(child.id());
+        }
         // Deliberately not waited on: the whole point is a descendant that
         // can outlive this process while still holding the inherited pipes.
     }
@@ -100,6 +126,16 @@ fn main() {
         let report = Report {
             argv,
             stdin: received_stdin,
+            env: std::env::vars_os()
+                .map(|(k, v)| {
+                    (
+                        k.to_string_lossy().into_owned(),
+                        v.to_string_lossy().into_owned(),
+                    )
+                })
+                .collect(),
+            pid: std::process::id(),
+            descendant_pid,
         };
         let json = serde_json::to_string(&report).expect("serialize report");
         let _ = std::fs::write(report_path, json);

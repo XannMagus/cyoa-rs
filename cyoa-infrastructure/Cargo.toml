@@ -15,6 +15,13 @@ serde_json.workspace = true
 thiserror.workspace = true
 toml = "1.1.6"
 
+# Process-group signaling, poll-set readiness and non-blocking pipe fds for
+# the vendor-neutral process supervisor (Phase 1 item 3). Safe public API
+# only; `unsafe_code = "forbid"` (workspace lint) does not gate a dependency's
+# own internals. Unix-only: this crate has no Windows process supervisor yet.
+[target.'cfg(unix)'.dependencies]
+rustix = { version = "1.1.5", default-features = false, features = ["std", "process", "event", "pipe", "fs"] }
+
 # Test-support subprocess used by this crate's own integration tests (and, via
 # escargot, by cyoa-cli's binary tests) to exercise the real process boundary
 # without an installed vendor CLI. Never wired into the shipped command surface.

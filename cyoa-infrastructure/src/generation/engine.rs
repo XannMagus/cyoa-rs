@@ -80,12 +80,9 @@ impl<B: Backend> GenerationEngine<B> {
             ),
         })?;
         if cancel.is_cancelled() {
-            // The transport succeeded, so there is no separate diagnostics
-            // capture attached to a `GenerationResponse` yet (a known gap;
-            // see this commit's report). Empty is honest, not fabricated.
             return Err(cancelled(
                 response.raw_response(),
-                TransportDiagnostics::empty(),
+                response.diagnostics().clone(),
             ));
         }
         Ok(response)
@@ -191,7 +188,7 @@ impl<B: Backend> StoryGenerator for GenerationEngine<B> {
         if cancel.is_cancelled() {
             return Err(cancelled(
                 response.raw_response(),
-                TransportDiagnostics::empty(),
+                response.diagnostics().clone(),
             ));
         }
         Ok(generated(turn, &response))

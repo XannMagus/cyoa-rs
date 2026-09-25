@@ -33,6 +33,7 @@ pub struct GenerationResponse {
     value: Value,
     raw_response: String,
     usage: TokenUsage,
+    diagnostics: TransportDiagnostics,
 }
 
 impl GenerationResponse {
@@ -47,6 +48,7 @@ impl GenerationResponse {
             value,
             raw_response,
             usage,
+            diagnostics: TransportDiagnostics::empty(),
         })
     }
 
@@ -60,6 +62,20 @@ impl GenerationResponse {
 
     pub fn usage(&self) -> TokenUsage {
         self.usage
+    }
+
+    /// Attaches transport diagnostics captured alongside a successful
+    /// response (e.g. accumulated stdout/stderr up to the terminal result).
+    /// Consumes and returns self, per this project's consuming-transform
+    /// convention; `from_json`'s 2-arg signature and existing call sites
+    /// (`ScriptedBackend` and friends) are unaffected.
+    pub fn with_diagnostics(mut self, diagnostics: TransportDiagnostics) -> Self {
+        self.diagnostics = diagnostics;
+        self
+    }
+
+    pub fn diagnostics(&self) -> &TransportDiagnostics {
+        &self.diagnostics
     }
 }
 

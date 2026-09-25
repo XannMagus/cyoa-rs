@@ -1,4 +1,7 @@
-use cyoa_application::{cancellation::CancellationSource, generation::*};
+use cyoa_application::{
+    cancellation::{CancellationSource, CancellationToken},
+    generation::*,
+};
 use cyoa_core::{game::GameState, limits::Limits, style::StoryStyle, text::*, world::*};
 use cyoa_infrastructure::generation::scripted::ScriptedBackend;
 use cyoa_infrastructure::{
@@ -370,6 +373,109 @@ fn preview_then_transport_failure_leaves_state_untouched() {
         error.raw_response().as_str(),
         "{\"narrative\":\"Visible preview"
     );
+    assert_eq!(game, before);
+}
+
+/// A `Backend` that ignores `on_json` entirely (complete-only, like a
+/// non-streaming vendor CLI) and cancels its own source right before
+/// returning a successful `GenerationResponse` carrying real diagnostics.
+/// This lets a test exercise `generate()`'s own post-success cancellation
+/// check specifically, isolated from `turn()`'s separate one.
+struct CancelJustBeforeReturningSuccess {
+    source: CancellationSource,
+    raw: String,
+    diagnostics: TransportDiagnostics,
+}
+impl Backend for CancelJustBeforeReturningSuccess {
+    fn generate(
+        &mut self,
+        _: GenerationRequest<'_>,
+        _: &CancellationToken,
+        _: &mut dyn FnMut(&str),
+    ) -> Result<GenerationResponse, BackendError> {
+        self.source.cancel();
+        Ok(
+            GenerationResponse::from_json(self.raw.clone(), TokenUsage::default())
+                .unwrap()
+                .with_diagnostics(self.diagnostics.clone()),
+        )
+    }
+}
+
+#[test]
+fn success_diagnostics_reach_generation_failure_when_outline_cancels_right_after_transport() {
+    let source = CancellationSource::default();
+    let token = source.token();
+    let diagnostics = TransportDiagnostics::new(b"stdout seen".to_vec(), b"stderr seen".to_vec());
+    let world = serde_json::json!({
+        "title": "Harbour", "description": "A sheltered harbour"
+    });
+    let mut use_cases = StoryUseCases::new(GenerationEngine::new(
+        CancelJustBeforeReturningSuccess {
+            source,
+            raw: world.to_string(),
+            diagnostics: diagnostics.clone(),
+        },
+        GenerationTemplates::bundled().unwrap(),
+    ));
+    let error = use_cases
+        .generate_outline(&Brief::new("A brief").unwrap(), &token)
+        .unwrap_err();
+    assert_eq!(error.kind(), FailureKind::Cancelled);
+    assert_eq!(error.diagnostics().stdout(), diagnostics.stdout());
+    assert_eq!(error.diagnostics().stderr(), diagnostics.stderr());
+}
+
+/// Cancels only from inside the post-decode remainder callback: `generate()`
+/// already returned successfully with `cancel.is_cancelled() == false`, so
+/// only `turn()`'s own, separate check (after decoding the wire response)
+/// can be the one that turns this into a `Cancelled` failure.
+#[test]
+fn success_diagnostics_reach_generation_failure_when_turns_own_post_decode_check_cancels() {
+    struct CompleteOnlyBackend {
+        raw: String,
+        diagnostics: TransportDiagnostics,
+    }
+    impl Backend for CompleteOnlyBackend {
+        fn generate(
+            &mut self,
+            _: GenerationRequest<'_>,
+            _: &CancellationToken,
+            _: &mut dyn FnMut(&str),
+        ) -> Result<GenerationResponse, BackendError> {
+            // Never calls on_json: a complete-only transport, so the
+            // preview scanner in `turn()` sees no chunks and the whole
+            // narrative arrives as the post-decode "remainder".
+            Ok(
+                GenerationResponse::from_json(self.raw.clone(), TokenUsage::default())
+                    .unwrap()
+                    .with_diagnostics(self.diagnostics.clone()),
+            )
+        }
+    }
+    let raw = turn_json().to_string();
+    let diagnostics = TransportDiagnostics::new(b"turn stdout".to_vec(), b"turn stderr".to_vec());
+    let mut use_cases = StoryUseCases::new(GenerationEngine::new(
+        CompleteOnlyBackend {
+            raw,
+            diagnostics: diagnostics.clone(),
+        },
+        GenerationTemplates::bundled().unwrap(),
+    ));
+    let source = CancellationSource::default();
+    let mut game = game();
+    let before = game.clone();
+    let error = use_cases
+        .take_turn(
+            &mut game,
+            TurnDirection::Continue,
+            &source.token(),
+            &mut |_remainder| source.cancel(),
+        )
+        .unwrap_err();
+    assert_eq!(error.kind(), FailureKind::Cancelled);
+    assert_eq!(error.diagnostics().stdout(), diagnostics.stdout());
+    assert_eq!(error.diagnostics().stderr(), diagnostics.stderr());
     assert_eq!(game, before);
 }
 

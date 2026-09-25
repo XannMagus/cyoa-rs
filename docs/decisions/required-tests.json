@@ -371,6 +371,68 @@
           "cancelling_after_a_streamed_preview_preserves_state_and_partial_diagnostics",
           "chunked_and_complete_transports_commit_the_same_turn_without_duplicate_preview"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "process_supervisor",
+        "tests": [
+          "missing_executable_is_a_spawn_error_not_a_panic",
+          "cancellation_before_spawn_launches_no_process",
+          "cancellation_while_the_child_is_silent_still_wakes_the_poll_loop_and_returns_promptly",
+          "nonzero_exit_is_reported_with_diagnostics",
+          "failure_after_a_candidate_record_still_reports_nonzero_exit_not_success",
+          "deadline_exceeded_kills_the_child_and_reports_timeout",
+          "output_bound_exceeded_stops_the_child_instead_of_buffering_forever",
+          "consumer_rejection_triggers_cleanup_and_reports_the_reason",
+          "final_record_without_a_trailing_newline_is_still_delivered",
+          "crlf_records_are_delivered_with_the_carriage_return_intact",
+          "a_descendant_retaining_the_inherited_pipe_does_not_hang_the_supervisor",
+          "broken_stdin_delivery_does_not_hang_and_the_process_still_completes",
+          "a_child_that_never_reads_stdin_still_completes",
+          "exact_argv_and_stdin_reach_the_child_and_both_pipes_are_drained",
+          "env_policy_is_an_explicit_allowlist_not_ambient_inheritance",
+          "multiple_records_are_delivered_in_order_and_success_requires_zero_exit",
+          "cancelling_from_inside_the_record_consumer_wins_over_a_same_tick_exit",
+          "cancelling_from_inside_the_final_no_newline_record_still_wins_over_exit",
+          "records_written_right_before_exit_are_not_silently_dropped",
+          "a_panicking_consumer_still_gets_the_child_cleaned_up"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "backends::process::split_record_tests::empty_buffer_yields_no_records_and_stays_empty",
+          "backends::process::split_record_tests::a_single_complete_record_is_extracted_and_removed",
+          "backends::process::split_record_tests::a_trailing_partial_record_without_newline_remains_buffered",
+          "backends::process::split_record_tests::crlf_records_keep_the_carriage_return_attached_to_the_record",
+          "backends::process::split_record_tests::an_empty_record_between_two_newlines_is_preserved_as_empty",
+          "backends::process::split_record_tests::feeding_bytes_across_multiple_calls_reassembles_a_split_record"
+        ]
+      },
+      {
+        "package": "cyoa-application",
+        "target": "cancellation",
+        "tests": [
+          "notifier_registered_after_cancel_already_fired_still_runs_immediately",
+          "notifier_registered_before_cancel_runs_once_when_cancel_fires"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "backend_contract",
+        "tests": [
+          "with_diagnostics_attaches_transport_bytes_to_an_otherwise_successful_response",
+          "a_response_with_no_attached_diagnostics_reports_empty"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "generation_use_cases",
+        "tests": [
+          "success_diagnostics_reach_generation_failure_when_outline_cancels_right_after_transport",
+          "success_diagnostics_reach_generation_failure_when_turns_own_post_decode_check_cancels"
+        ]
       }
     ]
   },

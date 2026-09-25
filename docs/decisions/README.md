@@ -375,8 +375,9 @@ caps. Persistence and live subprocess adapters remain pending.
 
 ### STREAM-001 Preview text never authorizes a state commit
 
-**Partial: scanner and scripted generation enforced; real subprocess framing and
-cancellation pending.** `StreamingStringField` extracts only the requested root
+**Partial: scanner, scripted generation, and the vendor-neutral process
+supervisor enforced; vendor event-stream interpretation (Claude/Codex codecs)
+pending.** `StreamingStringField` extracts only the requested root
 string, across valid UTF-8 chunks. It is a preview scanner, not JSON validation.
 Escapes and surrogate pairs are decoded; lone surrogate halves become U+FFFD
 because Rust cannot represent them as scalar values. Truncated escape sequences
@@ -398,6 +399,34 @@ and compare complete versus chunked committed state across 32 seeds. Failure aft
 preview and cancellation during preview leave complete state unchanged. This does
 not verify CLI byte decoding, process killing/reaping, or vendor stream events;
 each concrete backend must gain those tests and live evidence in Phase 1.
+
+Phase 1 item 3 (`cyoa-infrastructure/src/backends/process.rs`, Unix-only)
+closes the "real subprocess framing and cancellation" gap above at the
+vendor-neutral transport layer: a real `Command`-launched child, an explicit
+argv/environment (never ambient inheritance), stdout split into opaque byte
+records via a pure `split_records` function, non-blocking stdin/stdout/stderr
+polled alongside a self-pipe cancellation wake so an idle child cannot hang
+the observation of `cancel()`, checked/finite output-byte and deadline
+bounds, and process-group `SIGKILL` cleanup on every exit path (including
+ordinary success) so a descendant that inherited the pipes cannot keep them
+open, including via a `ChildGuard` whose `Drop` kills-and-reaps as a backstop
+for any exit path (a panic unwinding out of the supervisor's consumer
+callback, or a future early return this module forgets to route through
+cleanup) that never reaches its own normal-path cleanup.
+`CancellationToken::on_cancel` (`cyoa-application/src/cancellation.rs`)
+gained a race-free wake-notifier registration: a notifier registered after
+`cancel()` already fired still runs immediately, closing the exact
+lost-wakeup case this design exists to prevent.
+`GenerationResponse::with_diagnostics`/`diagnostics()`
+(`cyoa-infrastructure/src/backend.rs`) let a successful transport call carry
+its captured stdout/stderr forward; `GenerationEngine`'s two post-success
+cancellation checks (the shared `generate()` tail and `turn()`'s own
+post-decode check) now attach those real bytes instead of an
+always-empty placeholder. This module does not implement `Backend` and does
+not interpret Claude/Codex event shapes — that remains item 4/5's job, built
+on top of this supervisor. Windows is explicitly unsupported: `run` returns
+`SupervisorError::Unsupported` there without attempting anything
+platform-specific.
 
 ### ACCEPTANCE-001 — exercise the complete engine before adding external I/O
 
