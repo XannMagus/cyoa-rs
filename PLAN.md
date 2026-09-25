@@ -16,6 +16,8 @@ engine and specifies dependent commits, error/edge/nominal TDD, process cleanup,
 backend-local compatibility, headless ownership and separate live-verification gates.
 Use that document for the next phase rather than implementing historical sketches
 below literally. Its features remain planned until their acceptance evidence exists.
+The immediate adapter slice is detailed in [the Codex adapter plan](docs/plans/phase1-codex-adapter.md),
+including evidence gates, atomic commits and cross-backend acceptance obligations.
 
 ## Context
 

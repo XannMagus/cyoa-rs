@@ -7,6 +7,8 @@ and [documented repairs](../../reviews/2026-09-25-supervisor-repairs/README.md).
 Item 1's fresh evidence is Claude-side only; Codex retains its separately recorded
 2026-09-24 cast and outstanding questions. Transport tests exercise Linux, not a
 live vendor protocol. Items 4/5 may proceed in either order; neither is primary.
+The next adapter slice is expanded in [the Codex implementation plan](phase1-codex-adapter.md).
+Its sequence is proposed; it records no new live verification.
 This is the next implementation sequence after
 [Phase 0 acceptance](../decisions/phase0-acceptance.md). It refines
 [PLAN.md](../../PLAN.md)'s walking-skeleton phase; project contracts and explicit
@@ -45,19 +47,20 @@ protected by an autosave that does not exist.
 | Existing component | Reuse | Missing behavior |
 |---|---|---|
 | `StoryUseCases<G>` / `StoryGenerator` | Typed outline/cast/turn generation and rewind | Presentation orchestration and ownership of in-flight work |
-| `GenerationEngine<B>` | Rendering, wire decoding, checked construction, prose scanner | Live transport diagnostics/provenance mapping |
-| `Backend: Send` | One exclusive synchronous call; raw structured JSON fragments | Child lifecycle, event protocols, final success reconciliation |
-| `CancellationToken` | Observation-only token, caller-owned source | Waking while pipes are silent, killing/reaping children |
+| `GenerationEngine<B>` | Rendering, wire decoding, checked construction, prose scanner | Vendor extraction of payload, observed provenance and usage; application token reporting remains deferred |
+| `Backend: Send` | One exclusive synchronous call; raw structured JSON fragments | Vendor event protocols and adapter reconciliation with the implemented supervisor |
+| `CancellationToken` | Observation-only token, caller-owned source | Presentation rejection of stale/cancelled worker completions |
 | `GenerationResponse::from_json` | Raw payload and parsed value constructed together | Extracting exact payloads from vendor envelopes |
-| `BackendError` / `GenerationFailure` | Error-as-value and state preservation | Lossless transport diagnostics, distinct timeout/protocol outcomes where useful |
+| `BackendError` / `GenerationFailure` | Error-as-value and state preservation | Vendor error classification and candidate evidence on cancellation/timeout |
 | `backend_compat::claude_cli` | Isolated root `$schema` adaptation | Full adapter; Codex-specific adaptation in its own sibling file |
-| Scripted/chunked transports | Deterministic engine acceptance | Subprocess fixture executable and binary-level headless tests |
+| Scripted/chunked transports | Deterministic engine acceptance | Actual vendor-adapter fixture integration and binary-level headless tests |
 | Presentation and `main.rs` | Existing help/version and composition boundary | Command parsing, lifecycle, input/output, worker wiring |
 
 Do not recreate the game engine inside either backend or the headless controller.
-Do not move the low-level JSON `Backend` into application/domain. In particular,
-`GenerationEngine` currently drops transport usage and supplies default provenance;
-that is a known mapping gap, not evidence of working model/usage reporting.
+Do not move the low-level JSON `Backend` into application/domain.
+`GenerationEngine` now preserves attached diagnostics and observed provenance.
+It does not expose `TokenUsage` through `Generated<T>`; do not claim application
+token reporting merely because low-level transport counts are normalized.
 
 ## Architecture and ownership
 
@@ -95,18 +98,20 @@ set non-blocking and polled for `POLLOUT` alongside them so a full stdin pipe
 never needs a separate blocking writer thread, and a self-pipe/eventfd fd the
 supervisor also polls to wake on cancellation without blocking on any one fd.
 `CancellationSource`/`CancellationToken` (`cyoa-application/src/cancellation.rs`)
-stay OS-neutral: `cancel()` flips the existing atomic and additionally invokes
+stay OS-neutral: `cancel()` sets the shared cancellation flag and additionally invokes
 registered notifier callbacks. Infrastructure owns the eventfd/self-pipe and
 registers a notifier that writes to it; no fd or rustix type appears in
 application. A notifier registered after `cancel()` already fired must be
 invoked immediately on registration — a lost wakeup here reproduces the idle-
 cancel hang this design exists to prevent.
 
-Child exit alone never signals the poll set (no `POLLHUP` arrives while a
-descendant still holds the pipe open), so the loop also needs an explicit exit
-signal: a `pidfd` in the same poll set on Linux, or a bounded poll timeout plus
-`Child::try_wait()` as the portable fallback. Once exit is known, drain whatever
-is currently readable without blocking, then drop the fds — do not wait for EOF.
+Child exit alone may not signal the poll set while a descendant holds a pipe.
+The implemented loop uses a bounded poll tick and `waitid(WNOWAIT)` to observe
+exit without releasing the PID. Signal the process group before reaping or final
+capture; retain the same byte caps throughout cleanup. The final capture and
+reap have finite grace periods, including repeated interruption. Report failures
+explicitly rather than claiming success after unverified cleanup. This repair
+supersedes the earlier try-wait/drain-before-kill sketch.
 
 Generic process mechanics must not inspect Claude/Codex event names. Backend
 codecs should be independently testable consuming state machines, without
@@ -175,13 +180,11 @@ published copy is deliberately redacted.
 A blocking stdout reader cannot be the cancellation controller. The supervisor's
 poll loop observes the token's wake signal, the child's stdout/stderr readiness,
 non-blocking stdin's write-readiness, and an explicit exit signal (`pidfd` or a
-bounded timeout plus `try_wait`), without blocking on any single one. This must
-actually close the inherited-pipe case (a descendant that retains a pipe end
-after the child has exited): once exit is known, the supervisor drains what is
-currently readable without blocking, then drops its fds rather than waiting for
-an EOF that may never come. Avoid deadlocks when the child fills stderr, never
-reads stdin, closes stdin early, or a write to stdin exceeds the pipe buffer
-with nothing reading it.
+bounded timeout plus non-reaping exit observation), without blocking on any single
+one. Group signaling precedes reaping and bounded final capture, including when a
+descendant retains a pipe. Fatal I/O, undelivered input and cleanup failures are
+explicit outcomes. Retain the real-child backpressure, silent cancellation and
+inherited-pipe regressions rather than introducing a separate codec-owned runner.
 
 Use owned child/resource guards and an explicit lifecycle: spawned → stopping or
 exited → reaped. Every exit path closes owned handles and reaps the launched child,
@@ -224,8 +227,9 @@ must never become a reason to disable mutation checks.
 
 **Status: Claude side complete** (`c8c7f8b`, `431c0f3`) — `reference/01-claude-cli.md`
 restructured into Confirmed/Historical/Open questions against real bundled
-requests; a permanent, org-policy-enforced advisor-tool call was found and a
-suppression flag confirmed for `backend_compat::claude_cli` (item 4). **Codex
+requests; a permanent, org-policy-enforced advisor-tool call was found and an
+appended suppression instruction confirmed for future `backend_compat::claude_cli`
+invocation preparation (item 4; not an implemented production flag). **Codex
 side not started** — `reference/02-codex-cli.md`'s existing evidence predates
 this refresh and is explicitly labeled as needing its own live pass; do that
 first if starting item 4/5 from the Codex side.
@@ -351,8 +355,9 @@ with tests showing the original application semantics survive mapping: required
 versus defaulted fields, blank values, unknown action kinds, nullable chapter titles
 and null-versus-empty upcoming events. Check all three request kinds.
 
-The codec produces raw structured fragments and a final candidate; the supervisor
-reconciles terminal protocol state with process completion. Complete-only mode
+The codec produces raw structured fragments and a final candidate; the adapter
+reconciles terminal protocol state with the vendor-blind supervisor's process
+outcome. Complete-only mode
 emits a complete payload at most once; do not simulate token streaming with sleeps.
 Map only the documented/observed final structured message, not arbitrary assistant
 text or reasoning. Use the confirmed invocation and explicit subscription-preserving
