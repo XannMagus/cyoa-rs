@@ -66,21 +66,50 @@ Proposed module homes:
 | `cyoa-application/src/generation.rs` | Necessary vendor-neutral outcomes/diagnostics/progress contracts |
 | `cyoa-presentation/src/{commands,headless,worker}.rs` | CLI intent, lifecycle reducer, terminal I/O and worker coordination |
 | `cyoa-cli/src/main.rs` | Parse intent, build chosen concrete adapter/use cases, inject into presentation |
-| Infrastructure test support | Small Rust fixture executable for controlled child behavior |
+| `cyoa-infrastructure` test-support fixture bin (ungated `[[bin]]`, reached via `CARGO_BIN_EXE_*` by infra's own tests, via `escargot` by `cyoa-cli`'s) | Controlled child behavior for both infra and binary tests; never installed by `cargo install cyoa-cli` |
 | `cyoa-cli/tests/headless.rs` | Binary-level tests composing all layers |
 
 Keep subprocess and serde types out of application, including dev-dependencies.
 Presentation tests use inward-owned fake ports; infrastructure tests compose the
 real engine and real adapter; cross-layer binary tests belong in `cyoa-cli`.
 Do not add a sixth workspace crate without assigning its architectural layer in
-the dependency gate. Prefer a test-support executable within an existing crate.
+the dependency gate. The fixture lives once, as a `[[bin]]` in
+`cyoa-infrastructure`. That crate's own supervisor tests reach it directly via
+`CARGO_BIN_EXE_*` (verified: this variable resolves only for integration tests
+of the crate that owns the bin). `cyoa-cli`'s binary tests cannot use that
+variable across the crate boundary, so they build the same bin at test time via
+`escargot` (`-p cyoa-infrastructure --bin <name>`), honoring the active
+`CARGO_TARGET_DIR` — including the mutation runner's isolated one — and passing
+`--locked --offline`. `escargot` is a new dev-dependency of `cyoa-cli` only; the
+offline gate needs `cargo fetch --locked` to pick it up.
 
-Use `std::process`, threads and channels, not an async runtime. Generic process
-mechanics must not inspect Claude/Codex event names. Backend codecs should be
-independently testable consuming state machines, without spawning a process.
-Schema transformation functions consume and return values; owned resource methods
-may use `&mut self`. Retain `unsafe_code = forbid`; use safe library APIs for any
-platform process-group or signal operations.
+Use `std::process` and a supervisor thread, not an async runtime: a sync
+readiness loop (`rustix::event::poll`) over the child's stdout/stderr fds, stdin
+set non-blocking and polled for `POLLOUT` alongside them so a full stdin pipe
+never needs a separate blocking writer thread, and a self-pipe/eventfd fd the
+supervisor also polls to wake on cancellation without blocking on any one fd.
+`CancellationSource`/`CancellationToken` (`cyoa-application/src/cancellation.rs`)
+stay OS-neutral: `cancel()` flips the existing atomic and additionally invokes
+registered notifier callbacks. Infrastructure owns the eventfd/self-pipe and
+registers a notifier that writes to it; no fd or rustix type appears in
+application. A notifier registered after `cancel()` already fired must be
+invoked immediately on registration — a lost wakeup here reproduces the idle-
+cancel hang this design exists to prevent.
+
+Child exit alone never signals the poll set (no `POLLHUP` arrives while a
+descendant still holds the pipe open), so the loop also needs an explicit exit
+signal: a `pidfd` in the same poll set on Linux, or a bounded poll timeout plus
+`Child::try_wait()` as the portable fallback. Once exit is known, drain whatever
+is currently readable without blocking, then drop the fds — do not wait for EOF.
+
+Generic process mechanics must not inspect Claude/Codex event names. Backend
+codecs should be independently testable consuming state machines, without
+spawning a process. Schema transformation functions consume and return values;
+owned resource methods may use `&mut self`. Retain `unsafe_code = forbid`;
+`rustix` (features `process`/`event`/`pipe`/`fs` for `O_NONBLOCK`, safe public
+API) is the first dependency needed for group-signal and poll, added under
+`[target.'cfg(unix)'.dependencies]` — platform coverage is Unix-first, Windows
+cleanup must report unsupported rather than silently succeed.
 
 Use named types for executable paths, model selection, request IDs, session
 revisions and checked transport bounds where mixing values would be a defect.
@@ -137,10 +166,16 @@ published copy is deliberately redacted.
 
 ### Cancellation and cleanup must work without output
 
-A blocking stdout reader cannot be the cancellation controller. Design a supervisor
-that observes the token and child exit while stdin writing and stdout/stderr reads
-progress independently. Avoid deadlocks when the child fills stderr, never reads
-stdin, closes stdin early, or forks a descendant that retains a pipe.
+A blocking stdout reader cannot be the cancellation controller. The supervisor's
+poll loop observes the token's wake signal, the child's stdout/stderr readiness,
+non-blocking stdin's write-readiness, and an explicit exit signal (`pidfd` or a
+bounded timeout plus `try_wait`), without blocking on any single one. This must
+actually close the inherited-pipe case (a descendant that retains a pipe end
+after the child has exited): once exit is known, the supervisor drains what is
+currently readable without blocking, then drops its fds rather than waiting for
+an EOF that may never come. Avoid deadlocks when the child fills stderr, never
+reads stdin, closes stdin early, or a write to stdin exceeds the pipe buffer
+with nothing reading it.
 
 Use owned child/resource guards and an explicit lifecycle: spawned → stopping or
 exited → reaped. Every exit path closes owned handles and reaps the launched child,
