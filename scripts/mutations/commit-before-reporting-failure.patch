@@ -21,6 +21,6 @@
 +                return Err(error);
 +            }
 +        };
-         check_cancelled(cancel, generated.raw_response().clone())?;
+         generated.check_cancelled(cancel)?;
          let (turn, raw_response, provenance) = generated.into_parts();
          state.commit_turn(

@@ -1,3 +1,4 @@
+use cyoa_application::diagnostics::TransportDiagnostics;
 use cyoa_application::{
     cancellation::{CancellationSource, CancellationToken},
     generation::*,
@@ -561,4 +562,225 @@ fn chunked_and_complete_transports_commit_the_same_turn_without_duplicate_previe
         assert_eq!(actual.turns()[0].raw_response().as_str(), raw);
         assert_eq!(cases.into_generator().into_backend().requests().len(), 1);
     }
+}
+
+#[test]
+fn validation_failures_retain_transport_diagnostics_for_every_request_kind() {
+    struct DiagnosticBackend(String);
+    impl Backend for DiagnosticBackend {
+        fn generate(
+            &mut self,
+            _: GenerationRequest<'_>,
+            _: &cyoa_application::cancellation::CancellationToken,
+            _: &mut dyn FnMut(&str),
+        ) -> Result<GenerationResponse, BackendError> {
+            Ok(
+                GenerationResponse::from_json(self.0.clone(), TokenUsage::default())
+                    .unwrap()
+                    .with_diagnostics(cyoa_application::diagnostics::TransportDiagnostics::new(
+                        b"events",
+                        b"warning\xff",
+                    )),
+            )
+        }
+    }
+    for (kind, raw) in [
+        (0, r#"{"title":"","world_description":"World"}"#),
+        (0, "{}"),
+        (1, r#"{"characters":[],"npcs":[]}"#),
+        (1, "{}"),
+        (
+            2,
+            r#"{"narrative":" ","quick_actions":[],"scene_description":"","summary_update":{"current_situation":""}}"#,
+        ),
+        (2, "{}"),
+    ] {
+        let mut cases = StoryUseCases::new(GenerationEngine::new(
+            DiagnosticBackend(raw.into()),
+            GenerationTemplates::bundled().unwrap(),
+        ));
+        let source = CancellationSource::default();
+        let mut state = game();
+        let before = state.clone();
+        let error = match kind {
+            0 => cases
+                .generate_outline(state.brief(), &source.token())
+                .unwrap_err(),
+            1 => cases
+                .generate_world(
+                    state.brief(),
+                    state.world().outline().clone(),
+                    &state.limits(),
+                    &source.token(),
+                )
+                .unwrap_err(),
+            _ => cases
+                .take_turn(
+                    &mut state,
+                    TurnDirection::Continue,
+                    &source.token(),
+                    &mut |_| {},
+                )
+                .unwrap_err(),
+        };
+        assert_eq!(error.kind(), FailureKind::InvalidResponse);
+        assert_eq!(error.raw_response().as_str(), raw);
+        assert_eq!(error.diagnostics().stdout(), b"events");
+        assert_eq!(error.diagnostics().stderr(), b"warning\xff");
+        assert_eq!(state, before);
+    }
+}
+
+struct EvidenceBackend(String);
+impl Backend for EvidenceBackend {
+    fn generate(
+        &mut self,
+        _: GenerationRequest<'_>,
+        _: &CancellationToken,
+        _: &mut dyn FnMut(&str),
+    ) -> Result<GenerationResponse, BackendError> {
+        Ok(
+            GenerationResponse::from_json(self.0.clone(), TokenUsage::default())
+                .unwrap()
+                .with_diagnostics(TransportDiagnostics::new(b"events", b"warning"))
+                .with_provenance(cyoa_core::turn::GenerationProvenance {
+                    provider: Some(ProviderName::new("fixture").unwrap()),
+                    model: Some(ModelName::new("observed-model").unwrap()),
+                    cost: None,
+                }),
+        )
+    }
+}
+#[test]
+fn application_cancellation_after_generation_preserves_evidence() {
+    struct CancelAfter<G> {
+        inner: G,
+        source: std::sync::Arc<CancellationSource>,
+    }
+    impl<G: StoryGenerator> StoryGenerator for CancelAfter<G> {
+        fn outline(
+            &mut self,
+            brief: &Brief,
+            token: &CancellationToken,
+        ) -> Result<Generated<WorldOutline>, GenerationFailure> {
+            let value = self.inner.outline(brief, token)?;
+            self.source.cancel();
+            Ok(value)
+        }
+        fn cast(
+            &mut self,
+            brief: &Brief,
+            outline: &WorldOutline,
+            limits: &Limits,
+            token: &CancellationToken,
+        ) -> Result<Generated<WorldCast>, GenerationFailure> {
+            let value = self.inner.cast(brief, outline, limits, token)?;
+            self.source.cancel();
+            Ok(value)
+        }
+        fn turn(
+            &mut self,
+            state: &GameState,
+            direction: &TurnDirection,
+            token: &CancellationToken,
+            progress: &mut dyn FnMut(&str),
+        ) -> Result<Generated<cyoa_core::turn::StoryTurn>, GenerationFailure> {
+            let value = self.inner.turn(state, direction, token, progress)?;
+            self.source.cancel();
+            Ok(value)
+        }
+    }
+    let cast = serde_json::json!({"characters":[{"name":"A","description":"Sailor","backstory":"Sea"},{"name":"B","description":"Mason","backstory":"Land"}],"npcs":[]});
+    for (kind, raw) in [
+        (
+            0,
+            r#"{"title":"Harbour","world_description":"World"}"#.to_string(),
+        ),
+        (1, cast.to_string()),
+        (2, turn_json().to_string()),
+    ] {
+        let source = std::sync::Arc::new(CancellationSource::default());
+        let engine = GenerationEngine::new(
+            EvidenceBackend(raw.clone()),
+            GenerationTemplates::bundled().unwrap(),
+        );
+        let mut cases = StoryUseCases::new(CancelAfter {
+            inner: engine,
+            source: source.clone(),
+        });
+        let mut state = game();
+        let before = state.clone();
+        let error = match kind {
+            0 => cases
+                .generate_outline(state.brief(), &source.token())
+                .unwrap_err(),
+            1 => cases
+                .generate_world(
+                    state.brief(),
+                    state.world().outline().clone(),
+                    &state.limits(),
+                    &source.token(),
+                )
+                .unwrap_err(),
+            _ => cases
+                .take_turn(
+                    &mut state,
+                    TurnDirection::Continue,
+                    &source.token(),
+                    &mut |_| {},
+                )
+                .unwrap_err(),
+        };
+        assert_eq!(error.kind(), FailureKind::Cancelled);
+        assert_eq!(error.raw_response().as_str(), raw);
+        assert_eq!(error.diagnostics().stderr(), b"warning");
+        assert_eq!(state, before);
+    }
+}
+#[test]
+fn successful_generation_preserves_observed_provenance_and_diagnostics() {
+    let source = CancellationSource::default();
+    let mut cases = StoryUseCases::new(GenerationEngine::new(
+        EvidenceBackend(r#"{"title":"Harbour","world_description":"World"}"#.into()),
+        GenerationTemplates::bundled().unwrap(),
+    ));
+    let generated = cases
+        .generate_outline(game().brief(), &source.token())
+        .unwrap();
+    assert_eq!(generated.diagnostics().stdout(), b"events");
+    assert_eq!(
+        generated.into_parts().2.model.unwrap().as_str(),
+        "observed-model"
+    );
+    let mut cases = StoryUseCases::new(GenerationEngine::new(
+        EvidenceBackend(turn_json().to_string()),
+        GenerationTemplates::bundled().unwrap(),
+    ));
+    let mut state = game();
+    cases
+        .take_turn(
+            &mut state,
+            TurnDirection::Continue,
+            &source.token(),
+            &mut |_| {},
+        )
+        .unwrap();
+    assert_eq!(
+        state.turns()[0]
+            .provenance()
+            .provider
+            .as_ref()
+            .unwrap()
+            .as_str(),
+        "fixture"
+    );
+    assert_eq!(
+        state.turns()[0]
+            .provenance()
+            .model
+            .as_ref()
+            .unwrap()
+            .as_str(),
+        "observed-model"
+    );
 }

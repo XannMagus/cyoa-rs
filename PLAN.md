@@ -528,7 +528,7 @@ String newtypes distinguish normalized business text from verbatim exchange text
 and is used only for `RawResponse`, `Instructions`, and `RenderedPrompt`.
 These diagnostic fields do not establish turn validity; typed turn fields do.
 Transport stdout/stderr are a distinct, byte-backed (not `String`-backed) type,
-`TransportDiagnostics`, since a subprocess's diagnostic streams may contain
+`cyoa-application::diagnostics::TransportDiagnostics`, since a subprocess's diagnostic streams may contain
 invalid UTF-8; `BackendError`'s variants each carry it separately from
 `Generation`'s `raw_response` payload (Phase 1 item 2; see TEXT-001).
 

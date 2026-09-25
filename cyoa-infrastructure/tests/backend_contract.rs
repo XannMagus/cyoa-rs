@@ -1,8 +1,9 @@
 mod support;
 use support::fixture_backend;
 
+use cyoa_application::diagnostics::TransportDiagnostics;
 use cyoa_application::{cancellation::CancellationSource, generation::*};
-use cyoa_core::text::{Brief, TransportDiagnostics};
+use cyoa_core::text::Brief;
 use cyoa_infrastructure::backend::{
     Backend, BackendError, GenerationRequest, GenerationResponse, InputTokens, TokenUsage,
     normalize_input_tokens,

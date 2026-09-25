@@ -5,6 +5,7 @@
 //! presentation types. Game use cases arrive with the domain implementation.
 
 pub mod cancellation;
+pub mod diagnostics;
 pub mod image;
 
 pub mod generation;

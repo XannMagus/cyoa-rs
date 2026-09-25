@@ -19,7 +19,7 @@
 
 use super::{Lifecycle, OutputStream, ProcessOutcome, ProcessSpec, SupervisorError};
 use cyoa_application::cancellation::CancellationToken;
-use cyoa_core::text::TransportDiagnostics;
+use cyoa_application::diagnostics::TransportDiagnostics;
 use rustix::event::{PollFd, PollFlags, Timespec, poll};
 use rustix::fs::{OFlags, fcntl_getfl, fcntl_setfl};
 use rustix::pipe::{PipeFlags, pipe_with};

@@ -458,3 +458,9 @@ provides the composed story requirement. Domain, request, orchestration and live
 coverage are distinguished in `phase0-acceptance.md`; subprocess and persistence
 obligations remain open. These checks cannot stop an intentional rewrite of both
 contracts and assertions, so contract changes still require review.
+
+Review repair R4 (2026-09-25): transport diagnostics belong to
+`cyoa-application::diagnostics`, not domain text. Invalid outline/cast/turn responses
+and cancellation after a typed generation retain those bytes through the application
+boundary. Observed provider/model provenance is propagated, never invented. Required
+regressions exercise errors, application cancellation and successful commit.

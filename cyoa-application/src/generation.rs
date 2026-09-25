@@ -1,10 +1,11 @@
 //! Typed generation ports and synchronous use cases. Workers may run these on an
 //! owned game snapshot; presentation retains ownership of canonical state.
 use crate::cancellation::CancellationToken;
+use crate::diagnostics::TransportDiagnostics;
 use cyoa_core::{
     game::{GameState, InvalidRewind, TurnCount},
     limits::Limits,
-    text::{Brief, PlayerInput, RawResponse, TransportDiagnostics},
+    text::{Brief, PlayerInput, RawResponse},
     turn::{GenerationProvenance, StoryTurn},
     world::{World, WorldCast, WorldOutline},
 };
@@ -56,6 +57,7 @@ pub struct Generated<T> {
     value: T,
     raw_response: RawResponse,
     provenance: GenerationProvenance,
+    diagnostics: TransportDiagnostics,
 }
 impl<T> Generated<T> {
     pub fn new(value: T, raw_response: RawResponse, provenance: GenerationProvenance) -> Self {
@@ -63,6 +65,7 @@ impl<T> Generated<T> {
             value,
             raw_response,
             provenance,
+            diagnostics: TransportDiagnostics::empty(),
         }
     }
     pub fn value(&self) -> &T {
@@ -73,6 +76,25 @@ impl<T> Generated<T> {
     }
     pub fn into_parts(self) -> (T, RawResponse, GenerationProvenance) {
         (self.value, self.raw_response, self.provenance)
+    }
+    pub fn with_diagnostics(mut self, diagnostics: TransportDiagnostics) -> Self {
+        self.diagnostics = diagnostics;
+        self
+    }
+    pub fn diagnostics(&self) -> &TransportDiagnostics {
+        &self.diagnostics
+    }
+    fn check_cancelled(&self, cancel: &CancellationToken) -> Result<(), GenerationFailure> {
+        if cancel.is_cancelled() {
+            Err(GenerationFailure::new(
+                FailureKind::Cancelled,
+                "generation cancelled",
+                self.raw_response.clone(),
+                self.diagnostics.clone(),
+            ))
+        } else {
+            Ok(())
+        }
     }
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -130,7 +152,7 @@ impl<G: StoryGenerator> StoryUseCases<G> {
     ) -> Result<Generated<WorldOutline>, GenerationFailure> {
         check_cancelled(cancel, RawResponse::new(""))?;
         let generated = self.generator.outline(brief, cancel)?;
-        check_cancelled(cancel, generated.raw_response().clone())?;
+        generated.check_cancelled(cancel)?;
         Ok(generated)
     }
     pub fn generate_world(
@@ -142,7 +164,7 @@ impl<G: StoryGenerator> StoryUseCases<G> {
     ) -> Result<World, GenerationFailure> {
         check_cancelled(cancel, RawResponse::new(""))?;
         let generated = self.generator.cast(brief, &outline, limits, cancel)?;
-        check_cancelled(cancel, generated.raw_response().clone())?;
+        generated.check_cancelled(cancel)?;
         Ok(World::new(outline, generated.into_parts().0))
     }
     pub fn take_turn(
@@ -156,7 +178,7 @@ impl<G: StoryGenerator> StoryUseCases<G> {
         let generated = self
             .generator
             .turn(state, &direction, cancel, on_narrative)?;
-        check_cancelled(cancel, generated.raw_response().clone())?;
+        generated.check_cancelled(cancel)?;
         let (turn, raw_response, provenance) = generated.into_parts();
         state.commit_turn(
             turn,

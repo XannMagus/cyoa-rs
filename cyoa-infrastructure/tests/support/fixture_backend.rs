@@ -5,7 +5,7 @@
 //! It exists only to prove `BackendError`/`TransportDiagnostics` mapping and
 //! `TokenUsage` normalization survive a real subprocess boundary.
 
-use cyoa_core::text::TransportDiagnostics;
+use cyoa_application::diagnostics::TransportDiagnostics;
 use cyoa_infrastructure::backend::{
     Backend, BackendError, GenerationRequest, GenerationResponse, TokenUsage,
     normalize_input_tokens,

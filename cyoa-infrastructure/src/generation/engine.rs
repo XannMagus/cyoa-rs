@@ -5,11 +5,12 @@ use super::{
     wire::*,
 };
 use crate::backend::{Backend, BackendError, GenerationRequest, GenerationResponse};
+use cyoa_application::diagnostics::TransportDiagnostics;
 use cyoa_application::{cancellation::CancellationToken, generation::*};
 use cyoa_core::{
     game::GameState,
     limits::Limits,
-    text::{Brief, RawResponse, TransportDiagnostics},
+    text::{Brief, RawResponse},
     turn::StoryTurn,
     world::{WorldCast, WorldOutline},
 };
@@ -109,7 +110,7 @@ fn invalid(error: impl std::fmt::Display, response: &GenerationResponse) -> Gene
         FailureKind::InvalidResponse,
         error.to_string(),
         RawResponse::new(response.raw_response()),
-        TransportDiagnostics::empty(),
+        response.diagnostics().clone(),
     )
 }
 fn decode<T: serde::de::DeserializeOwned>(
@@ -121,8 +122,9 @@ fn generated<T>(value: T, response: &GenerationResponse) -> Generated<T> {
     Generated::new(
         value,
         RawResponse::new(response.raw_response()),
-        Default::default(),
+        response.provenance().clone(),
     )
+    .with_diagnostics(response.diagnostics().clone())
 }
 impl<B: Backend> StoryGenerator for GenerationEngine<B> {
     fn outline(

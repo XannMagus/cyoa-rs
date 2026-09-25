@@ -47,8 +47,7 @@
         "package": "cyoa-core",
         "target": "lib",
         "tests": [
-          "text::tests::exchange_text_preserves_every_byte_including_empty_and_whitespace",
-          "text::tests::transport_diagnostics_preserve_non_utf8_bytes_exactly_and_lossy_display_never_panics"
+          "text::tests::exchange_text_preserves_every_byte_including_empty_and_whitespace"
         ]
       },
       {
@@ -66,6 +65,22 @@
           "non_utf8_stderr_diagnostics_survive_the_process_boundary_and_lossy_display_does_not_panic",
           "fixture_round_trips_quotes_newlines_and_unicode_through_a_real_process_boundary",
           "fixture_reports_the_exact_argv_and_stdin_prompt_bytes_it_received"
+        ]
+      },
+      {
+        "package": "cyoa-application",
+        "target": "lib",
+        "tests": [
+          "diagnostics::tests::transport_diagnostics_preserve_non_utf8_bytes_exactly_and_lossy_display_never_panics"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "generation_use_cases",
+        "tests": [
+          "validation_failures_retain_transport_diagnostics_for_every_request_kind",
+          "application_cancellation_after_generation_preserves_evidence",
+          "successful_generation_preserves_observed_provenance_and_diagnostics"
         ]
       }
     ]

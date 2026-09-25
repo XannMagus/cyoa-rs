@@ -12,7 +12,7 @@
 //! [`SupervisorError::Unsupported`] without attempting anything platform
 //! specific; this module makes no portability claim beyond that.
 
-use cyoa_core::text::TransportDiagnostics;
+use cyoa_application::diagnostics::TransportDiagnostics;
 use std::ffi::OsString;
 use std::path::PathBuf;
 use std::time::Duration;

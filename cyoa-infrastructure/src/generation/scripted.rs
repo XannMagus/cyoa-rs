@@ -1,7 +1,7 @@
 //! Deterministic, credential-free transport for integration tests and future demos.
 use crate::backend::*;
 use cyoa_application::cancellation::CancellationToken;
-use cyoa_core::text::TransportDiagnostics;
+use cyoa_application::diagnostics::TransportDiagnostics;
 use std::collections::VecDeque;
 #[derive(Debug)]
 pub struct CapturedRequest {

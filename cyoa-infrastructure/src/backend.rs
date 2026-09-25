@@ -4,7 +4,7 @@
 //! domain-facing requests and results through this internal transport boundary.
 
 use cyoa_application::cancellation::CancellationToken;
-use cyoa_core::text::TransportDiagnostics;
+use cyoa_application::diagnostics::TransportDiagnostics;
 
 use serde_json::Value;
 use thiserror::Error;
@@ -34,6 +34,7 @@ pub struct GenerationResponse {
     raw_response: String,
     usage: TokenUsage,
     diagnostics: TransportDiagnostics,
+    provenance: cyoa_core::turn::GenerationProvenance,
 }
 
 impl GenerationResponse {
@@ -49,6 +50,7 @@ impl GenerationResponse {
             raw_response,
             usage,
             diagnostics: TransportDiagnostics::empty(),
+            provenance: Default::default(),
         })
     }
 
@@ -76,6 +78,13 @@ impl GenerationResponse {
 
     pub fn diagnostics(&self) -> &TransportDiagnostics {
         &self.diagnostics
+    }
+    pub fn with_provenance(mut self, provenance: cyoa_core::turn::GenerationProvenance) -> Self {
+        self.provenance = provenance;
+        self
+    }
+    pub fn provenance(&self) -> &cyoa_core::turn::GenerationProvenance {
+        &self.provenance
     }
 }
 
