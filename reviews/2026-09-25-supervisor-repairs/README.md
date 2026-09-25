@@ -17,3 +17,13 @@ unknown; no backend/model is inferred.
 Moved the diagnostic value and its existing byte-preservation regression from domain
 to the application-owned port boundary, updating the registry. No story rules changed.
 Logs: `/tmp/cyoa-fix-diagnostics-red.log`, `/tmp/cyoa-fix-evidence-red.log`.
+
+## R2/R3 — authoritative input delivery and cancellation
+
+The promoted incomplete-input and delayed-notifier probes each failed at runtime
+against the old supervisor (`/tmp/cyoa-fix-{input,cancel}-red.log`). Zero child exit
+now also requires every input byte to have reached the pipe; the corrected existing
+broken-stdin regression expects failure, not success. A child need not prove it
+semantically read already-delivered bytes. Cancellation reads the token even when
+its notification is delayed, and checks it before accepting empty-output success.
+The pipe remains a wake optimization, not the source of cancellation truth.

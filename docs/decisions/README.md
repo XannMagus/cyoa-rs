@@ -464,3 +464,9 @@ Review repair R4 (2026-09-25): transport diagnostics belong to
 and cancellation after a typed generation retain those bytes through the application
 boundary. Observed provider/model provenance is propagated, never invented. Required
 regressions exercise errors, application cancellation and successful commit.
+
+Review repairs R2/R3: zero child exit cannot authorize transport success when request
+bytes are known to be undelivered. The earlier broken-stdin success test encoded an
+incorrect policy and is replaced with a failure assertion, per the authorized review
+repair. Cancellation state is authoritative; wake notifications are only an
+optimization and delayed callbacks cannot override an already-cancelled token.

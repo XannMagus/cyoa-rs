@@ -349,7 +349,7 @@ fn a_descendant_retaining_the_inherited_pipe_does_not_hang_the_supervisor() {
 }
 
 #[test]
-fn broken_stdin_delivery_does_not_hang_and_the_process_still_completes() {
+fn broken_stdin_delivery_is_reported_without_hanging() {
     // drain_stdin is false, so the fixture never reads stdin at all; the
     // supervisor's writes should hit a full-then-broken pipe and abandon
     // delivery rather than hanging, per this module's documented policy.
@@ -364,8 +364,8 @@ fn broken_stdin_delivery_does_not_hang_and_the_process_still_completes() {
     };
     let source = CancellationSource::default();
     let start = std::time::Instant::now();
-    let outcome = run(&spec, &source.token(), &mut noop).unwrap();
-    assert_eq!(outcome.exit_code, 0);
+    let error = run(&spec, &source.token(), &mut noop).unwrap_err();
+    assert!(matches!(error, SupervisorError::IncompleteInput { .. }));
     assert!(start.elapsed() < Duration::from_secs(5));
 }
 
@@ -638,5 +638,50 @@ fn stdout_larger_than_pipe_capacity_is_fully_delivered_and_diagnostics_agree() {
     assert_eq!(
         outcome.diagnostics.stdout().len(),
         line.len() * repeat as usize
+    );
+}
+
+#[test]
+fn incomplete_request_delivery_cannot_report_success() {
+    let spec = ProcessSpec {
+        program: FIXTURE_EXE.into(),
+        args: vec![fixture_backend::scenario(&[b"{\"ok\":true}\n"], &[], 0).into()],
+        env: EnvPolicy::new(),
+        stdin: vec![b'a'; 2 * 1024 * 1024],
+        bounds: short_bounds(),
+    };
+    let result = run(&spec, &CancellationSource::default().token(), &mut noop);
+    assert!(
+        result.is_err(),
+        "known undelivered request bytes must not produce success"
+    );
+}
+
+#[test]
+fn cancelled_token_wins_even_before_its_notifier_runs() {
+    let path = report_path("delayed-notifier");
+    let source = CancellationSource::default();
+    let token = source.token();
+    let (release, wait_release) = std::sync::mpsc::channel();
+    token.on_cancel(move || {
+        wait_release.recv().unwrap();
+    });
+    let signal_path = path.clone();
+    let canceller = std::thread::spawn(move || {
+        assert!(wait_for_file(&signal_path, Duration::from_secs(2)));
+        source.cancel();
+    });
+    let scenario =
+        serde_json::json!({"stdout":[],"report_path":path,"hang_ms":200,"exit_code":0}).to_string();
+    let result = run(&spec(scenario, short_bounds()), &token, &mut noop);
+    let signalled = token.is_cancelled();
+    release.send(()).unwrap();
+    canceller.join().unwrap();
+    let report = read_report(&path);
+    assert_process_gone(report.pid, "delayed notifier");
+    assert!(signalled);
+    assert!(
+        matches!(result, Err(SupervisorError::Cancelled { .. })),
+        "cancelled token yielded {result:?}"
     );
 }

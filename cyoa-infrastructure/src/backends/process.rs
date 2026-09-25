@@ -146,8 +146,7 @@ impl ProcessBounds {
 }
 
 /// One generation call's launch parameters. `stdin` is written in full, then
-/// the write end is closed (or delivery is abandoned on a broken pipe — see
-/// [`run`]'s module-level stdin policy note).
+/// the write end is closed. Known incomplete delivery cannot produce success.
 #[derive(Debug, Clone)]
 pub struct ProcessSpec {
     pub program: PathBuf,
@@ -184,6 +183,12 @@ pub struct ProcessOutcome {
 
 #[derive(Debug, thiserror::Error)]
 pub enum SupervisorError {
+    #[error("request delivery incomplete: wrote {written} of {expected} bytes")]
+    IncompleteInput {
+        written: usize,
+        expected: usize,
+        diagnostics: TransportDiagnostics,
+    },
     #[error("failed to launch process: {0}")]
     Spawn(std::io::Error),
     #[error("process supervision is not implemented on this platform")]
@@ -219,6 +224,7 @@ impl SupervisorError {
                 TransportDiagnostics::empty()
             }
             SupervisorError::Cancelled { diagnostics }
+            | SupervisorError::IncompleteInput { diagnostics, .. }
             | SupervisorError::Timeout { diagnostics }
             | SupervisorError::NonzeroExit { diagnostics, .. }
             | SupervisorError::OutputBoundExceeded { diagnostics, .. }

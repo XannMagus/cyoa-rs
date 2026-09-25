@@ -402,7 +402,7 @@
           "final_record_without_a_trailing_newline_is_still_delivered",
           "crlf_records_are_delivered_with_the_carriage_return_intact",
           "a_descendant_retaining_the_inherited_pipe_does_not_hang_the_supervisor",
-          "broken_stdin_delivery_does_not_hang_and_the_process_still_completes",
+          "broken_stdin_delivery_is_reported_without_hanging",
           "a_child_that_never_reads_stdin_still_completes",
           "exact_argv_and_stdin_reach_the_child_and_both_pipes_are_drained",
           "env_policy_is_an_explicit_allowlist_not_ambient_inheritance",
@@ -449,6 +449,14 @@
         "tests": [
           "success_diagnostics_reach_generation_failure_when_outline_cancels_right_after_transport",
           "success_diagnostics_reach_generation_failure_when_turns_own_post_decode_check_cancels"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "process_supervisor",
+        "tests": [
+          "incomplete_request_delivery_cannot_report_success",
+          "cancelled_token_wins_even_before_its_notifier_runs"
         ]
       }
     ]

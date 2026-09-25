@@ -3,13 +3,7 @@
 //! per `docs/plans/phase1-headless-backends.md`'s "Cancellation and cleanup
 //! must work without output" contract.
 //!
-//! Stdin delivery policy (explicit, since the plan requires one): if writing
-//! the request payload hits a broken pipe (the child closed its stdin
-//! without reading all of it), delivery is abandoned — this is not itself a
-//! supervisor failure. A vendor CLI that stops reading stdin early but still
-//! exits zero with valid output is not this layer's problem to diagnose;
-//! only actual exit status/consumer rejection/cancellation/deadline/output
-//! bound decide the outcome.
+//! Known undelivered input is a failure even if the child exits zero.
 //!
 //! Every exit path (including ordinary success, and a panic unwinding out of
 //! this function via [`ChildGuard`]'s `Drop`) sends `SIGKILL` to the whole
@@ -174,6 +168,7 @@ fn dispatch_records(
 
 /// Why the loop is ending, decided at the point of the decisive observation.
 enum Ending {
+    IncompleteInput { written: usize, expected: usize },
     Cancelled,
     Timeout,
     OutputBound(OutputStream),
@@ -200,6 +195,11 @@ fn finish(
     guard.kill_and_reap();
     let diagnostics = TransportDiagnostics::new(stdout_diag, stderr_diag);
     match ending {
+        Ending::IncompleteInput { written, expected } => Err(SupervisorError::IncompleteInput {
+            written,
+            expected,
+            diagnostics,
+        }),
         Ending::Cancelled => Err(SupervisorError::Cancelled { diagnostics }),
         Ending::Timeout => Err(SupervisorError::Timeout { diagnostics }),
         Ending::OutputBound(stream) => Err(SupervisorError::OutputBoundExceeded {
@@ -338,11 +338,9 @@ pub fn run(
 
             while let Err(rustix::io::Errno::INTR) = poll(&mut fds, Some(&ts)) {}
 
-            // Only the self-pipe wake decides `cancelled` here (not a
-            // redundant `cancel.is_cancelled()` OR-clause): that keeps the
-            // notifier genuinely load-bearing for the idle case instead of
-            // masked by a coincidentally-short poll tick.
-            cancelled = fds[self_read_idx].revents().contains(PollFlags::IN);
+            // The token is authoritative; readiness only accelerates observation.
+            cancelled =
+                cancel.is_cancelled() || fds[self_read_idx].revents().contains(PollFlags::IN);
 
             if !cancelled && let Some(i) = stdin_idx {
                 let ready = fds[i]
@@ -526,13 +524,23 @@ pub fn run(
                 }
             }
             let exit_code = status.code().unwrap_or(-1);
+            let ending = if cancel.is_cancelled() {
+                Ending::Cancelled
+            } else if exit_code == 0 && stdin_pos < spec.stdin.len() {
+                Ending::IncompleteInput {
+                    written: stdin_pos,
+                    expected: spec.stdin.len(),
+                }
+            } else {
+                Ending::Exited(exit_code)
+            };
             return finish(
                 &mut guard,
                 &stdout,
                 &stderr,
                 stdout_diag,
                 stderr_diag,
-                Ending::Exited(exit_code),
+                ending,
             );
         }
     }
