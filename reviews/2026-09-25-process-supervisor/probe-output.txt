@@ -1,0 +1,45 @@
+   Compiling cyoa-infrastructure v0.1.0 (/tmp/cyoa-review-ae8cece/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.33s
+     Running tests/review_regressions.rs (/tmp/cyoa-review-ae8cece/target/debug/deps/review_regressions-b37887bd9bd63812)
+
+running 4 tests
+test incomplete_request_delivery_cannot_report_success ... FAILED
+test retained_stdout_respects_its_configured_bound ... FAILED
+test malformed_domain_response_retains_transport_diagnostics ... FAILED
+test already_signalled_cancellation_wins_even_before_its_notifier_runs ... FAILED
+
+failures:
+
+---- incomplete_request_delivery_cannot_report_success stdout ----
+
+thread 'incomplete_request_delivery_cannot_report_success' (157) panicked at cyoa-infrastructure/tests/review_regressions.rs:37:5:
+reported success despite a request larger than the pipe and a child that never reads it
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- retained_stdout_respects_its_configured_bound stdout ----
+
+thread 'retained_stdout_respects_its_configured_bound' (159) panicked at cyoa-infrastructure/tests/review_regressions.rs:31:5:
+100-byte cap retained 4096 bytes
+
+---- malformed_domain_response_retains_transport_diagnostics stdout ----
+
+thread 'malformed_domain_response_retains_transport_diagnostics' (158) panicked at cyoa-infrastructure/tests/review_regressions.rs:17:5:
+assertion `left == right` failed
+  left: []
+ right: [100, 105, 97, 103, 110, 111, 115, 116, 105, 99, 32, 119, 97, 114, 110, 105, 110, 103]
+
+---- already_signalled_cancellation_wins_even_before_its_notifier_runs stdout ----
+
+thread 'already_signalled_cancellation_wins_even_before_its_notifier_runs' (156) panicked at cyoa-infrastructure/tests/review_regressions.rs:60:5:
+cancelled token yielded Ok(ProcessOutcome { exit_code: 0, diagnostics: TransportDiagnostics { stdout: [], stderr: [] } })
+
+
+failures:
+    already_signalled_cancellation_wins_even_before_its_notifier_runs
+    incomplete_request_delivery_cannot_report_success
+    malformed_domain_response_retains_transport_diagnostics
+    retained_stdout_respects_its_configured_bound
+
+test result: FAILED. 0 passed; 4 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.20s
+
+error: test failed, to rerun pass `-p cyoa-infrastructure --test review_regressions`
