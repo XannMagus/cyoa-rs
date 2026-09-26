@@ -4,11 +4,12 @@ Status: **transport foundations repaired; vendor adapters and headless play pend
 Written 2026-09-25 against `3dfce38`; implementation initially landed in
 `c8c7f8b`..`a28ba66`, then underwent the [process-supervisor review](../../reviews/2026-09-25-process-supervisor/README.md)
 and [documented repairs](../../reviews/2026-09-25-supervisor-repairs/README.md).
-Item 1's fresh evidence is Claude-side only; Codex retains its separately recorded
-2026-09-24 cast and outstanding questions. Transport tests exercise Linux, not a
+Item 1 has separate Claude evidence and a 2026-09-26 Codex 0.157.1 protocol profile
+with bounded bundled-request probes; neither is a finished Backend. Transport
+tests exercise Linux, not a
 live vendor protocol. Items 4/5 may proceed in either order; neither is primary.
 The next adapter slice is expanded in [the Codex implementation plan](phase1-codex-adapter.md).
-Its sequence is proposed; it records no new live verification.
+Its step 1 evidence is complete; production adapter steps remain pending.
 This is the next implementation sequence after
 [Phase 0 acceptance](../decisions/phase0-acceptance.md). It refines
 [PLAN.md](../../PLAN.md)'s walking-skeleton phase; project contracts and explicit

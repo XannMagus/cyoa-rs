@@ -1,6 +1,9 @@
 # Next slice: a Codex CLI adapter with independently verified completion
 
-Status: **proposed, not implemented**. Planning baseline: `8f8d253`, 2026-09-25.
+Status: **step 1 complete (protocol evidence only); steps 2–7 not implemented**.
+Planning baseline: `8f8d253`, 2026-09-25; step 1 starts from `4ac538d` with no
+subsequent changes and records CLI 0.157.1 on 2026-09-26 in
+[the discovery evidence](../../reviews/2026-09-26-codex-profile/README.md).
 This expands item 4 of [Phase 1](phase1-headless-backends.md); it does not replace
 that plan or the [project contracts](../decisions/README.md). The preceding
 [repair trace](../../reviews/2026-09-25-supervisor-repairs/README.md) is mandatory
@@ -144,6 +147,18 @@ that later implementation already works. Dependencies follow table order; existi
 behavior is retained throughout.
 
 ### 1. Freeze the supported Codex protocol profile
+
+**Complete, 2026-09-26; no production adapter claim.** The
+[current profile](../../reference/02-codex-cli.md#supported-profile-01571-step-1-policy-not-yet-implemented)
+freezes complete-only, one-agent-message acceptance, framed combined stdin,
+all-properties-required plus annotated-ref union adaptation, and partial isolation.
+The live tool canary has commentary and a second agent message with no final
+discriminator; it is explicitly outside the supported profile. Unknown/reasoning/tool
+events and error-recovery streams are initially rejected, not treated as harmless.
+Requiredness alone was insufficient: the recorded `$ref`-description rejection
+requires the second Codex-local preparation change in step 2. Local AGENTS.md canary
+suppression needs `project_doc_max_bytes=0`; full account/tool isolation remains open.
+Synthetic error/order fixtures specify future tests without pre-registering them.
 
 Read both backend references, recheck help/version/auth, then run the bounded probes
 above with actual bundled requests. Preserve the original schema alongside any

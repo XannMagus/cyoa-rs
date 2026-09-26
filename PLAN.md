@@ -316,6 +316,18 @@ keeping only the semantic field rules. The Markdown formatting instructions
 
 ## Backend: `codex exec` (OpenAI Codex CLI headless mode)
 
+**2026-09-26 update:** step 1 of the Codex adapter plan is complete, with a
+[frozen 0.157.1 discovery profile](reference/02-codex-cli.md) and
+[committed probe artifacts](reviews/2026-09-26-codex-profile/README.md).
+Bundled outline/cast/opening/continuation, zero NPCs, null/empty updates and
+instruction/tool canaries were exercised. Complete-only, single-agent-message
+acceptance is the initial policy. Codex-local schema preparation must require all
+properties and wrap annotated refs in a single-branch anyOf; shared/Claude output
+stays unchanged. Local instruction suppression needs project_doc_max_bytes=0,
+but full account/tool isolation remains unverified. No production Backend or
+headless acceptance is claimed. The following 2026-09-24 sketch is historical;
+the current reference file governs implementation.
+
 **Status: one live cast verified on 2026-09-24; full adapter incomplete.** Codex
 CLI 0.155.1 generated a cast using ChatGPT login after a temporary adaptation
 making all object properties required. Root `$schema` and `$defs`/`$ref` remained

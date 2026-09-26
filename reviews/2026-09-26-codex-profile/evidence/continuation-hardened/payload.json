@@ -1,0 +1,53 @@
+{
+  "narrative": "You cup your hand around the flame until it steadies. Across the harbourmaster’s desk, shadows settle into the creases of a chart, leaving the water beyond the window almost entirely black.\n\n“The missing ship,” you say. “When did anyone last see her?”\n\nThe harbourmaster keeps her thumb on the page she is reading. Her coat hangs from a peg behind her, dripping onto a folded sack; beneath it, she wears a wool waistcoat polished smooth at the pockets. There is an untouched heel of bread beside her elbow. She looks at your hand first, at the pale mortar caught beside your nails, then up at your face.\n\n“Outside the entrance. Just before dusk.” Her voice is low and rough. “She signalled for a berth. We answered. By the time the pilot boat reached the mouth, she was gone.”\n\n“Gone where?”\n\n“If I knew that, mason, I would have finished my supper.” The sharpness costs her something. She closes the ledger carefully and rubs the bridge of her nose. “Forgive me. Three people have asked me that in the last hour. None liked the answer.”\n\nBeyond the glass, mooring ropes creak as boats lean against their fenders. You can hear each small movement distinctly in this sheltered water. No wind rattles the window. No surf breaks loudly enough to drown a shout.\n\n“There wasn’t weather to take her,” you say.\n\n“No.”\n\n“And no room to lose sight of a ship between the entrance and the pilot boat.”\n\nThe harbourmaster draws the chart toward you. “My name is Mara. If we’re going to accuse the sea of dishonesty together, we might as well be introduced.” There is the faintest movement at one corner of her mouth, but it passes before becoming a smile. She taps the narrow opening between the harbour arms. “The lookout saw her here. Then here.” Her finger moves inward. “That second sighting is the trouble.”\n\nYou bend closer. Beneath the smell of lamp oil and wet wool lies the familiar chalky scent of damp stone. The office occupies the foot of the harbour wall; you remember setting the window lintel, the awkward weight of it swinging above your shoulder.\n\nMara’s finger rests on a stretch of masonry farther along that same wall.\n\n“That’s land,” you say.\n\n“That’s what I told him.”\n\nShe opens a drawer and lifts out a small object wrapped in cloth. When she uncovers it, you see a wedge of pale stone, wet along one edge. A shallow groove crosses its face. You recognize the groove before you touch it: the mark your chisel makes when its damaged corner catches.\n\n**It comes from work you laid yourself.**\n\n“The pilot brought this back,” Mara says. “He found it on the landing below the sealed stair. There was fresh grit all over the steps.”\n\nYou turn the fragment between your fingers. One surface carries the dark skin of years; the broken face is clean. Someone has disturbed the wall recently, and with enough force to split the stone rather than ease out its mortar.\n\n“Why didn’t you fetch me?”\n\n“I sent to your house.” Her eyes stay on yours. “You weren’t there.”\n\nA sound reaches you through the floor: a dull knock, followed by another. You stop moving the fragment. Mara’s chair scrapes backward.\n\nFor a moment there is only the water licking the quay. Then the sound comes again, three measured blows from somewhere beneath the office.\n\nMara takes a heavy key from her waistcoat pocket. “The cellar door opens onto the old stair,” she says. “I locked it myself this morning.” She puts the key on the desk between you, but keeps her fingers resting on it. “Tell me something before I open it. When you built that wall—was there any way through it?”",
+  "quick_actions": [
+    {
+      "text": "Keep the cellar locked and listen for more knocks",
+      "kind": "cautious"
+    },
+    {
+      "text": "Take the key and open the cellar door",
+      "kind": "bold"
+    },
+    {
+      "text": "Ask Mara exactly what the lookout saw",
+      "kind": "social"
+    }
+  ],
+  "scene_description": "Inside a cramped stone harbourmaster’s office at night, a mason in dusty work clothes stands beside a wooden desk, holding a freshly broken wedge of pale stone. Mortar clings beside the mason’s fingernails; their posture is tense and attentive. Across the desk, a tired harbourmaster with weathered features and pinned dark hair stands half risen from her chair, wearing a wool waistcoat, her fingers resting on a heavy iron key. A lantern lights an unfolded harbour chart, a closed ledger, and untouched bread. A wet coat drips onto a sack beside the wall. Through a small window, moored boats sit on dark, still harbour water. The atmosphere is intimate and apprehensive.",
+  "summary_update": {
+    "current_situation": "In the harbourmaster’s office at night, the mason Ajax holds a fragment from the wall they built. Measured knocks have sounded beneath the floor; Mara has produced the cellar key and asks whether the wall has a passage through it.",
+    "character_updates": [
+      {
+        "id": "protagonist",
+        "current_state": "In Mara’s harbour office, investigating a missing ship; holding a freshly broken fragment recognized as their own masonry and listening to knocks beneath the floor. Mara asks whether there is a way through the wall.",
+        "name": "",
+        "description": "",
+        "backstory": "",
+        "relationships": ""
+      },
+      {
+        "id": "mara",
+        "current_state": "In her harbour office, tired and apprehensive, with her fingers on the cellar key. Has shared the missing ship’s sightings and recovered masonry with the protagonist; considering opening the cellar after knocks from below.",
+        "name": "Mara",
+        "description": "A harbourmaster with weathered features and pinned dark hair, wearing a wool waistcoat and a practical coat outdoors; blunt, observant, and capable of dry humour.",
+        "backstory": "Oversees the sheltered harbour and its pilot operations; arranged a search when an arriving ship disappeared and sent for the mason after a pilot recovered broken masonry.",
+        "relationships": "Treats the protagonist as a knowledgeable mason whose help may explain the missing ship and damaged wall."
+      }
+    ],
+    "new_major_events": [
+      "Mara reports that a missing ship was last sighted at the wall Ajax built; a pilot recovered freshly broken masonry there, and knocks now sound beneath her office."
+    ],
+    "upcoming_events": [
+      "Depart",
+      "Discover what happened to the missing ship and why its last reported position lies at the harbour wall.",
+      "Investigate the damaged masonry and knocks near the locked cellar and old stair."
+    ],
+    "world": "",
+    "consolidated_major_events": [
+      "A; B"
+    ]
+  },
+  "starts_new_chapter": false,
+  "chapter_title": null
+}

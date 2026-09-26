@@ -1,0 +1,38 @@
+{
+  "status": "success",
+  "exit_code": 0,
+  "elapsed_ms": 34220,
+  "stdout_capture": "Complete",
+  "stderr_capture": "Complete",
+  "workspace_removed": true,
+  "record_timings": [
+    {
+      "elapsed_ms": 108,
+      "record_bytes": 76
+    },
+    {
+      "elapsed_ms": 114,
+      "record_bytes": 23
+    },
+    {
+      "elapsed_ms": 6039,
+      "record_bytes": 168
+    },
+    {
+      "elapsed_ms": 7157,
+      "record_bytes": 183
+    },
+    {
+      "elapsed_ms": 7157,
+      "record_bytes": 203
+    },
+    {
+      "elapsed_ms": 33688,
+      "record_bytes": 4070
+    },
+    {
+      "elapsed_ms": 33704,
+      "record_bytes": 161
+    }
+  ]
+}

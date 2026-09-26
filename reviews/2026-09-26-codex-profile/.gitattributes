@@ -1,0 +1,4 @@
+# Preserve captured bytes and intentional framing fixtures, including whitespace.
+evidence/**/stdout.jsonl -text -whitespace
+evidence/**/stderr.txt -text -whitespace
+synthetic/crlf.jsonl -text -whitespace

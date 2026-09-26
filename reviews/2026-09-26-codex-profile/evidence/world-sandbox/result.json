@@ -1,0 +1,9 @@
+{
+  "status": "process exited with status 1",
+  "exit_code": 1,
+  "elapsed_ms": 73,
+  "stdout_capture": "Complete",
+  "stderr_capture": "Complete",
+  "workspace_removed": true,
+  "record_timings": []
+}

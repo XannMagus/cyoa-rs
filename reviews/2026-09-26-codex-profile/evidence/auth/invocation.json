@@ -1,0 +1,17 @@
+{
+  "executable": "/home/xann/.local/bin/codex",
+  "argv": [
+    "login",
+    "status"
+  ],
+  "environment_names": [
+    "HOME",
+    "PATH"
+  ],
+  "environment_values": "not recorded; inherited only named auth-home/path selections",
+  "cwd": "/tmp/cyoa-request-5WCGNo",
+  "requested_model": null,
+  "deadline_seconds": 180,
+  "stdout_cap": 1048576,
+  "stderr_cap": 262144
+}

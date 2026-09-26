@@ -1,0 +1,25 @@
+{
+  "characters": [
+    {
+      "name": "Ajax the Greater — The Harbour’s Shield",
+      "description": "**Ajax is a towering man of forty**, with a broad, muscular build, bronze skin, deep brown eyes and a broken nose. Grey threads his tightly curled black hair and square beard; an old scar divides his left eyebrow. He typically wears heavy woven tunics, practical bronze armour and weathered wool cloaks.\n\n*Even at rest, he stands as though someone behind him needs protecting.*",
+      "backstory": "Ajax has spent twenty years defending the sheltered harbour, where every departing ship leaves families in his care. Now sand is choking its entrance, and an ancient chart promises a safer home beyond the open sea.\n\n**He will undertake the voyage only if everyone can follow.** The other Ajax calls that impossible. He calls it the point."
+    },
+    {
+      "name": "Ajax the Greater — The Unburdened",
+      "description": "**Ajax is a massive, broad-shouldered man of forty**, with warm brown skin, close-cropped black curls and a beard unevenly streaked with silver. His dark eyes sit beneath heavy brows, and pale scars cross his thick forearms. He favours loose linen clothes, leather belts and sturdy sailors’ wraps, avoiding anything that restricts his movement.\n\n*His hands keep reaching for a shield he no longer carries.*",
+      "backstory": "In this version of his life, Ajax survived a failed rescue at the harbour mouth and abandoned his command. He now repairs fishing boats, accepting payment in meals and silence.\n\nThe proposed voyage offers **a chance to leave the place that remembers his failure**. But with the other Ajax gathering volunteers, he must decide whether freedom means escaping responsibility or choosing it for himself."
+    },
+    {
+      "name": "Ajax the Lesser — The Horizon-Seeker",
+      "description": "**Ajax is a lean, wiry man of twenty-eight**, with olive skin, quick hazel eyes and wavy dark hair usually tied away from his narrow face. A small notch marks his upper lip, and tiny blue navigation symbols are tattooed along his fingers. He typically wears light sailor’s tunics, short wool jackets and soft leather footwear suited to climbing rigging.\n\n*He seems perpetually poised to catch a departing rope.*",
+      "backstory": "Raised in the sheltered harbour beneath the reputation of the older Ajax, he learned to sail wherever the great defender could not follow. He discovered the chart to a distant refuge inside a wreck lodged beneath the breakwater.\n\n**He wants to launch before caution becomes another kind of shipwreck.** Yet he has concealed a troubling detail: the chart records an outward passage, with no route home."
+    },
+    {
+      "name": "Ajax the Lesser — The Keeper of Soundings",
+      "description": "**Ajax is a slight, compact man of twenty-eight**, with brown skin, a long angular face, amber eyes and thick black hair worn in a loose braid. One ear bears a crescent-shaped scar, and his palms are rough with rope burns. He favours layered linen clothing, patched sea coats and belts with pockets for measuring tools.\n\n*He listens to water with the concentration others reserve for speech.*",
+      "backstory": "In this version of his life, Ajax became the harbour’s surveyor after losing his family’s boat on an allegedly safe channel. His measurements reveal that the sheltering breakwater is changing the currents and slowly sealing the harbour shut.\n\n**He believes the voyage should gather knowledge before it carries settlers.** To persuade the greater Ajax, he must risk scarce provisions on an expedition that may return with nothing more comforting than the truth."
+    }
+  ],
+  "npcs": []
+}

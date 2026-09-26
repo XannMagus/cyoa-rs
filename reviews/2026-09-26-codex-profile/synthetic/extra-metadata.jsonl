@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"synthetic-thread","future_metadata":"harmless envelope addition"}
+{"type":"turn.started","future_metadata":"harmless envelope addition"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":" \r\n{\"title\":\"Harbour\",\"world_description\":\"A sheltered harbour — 灯\"}\n"},"future_metadata":"harmless envelope addition"}
+{"type":"turn.completed","usage":{"input_tokens":10,"cached_input_tokens":0,"output_tokens":5},"future_metadata":"harmless envelope addition"}

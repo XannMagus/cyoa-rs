@@ -23,8 +23,10 @@ correctness gaps found after the first implementation and their fixes: bounded
 capture/cleanup, exact request delivery, authoritative cancellation, diagnostics
 propagation and owned request directories.
 
-Claude evidence was refreshed on 2026-09-25; Codex has a confirmed cast from
-2026-09-24 and its own outstanding verification questions. Neither vendor codec/
+Claude evidence was refreshed on 2026-09-25; Codex's
+[0.157.1 protocol profile](reviews/2026-09-26-codex-profile/README.md) was frozen on
+2026-09-26 using bounded bundled-request probes, with full account/tool isolation
+still unverified. Neither vendor codec/
 Backend nor headless play is implemented. See the [Phase 1 plan](docs/plans/phase1-headless-backends.md)
 and each backend reference file for the remaining work; offline transport tests
 do not establish live vendor behavior.

@@ -1,0 +1,169 @@
+{
+  "type": "object",
+  "properties": {
+    "narrative": {
+      "type": "string",
+      "description": "The next passage of the novel, continuing seamlessly from the prose written so far without repeating any of it, written to the contract for the prose given in the instructions"
+    },
+    "quick_actions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/QuickAction"
+      },
+      "description": "Exactly three actions the player could plausibly take next, one of each kind requested in the instructions: a cautious one, a bold one and one that engages another character or investigates something. They must be three genuinely different approaches to the situation, not three phrasings of the obvious next step."
+    },
+    "scene_description": {
+      "type": "string",
+      "description": "A self-contained visual description of the current scene, suitable as a prompt for an image generation AI, that does not rely on knowledge of the story. Describe the current physical state of the characters, their clothing and emotional state."
+    },
+    "summary_update": {
+      "$ref": "#/$defs/SummaryUpdate",
+      "description": "The changes this passage makes to the running summary of the story"
+    },
+    "starts_new_chapter": {
+      "type": "boolean",
+      "description": "True only when this turn begins a major new phase of the story, suitable as the start of a new chapter"
+    },
+    "chapter_title": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "A title for the new chapter when starts_new_chapter is true; on a continuing passage, a title may retitle the current chapter. Null keeps its existing title"
+    }
+  },
+  "required": [
+    "narrative",
+    "quick_actions",
+    "scene_description",
+    "summary_update",
+    "starts_new_chapter"
+  ],
+  "description": "One turn of the adventure",
+  "title": "StoryTurn",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "SummaryUpdate": {
+      "type": "object",
+      "properties": {
+        "current_situation": {
+          "type": "string",
+          "description": "Where the protagonist is and what is happening as this passage ends. This replaces the previous situation."
+        },
+        "character_updates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CharacterDelta"
+          },
+          "description": "One entry for every character this passage changes and every new named character it introduces. Leave out the characters it does not touch: they keep the state they already have in the summary."
+        },
+        "new_major_events": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "The events of this passage that matter to the rest of the story, one short line each, in chronological order. They are appended to the major events already in the summary, so never repeat one that is already there. Leave this empty when nothing of lasting importance happened."
+        },
+        "upcoming_events": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "The foreshadowed or planned future events and unresolved plot threads of the story. Send null, as most passages must, unless this passage opens a new thread or resolves one the summary already holds. When one does change, this field replaces the previous list rather than adding to it: give the complete list of threads as it now stands, repeating every one that is still open, or an empty list when this passage resolves the last of them.",
+          "default": null
+        },
+        "world": {
+          "type": "string",
+          "default": "",
+          "description": "The description of the world. Leave it empty unless the state of the world itself has changed, in which case give the full new description."
+        },
+        "consolidated_major_events": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "A condensed rewrite of the major events that were already in the summary, replacing them. Leave this empty except when the summary is nearing its limit of 2 major events: then merge the older ones into fewer single lines, each covering several events, keeping every development the rest of the story still depends on."
+        }
+      },
+      "required": [
+        "current_situation"
+      ],
+      "description": "The changes a passage of the story makes to the running summary of the story",
+      "additionalProperties": false
+    },
+    "QuickAction": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "description": "The action itself, as a short imperative phrase, such as \"Follow the stranger into the alley\""
+        },
+        "kind": {
+          "$ref": "#/$defs/QuickActionKind",
+          "description": "Which kind of approach this action takes"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "description": "One action suggested to the player, with the kind of approach it takes",
+      "additionalProperties": false
+    },
+    "QuickActionKind": {
+      "type": "string",
+      "enum": [
+        "cautious",
+        "bold",
+        "social",
+        "investigate",
+        "other"
+      ],
+      "description": "The kind of approach a suggested action takes. The actions offered to the player must differ in kind, so that they are genuinely different choices rather than variations on a single idea."
+    },
+    "CharacterDelta": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The short, permanent, lowercase identifier of the character this updates, such as 'marlo'. It is the identity of the character, not their name: reproduce the id from the summary verbatim, even when you rename the character or reveal their true identity. Invent a new one, based on their name, only for a character you are adding to the summary for the first time."
+        },
+        "current_state": {
+          "type": "string",
+          "description": "Everything that is true of this character only right now: where they are, what they are doing, their physical condition and any injuries, their mood, what they are carrying and what they intend to do next. Always fill this in: it replaces whatever the summary currently says about them."
+        },
+        "name": {
+          "type": "string",
+          "default": "",
+          "description": "The name of the character. Fill this in only when you are adding them to the summary or the story renames them; leave it empty to keep the name they already have."
+        },
+        "description": {
+          "type": "string",
+          "default": "",
+          "description": "The physical appearance and nature of the character: their looks, age, distinguishing features, the kind of clothes they wear and their temperament. This doubles as the prompt used to draw them. Leave it empty unless you are adding them to the summary, or their appearance or nature has permanently changed, for example a new scar, the loss of a limb or aging, in which case give the full new description. Never record events, mood, injuries, location or plot developments here, they belong in current_state."
+        },
+        "backstory": {
+          "type": "string",
+          "default": "",
+          "description": "The character's brief backstory: who they are and how they came to be part of the story. Leave it empty unless you are adding them to the summary, or the story has just revealed something new about their past, in which case give the full extended backstory."
+        },
+        "relationships": {
+          "type": "string",
+          "default": "",
+          "description": "How this character stands with the protagonist and the other characters. Leave it empty unless their relationships changed this turn, in which case give them in full."
+        }
+      },
+      "required": [
+        "id",
+        "current_state"
+      ],
+      "description": "A change to one character of the story summary. Only what changed this turn need be filled in: every field left empty keeps the value the character already has in the summary.",
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

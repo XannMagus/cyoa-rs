@@ -1,0 +1,28 @@
+{
+  "executable": "/home/xann/.local/bin/codex",
+  "argv": [
+    "exec",
+    "--json",
+    "--ephemeral",
+    "--sandbox",
+    "read-only",
+    "--ignore-user-config",
+    "--ignore-rules",
+    "--skip-git-repo-check",
+    "--color",
+    "never",
+    "--output-schema",
+    "schema.json",
+    "-"
+  ],
+  "environment_names": [
+    "HOME",
+    "PATH"
+  ],
+  "environment_values": "not recorded; inherited only named auth-home/path selections",
+  "cwd": "/tmp/cyoa-request-L0bQY8",
+  "requested_model": null,
+  "deadline_seconds": 180,
+  "stdout_cap": 1048576,
+  "stderr_cap": 262144
+}

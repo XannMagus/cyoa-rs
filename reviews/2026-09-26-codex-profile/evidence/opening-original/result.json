@@ -1,0 +1,26 @@
+{
+  "status": "process exited with status 1",
+  "exit_code": 1,
+  "elapsed_ms": 1805,
+  "stdout_capture": "Complete",
+  "stderr_capture": "Complete",
+  "workspace_removed": true,
+  "record_timings": [
+    {
+      "elapsed_ms": 106,
+      "record_bytes": 76
+    },
+    {
+      "elapsed_ms": 111,
+      "record_bytes": 23
+    },
+    {
+      "elapsed_ms": 1683,
+      "record_bytes": 436
+    },
+    {
+      "elapsed_ms": 1683,
+      "record_bytes": 452
+    }
+  ]
+}

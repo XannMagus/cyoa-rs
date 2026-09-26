@@ -1,0 +1,57 @@
+2026-09-26: evidence-only step 1, baseline 4ac538d
+cargo fmt --all --check: PASS
+cargo clippy --workspace --all-targets --locked --offline -- -D warnings: PASS
+bash scripts/check_contracts.sh: PASS (191 Rust tests including doctests; 11 runtime mutations)
+bash reviews/2026-09-26-codex-profile/check_evidence.sh: PASS
+No new implementation tests registered; synthetic expectations are future codec inputs.
+   Compiling cyoa-profile-tool v0.0.0 (/tmp/cyoa-profile-build.CSHsOb)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.45s
+zero_npcs: instructions 1186B, prompt 185B, schema 1628B (adapted 1628B)
+world: instructions 622B, prompt 101B, schema 495B (adapted 495B)
+cast: instructions 1504B, prompt 185B, schema 1743B (adapted 1743B)
+opening_turn: instructions 6395B, prompt 1430B, schema 6992B (adapted 7157B)
+continuation_turn: instructions 6395B, prompt 1111B, schema 6992B (adapted 7157B)
+wrote 4 requests to /tmp/cyoa-profile-check.0lWYxj/requests
+Seven recorded payloads passed existing wire/domain boundaries; no adapter or live story lifecycle claimed.
+PASS: bundled artifacts, explicit source state, live observations, wire/domain boundaries and synthetic reproduction (no codec implementation).
+Workspace dependency boundaries verified.
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 26 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 33 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.02s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.31s
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+test result: ok. 30 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.48s
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Mutation outcome validation verified.
+Detected mutation: name-only-deduplication (generation_use_cases/scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls)
+Detected mutation: duplicate-opening-request (generation_use_cases/scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls)
+Detected mutation: default-instead-of-active-limits (generation_use_cases/restored_limits_reach_captured_prompt_schema_and_committed_memory)
+Detected mutation: commit-before-reporting-failure (phase_zero_acceptance/full_story_preserves_contracts_through_failure_retry_cancellation_and_rewind)
+Detected mutation: capture-past-limit (process_supervisor/captured_output_never_exceeds_either_configured_bound)
+Detected mutation: accept-incomplete-input (process_supervisor/incomplete_request_delivery_cannot_report_success)
+Detected mutation: ignore-cancelled-token (process_supervisor/cancelled_token_wins_even_before_its_notifier_runs)
+Detected mutation: accept-failed-process (process_supervisor/failure_after_a_candidate_record_still_reports_nonzero_exit_not_success)
+Detected mutation: swallow-reader-error (lib/backends::process::unix_impl::fault_tests::fatal_read_error_is_not_treated_as_would_block)
+Detected mutation: disable-cancellation-wake (lib/backends::process::unix_impl::fault_tests::self_pipe_wakes_a_long_poll_without_removing_token_checks)
+Detected mutation: discard-cleanup-cause (lib/backends::process::unix_impl::fault_tests::cleanup_failures_preserve_the_initiating_error)
+Project contracts verified. Pending feature obligations remain listed in docs/decisions.
+Final evidence-check refinement: exact combined-stdin instruction/prompt round trips checked with jq -jr and cmp; PASS.
+Standalone discovery sources: rustfmt --check --edition 2024; PASS.
+Final diff: git diff --check; PASS.
+Word-count audit: split_whitespace reports 659 opening / 629 continuation; documentation uses those counts (initial exploratory space-only counts were 624 / 606).
+Staged diff initially flagged original CLI-help whitespace and intentional CRLF bytes. Scoped .gitattributes preserves these raw artifacts without normalizing evidence; staged whitespace check rerun before commit.

@@ -1,11 +1,127 @@
-# `codex exec` as a second inference backend — status: live cast verified, adapter incomplete
+# `codex exec` — protocol profile observed; adapter not implemented
 
-Companion to `01-claude-cli.md`. The original session verified flags and an
-unauthenticated failure. On **2026-09-24**, Codex CLI **0.155.1**, logged in using
-ChatGPT, produced a real cast after a temporary schema adaptation. See the dated
-evidence below. A complete backend, incremental narrative streaming, and the other
-open behaviors are not yet verified. Everything under "Confirmed" was observed;
-one successful request does not confirm unexercised behavior.
+Co-equal companion to `01-claude-cli.md`. Step 1 of the Codex adapter plan is
+complete: **0.157.1, 2026-09-26**, authenticated using ChatGPT. Bundled outline,
+cast, opening, continuation and zero-NPC requests were probed, plus explicit
+null/empty and isolation canaries. [Full evidence and reproduction](../reviews/2026-09-26-codex-profile/README.md).
+This freezes a narrow protocol for implementation; it does not verify a Backend
+that does not yet exist. Claude's implementation/live gates remain independent.
+
+## Confirmed: 0.157.1 discovery, 2026-09-26
+
+- Exact help/version/auth captures and each argv/stdin/schema/stdout/stderr/exit,
+  finite bounds and receipt timings are in the linked evidence directory. Only
+  HOME, PATH and CODEX_HOME (when present) were inherited. No metered-auth override
+  was passed. No explicit model was selected, and events reported no model name.
+- Outline and current cast schemas work unchanged. Original StoryTurn fails with
+  `invalid_json_schema` (missing required character_updates). Making all properties
+  required exposes another rejection: a `$ref` with sibling description at
+  QuickAction.kind. Moving that ref into a single-branch anyOf while retaining
+  its description succeeds. Keep root `$schema`, definitions/refs, ordering,
+  defaults, descriptions, types, nullability and additionalProperties.
+- Seven inspected story successes have thread.started → turn.started → exactly
+  one item.completed(agent_message with string text) → turn.completed. Opening
+  and continuation narratives contain 659 and 629 whitespace-separated words;
+  neither emitted partial text. Complete-only is supported; universal absence of
+  streaming is not proven.
+- Bundled instructions and user prompt were delivered together on stdin, as
+  separately JSON-escaped `instructions` and `prompt` fields with an explicit
+  transport preface. The unmodified strings round-trip; this is a combined user
+  message, **not a privileged system/developer channel**. All large text stays
+  off argv. The exact preface is frozen in each `stdin.txt` and `probe.rs`.
+- Zero-NPC output is `[]`. Labelled discovery suffixes exercised chapter_title
+  null and upcoming_events null versus []; defaulted durable delta fields were
+  returned as empty strings. Existing wire/domain constructors accept the seven
+  extracted payloads. They were not played as a composed live story.
+- `--ignore-user-config --ignore-rules` does **not** disable AGENTS.md: a local
+  canary changed the title. Adding `-c project_doc_max_bytes=0` suppressed that
+  canary. A separate harmless read canary proves shell tools remain usable.
+  That stream includes an ordinary commentary agent_message, command_execution
+  start/completion, then another agent_message. Neither message has a final/phase
+  discriminator. Do not pick the first/last parseable JSON to resolve ambiguity.
+- Success usage includes input_tokens, cached_input_tokens,
+  cache_write_input_tokens, output_tokens and reasoning_output_tokens. Cached
+  input is zero in story probes and nonzero (14208 of 28994) in the tool probe.
+  No monetary field or model identity appeared. Schema errors emit error then
+  turn.failed, exit 1, no usage. The initial outer-sandbox initialization failure
+  instead had empty stdout and stderr only; its explicit rerun is retained.
+
+## Supported profile 0.157.1 (step 1 policy, not yet implemented)
+
+This is an intentionally conservative **adapter acceptance policy**, not a claim
+that every valid Codex run has this shape. Steps 2–6 must implement and test it.
+
+Invocation: resolved absolute executable, private request cwd, explicit auth-home
+environment above, subscription-mode preflight using the same selection, and:
+
+```text
+codex exec -c project_doc_max_bytes=0 --json --ephemeral --sandbox read-only
+  --ignore-user-config --ignore-rules --skip-git-repo-check --color never
+  --output-schema schema.json -
+```
+
+Use the recorded combined stdin envelope. Prepare a Codex-owned schema copy using
+the two observed transformations above in `generation::backend_compat::codex_cli`.
+Do not import Claude's root-key removal, alter shared DTOs/templates/schemas, add
+nullability, or expose arbitrary config/argv overrides. Explicit model overrides
+are not exercised by this profile; configured is never synonymous with observed.
+
+Protocol rules to implement:
+
+1. One thread.started with nonempty thread_id, then one turn.started, then one
+   item.completed whose item has nonempty id, type agent_message and string text,
+   then one turn.completed. Empty/invalid structured text cannot become success.
+   Preserve the decoded text's exact UTF-8 bytes; validate JSON separately.
+2. An agent message is only a candidate. Require successful process completion,
+   full request delivery, no observed cancellation/I/O/cap/cleanup failure, and
+   successful reaping/workspace cleanup before emitting **one complete payload**.
+   No simulated streaming, concatenation or duplicate final emission.
+3. Reject duplicate or conflicting terminals, messages before turn start/after
+   completion, missing candidate/terminal, multiple agent_message items (including
+   commentary and identical candidates), and reused/invalid item IDs. No
+   first/last-message or first/last-parseable-JSON heuristic.
+4. In this initial profile, ignore only extra fields on known valid envelopes;
+   no other event/item kinds are classified harmless. Reject reasoning, tools,
+   unknown events and partial item events as unsupported, keeping diagnostics.
+   This narrow choice can reject legitimate CLI runs; future tolerance needs its
+   own evidence and regression. In particular, tool output never supplies JSON.
+5. Any turn.failed rejects the call and invalidates earlier candidate success.
+   Any top-level error also makes this initial profile unsupported. Historical
+   reconnect notices are **not necessarily terminal vendor failures**, but no
+   successful recovery was observed here; conservatively reject rather than
+   claim them harmless. Keep candidate and diagnostics separately on failure.
+6. Reject malformed required event fields, invalid protocol UTF-8/JSON and
+   truncated JSON records. Accept a complete final JSON record without newline,
+   and CRLF framing without changing retained transcript or decoded payload bytes.
+7. Usage is optional telemetry, never the payload authority. Missing means unknown;
+   explicit zero means zero. Map total/cached input through existing
+   normalize_input_tokens (cached greater than total becomes unknown). Keep output
+   total without adding reasoning or cache counts again. Missing/malformed usage
+   does not invent counts or invalidate otherwise valid fiction; malformed
+   telemetry is unknown. Ignore documented auxiliary counts at the normalized
+   boundary; raw diagnostics retain them. Observed model and monetary cost stay
+   absent for these transcripts.
+
+The [synthetic fixture manifest](../reviews/2026-09-26-codex-profile/synthetic/expectations.json)
+specifies future acceptance outcomes independently of a codec. These fixtures
+are not live observations or existing implementation tests. The real tool-canary
+transcript is an explicit unsupported-profile example despite its CLI exit 0.
+
+## Open questions after step 1
+
+- Full account/global instruction, skill/plugin/MCP and tool isolation is **not
+  verified**. The byte-limit canary covers local AGENTS.md only. Read-only does
+  not disable reads/tools; rejecting their events cannot prevent earlier effects.
+- Other CLI versions, explicit model choices, longer/different-mode streaming,
+  recovery after error notices and a reliable discriminator among multiple agent
+  messages remain outside this profile until independently exercised.
+- Rate-limit/unsatisfiable-schema/sandbox-denial outcomes and failure/cancellation
+  usage are unexercised. Do not exhaust quota to manufacture evidence.
+- Actual CodexCliBackend acceptance, live cancellation and candidate retention,
+  composed identities/limits/story behavior and the headless gate remain pending.
+  Supervisor Linux tests and payload boundary inspection are different evidence.
+
+## Historical observations (0.155.1, retained with original scope)
 
 ## Initial minimal verification recipe
 
@@ -117,7 +233,7 @@ Per ARCH-003, production schema adaptation belongs in a future
 does not settle optional/null behavior for all DTOs and is not a shipped adapter.
 Shared wire requiredness must separately follow the business/source contract.
 
-## Open questions — resolve before writing `CodexCliBackend`
+## Historical open questions (2026-09-24; superseded by the current sections above)
 
 1. **Does `--output-schema` stream the structured fields incrementally?** Claude's
    backend gets this via a forced `StructuredOutput` tool call whose `input_json_delta`

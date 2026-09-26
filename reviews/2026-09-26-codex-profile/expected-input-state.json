@@ -1,0 +1,30 @@
+{
+  "provenance": "Hand-specified from the frozen Phase 0 fixture and project decisions, not from a model response or protocol decoder.",
+  "brief": "Two Ajaxes, a harbour and a voyage",
+  "outline": {"title":"Harbour","world_description":"A sheltered harbour"},
+  "selected_playable_position": 1,
+  "active_major_event_limit": 2,
+  "opening": {
+    "turn_count":0,
+    "character_ids":["protagonist","ajax","ajax-2"],
+    "character_roles":["mason","merchant","guard"],
+    "current_situation":"The adventure has not yet begun.",
+    "major_events":[],
+    "upcoming_events":[],
+    "opening_identity_instruction":true
+  },
+  "continuation": {
+    "turn_count":1,
+    "character_ids":["protagonist","ajax","ajax-2"],
+    "character_current_states":["","At the shop","At the gate"],
+    "current_situation":"The adventure has not yet begun.",
+    "major_events":["A","B"],
+    "upcoming_events":["Depart"],
+    "current_chapter":0,
+    "chapter_title":"Harbour",
+    "prose":"Opening: the lantern flickered.",
+    "player_input":"I ask the harbourmaster about the missing ship.",
+    "opening_identity_instruction":false
+  },
+  "zero_npcs":{"requested_playables_min":3,"requested_playables_max":5,"requested_npcs":0}
+}

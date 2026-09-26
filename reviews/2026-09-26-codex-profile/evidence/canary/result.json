@@ -1,0 +1,26 @@
+{
+  "status": "success",
+  "exit_code": 0,
+  "elapsed_ms": 28249,
+  "stdout_capture": "Complete",
+  "stderr_capture": "Complete",
+  "workspace_removed": true,
+  "record_timings": [
+    {
+      "elapsed_ms": 102,
+      "record_bytes": 76
+    },
+    {
+      "elapsed_ms": 107,
+      "record_bytes": 23
+    },
+    {
+      "elapsed_ms": 27991,
+      "record_bytes": 4039
+    },
+    {
+      "elapsed_ms": 28035,
+      "record_bytes": 157
+    }
+  ]
+}

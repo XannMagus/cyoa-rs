@@ -1,0 +1,107 @@
+[
+  {
+    "label": "world",
+    "wire_and_domain_boundary": "accepted",
+    "payload_bytes": 4266,
+    "usage": {
+      "input_tokens": 14411,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 827,
+      "reasoning_output_tokens": 0
+    },
+    "narrative_whitespace_words": null,
+    "observed_model": null,
+    "application_or_adapter_acceptance": "not exercised"
+  },
+  {
+    "label": "cast",
+    "wire_and_domain_boundary": "accepted",
+    "payload_bytes": 7579,
+    "usage": {
+      "input_tokens": 14818,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 1726,
+      "reasoning_output_tokens": 90
+    },
+    "narrative_whitespace_words": null,
+    "observed_model": null,
+    "application_or_adapter_acceptance": "not exercised"
+  },
+  {
+    "label": "opening-ref-union",
+    "wire_and_domain_boundary": "accepted",
+    "payload_bytes": 6376,
+    "usage": {
+      "input_tokens": 17225,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 1411,
+      "reasoning_output_tokens": 0
+    },
+    "narrative_whitespace_words": 659,
+    "observed_model": null,
+    "application_or_adapter_acceptance": "not exercised"
+  },
+  {
+    "label": "continuation-hardened",
+    "wire_and_domain_boundary": "accepted",
+    "payload_bytes": 6877,
+    "usage": {
+      "input_tokens": 17189,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 1540,
+      "reasoning_output_tokens": 0
+    },
+    "narrative_whitespace_words": 629,
+    "observed_model": null,
+    "application_or_adapter_acceptance": "not exercised"
+  },
+  {
+    "label": "zero-npcs-hardened",
+    "wire_and_domain_boundary": "accepted",
+    "payload_bytes": 3717,
+    "usage": {
+      "input_tokens": 14735,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 896,
+      "reasoning_output_tokens": 98
+    },
+    "narrative_whitespace_words": null,
+    "observed_model": null,
+    "application_or_adapter_acceptance": "not exercised"
+  },
+  {
+    "label": "null-hardened",
+    "wire_and_domain_boundary": "accepted",
+    "payload_bytes": 4426,
+    "usage": {
+      "input_tokens": 17245,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 957,
+      "reasoning_output_tokens": 0
+    },
+    "narrative_whitespace_words": 361,
+    "observed_model": null,
+    "application_or_adapter_acceptance": "not exercised"
+  },
+  {
+    "label": "empty-hardened",
+    "wire_and_domain_boundary": "accepted",
+    "payload_bytes": 3526,
+    "usage": {
+      "input_tokens": 17249,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 756,
+      "reasoning_output_tokens": 0
+    },
+    "narrative_whitespace_words": 253,
+    "observed_model": null,
+    "application_or_adapter_acceptance": "not exercised"
+  }
+]
