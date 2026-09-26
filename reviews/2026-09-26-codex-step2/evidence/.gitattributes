@@ -1,0 +1,2 @@
+# Preserve cargo's original trailing blank lines in captured test logs.
+*.log whitespace=-blank-at-eof

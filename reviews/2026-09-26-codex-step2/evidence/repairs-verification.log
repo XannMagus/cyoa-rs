@@ -1,0 +1,12 @@
+2026-09-26: user-authorized repairs to Luna's uncommitted step-2 implementation.
+Baseline HEAD: 70a669c7e5a67e9ce4f4dc507f925d37775567fa (existing working changes retained).
+Focused error-first tests: three runtime failures; repairs-red.log.
+Focused post-repair tests: 17 passed; repairs-green.log.
+Positive-control/drop refinement: 17 passed; repairs-final-focused.log.
+cargo fmt --all --check: PASS.
+cargo clippy --workspace --all-targets --locked --offline -- -D warnings: PASS.
+bash scripts/check_contracts.sh: PASS; 208 Rust tests including doctests, registry and architecture checks, eleven runtime mutations; repairs-contracts.log.
+git diff --check: PASS.
+git diff --exit-code 70a669c for shared wire/schema/templates, Claude adapter, supervisor and mutation patches: PASS (unchanged).
+No installed vendor/model call or auth preflight. Tests launch local fixtures, including the harmless no-launch test's positive control.
+No commit. Step 3 documented only; no codec, Backend execution or headless implementation.

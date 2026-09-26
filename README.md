@@ -31,6 +31,14 @@ Backend nor headless play is implemented. See the [Phase 1 plan](docs/plans/phas
 and each backend reference file for the remaining work; offline transport tests
 do not establish live vendor behavior.
 
+Codex adapter **step 2 is implemented**: isolated schema adaptation and owned,
+offline invocation preparation, with [review repairs and evidence](reviews/2026-09-26-codex-step2/review-and-repairs.md).
+**Step 3 is NOT done.** The next coding agent, including Claude Code, should start
+with the [step-3 handoff](docs/plans/phase1-codex-step3-handoff.md).
+Neither Codex nor Claude has an implemented vendor event codec or executable
+Backend. Claude's adapter and live acceptance remain separate pending work;
+Codex preparation does not satisfy Claude's implementation obligations.
+
 - `cyoa-core`: checked domain types, namesake-preserving casts and stable IDs,
   summary deltas, typed limits, owned protagonist selection, turns, chapters and
   rewind. Current/original restore policies preserve original settings and reapply
@@ -43,7 +51,8 @@ do not establish live vendor behavior.
   request-recording complete/chunked scripted transports and a process supervisor
   exercised against an in-repo subprocess fixture. Claude schema adaptation is
   isolated in `backend_compat::claude_cli`; advisor-suppression instructions exist
-  in evidence and plans only. Both vendor adapters remain pending.
+  in evidence and plans only. Codex schema/invocation preparation is implemented;
+  both executable vendor Backends remain pending.
 - `cyoa-presentation`: terminal help/version output; gameplay UI is pending.
 - `cyoa-cli`: executable and composition root.
 - `reference/`: source material and each backend's separate live-verification record.

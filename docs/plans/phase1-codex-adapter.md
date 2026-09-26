@@ -1,6 +1,6 @@
 # Next slice: a Codex CLI adapter with independently verified completion
 
-Status: **step 1 complete (protocol evidence only); steps 2–7 not implemented**.
+Status: **steps 1–2 complete (profile evidence and offline preparation); steps 3–7 not implemented**.
 Planning baseline: `8f8d253`, 2026-09-25; step 1 starts from `4ac538d` with no
 subsequent changes and records CLI 0.157.1 on 2026-09-26 in
 [the discovery evidence](../../reviews/2026-09-26-codex-profile/README.md).
@@ -195,6 +195,19 @@ allowlist alone verifies the saved account's auth mode.
 
 Exit: preparation returns a coherent owned request; golden diffs explain every
 backend-specific change. The existing peer/generic schema regressions still pass.
+
+**Implemented 2026-09-26:** Codex-local schema adaptation and fixed invocation
+preparation now live in `generation::backend_compat::codex_cli` and
+`backends::codex_cli`. The prepared request owns its schema and `RequestWorkspace`,
+uses only the named HOME/PATH/CODEX_HOME environment, and transfers to the existing
+`ProcessSpec` without launching a child. It does not implement the protocol codec or
+`Backend::generate`; live isolation and the optional model override remain unverified.
+See [the step-2 review record](../../reviews/2026-09-26-codex-step2/README.md).
+The subsequent [review repairs](../../reviews/2026-09-26-codex-step2/review-and-repairs.md)
+reject constraint loss and unsupported structural forms, correct executable PATH
+resolution, and strengthen the no-launch test. The
+[step-3 handoff](phase1-codex-step3-handoff.md) defines the next bounded slice;
+it is planning only.
 
 ### 3. Implement the private event state machine without subprocesses
 

@@ -89,6 +89,14 @@
         "tests": [
           "successful_fixture_transport_attaches_both_captured_streams"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "backends::codex_cli::tests::prepared_request_owns_schema_stdin_environment_and_workspace_until_transfer_drop",
+          "generation::backend_compat::codex_cli::tests::framing_matches_the_committed_discovery_capture_byte_for_byte"
+        ]
       }
     ]
   },
@@ -199,6 +207,18 @@
           "failed_turns_preserve_diagnostics_state_and_single_attempt",
           "invalid_outline_and_insufficient_cast_are_returned_with_raw_output"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "backends::codex_cli::tests::invalid_model_home_and_search_path_values_are_rejected",
+          "backends::codex_cli::tests::executable_resolution_handles_absolute_relative_and_selected_path_names",
+          "backends::codex_cli::tests::executable_search_skips_nonexecutables_and_resolves_empty_path_entries",
+          "backends::codex_cli::tests::preparation_never_launches_the_selected_executable",
+          "backends::codex_cli::tests::failed_schema_write_is_located_and_workspace_drop_cleans_up",
+          "backends::codex_cli::tests::public_generation_preparation_uses_one_rendered_request_for_prompt_and_schema"
+        ]
       }
     ]
   },
@@ -249,6 +269,13 @@
       },
       {
         "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "generation::backend_compat::codex_cli::tests::adapted_turn_keeps_order_nullability_defaults_and_empty_strings"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
         "target": "wire_mapping",
         "tests": [
           "required_response_text_distinguishes_missing_null_and_empty",
@@ -274,7 +301,16 @@
         "target": "lib",
         "tests": [
           "generation::schema::tests::generic_schemas_declare_a_root_schema_key",
-          "generation::backend_compat::claude_cli::tests::adapt_schema_strips_the_root_schema_key_and_nothing_else"
+          "generation::backend_compat::claude_cli::tests::adapt_schema_strips_the_root_schema_key_and_nothing_else",
+          "generation::backend_compat::codex_cli::tests::malformed_property_map_is_a_located_preparation_error",
+          "generation::backend_compat::codex_cli::tests::required_names_outside_properties_are_rejected_without_losing_constraints",
+          "generation::backend_compat::codex_cli::tests::unsupported_dialects_and_structural_keywords_are_located_errors",
+          "generation::backend_compat::codex_cli::tests::malformed_required_keyword_is_rejected_even_without_properties",
+          "generation::backend_compat::codex_cli::tests::a_ref_with_a_union_sibling_is_rejected_at_its_location",
+          "generation::backend_compat::codex_cli::tests::unsupported_schema_children_report_their_location_and_boolean_constraints_survive",
+          "generation::backend_compat::codex_cli::tests::bundled_schemas_match_independent_discovery_expectations",
+          "generation::backend_compat::codex_cli::tests::transformation_is_idempotent_and_leaves_schema_looking_annotations_opaque",
+          "generation::backend_compat::codex_cli::tests::framing_matches_the_committed_discovery_capture_byte_for_byte"
         ]
       }
     ]
@@ -357,6 +393,15 @@
           "generation::templates::tests::toml_override_merges_per_key_not_per_file",
           "generation::templates::tests::undefined_template_variable_is_a_render_error",
           "generation::templates::tests::quick_action_instructions_change_when_kinds_table_is_overridden"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "generation::backend_compat::codex_cli::tests::adapted_turn_keeps_order_nullability_defaults_and_empty_strings",
+          "backends::codex_cli::tests::prepared_request_owns_schema_stdin_environment_and_workspace_until_transfer_drop",
+          "backends::codex_cli::tests::public_generation_preparation_uses_one_rendered_request_for_prompt_and_schema"
         ]
       }
     ]

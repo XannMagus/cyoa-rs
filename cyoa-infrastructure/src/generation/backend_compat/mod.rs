@@ -15,3 +15,4 @@
 //! runtime) earns its complexity, rather than building it speculatively now.
 
 pub mod claude_cli;
+pub mod codex_cli;

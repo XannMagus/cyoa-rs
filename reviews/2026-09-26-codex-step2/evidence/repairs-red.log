@@ -1,0 +1,52 @@
+   Compiling cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.97s
+     Running unittests src/lib.rs (target/debug/deps/cyoa_infrastructure-e3ed95a49fb8bb1c)
+
+running 17 tests
+test backends::codex_cli::tests::executable_search_skips_nonexecutables_and_resolves_empty_path_entries ... FAILED
+test backends::codex_cli::tests::invalid_model_home_and_search_path_values_are_rejected ... ok
+test backends::codex_cli::tests::failed_schema_write_is_located_and_workspace_drop_cleans_up ... ok
+test generation::backend_compat::codex_cli::tests::a_ref_with_a_union_sibling_is_rejected_at_its_location ... ok
+test backends::codex_cli::tests::executable_resolution_handles_absolute_relative_and_selected_path_names ... ok
+test backends::codex_cli::tests::preparation_never_launches_the_selected_executable ... ok
+test generation::backend_compat::codex_cli::tests::required_names_outside_properties_are_rejected_without_losing_constraints ... FAILED
+test generation::backend_compat::codex_cli::tests::unsupported_schema_children_report_their_location_and_boolean_constraints_survive ... ok
+test generation::backend_compat::codex_cli::tests::malformed_property_map_is_a_located_preparation_error ... ok
+test generation::backend_compat::codex_cli::tests::malformed_required_keyword_is_rejected_even_without_properties ... ok
+test generation::backend_compat::codex_cli::tests::unsupported_dialects_and_structural_keywords_are_located_errors ... FAILED
+test generation::backend_compat::codex_cli::tests::framing_matches_the_committed_discovery_capture_byte_for_byte ... ok
+test generation::backend_compat::codex_cli::tests::transformation_is_idempotent_and_leaves_schema_looking_annotations_opaque ... ok
+test generation::backend_compat::codex_cli::tests::adapted_turn_keeps_order_nullability_defaults_and_empty_strings ... ok
+test generation::backend_compat::codex_cli::tests::bundled_schemas_match_independent_discovery_expectations ... ok
+test backends::codex_cli::tests::public_generation_preparation_uses_one_rendered_request_for_prompt_and_schema ... ok
+test backends::codex_cli::tests::prepared_request_owns_schema_stdin_environment_and_workspace_until_transfer_drop ... ok
+
+failures:
+
+---- backends::codex_cli::tests::executable_search_skips_nonexecutables_and_resolves_empty_path_entries stdout ----
+
+thread 'backends::codex_cli::tests::executable_search_skips_nonexecutables_and_resolves_empty_path_entries' (305) panicked at cyoa-infrastructure/src/backends/codex_cli.rs:428:9:
+assertion `left == right` failed
+  left: "/tmp/.tmp8k1wJf/first/codex"
+ right: "/tmp/.tmp8k1wJf/second/codex"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- generation::backend_compat::codex_cli::tests::required_names_outside_properties_are_rejected_without_losing_constraints stdout ----
+
+thread 'generation::backend_compat::codex_cli::tests::required_names_outside_properties_are_rejected_without_losing_constraints' (317) panicked at cyoa-infrastructure/src/generation/backend_compat/codex_cli.rs:241:13:
+called `Result::unwrap_err()` on an `Ok` value: Object {"type": String("object"), "properties": Object {"visible": Object {"type": String("string")}}, "required": Array [String("visible")], "additionalProperties": Bool(true)}
+
+---- generation::backend_compat::codex_cli::tests::unsupported_dialects_and_structural_keywords_are_located_errors stdout ----
+
+thread 'generation::backend_compat::codex_cli::tests::unsupported_dialects_and_structural_keywords_are_located_errors' (319) panicked at cyoa-infrastructure/src/generation/backend_compat/codex_cli.rs:252:46:
+called `Result::unwrap_err()` on an `Ok` value: Object {"properties": Object {"nested": Object {"dependencies": Object {"properties": Object {"hidden": Object {"type": String("string")}}}}}, "required": Array [String("nested")]}
+
+
+failures:
+    backends::codex_cli::tests::executable_search_skips_nonexecutables_and_resolves_empty_path_entries
+    generation::backend_compat::codex_cli::tests::required_names_outside_properties_are_rejected_without_losing_constraints
+    generation::backend_compat::codex_cli::tests::unsupported_dialects_and_structural_keywords_are_located_errors
+
+test result: FAILED. 14 passed; 3 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.02s
+
+error: test failed, to rerun pass `-p cyoa-infrastructure --lib`
