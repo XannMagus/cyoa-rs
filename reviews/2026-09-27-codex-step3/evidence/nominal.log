@@ -1,0 +1,17 @@
+   Compiling cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.71s
+     Running unittests src/lib.rs (target/debug/deps/cyoa_infrastructure-e3ed95a49fb8bb1c)
+
+running 9 tests
+test backends::codex_cli::protocol::tests::order_failures_and_end_of_stream_never_authorize_completion ... ok
+test backends::codex_cli::protocol::tests::invalid_payload_is_retained_and_never_repaired_or_accepted ... ok
+test backends::codex_cli::protocol::tests::first_failure_is_sticky_and_keeps_candidate_after_later_records ... ok
+test backends::codex_cli::protocol::tests::malformed_required_fields_and_unsupported_items_are_not_candidates ... ok
+test backends::codex_cli::protocol::tests::framing_metadata_and_escaped_text_preserve_exact_candidate_bytes ... ok
+test backends::codex_cli::protocol::tests::optional_telemetry_preserves_unknown_zero_and_normalizes_invalid_cache ... ok
+test backends::codex_cli::protocol::tests::frozen_error_transcripts_reject_with_located_reasons_and_candidate_evidence ... ok
+test backends::codex_cli::protocol::tests::live_tool_canary_is_unsupported_even_though_the_cli_exited_successfully ... ok
+test backends::codex_cli::protocol::tests::frozen_live_story_captures_match_independent_payload_and_usage_expectations ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 50 filtered out; finished in 0.00s
+

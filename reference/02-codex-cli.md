@@ -7,6 +7,12 @@ null/empty and isolation canaries. [Full evidence and reproduction](../reviews/2
 This freezes a narrow protocol for implementation; it does not verify a Backend
 that does not yet exist. Claude's implementation/live gates remain independent.
 
+Implementation status, 2026-09-27: request preparation and the private protocol
+codec are now offline-tested ([step 3 record](../reviews/2026-09-27-codex-step3/README.md)).
+The supported-profile policy below is implemented by the codec only for event
+decoding; process reconciliation and the executable Backend remain pending.
+No new authenticated observation is added by replaying these captures.
+
 ## Confirmed: 0.157.1 discovery, 2026-09-26
 
 - Exact help/version/auth captures and each argv/stdin/schema/stdout/stderr/exit,

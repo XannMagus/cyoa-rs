@@ -1,6 +1,6 @@
 # Next slice: a Codex CLI adapter with independently verified completion
 
-Status: **steps 1–2 complete (profile evidence and offline preparation); steps 3–7 not implemented**.
+Status: **steps 1–3 complete (profile evidence, offline preparation and private codec); steps 4–7 not implemented**.
 Planning baseline: `8f8d253`, 2026-09-25; step 1 starts from `4ac538d` with no
 subsequent changes and records CLI 0.157.1 on 2026-09-26 in
 [the discovery evidence](../../reviews/2026-09-26-codex-profile/README.md).
@@ -210,6 +210,12 @@ resolution, and strengthen the no-launch test. The
 it is planning only.
 
 ### 3. Implement the private event state machine without subprocesses
+
+**Implemented offline, 2026-09-27.** The private codec consumes complete byte
+records, latches located failures while retaining candidates, and returns protocol
+completion only. Nine registered tests replay the frozen synthetic/live captures
+and additional edge cases. [Evidence and boundaries](../../reviews/2026-09-27-codex-step3/README.md).
+No process reconciliation, executable Backend or new live acceptance is claimed.
 
 Drive it with complete byte records from frozen fixtures. Write error cases before
 edge cases before nominal cases. Cover missing/failed/duplicate terminal outcomes,

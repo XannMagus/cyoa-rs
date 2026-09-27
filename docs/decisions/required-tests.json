@@ -97,6 +97,15 @@
           "backends::codex_cli::tests::prepared_request_owns_schema_stdin_environment_and_workspace_until_transfer_drop",
           "generation::backend_compat::codex_cli::tests::framing_matches_the_committed_discovery_capture_byte_for_byte"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "backends::codex_cli::protocol::tests::framing_metadata_and_escaped_text_preserve_exact_candidate_bytes",
+          "backends::codex_cli::protocol::tests::first_failure_is_sticky_and_keeps_candidate_after_later_records",
+          "backends::codex_cli::protocol::tests::invalid_payload_is_retained_and_never_repaired_or_accepted"
+        ]
       }
     ]
   },
@@ -311,6 +320,14 @@
           "generation::backend_compat::codex_cli::tests::bundled_schemas_match_independent_discovery_expectations",
           "generation::backend_compat::codex_cli::tests::transformation_is_idempotent_and_leaves_schema_looking_annotations_opaque",
           "generation::backend_compat::codex_cli::tests::framing_matches_the_committed_discovery_capture_byte_for_byte"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "backends::codex_cli::protocol::tests::frozen_live_story_captures_match_independent_payload_and_usage_expectations",
+          "backends::codex_cli::protocol::tests::live_tool_canary_is_unsupported_even_though_the_cli_exited_successfully"
         ]
       }
     ]
@@ -559,6 +576,20 @@
         "target": "lib",
         "tests": [
           "backends::process::unix_impl::fault_tests::interrupted_reaping_still_has_a_finite_deadline"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "backends::codex_cli::protocol::tests::frozen_error_transcripts_reject_with_located_reasons_and_candidate_evidence",
+          "backends::codex_cli::protocol::tests::malformed_required_fields_and_unsupported_items_are_not_candidates",
+          "backends::codex_cli::protocol::tests::order_failures_and_end_of_stream_never_authorize_completion",
+          "backends::codex_cli::protocol::tests::invalid_payload_is_retained_and_never_repaired_or_accepted",
+          "backends::codex_cli::protocol::tests::optional_telemetry_preserves_unknown_zero_and_normalizes_invalid_cache",
+          "backends::codex_cli::protocol::tests::first_failure_is_sticky_and_keeps_candidate_after_later_records",
+          "backends::codex_cli::protocol::tests::frozen_live_story_captures_match_independent_payload_and_usage_expectations",
+          "backends::codex_cli::protocol::tests::live_tool_canary_is_unsupported_even_though_the_cli_exited_successfully"
         ]
       }
     ]

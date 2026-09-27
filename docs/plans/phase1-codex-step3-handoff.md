@@ -1,9 +1,10 @@
 # Step 3 handoff: private Codex event state machine
 
-Planning only, 2026-09-26. **Step 3 is NOT implemented.** This applies regardless
-of which coding agent resumes, including Claude Code. Neither Codex nor Claude
-has a vendor event codec or executable Backend. Claude's own adapter remains
-separate pending work; this handoff plans the Codex codec only.
+Historical handoff, 2026-09-26. **Step 3 was implemented offline on 2026-09-27**;
+see [the implementation record](../../reviews/2026-09-27-codex-step3/README.md).
+The scope and obligations below were used for that slice. Next is adapter-plan
+step 4 (transport reconciliation); neither vendor has an executable Backend.
+Claude's own codec and adapter remain separate pending work.
 
 Baseline: step-1 profile `70a669c` plus the step-2 implementation and
 [review repairs](../../reviews/2026-09-26-codex-step2/review-and-repairs.md), committed

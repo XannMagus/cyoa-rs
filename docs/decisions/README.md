@@ -375,9 +375,9 @@ caps. Persistence and live subprocess adapters remain pending.
 
 ### STREAM-001 Preview text never authorizes a state commit
 
-**Partial: scanner, scripted generation, and the vendor-neutral process
-supervisor enforced; vendor event-stream interpretation (Claude/Codex codecs)
-pending.** `StreamingStringField` extracts only the requested root
+**Partial: scanner, scripted generation, vendor-neutral process supervision and
+the private Codex protocol codec enforced; concrete Backend reconciliation and
+Claude event decoding pending.** `StreamingStringField` extracts only the requested root
 string, across valid UTF-8 chunks. It is a preview scanner, not JSON validation.
 Escapes and surrogate pairs are decoded; lone surrogate halves become U+FFFD
 because Rust cannot represent them as scalar values. Truncated escape sequences
@@ -427,6 +427,17 @@ not interpret Claude/Codex event shapes — that remains item 4/5's job, built
 on top of this supervisor. Windows is explicitly unsupported: `run` returns
 `SupervisorError::Unsupported` there without attempting anything
 platform-specific.
+
+Codex adapter step 3 (2026-09-27) adds a private codec for the frozen 0.157.1
+profile. It requires one eligible message and terminal completion in order,
+rejects unsupported/ambiguous/malformed records, and preserves candidate bytes
+separately from its located error. Errors latch; later events cannot repair them.
+Payload syntax is checked at end-of-stream without trimming or reserialization.
+Malformed/missing telemetry counts independently become unknown; invalid cached
+counts use the existing normalizer. Tests replay seven earlier live captures and
+synthetic error/edge transcripts; this is offline evidence, not new live acceptance.
+The codec emits no preview or GenerationResponse and does not observe child exit,
+cleanup or cancellation. BACKENDS-001 remains pending until adapter integration.
 
 ### ACCEPTANCE-001 — exercise the complete engine before adding external I/O
 

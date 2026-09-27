@@ -1,7 +1,12 @@
 //! Codex invocation configuration and owned request preparation.
 //!
-//! This module prepares a [`ProcessSpec`] but does not launch it or interpret
-//! Codex events. The event codec and `Backend::generate` belong to later steps.
+//! This module prepares a [`ProcessSpec`] and owns a private event codec. It
+//! does not launch requests: `Backend::generate` and reconciliation of protocol
+//! evidence with process outcomes belong to step 4.
+
+// Step 4 will connect this private codec to the supervisor.
+#[allow(dead_code)]
+mod protocol;
 
 use crate::{
     backends::process::{

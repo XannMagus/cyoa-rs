@@ -26,18 +26,19 @@ propagation and owned request directories.
 Claude evidence was refreshed on 2026-09-25; Codex's
 [0.157.1 protocol profile](reviews/2026-09-26-codex-profile/README.md) was frozen on
 2026-09-26 using bounded bundled-request probes, with full account/tool isolation
-still unverified. Neither vendor codec/
-Backend nor headless play is implemented. See the [Phase 1 plan](docs/plans/phase1-headless-backends.md)
+still unverified. Executable vendor Backends and headless play remain pending.
+See the [Phase 1 plan](docs/plans/phase1-headless-backends.md)
 and each backend reference file for the remaining work; offline transport tests
 do not establish live vendor behavior.
 
 Codex adapter **step 2 is implemented**: isolated schema adaptation and owned,
 offline invocation preparation, with [review repairs and evidence](reviews/2026-09-26-codex-step2/review-and-repairs.md).
-**Step 3 is NOT done.** The next coding agent, including Claude Code, should start
-with the [step-3 handoff](docs/plans/phase1-codex-step3-handoff.md).
-Neither Codex nor Claude has an implemented vendor event codec or executable
-Backend. Claude's adapter and live acceptance remain separate pending work;
-Codex preparation does not satisfy Claude's implementation obligations.
+**Step 3 is implemented offline**: a private Codex event state machine validates
+the frozen complete-only profile and retains exact candidate evidence on failure.
+See the [implementation record](reviews/2026-09-27-codex-step3/README.md).
+Next is [step 4](docs/plans/phase1-codex-adapter.md): reconcile protocol and process
+outcomes in the actual Backend. Neither vendor has an executable Backend;
+Claude's codec and independent live acceptance remain pending.
 
 - `cyoa-core`: checked domain types, namesake-preserving casts and stable IDs,
   summary deltas, typed limits, owned protagonist selection, turns, chapters and
@@ -51,7 +52,8 @@ Codex preparation does not satisfy Claude's implementation obligations.
   request-recording complete/chunked scripted transports and a process supervisor
   exercised against an in-repo subprocess fixture. Claude schema adaptation is
   isolated in `backend_compat::claude_cli`; advisor-suppression instructions exist
-  in evidence and plans only. Codex schema/invocation preparation is implemented;
+  in evidence and plans only. Codex schema/invocation preparation and private
+  protocol decoding are implemented;
   both executable vendor Backends remain pending.
 - `cyoa-presentation`: terminal help/version output; gameplay UI is pending.
 - `cyoa-cli`: executable and composition root.

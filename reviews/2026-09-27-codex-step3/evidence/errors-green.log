@@ -1,0 +1,11 @@
+   Compiling cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.92s
+     Running unittests src/lib.rs (target/debug/deps/cyoa_infrastructure-e3ed95a49fb8bb1c)
+
+running 3 tests
+test backends::codex_cli::protocol::tests::order_failures_and_end_of_stream_never_authorize_completion ... ok
+test backends::codex_cli::protocol::tests::malformed_required_fields_and_unsupported_items_are_not_candidates ... ok
+test backends::codex_cli::protocol::tests::frozen_error_transcripts_reject_with_located_reasons_and_candidate_evidence ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 50 filtered out; finished in 0.00s
+
