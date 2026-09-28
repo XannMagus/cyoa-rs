@@ -1,4 +1,4 @@
-# `codex exec` — adapter implemented; composed/live acceptance incomplete
+# `codex exec` — composed fixture acceptance complete; full live gate pending
 
 Co-equal companion to `01-claude-cli.md`. Step 1 of the Codex adapter plan is
 complete: **0.157.1, 2026-09-26**, authenticated using ChatGPT. Bundled outline,
@@ -11,6 +11,12 @@ Claude's implementation/live gates remain independent.
 Implementation status, 2026-09-27: steps 1–4 now include request preparation,
 private protocol decoding and real Backend reconciliation. The supported-profile
 policy below is implemented; offline replay is distinct from live evidence.
+
+Implementation update, 2026-09-28: step 5 now checks composed story contracts
+through the actual adapter and fixture children, including cleanup failure and
+state-preserving retry ([record](../reviews/2026-09-28-codex-step5/README.md)).
+No new authenticated run was made for this offline acceptance slice. The live
+observations and remaining live questions below keep their original scope.
 
 ## Confirmed: actual adapter outline smoke, 0.157.1, 2026-09-27
 

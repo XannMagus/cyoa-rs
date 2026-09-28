@@ -295,8 +295,8 @@ a build/test dependency violates this decision even if the source uses it.
 
 ### BACKENDS-001 Two co-equal subscription CLI backends
 
-**Partial: Codex adapter and real-child fixture checks implemented; composed
-story/complete live acceptance and Claude adapter pending.** Claude and Codex are peers behind inward-owned ports, not primary and
+**Partial: Codex adapter and composed real-child fixture acceptance implemented;
+complete live acceptance and Claude adapter pending.** Claude and Codex are peers behind inward-owned ports, not primary and
 fallback. Use stateless calls and subscription auth; never silently switch to paid
 API auth. Test the shared contract against scripted and both concrete adapters.
 Each backend needs its own actual live evidence before "verified" or v1 completion;
@@ -315,6 +315,18 @@ emission and after the callback. Only then can it return a GenerationResponse.
 Real-child tests check failure classification, exact candidate and byte evidence,
 resource cleanup, request argv/stdin/schema and no premature emission. One bundled
 outline was exercised live on 0.157.1; this is not the full story acceptance gate.
+
+Step 5 adds `codex_story_acceptance`: actual adapter → GenerationEngine →
+StoryUseCases, edited outline, namesake cast/ID repair, opening/continuation,
+chapter breaks and retitling, rewind, both restored-limit policies and zero NPCs.
+Captured child requests and launch counts check context and no extra generation.
+Nonzero exit after a candidate, terminal failure, invalid payload/domain data,
+missing terminal, idle/callback cancellation, output cap and actual workspace
+cleanup failure leave the entire game unchanged. Explicit retry adds exactly one
+child and receives the same prompt. Fixture payloads are synthetic; this provides
+offline enforcement across contracts, not a new live-fiction claim. Complete-only
+candidate callback cancellation is exercised; incremental preview disagreement
+is outside this supported profile. Existing Phase 0 tests remain unchanged.
 
 ### PRODUCT-001 Standalone TUI, persistence, export, and image boundary
 

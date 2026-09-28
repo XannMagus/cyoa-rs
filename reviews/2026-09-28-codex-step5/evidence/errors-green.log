@@ -1,0 +1,52 @@
+warning: unused imports: `MaxGeneratedNpcs`, `MinPlayableCharacters`, `PlayerInput`, `ProseBridgeTurns`, `RestoreLimits`, `TurnCount`, `ids::CharacterId`, and `turn::QuickActionKind`
+ --> cyoa-infrastructure/tests/codex_story_acceptance.rs:6:23
+  |
+6 |     game::{GameState, TurnCount}, ids::CharacterId,
+  |                       ^^^^^^^^^   ^^^^^^^^^^^^^^^^
+7 |     limits::{Limits, MajorEventLimit, MaxGeneratedNpcs, MinPlayableCharacters, ProseBridgeTurns, RestoreLimits},
+  |                                       ^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^
+8 |     style::StoryStyle, text::{Brief, PlayerInput, WorldDescription},
+  |                                      ^^^^^^^^^^^
+9 |     turn::QuickActionKind, world::{PlayablePosition, WorldOutline},
+  |     ^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `Instant`
+  --> cyoa-infrastructure/tests/codex_story_acceptance.rs:16:47
+   |
+16 | use std::{fs, path::PathBuf, time::{Duration, Instant}};
+   |                                               ^^^^^^^
+
+warning: field `schema` is never read
+  --> cyoa-infrastructure/tests/codex_story_acceptance.rs:33:64
+   |
+33 | struct CapturedRequest { prompt: String, instructions: String, schema: Value }
+   |        --------------- field in this struct                    ^^^^^^
+   |
+   = note: `CapturedRequest` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `events` is never used
+   --> cyoa-infrastructure/tests/codex_story_acceptance.rs:103:4
+    |
+103 | fn events(game: &GameState) -> Vec<String> { game.current_summary().major_events().events().as_slice().iter().map(|s|s.as_str().int...
+    |    ^^^^^^
+
+warning: function `upcoming` is never used
+   --> cyoa-infrastructure/tests/codex_story_acceptance.rs:104:4
+    |
+104 | fn upcoming(game: &GameState) -> Vec<String> { game.current_summary().upcoming_events().as_slice().iter().map(|s|s.as_str().into())...
+    |    ^^^^^^^^
+
+   Compiling cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+warning: `cyoa-infrastructure` (test "codex_story_acceptance") generated 5 warnings (run `cargo fix --test "codex_story_acceptance" -p cyoa-infrastructure` to apply 2 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.26s
+     Running tests/codex_story_acceptance.rs (target/debug/deps/codex_story_acceptance-46a5db368345348c)
+
+running 2 tests
+test real_workspace_cleanup_failure_preserves_the_game_and_candidate ... ok
+test late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.48s
+

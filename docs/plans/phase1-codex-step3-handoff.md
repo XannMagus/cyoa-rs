@@ -4,7 +4,8 @@ Historical handoff, 2026-09-26. **Step 3 was implemented offline on 2026-09-27**
 see [the implementation record](../../reviews/2026-09-27-codex-step3/README.md).
 The scope and obligations below were used for that slice. Adapter-plan step 4
 (transport reconciliation) subsequently completed; see its
-[record](../../reviews/2026-09-27-codex-step4/README.md). Step 5 is next.
+[record](../../reviews/2026-09-27-codex-step4/README.md). The
+[adapter plan](phase1-codex-adapter.md) tracks subsequent completed and next steps.
 Claude's own codec and adapter remain separate pending work.
 
 Baseline: step-1 profile `70a669c` plus the step-2 implementation and

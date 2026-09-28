@@ -1,0 +1,27 @@
+   Compiling cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.49s
+     Running tests/codex_story_acceptance.rs (target/debug/deps/codex_story_acceptance-46a5db368345348c)
+
+running 6 tests
+test zero_npc_limit_survives_cast_selection_opening_and_continuation ... FAILED
+test real_workspace_cleanup_failure_preserves_the_game_and_candidate ... ok
+test composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context ... ok
+test cancellation_and_output_cap_preserve_state_context_and_explicit_retry ... ok
+test late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once ... ok
+test both_restore_policies_control_actual_requests_snapshots_and_chapter_bridge ... ok
+
+failures:
+
+---- zero_npc_limit_survives_cast_selection_opening_and_continuation stdout ----
+
+thread 'zero_npc_limit_survives_cast_selection_opening_and_continuation' (353) panicked at cyoa-infrastructure/tests/codex_story_acceptance.rs:609:5:
+assertion failed: fixture.captures[1].prompt.contains('0')
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    zero_npc_limit_survives_cast_selection_opening_and_continuation
+
+test result: FAILED. 5 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.56s
+
+error: test failed, to rerun pass `-p cyoa-infrastructure --test codex_story_acceptance`

@@ -18,6 +18,13 @@
         "tests": [
           "scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_story_acceptance",
+        "tests": [
+          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
+        ]
       }
     ]
   },
@@ -35,6 +42,13 @@
           "cast_supports_id_lookup_without_changing_order_after_rename_or_insertion",
           "cast_equality_includes_presentation_order",
           "explicit_ids_are_preserved_and_duplicate_names_match_the_last_entry"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_story_acceptance",
+        "tests": [
+          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
         ]
       }
     ]
@@ -128,6 +142,15 @@
         "tests": [
           "backends::codex_cli::adapter::tests::nested_cleanup_retains_initiating_failure_payload_and_prefix_without_displaying_buffers"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_story_acceptance",
+        "tests": [
+          "late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once",
+          "real_workspace_cleanup_failure_preserves_the_game_and_candidate",
+          "cancellation_and_output_cap_preserve_state_context_and_explicit_retry"
+        ]
       }
     ]
   },
@@ -202,6 +225,14 @@
         "tests": [
           "restored_limits_reach_captured_prompt_schema_and_committed_memory"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_story_acceptance",
+        "tests": [
+          "both_restore_policies_control_actual_requests_snapshots_and_chapter_bridge",
+          "zero_npc_limit_survives_cast_selection_opening_and_continuation"
+        ]
       }
     ]
   },
@@ -222,6 +253,13 @@
         "target": "prompt_rendering",
         "tests": [
           "retitling_instructions_reach_wire_commit_and_rewind"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_story_acceptance",
+        "tests": [
+          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
         ]
       }
     ]
@@ -320,6 +358,14 @@
           "adapter_reported_invalid_cache_accounting_normalizes_to_unknown_over_a_real_process_boundary",
           "normalize_input_tokens_distinguishes_unknown_from_zero_and_repairs_only_invalid_cache"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_story_acceptance",
+        "tests": [
+          "late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once",
+          "zero_npc_limit_survives_cast_selection_opening_and_continuation"
+        ]
       }
     ]
   },
@@ -351,6 +397,13 @@
           "backends::codex_cli::protocol::tests::frozen_live_story_captures_match_independent_payload_and_usage_expectations",
           "backends::codex_cli::protocol::tests::live_tool_canary_is_unsupported_even_though_the_cli_exited_successfully"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_story_acceptance",
+        "tests": [
+          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
+        ]
       }
     ]
   },
@@ -376,6 +429,13 @@
         "tests": [
           "scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_story_acceptance",
+        "tests": [
+          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
+        ]
       }
     ]
   },
@@ -399,6 +459,18 @@
           "no_stdout_failure_and_invalid_protocol_preserve_bytes_with_distinct_categories",
           "application_receives_complete_candidate_and_diagnostics_on_adapter_timeout",
           "failed_auth_exit_is_unavailable_even_with_a_success_looking_status_on_stdout"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_story_acceptance",
+        "tests": [
+          "late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once",
+          "real_workspace_cleanup_failure_preserves_the_game_and_candidate",
+          "cancellation_and_output_cap_preserve_state_context_and_explicit_retry",
+          "both_restore_policies_control_actual_requests_snapshots_and_chapter_bridge",
+          "zero_npc_limit_survives_cast_selection_opening_and_continuation",
+          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
         ]
       }
     ]
@@ -649,6 +721,15 @@
           "timeout_after_candidate_retains_unemitted_payload_and_reaps_child",
           "cancellation_from_the_complete_callback_cannot_return_success"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_story_acceptance",
+        "tests": [
+          "late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once",
+          "real_workspace_cleanup_failure_preserves_the_game_and_candidate",
+          "cancellation_and_output_cap_preserve_state_context_and_explicit_retry"
+        ]
       }
     ]
   },
@@ -663,6 +744,13 @@
           "invalid_rewind_is_an_error_without_state_changes_or_generation",
           "rewinding_the_only_turn_restores_opening_context_without_an_extra_call",
           "full_story_preserves_contracts_through_failure_retry_cancellation_and_rewind"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_story_acceptance",
+        "tests": [
+          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
         ]
       }
     ]

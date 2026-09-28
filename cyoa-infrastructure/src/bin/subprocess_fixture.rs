@@ -62,6 +62,9 @@ struct Scenario {
     auth_exit_code: i32,
     #[serde(default)]
     auth_stdout: bool,
+    /// Vendor-fixture-only obstruction for real workspace-cleanup failures.
+    #[serde(default)]
+    replace_workspace_with_file: bool,
     exit_code: i32,
 }
 
@@ -223,6 +226,23 @@ fn main() {
 
     write_chunks(&scenario.stdout, std::io::stdout().lock());
     write_chunks(&scenario.stderr, std::io::stderr().lock());
+
+    if scenario.replace_workspace_with_file {
+        assert!(vendor_mode, "cleanup obstruction is vendor-fixture-only");
+        let cwd = std::env::current_dir().unwrap();
+        assert!(
+            cwd.file_name()
+                .unwrap()
+                .to_string_lossy()
+                .starts_with("cyoa-request-")
+        );
+        // Remove only the known prepared file and then an empty directory. Never
+        // recursively delete an arbitrary path. The parent test removes the marker.
+        std::fs::remove_file(cwd.join("schema.json")).unwrap();
+        std::env::set_current_dir(std::env::var_os("HOME").unwrap()).unwrap();
+        std::fs::remove_dir(&cwd).unwrap();
+        std::fs::write(&cwd, b"fixture cleanup obstruction").unwrap();
+    }
 
     if let Some(ms) = scenario.hang_after_output_ms {
         std::thread::sleep(std::time::Duration::from_millis(ms));

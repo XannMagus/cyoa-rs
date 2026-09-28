@@ -1,6 +1,6 @@
 # Next slice: a Codex CLI adapter with independently verified completion
 
-Status: **steps 1–4 complete (profile, preparation, codec and actual adapter reconciliation); steps 5–7 pending**.
+Status: **steps 1–5 complete (profile, preparation, codec, reconciliation and composed fixture acceptance); steps 6–7 pending**.
 Planning baseline: `8f8d253`, 2026-09-25; step 1 starts from `4ac538d` with no
 subsequent changes and records CLI 0.157.1 on 2026-09-26 in
 [the discovery evidence](../../reviews/2026-09-26-codex-profile/README.md).
@@ -237,7 +237,8 @@ supervisor. Cancellation/timeout now retain explicit candidates; structured
 transport causes retain nested failures without embedding diagnostic buffers in
 messages. Real-child fixtures and a bounded live outline smoke passed.
 [Evidence and limitations](../../reviews/2026-09-27-codex-step4/README.md).
-Step 5's composed story suite and step 7's full live gate are still pending.
+Step 5 subsequently added composed fixture acceptance; step 7's full live gate
+remains pending.
 
 Implement `Backend::generate` by invoking the existing supervisor once, feeding its
 records to the codec, and accepting a response only after both parts succeed.
@@ -273,6 +274,14 @@ for this. Fixture mode must record argv/stdin/schema visibility without making i
 scenario JSON the production adapter's argv contract.
 
 ### 5. Prove story contracts through the composed adapter
+
+**Implemented offline, 2026-09-28.** Six registered composed tests drive the
+actual adapter and supervisor through fixture children. They cover identity,
+edited outlines, both restore policies, zero NPCs, chapters/rewind, late failures,
+cancellation, output caps and a real workspace-cleanup failure. Entire state and
+subsequent captured prompts remain unchanged on failed attempts; explicit retry
+launches one new generation child. [Evidence and scope](../../reviews/2026-09-28-codex-step5/README.md).
+No production engine/backend change or new live verification was needed.
 
 Replay vendor-shaped fixtures through `CodexCliBackend -> GenerationEngine ->
 StoryUseCases`. Include outline acceptance/edit, cast, protagonist selection,

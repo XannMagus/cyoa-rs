@@ -40,8 +40,11 @@ See the [implementation record](reviews/2026-09-27-codex-step3/README.md).
 **Step 4 is implemented**: the actual Codex Backend reconciles protocol and process
 outcomes, preserves failure evidence, and checks subscription auth at construction.
 [Evidence](reviews/2026-09-27-codex-step4/README.md) distinguishes real-child tests
-from the bounded live outline smoke. Next is step 5's composed story acceptance,
-then codec mutations and the full live adapter gate. Claude remains a co-equal
+from the bounded live outline smoke. **Step 5 is implemented offline**: composed
+story acceptance checks identity, limits, chapters, cancellation, cleanup failures
+and explicit retry through actual fixture children
+([evidence](reviews/2026-09-28-codex-step5/README.md)). Next are step 6's codec
+mutations and the full live adapter gate. Claude remains a co-equal
 pending implementation with independent acceptance obligations.
 
 - `cyoa-core`: checked domain types, namesake-preserving casts and stable IDs,
@@ -107,8 +110,9 @@ See the [acceptance sequence](docs/decisions/phase0-acceptance.md) and
 [TDD/evidence record](reviews/2026-09-25-phase0-acceptance/README.md). Phase 1
 is [real subprocess adapters and a playable headless loop](docs/plans/phase1-headless-backends.md)
 — transport foundations and Codex Backend reconciliation are implemented and
-Linux-tested. Composed Codex story acceptance is next; Claude implementation and
-the full authenticated acceptance gates remain separate obligations.
+Linux-tested, including composed Codex story acceptance. Codec mutations are next;
+Claude implementation and the full authenticated acceptance gates remain separate
+obligations.
 
 ## Where to start
 

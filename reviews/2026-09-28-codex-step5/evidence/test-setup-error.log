@@ -1,0 +1,30 @@
+   Compiling cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+warning: unused imports: `MaxGeneratedNpcs`, `MinPlayableCharacters`, `PlayerInput`, `ProseBridgeTurns`, `RestoreLimits`, `TurnCount`, `ids::CharacterId`, and `turn::QuickActionKind`
+ --> cyoa-infrastructure/tests/codex_story_acceptance.rs:6:23
+  |
+6 |     game::{GameState, TurnCount}, ids::CharacterId,
+  |                       ^^^^^^^^^   ^^^^^^^^^^^^^^^^
+7 |     limits::{Limits, MajorEventLimit, MaxGeneratedNpcs, MinPlayableCharacters, ProseBridgeTurns, RestoreLimits},
+  |                                       ^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^
+8 |     style::StoryStyle, text::{Brief, PlayerInput, WorldDescription},
+  |                                      ^^^^^^^^^^^
+9 |     turn::QuickActionKind, world::{PlayablePosition, WorldOutline},
+  |     ^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `Instant`
+  --> cyoa-infrastructure/tests/codex_story_acceptance.rs:16:47
+   |
+16 | use std::{fs, path::PathBuf, time::{Duration, Instant}};
+   |                                               ^^^^^^^
+
+error[E0599]: no method named `message` found for struct `GenerationFailure` in the current scope
+   --> cyoa-infrastructure/tests/codex_story_acceptance.rs:147:19
+    |
+147 |     assert!(error.message().contains("WorkspaceCleanup")); assert_eq!(error.raw_response().as_str(),raw);
+    |                   ^^^^^^^ private field, not a method
+
+For more information about this error, try `rustc --explain E0599`.
+warning: `cyoa-infrastructure` (test "codex_story_acceptance") generated 2 warnings
+error: could not compile `cyoa-infrastructure` (test "codex_story_acceptance") due to 1 previous error; 2 warnings emitted

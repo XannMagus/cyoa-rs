@@ -1,0 +1,2 @@
+# Retain Cargo's original trailing blank lines in captured verification logs.
+*.log whitespace=-blank-at-eof
