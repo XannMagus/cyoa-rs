@@ -106,6 +106,28 @@
           "backends::codex_cli::protocol::tests::first_failure_is_sticky_and_keeps_candidate_after_later_records",
           "backends::codex_cli::protocol::tests::invalid_payload_is_retained_and_never_repaired_or_accepted"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "backend_contract",
+        "tests": [
+          "complete_only_cancellation_and_timeout_keep_explicit_candidate_without_preview"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_backend",
+        "tests": [
+          "application_receives_complete_candidate_and_diagnostics_on_adapter_timeout",
+          "successful_response_emits_once_after_cleanup_and_retains_usage_and_exact_request"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "backends::codex_cli::adapter::tests::nested_cleanup_retains_initiating_failure_payload_and_prefix_without_displaying_buffers"
+        ]
       }
     ]
   },
@@ -359,8 +381,27 @@
   },
   {
     "id": "BACKENDS-001",
-    "coverage": "pending",
-    "checks": []
+    "coverage": "partial",
+    "checks": [
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_backend",
+        "tests": [
+          "candidate_and_success_terminal_cannot_override_nonzero_process_exit",
+          "protocol_rejection_and_missing_completion_keep_candidate_without_emission",
+          "preflight_rejects_non_subscription_unknown_and_conflicting_auth_without_generation",
+          "timeout_after_candidate_retains_unemitted_payload_and_reaps_child",
+          "silent_cancellation_uses_a_child_handshake_and_pre_cancel_launches_nothing",
+          "capped_output_preserves_prefix_metadata_and_a_structured_cause",
+          "successful_response_emits_once_after_cleanup_and_retains_usage_and_exact_request",
+          "cancellation_from_the_complete_callback_cannot_return_success",
+          "preparation_failure_and_removed_executable_never_launch_a_generation",
+          "no_stdout_failure_and_invalid_protocol_preserve_bytes_with_distinct_categories",
+          "application_receives_complete_candidate_and_diagnostics_on_adapter_timeout",
+          "failed_auth_exit_is_unavailable_even_with_a_success_looking_status_on_stdout"
+        ]
+      }
+    ]
   },
   {
     "id": "PROMPTS-002",
@@ -590,6 +631,23 @@
           "backends::codex_cli::protocol::tests::first_failure_is_sticky_and_keeps_candidate_after_later_records",
           "backends::codex_cli::protocol::tests::frozen_live_story_captures_match_independent_payload_and_usage_expectations",
           "backends::codex_cli::protocol::tests::live_tool_canary_is_unsupported_even_though_the_cli_exited_successfully"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "backends::codex_cli::adapter::tests::every_transport_failure_category_remains_distinct_and_never_emits",
+          "backends::codex_cli::adapter::tests::cancellation_at_acceptance_overrides_protocol_completion_without_emitting"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_backend",
+        "tests": [
+          "silent_cancellation_uses_a_child_handshake_and_pre_cancel_launches_nothing",
+          "timeout_after_candidate_retains_unemitted_payload_and_reaps_child",
+          "cancellation_from_the_complete_callback_cannot_return_success"
         ]
       }
     ]

@@ -1,0 +1,22 @@
+   Compiling cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.69s
+     Running tests/codex_backend.rs (target/debug/deps/codex_backend-1de46461b3248eff)
+
+running 1 test
+test failed_auth_exit_is_unavailable_even_with_a_success_looking_status_on_stdout ... FAILED
+
+failures:
+
+---- failed_auth_exit_is_unavailable_even_with_a_success_looking_status_on_stdout stdout ----
+
+thread 'failed_auth_exit_is_unavailable_even_with_a_success_looking_status_on_stdout' (557) panicked at cyoa-infrastructure/tests/codex_backend.rs:473:5:
+generation failed: Codex exited with status 1
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    failed_auth_exit_is_unavailable_even_with_a_success_looking_status_on_stdout
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.03s
+
+error: test failed, to rerun pass `-p cyoa-infrastructure --test codex_backend`

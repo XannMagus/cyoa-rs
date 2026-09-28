@@ -1,0 +1,4 @@
+# Preserve Cargo's captured trailing blank lines, as in the step-2 evidence.
+*.log whitespace=-blank-at-eof
+# Preserve the CLI's help text byte-for-byte, including whitespace-only lines.
+help.txt -text -whitespace

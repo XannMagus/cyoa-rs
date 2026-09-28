@@ -44,6 +44,7 @@ impl Backend for ScriptedBackend {
     ) -> Result<GenerationResponse, BackendError> {
         if cancel.is_cancelled() {
             return Err(BackendError::Cancelled {
+                raw_response: None,
                 diagnostics: TransportDiagnostics::empty(),
             });
         }
@@ -104,6 +105,7 @@ impl Backend for ChunkedBackend {
         while start + 1 < boundaries.len() {
             if cancel.is_cancelled() {
                 return Err(BackendError::Cancelled {
+                    raw_response: None,
                     diagnostics: TransportDiagnostics::empty(),
                 });
             }
@@ -114,6 +116,7 @@ impl Backend for ChunkedBackend {
         }
         if cancel.is_cancelled() {
             return Err(BackendError::Cancelled {
+                raw_response: None,
                 diagnostics: TransportDiagnostics::empty(),
             });
         }

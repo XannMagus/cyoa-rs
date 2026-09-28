@@ -26,7 +26,8 @@ propagation and owned request directories.
 Claude evidence was refreshed on 2026-09-25; Codex's
 [0.157.1 protocol profile](reviews/2026-09-26-codex-profile/README.md) was frozen on
 2026-09-26 using bounded bundled-request probes, with full account/tool isolation
-still unverified. Executable vendor Backends and headless play remain pending.
+still unverified. Codex has an executable adapter and one live outline smoke;
+Claude's executable adapter and headless play remain pending.
 See the [Phase 1 plan](docs/plans/phase1-headless-backends.md)
 and each backend reference file for the remaining work; offline transport tests
 do not establish live vendor behavior.
@@ -36,9 +37,12 @@ offline invocation preparation, with [review repairs and evidence](reviews/2026-
 **Step 3 is implemented offline**: a private Codex event state machine validates
 the frozen complete-only profile and retains exact candidate evidence on failure.
 See the [implementation record](reviews/2026-09-27-codex-step3/README.md).
-Next is [step 4](docs/plans/phase1-codex-adapter.md): reconcile protocol and process
-outcomes in the actual Backend. Neither vendor has an executable Backend;
-Claude's codec and independent live acceptance remain pending.
+**Step 4 is implemented**: the actual Codex Backend reconciles protocol and process
+outcomes, preserves failure evidence, and checks subscription auth at construction.
+[Evidence](reviews/2026-09-27-codex-step4/README.md) distinguishes real-child tests
+from the bounded live outline smoke. Next is step 5's composed story acceptance,
+then codec mutations and the full live adapter gate. Claude remains a co-equal
+pending implementation with independent acceptance obligations.
 
 - `cyoa-core`: checked domain types, namesake-preserving casts and stable IDs,
   summary deltas, typed limits, owned protagonist selection, turns, chapters and
@@ -53,8 +57,8 @@ Claude's codec and independent live acceptance remain pending.
   exercised against an in-repo subprocess fixture. Claude schema adaptation is
   isolated in `backend_compat::claude_cli`; advisor-suppression instructions exist
   in evidence and plans only. Codex schema/invocation preparation and private
-  protocol decoding are implemented;
-  both executable vendor Backends remain pending.
+  protocol decoding and an executable Codex Backend are implemented;
+  Claude's executable Backend remains pending.
 - `cyoa-presentation`: terminal help/version output; gameplay UI is pending.
 - `cyoa-cli`: executable and composition root.
 - `reference/`: source material and each backend's separate live-verification record.
@@ -102,9 +106,9 @@ Run `bash scripts/check_contract_mutations.sh` for only that check.
 See the [acceptance sequence](docs/decisions/phase0-acceptance.md) and
 [TDD/evidence record](reviews/2026-09-25-phase0-acceptance/README.md). Phase 1
 is [real subprocess adapters and a playable headless loop](docs/plans/phase1-headless-backends.md)
-— transport foundations are implemented and Linux-tested. A real vendor codec/
-`Backend` implementation (Claude or Codex) is next, with
-separate authenticated acceptance gates for the two co-equal backends.
+— transport foundations and Codex Backend reconciliation are implemented and
+Linux-tested. Composed Codex story acceptance is next; Claude implementation and
+the full authenticated acceptance gates remain separate obligations.
 
 ## Where to start
 

@@ -1,12 +1,12 @@
 //! Codex invocation configuration and owned request preparation.
 //!
-//! This module prepares a [`ProcessSpec`] and owns a private event codec. It
-//! does not launch requests: `Backend::generate` and reconciliation of protocol
-//! evidence with process outcomes belong to step 4.
+//! Owns fixed-profile request preparation, subscription auth preflight and
+//! protocol decoding. The adapter accepts output only after the vendor-neutral
+//! supervisor completes request delivery, child reaping and workspace cleanup.
 
-// Step 4 will connect this private codec to the supervisor.
-#[allow(dead_code)]
+mod adapter;
 mod protocol;
+pub use adapter::CodexCliBackend;
 
 use crate::{
     backends::process::{
@@ -148,6 +148,11 @@ pub struct CodexInvocationConfig {
 }
 
 impl CodexInvocationConfig {
+    /// Finite transport controls only; does not expose arbitrary CLI options.
+    pub fn with_bounds(mut self, bounds: ProcessBounds) -> Self {
+        self.bounds = bounds;
+        self
+    }
     pub fn new(
         executable: CodexExecutable,
         home: PathBuf,

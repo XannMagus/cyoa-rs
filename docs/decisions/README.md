@@ -291,11 +291,12 @@ tests must not execute it to establish project-specific expectations. CI and loc
 verification use the same contract gate. Adding a Python interpreter or package as
 a build/test dependency violates this decision even if the source uses it.
 
-## Required future behavior — not implemented or claimed tested
+## Backend and product completion obligations
 
 ### BACKENDS-001 Two co-equal subscription CLI backends
 
-**Pending.** Claude and Codex are peers behind inward-owned ports, not primary and
+**Partial: Codex adapter and real-child fixture checks implemented; composed
+story/complete live acceptance and Claude adapter pending.** Claude and Codex are peers behind inward-owned ports, not primary and
 fallback. Use stateless calls and subscription auth; never silently switch to paid
 API auth. Test the shared contract against scripted and both concrete adapters.
 Each backend needs its own actual live evidence before "verified" or v1 completion;
@@ -303,6 +304,17 @@ the other backend remains explicitly unverified when auth is unavailable. Option
 list-price estimates are not subscription charges. CLI flag facts come from each
 reference file's evidence, not inference from the other vendor. No fabricated live
 tests and no credentials/network required by this contract gate.
+
+Codex step 4 verifies subscription auth at construction with `login status`, using
+the same executable/HOME/CODEX_HOME/PATH as generation. Unknown or conflicting
+status fails closed; it never changes login mode. This is a point-in-time check,
+not a guarantee against later account changes. Each generate call launches one
+generation child through the existing supervisor, with no retry. It reconciles
+the complete-only codec against transport completion and checks cancellation before
+emission and after the callback. Only then can it return a GenerationResponse.
+Real-child tests check failure classification, exact candidate and byte evidence,
+resource cleanup, request argv/stdin/schema and no premature emission. One bundled
+outline was exercised live on 0.157.1; this is not the full story acceptance gate.
 
 ### PRODUCT-001 Standalone TUI, persistence, export, and image boundary
 
@@ -375,9 +387,9 @@ caps. Persistence and live subprocess adapters remain pending.
 
 ### STREAM-001 Preview text never authorizes a state commit
 
-**Partial: scanner, scripted generation, vendor-neutral process supervision and
-the private Codex protocol codec enforced; concrete Backend reconciliation and
-Claude event decoding pending.** `StreamingStringField` extracts only the requested root
+**Partial: scanner, scripted generation, vendor-neutral process supervision,
+Codex protocol decoding and Backend reconciliation enforced; Claude event decoding
+and presentation acceptance pending.** `StreamingStringField` extracts only the requested root
 string, across valid UTF-8 chunks. It is a preview scanner, not JSON validation.
 Escapes and surrogate pairs are decoded; lone surrogate halves become U+FFFD
 because Rust cannot represent them as scalar values. Truncated escape sequences
@@ -437,7 +449,11 @@ Malformed/missing telemetry counts independently become unknown; invalid cached
 counts use the existing normalizer. Tests replay seven earlier live captures and
 synthetic error/edge transcripts; this is offline evidence, not new live acceptance.
 The codec emits no preview or GenerationResponse and does not observe child exit,
-cleanup or cancellation. BACKENDS-001 remains pending until adapter integration.
+cleanup or cancellation. Step 4 now supplies those checks in its parent adapter.
+Cancelled/Timeout errors carry an optional candidate separately from diagnostics;
+the generation engine uses it before falling back to streamed fragments. Structured
+transport causes preserve nested cleanup/initiating failures and prefix metadata;
+application messages summarize the causes without embedding the diagnostic buffers.
 
 ### ACCEPTANCE-001 — exercise the complete engine before adding external I/O
 

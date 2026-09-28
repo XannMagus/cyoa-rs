@@ -1,0 +1,43 @@
+   Compiling cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.98s
+     Running tests/backend_contract.rs (target/debug/deps/backend_contract-bf3c1df86b122de7)
+
+running 18 tests
+test a_response_with_no_attached_diagnostics_reports_empty ... ok
+test cached_tokens_cannot_exceed_total_but_unknown_is_not_zero ... ok
+test malformed_response_is_an_error_with_original_diagnostics ... ok
+test normalize_input_tokens_distinguishes_unknown_from_zero_and_repairs_only_invalid_cache ... ok
+test successful_response_retains_the_exact_json_it_parsed ... ok
+test with_diagnostics_attaches_transport_bytes_to_an_otherwise_successful_response ... ok
+test crlf_in_diagnostics_is_preserved_without_normalization ... ok
+test cancelling_from_inside_the_streamed_callback_returns_cancelled_with_diagnostics_seen_so_far ... ok
+test adapter_reported_invalid_cache_accounting_normalizes_to_unknown_over_a_real_process_boundary ... ok
+test empty_stdout_with_exit_zero_does_not_construct_a_false_success ... ok
+test fixture_round_trips_quotes_newlines_and_unicode_through_a_real_process_boundary ... ok
+test nonzero_exit_after_emitting_stdout_maps_to_generation_not_unavailable ... ok
+test successful_fixture_transport_attaches_both_captured_streams ... ok
+test non_utf8_stderr_diagnostics_survive_the_process_boundary_and_lossy_display_does_not_panic ... ok
+test nonzero_exit_with_no_stdout_maps_to_unavailable_with_exact_stderr_bytes ... ok
+test fixture_reports_the_exact_argv_and_stdin_prompt_bytes_it_received ... ok
+test complete_only_cancellation_and_timeout_keep_explicit_candidate_without_preview ... ok
+test every_backend_error_variant_maps_to_its_failure_kind_with_exact_diagnostics ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/codex_backend.rs (target/debug/deps/codex_backend-1de46461b3248eff)
+
+running 11 tests
+test candidate_and_success_terminal_cannot_override_nonzero_process_exit ... ok
+test capped_output_preserves_prefix_metadata_and_a_structured_cause ... ok
+test silent_cancellation_uses_a_child_handshake_and_pre_cancel_launches_nothing ... ok
+test successful_response_emits_once_after_cleanup_and_retains_usage_and_exact_request ... ok
+test cancellation_from_the_complete_callback_cannot_return_success ... ok
+test preparation_failure_and_removed_executable_never_launch_a_generation ... ok
+test preflight_rejects_non_subscription_unknown_and_conflicting_auth_without_generation ... ok
+test no_stdout_failure_and_invalid_protocol_preserve_bytes_with_distinct_categories ... ok
+test protocol_rejection_and_missing_completion_keep_candidate_without_emission ... ok
+test timeout_after_candidate_retains_unemitted_payload_and_reaps_child ... ok
+test application_receives_complete_candidate_and_diagnostics_on_adapter_timeout ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.54s
+

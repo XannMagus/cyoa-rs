@@ -79,7 +79,10 @@ impl Backend for FixtureBackend {
         }
 
         if cancel.is_cancelled() {
-            return Err(BackendError::Cancelled { diagnostics });
+            return Err(BackendError::Cancelled {
+                raw_response: None,
+                diagnostics,
+            });
         }
 
         if !output.status.success() {

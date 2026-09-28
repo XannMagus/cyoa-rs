@@ -1,0 +1,24 @@
+   Compiling cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.87s
+     Running tests/backend_contract.rs (target/debug/deps/backend_contract-bf3c1df86b122de7)
+
+running 1 test
+test complete_only_cancellation_and_timeout_keep_explicit_candidate_without_preview ... FAILED
+
+failures:
+
+---- complete_only_cancellation_and_timeout_keep_explicit_candidate_without_preview stdout ----
+
+thread 'complete_only_cancellation_and_timeout_keep_explicit_candidate_without_preview' (524) panicked at cyoa-infrastructure/tests/backend_contract.rs:377:13:
+assertion `left == right` failed
+  left: ""
+ right: " \r\n{\"title\":\"candidate 灯\"}\n"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    complete_only_cancellation_and_timeout_keep_explicit_candidate_without_preview
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 17 filtered out; finished in 0.03s
+
+error: test failed, to rerun pass `-p cyoa-infrastructure --test backend_contract`

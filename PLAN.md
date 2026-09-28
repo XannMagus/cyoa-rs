@@ -18,9 +18,10 @@ Use that document for the next phase rather than implementing historical sketche
 below literally. Its features remain planned until their acceptance evidence exists.
 The immediate adapter slice is detailed in [the Codex adapter plan](docs/plans/phase1-codex-adapter.md),
 including evidence gates, atomic commits and cross-backend acceptance obligations.
-Steps 1–3 are complete: frozen live discovery, isolated request preparation and
-offline private protocol decoding. Step 4 connects that codec to process outcomes;
-neither vendor has an executable Backend or headless acceptance yet.
+Steps 1–4 are complete: frozen live discovery, isolated request preparation,
+private protocol decoding and Codex Backend reconciliation. One bundled outline
+passed a real-adapter smoke; composed story acceptance, the full live adapter gate,
+Claude's implementation and headless acceptance remain pending.
 
 ## Context
 

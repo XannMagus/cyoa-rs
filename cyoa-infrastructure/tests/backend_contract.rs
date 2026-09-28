@@ -99,6 +99,7 @@ fn every_backend_error_variant_maps_to_its_failure_kind_with_exact_diagnostics()
     let variant_cases = [
         (
             BackendError::Cancelled {
+                raw_response: None,
                 diagnostics: diagnostics.clone(),
             },
             FailureKind::Cancelled,
@@ -112,6 +113,7 @@ fn every_backend_error_variant_maps_to_its_failure_kind_with_exact_diagnostics()
         ),
         (
             BackendError::Timeout {
+                raw_response: None,
                 diagnostics: diagnostics.clone(),
             },
             FailureKind::Timeout,
@@ -121,6 +123,15 @@ fn every_backend_error_variant_maps_to_its_failure_kind_with_exact_diagnostics()
                 message: "transport failed".into(),
                 raw_response: "oops".into(),
                 diagnostics: diagnostics.clone(),
+            },
+            FailureKind::Transport,
+        ),
+        (
+            BackendError::Transport {
+                message: "cleanup failed after cancellation".into(),
+                raw_response: "candidate".into(),
+                diagnostics: Box::new(diagnostics.clone()),
+                cause: Box::new(std::io::Error::other("injected transport failure")),
             },
             FailureKind::Transport,
         ),
@@ -197,7 +208,7 @@ fn cancelling_from_inside_the_streamed_callback_returns_cancelled_with_diagnosti
         })
         .unwrap_err();
     match error {
-        BackendError::Cancelled { diagnostics } => {
+        BackendError::Cancelled { diagnostics, .. } => {
             assert_eq!(diagnostics.stdout(), payload);
             assert!(diagnostics.stderr().is_empty());
         }
@@ -359,4 +370,41 @@ fn successful_fixture_transport_attaches_both_captured_streams() {
         .unwrap();
     assert_eq!(response.diagnostics().stdout(), raw);
     assert_eq!(response.diagnostics().stderr(), stderr);
+}
+
+#[test]
+fn complete_only_cancellation_and_timeout_keep_explicit_candidate_without_preview() {
+    for raw in ["", " \r\n{\"title\":\"candidate 灯\"}\n"] {
+        for timeout in [false, true] {
+            let diagnostics =
+                TransportDiagnostics::new(b"events\r\n".to_vec(), b"err\xff".to_vec());
+            let error = if timeout {
+                BackendError::Timeout {
+                    raw_response: Some(raw.into()),
+                    diagnostics: diagnostics.clone(),
+                }
+            } else {
+                BackendError::Cancelled {
+                    raw_response: Some(raw.into()),
+                    diagnostics: diagnostics.clone(),
+                }
+            };
+            let failure = use_cases([Err(error)])
+                .generate_outline(
+                    &Brief::new("Harbour").unwrap(),
+                    &CancellationSource::default().token(),
+                )
+                .unwrap_err();
+            assert_eq!(failure.raw_response().as_str(), raw);
+            assert_eq!(failure.diagnostics(), &diagnostics);
+            assert_eq!(
+                failure.kind(),
+                if timeout {
+                    FailureKind::Timeout
+                } else {
+                    FailureKind::Cancelled
+                }
+            );
+        }
+    }
 }

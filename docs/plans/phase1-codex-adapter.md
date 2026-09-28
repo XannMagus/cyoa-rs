@@ -1,6 +1,6 @@
 # Next slice: a Codex CLI adapter with independently verified completion
 
-Status: **steps 1–3 complete (profile evidence, offline preparation and private codec); steps 4–7 not implemented**.
+Status: **steps 1–4 complete (profile, preparation, codec and actual adapter reconciliation); steps 5–7 pending**.
 Planning baseline: `8f8d253`, 2026-09-25; step 1 starts from `4ac538d` with no
 subsequent changes and records CLI 0.157.1 on 2026-09-26 in
 [the discovery evidence](../../reviews/2026-09-26-codex-profile/README.md).
@@ -230,6 +230,14 @@ with completion. Each supported transcript has independent expected events/paylo
 do not use the implementation to generate its own expected answer.
 
 ### 4. Reconcile transport, protocol and failure evidence in the real adapter
+
+**Implemented 2026-09-27.** `CodexCliBackend` verifies subscription auth at
+construction and launches one generation child per call via the existing
+supervisor. Cancellation/timeout now retain explicit candidates; structured
+transport causes retain nested failures without embedding diagnostic buffers in
+messages. Real-child fixtures and a bounded live outline smoke passed.
+[Evidence and limitations](../../reviews/2026-09-27-codex-step4/README.md).
+Step 5's composed story suite and step 7's full live gate are still pending.
 
 Implement `Backend::generate` by invoking the existing supervisor once, feeding its
 records to the codec, and accepting a response only after both parts succeed.

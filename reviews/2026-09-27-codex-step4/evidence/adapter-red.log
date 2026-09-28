@@ -1,0 +1,145 @@
+   Compiling cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+warning: struct `ProtocolError` is never constructed
+ --> cyoa-infrastructure/src/backends/codex_cli/protocol.rs:8:19
+  |
+8 | pub(super) struct ProtocolError {
+  |                   ^^^^^^^^^^^^^
+  |
+  = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: enum `ErrorKind` is never used
+  --> cyoa-infrastructure/src/backends/codex_cli/protocol.rs:15:17
+   |
+15 | pub(super) enum ErrorKind {
+   |                 ^^^^^^^^^
+
+warning: struct `Candidate` is never constructed
+  --> cyoa-infrastructure/src/backends/codex_cli/protocol.rs:31:19
+   |
+31 | pub(super) struct Candidate {
+   |                   ^^^^^^^^^
+
+warning: struct `Completion` is never constructed
+  --> cyoa-infrastructure/src/backends/codex_cli/protocol.rs:38:19
+   |
+38 | pub(super) struct Completion {
+   |                   ^^^^^^^^^^
+
+warning: struct `Failure` is never constructed
+  --> cyoa-infrastructure/src/backends/codex_cli/protocol.rs:44:19
+   |
+44 | pub(super) struct Failure {
+   |                   ^^^^^^^
+
+warning: enum `State` is never used
+  --> cyoa-infrastructure/src/backends/codex_cli/protocol.rs:50:6
+   |
+50 | enum State {
+   |      ^^^^^
+
+warning: struct `Protocol` is never constructed
+  --> cyoa-infrastructure/src/backends/codex_cli/protocol.rs:61:19
+   |
+61 | pub(super) struct Protocol {
+   |                   ^^^^^^^^
+
+warning: methods `record`, `advance`, and `finish` are never used
+   --> cyoa-infrastructure/src/backends/codex_cli/protocol.rs:69:12
+    |
+ 66 | impl Protocol {
+    | ------------- methods in this implementation
+...
+ 69 |     pub fn record(&mut self, record: &[u8]) -> Result<(), ProtocolError> {
+    |            ^^^^^^
+...
+ 85 |     fn advance(&mut self, event: Event) -> Result<(), ProtocolError> {
+    |        ^^^^^^^
+...
+118 |     pub fn finish(self) -> Result<Completion, Failure> {
+    |            ^^^^^^
+
+warning: method `into_candidate` is never used
+   --> cyoa-infrastructure/src/backends/codex_cli/protocol.rs:146:8
+    |
+145 | impl State {
+    | ---------- method in this implementation
+146 |     fn into_candidate(self) -> Option<Candidate> {
+    |        ^^^^^^^^^^^^^^
+
+warning: enum `Event` is never used
+   --> cyoa-infrastructure/src/backends/codex_cli/protocol.rs:158:6
+    |
+158 | enum Event {
+    |      ^^^^^
+
+warning: function `error` is never used
+   --> cyoa-infrastructure/src/backends/codex_cli/protocol.rs:167:4
+    |
+167 | fn error(record: usize, location: &str, kind: ErrorKind) -> ProtocolError {
+    |    ^^^^^
+
+warning: function `string_field` is never used
+   --> cyoa-infrastructure/src/backends/codex_cli/protocol.rs:175:4
+    |
+175 | fn string_field<'a>(
+    |    ^^^^^^^^^^^^
+
+warning: function `parse_event` is never used
+   --> cyoa-infrastructure/src/backends/codex_cli/protocol.rs:189:4
+    |
+189 | fn parse_event(bytes: &[u8], record: usize) -> Result<Event, ProtocolError> {
+    |    ^^^^^^^^^^^
+
+warning: function `usage` is never used
+   --> cyoa-infrastructure/src/backends/codex_cli/protocol.rs:240:4
+    |
+240 | fn usage(value: &serde_json::Value) -> TokenUsage {
+    |    ^^^^^
+
+warning: `cyoa-infrastructure` (lib) generated 14 warnings
+warning: unused import: `Instant`
+ --> cyoa-infrastructure/tests/codex_backend.rs:6:47
+  |
+6 | use std::{fs, path::PathBuf, time::{Duration, Instant}};
+  |                                               ^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `cyoa-infrastructure` (test "codex_backend") generated 1 warning (run `cargo fix --test "codex_backend" -p cyoa-infrastructure` to apply 1 suggestion)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.75s
+     Running tests/codex_backend.rs (target/debug/deps/codex_backend-1de46461b3248eff)
+
+running 3 tests
+test candidate_and_success_terminal_cannot_override_nonzero_process_exit ... FAILED
+test protocol_rejection_and_missing_completion_keep_candidate_without_emission ... FAILED
+test preflight_rejects_non_subscription_unknown_and_conflicting_auth_without_generation ... FAILED
+
+failures:
+
+---- candidate_and_success_terminal_cannot_override_nonzero_process_exit stdout ----
+
+thread 'candidate_and_success_terminal_cannot_override_nonzero_process_exit' (509) panicked at cyoa-infrastructure/tests/codex_backend.rs:50:5:
+assertion failed: error.to_string().contains('7')
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- protocol_rejection_and_missing_completion_keep_candidate_without_emission stdout ----
+
+thread 'protocol_rejection_and_missing_completion_keep_candidate_without_emission' (511) panicked at cyoa-infrastructure/tests/codex_backend.rs:62:9:
+assertion `left == right` failed: failed-after-candidate.jsonl
+  left: ""
+ right: " \r\n{\"title\":\"Harbour\",\"world_description\":\"A sheltered harbour — 灯\"}\n"
+
+---- preflight_rejects_non_subscription_unknown_and_conflicting_auth_without_generation stdout ----
+
+thread 'preflight_rejects_non_subscription_unknown_and_conflicting_auth_without_generation' (510) panicked at cyoa-infrastructure/tests/codex_backend.rs:71:110:
+called `Result::unwrap_err()` on an `Ok` value: CodexCliBackend { config: CodexInvocationConfig { executable: CodexExecutable("/home/xann/cyoa-rs/target/debug/subprocess_fixture"), home: "/tmp/.tmp6Ea6Iv", selected_path: "/bin", codex_home: Some("/tmp/.tmp6Ea6Iv/auth"), model: None, bounds: ProcessBounds { deadline: 3s, max_stdout_bytes: MaxStdoutBytes(1048576), max_stderr_bytes: MaxStderrBytes(4096) } } }
+
+
+failures:
+    candidate_and_success_terminal_cannot_override_nonzero_process_exit
+    preflight_rejects_non_subscription_unknown_and_conflicting_auth_without_generation
+    protocol_rejection_and_missing_completion_keep_candidate_without_emission
+
+test result: FAILED. 0 passed; 3 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p cyoa-infrastructure --test codex_backend`

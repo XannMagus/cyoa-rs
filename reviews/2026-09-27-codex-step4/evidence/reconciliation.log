@@ -1,0 +1,11 @@
+   Compiling cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.10s
+     Running unittests src/lib.rs (target/debug/deps/cyoa_infrastructure-e3ed95a49fb8bb1c)
+
+running 3 tests
+test backends::codex_cli::adapter::tests::cancellation_at_acceptance_overrides_protocol_completion_without_emitting ... ok
+test backends::codex_cli::adapter::tests::nested_cleanup_retains_initiating_failure_payload_and_prefix_without_displaying_buffers ... ok
+test backends::codex_cli::adapter::tests::every_transport_failure_category_remains_distinct_and_never_emits ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 59 filtered out; finished in 0.00s
+

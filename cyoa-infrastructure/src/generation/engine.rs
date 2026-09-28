@@ -53,7 +53,10 @@ impl<B: Backend> GenerationEngine<B> {
             },
         );
         let response = response.map_err(|error| match error {
-            BackendError::Cancelled { diagnostics } => cancelled(fragments, diagnostics),
+            BackendError::Cancelled {
+                diagnostics,
+                raw_response,
+            } => cancelled(raw_response.unwrap_or(fragments), diagnostics),
             BackendError::Unavailable {
                 message,
                 diagnostics,
@@ -63,10 +66,13 @@ impl<B: Backend> GenerationEngine<B> {
                 RawResponse::new(fragments),
                 diagnostics,
             ),
-            BackendError::Timeout { diagnostics } => GenerationFailure::new(
+            BackendError::Timeout {
+                diagnostics,
+                raw_response,
+            } => GenerationFailure::new(
                 FailureKind::Timeout,
                 "generation timed out",
-                RawResponse::new(fragments),
+                RawResponse::new(raw_response.unwrap_or(fragments)),
                 diagnostics,
             ),
             BackendError::Generation {
@@ -78,6 +84,17 @@ impl<B: Backend> GenerationEngine<B> {
                 message,
                 RawResponse::new(raw_response),
                 diagnostics,
+            ),
+            BackendError::Transport {
+                message,
+                raw_response,
+                diagnostics,
+                ..
+            } => GenerationFailure::new(
+                FailureKind::Transport,
+                message,
+                RawResponse::new(raw_response),
+                *diagnostics,
             ),
         })?;
         if cancel.is_cancelled() {

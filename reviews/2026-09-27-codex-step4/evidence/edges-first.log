@@ -1,0 +1,29 @@
+warning: field `item_id` is never read
+  --> cyoa-infrastructure/src/backends/codex_cli/protocol.rs:32:9
+   |
+31 | pub(super) struct Candidate {
+   |                   --------- field in this struct
+32 |     pub item_id: String,
+   |         ^^^^^^^
+   |
+   = note: `Candidate` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `cyoa-infrastructure` (lib) generated 1 warning
+   Compiling cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.34s
+     Running tests/codex_backend.rs (target/debug/deps/codex_backend-1de46461b3248eff)
+
+running 9 tests
+test silent_cancellation_uses_a_child_handshake_and_pre_cancel_launches_nothing ... ok
+test capped_output_preserves_prefix_metadata_and_a_structured_cause ... ok
+test candidate_and_success_terminal_cannot_override_nonzero_process_exit ... ok
+test cancellation_from_the_complete_callback_cannot_return_success ... ok
+test successful_response_emits_once_after_cleanup_and_retains_usage_and_exact_request ... ok
+test preparation_failure_and_removed_executable_never_launch_a_generation ... ok
+test preflight_rejects_non_subscription_unknown_and_conflicting_auth_without_generation ... ok
+test protocol_rejection_and_missing_completion_keep_candidate_without_emission ... ok
+test timeout_after_candidate_retains_unemitted_payload_and_reaps_child ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.53s
+

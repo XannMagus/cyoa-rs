@@ -146,14 +146,32 @@ pub struct TokenUsage {
 #[derive(Debug, Error)]
 pub enum BackendError {
     #[error("generation cancelled")]
-    Cancelled { diagnostics: TransportDiagnostics },
+    Cancelled {
+        /// None falls back to streamed fragments; Some preserves a candidate,
+        /// including an explicitly empty candidate, without emitting a preview.
+        raw_response: Option<String>,
+        diagnostics: TransportDiagnostics,
+    },
     #[error("backend unavailable: {message}")]
     Unavailable {
         message: String,
         diagnostics: TransportDiagnostics,
     },
     #[error("generation timed out")]
-    Timeout { diagnostics: TransportDiagnostics },
+    Timeout {
+        raw_response: Option<String>,
+        diagnostics: TransportDiagnostics,
+    },
+    /// A structured vendor-neutral transport cause (including nested cleanup
+    /// failures). Display uses the safe summary, never the diagnostic buffers.
+    #[error("transport failed: {message}")]
+    Transport {
+        message: String,
+        raw_response: String,
+        diagnostics: Box<TransportDiagnostics>,
+        #[source]
+        cause: Box<dyn std::error::Error + Send + Sync>,
+    },
     #[error("generation failed: {message}")]
     Generation {
         message: String,

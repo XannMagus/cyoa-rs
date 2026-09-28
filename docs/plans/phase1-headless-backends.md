@@ -1,6 +1,7 @@
 # Phase 1 — real CLI backends and headless play
 
-Status: **transport foundations repaired; vendor adapters and headless play pending.**
+Status: **transport foundations repaired; Codex adapter reconciliation implemented;
+composed/full live acceptance, Claude adapter and headless play pending.**
 Written 2026-09-25 against `3dfce38`; implementation initially landed in
 `c8c7f8b`..`a28ba66`, then underwent the [process-supervisor review](../../reviews/2026-09-25-process-supervisor/README.md)
 and [documented repairs](../../reviews/2026-09-25-supervisor-repairs/README.md).

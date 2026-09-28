@@ -1,17 +1,33 @@
-# `codex exec` — protocol profile observed; adapter not implemented
+# `codex exec` — adapter implemented; composed/live acceptance incomplete
 
 Co-equal companion to `01-claude-cli.md`. Step 1 of the Codex adapter plan is
 complete: **0.157.1, 2026-09-26**, authenticated using ChatGPT. Bundled outline,
 cast, opening, continuation and zero-NPC requests were probed, plus explicit
 null/empty and isolation canaries. [Full evidence and reproduction](../reviews/2026-09-26-codex-profile/README.md).
-This freezes a narrow protocol for implementation; it does not verify a Backend
-that does not yet exist. Claude's implementation/live gates remain independent.
+This freezes a narrow protocol. The subsequent step-4 evidence below exercises
+the actual Backend for one outline; complete acceptance remains pending.
+Claude's implementation/live gates remain independent.
 
-Implementation status, 2026-09-27: request preparation and the private protocol
-codec are now offline-tested ([step 3 record](../reviews/2026-09-27-codex-step3/README.md)).
-The supported-profile policy below is implemented by the codec only for event
-decoding; process reconciliation and the executable Backend remain pending.
-No new authenticated observation is added by replaying these captures.
+Implementation status, 2026-09-27: steps 1–4 now include request preparation,
+private protocol decoding and real Backend reconciliation. The supported-profile
+policy below is implemented; offline replay is distinct from live evidence.
+
+## Confirmed: actual adapter outline smoke, 0.157.1, 2026-09-27
+
+The opt-in `codex_adapter_smoke` example used bundled outline templates and the
+actual CodexCliBackend with a 180-second deadline and 1 MiB/256 KiB capture caps.
+It confirmed ChatGPT subscription auth through the same selected home/environment,
+then issued one generation call. The first sandboxed attempt failed before model
+generation with empty stdout and an app-server filesystem initialization error.
+An explicitly approved rerun outside the outer sandbox succeeded in 27.161 seconds.
+Both attempts are retained in [step-4 evidence](../reviews/2026-09-27-codex-step4/README.md).
+
+The accepted outline passed the existing wire/domain constructors. One complete
+payload emission matched the final payload exactly. Input 14419, cached input 0,
+output 778; no model override was requested, no model identity or cost was observed.
+Success came through supervisor exit/reap/workspace-cleanup checks. Real PID and
+workspace assertions are separately exercised by fixture children, not inferred
+from this smoke. No real cancellation or composed cast/turn story was exercised.
 
 ## Confirmed: 0.157.1 discovery, 2026-09-26
 
@@ -123,8 +139,9 @@ transcript is an explicit unsupported-profile example despite its CLI exit 0.
   messages remain outside this profile until independently exercised.
 - Rate-limit/unsatisfiable-schema/sandbox-denial outcomes and failure/cancellation
   usage are unexercised. Do not exhaust quota to manufacture evidence.
-- Actual CodexCliBackend acceptance, live cancellation and candidate retention,
+- Complete CodexCliBackend live acceptance, live cancellation,
   composed identities/limits/story behavior and the headless gate remain pending.
+  Candidate retention and transport reconciliation now have fixture evidence.
   Supervisor Linux tests and payload boundary inspection are different evidence.
 
 ## Historical observations (0.155.1, retained with original scope)

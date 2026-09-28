@@ -1,0 +1,32 @@
+   Compiling cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+warning: field `item_id` is never read
+  --> cyoa-infrastructure/src/backends/codex_cli/protocol.rs:32:9
+   |
+31 | pub(super) struct Candidate {
+   |                   --------- field in this struct
+32 |     pub item_id: String,
+   |         ^^^^^^^
+   |
+   = note: `Candidate` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `cyoa-infrastructure` (lib) generated 1 warning
+warning: unused import: `Instant`
+ --> cyoa-infrastructure/tests/codex_backend.rs:6:47
+  |
+6 | use std::{fs, path::PathBuf, time::{Duration, Instant}};
+  |                                               ^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `cyoa-infrastructure` (test "codex_backend") generated 1 warning (run `cargo fix --test "codex_backend" -p cyoa-infrastructure` to apply 1 suggestion)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.89s
+     Running tests/codex_backend.rs (target/debug/deps/codex_backend-1de46461b3248eff)
+
+running 3 tests
+test candidate_and_success_terminal_cannot_override_nonzero_process_exit ... ok
+test preflight_rejects_non_subscription_unknown_and_conflicting_auth_without_generation ... ok
+test protocol_rejection_and_missing_completion_keep_candidate_without_emission ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
+

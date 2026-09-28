@@ -54,11 +54,20 @@ struct Scenario {
     /// forbids "timing-only sleeps as proof a child started/stopped").
     #[serde(default)]
     hang_ms: Option<u64>,
+    #[serde(default)]
+    hang_after_output_ms: Option<u64>,
+    #[serde(default = "subscription_status")]
+    auth_status: String,
+    #[serde(default)]
+    auth_exit_code: i32,
+    #[serde(default)]
+    auth_stdout: bool,
     exit_code: i32,
 }
 
 #[derive(Debug, serde::Serialize)]
 struct Report {
+    schema: Option<Vec<u8>>,
     cwd: std::path::PathBuf,
     argv: Vec<String>,
     stdin: Vec<u8>,
@@ -104,6 +113,10 @@ fn one() -> u32 {
     1
 }
 
+fn subscription_status() -> String {
+    "Logged in using ChatGPT\n".into()
+}
+
 /// Recognized by a descendant re-exec (see `spawn_descendant_holding_stdout_ms`):
 /// sleep for the given number of milliseconds, then exit 0, without parsing a
 /// scenario at all.
@@ -117,12 +130,47 @@ fn main() {
     }
 
     let argv: Vec<String> = std::env::args().collect();
-    let scenario_json = argv
-        .get(1)
-        .cloned()
-        .expect("subprocess_fixture requires a JSON scenario as argv[1]");
+    // Vendor-fixture mode keeps the production argv/stdin contract intact.
+    // Only this test binary reads a scenario from its selected fake HOME.
+    let vendor_mode = matches!(argv.get(1).map(String::as_str), Some("exec" | "login"));
+    let scenario_json = if vendor_mode {
+        std::fs::read_to_string(
+            std::path::PathBuf::from(std::env::var_os("HOME").unwrap()).join("cyoa-fixture.json"),
+        )
+        .unwrap()
+    } else {
+        argv.get(1)
+            .cloned()
+            .expect("subprocess_fixture requires a scenario")
+    };
     let scenario: Scenario =
         serde_json::from_str(&scenario_json).expect("argv[1] must be a valid Scenario JSON");
+
+    if vendor_mode {
+        let path =
+            std::path::PathBuf::from(std::env::var_os("HOME").unwrap()).join("launches.jsonl");
+        let mut calls = std::fs::OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open(path)
+            .unwrap();
+        writeln!(
+            calls,
+            "{}",
+            serde_json::json!({"command":argv[1],"pid":std::process::id()})
+        )
+        .unwrap();
+    }
+
+    if argv.get(1).map(String::as_str) == Some("login") {
+        assert_eq!(&argv[1..], &["login", "status"]);
+        if scenario.auth_stdout {
+            print!("{}", scenario.auth_status);
+        } else {
+            eprint!("{}", scenario.auth_status);
+        }
+        std::process::exit(scenario.auth_exit_code);
+    }
 
     let mut descendant_pid = None;
     if let Some(sleep_ms) = scenario.spawn_descendant_holding_stdout_ms {
@@ -147,6 +195,11 @@ fn main() {
 
     if let Some(report_path) = &scenario.report_path {
         let report = Report {
+            schema: if vendor_mode {
+                Some(std::fs::read("schema.json").expect("prepared schema exists"))
+            } else {
+                None
+            },
             cwd: std::env::current_dir().expect("fixture working directory"),
             argv,
             stdin: received_stdin,
@@ -170,6 +223,10 @@ fn main() {
 
     write_chunks(&scenario.stdout, std::io::stdout().lock());
     write_chunks(&scenario.stderr, std::io::stderr().lock());
+
+    if let Some(ms) = scenario.hang_after_output_ms {
+        std::thread::sleep(std::time::Duration::from_millis(ms));
+    }
 
     std::process::exit(scenario.exit_code);
 }

@@ -29,6 +29,8 @@ pub(super) enum ErrorKind {
 
 #[derive(Debug)]
 pub(super) struct Candidate {
+    #[allow(dead_code)]
+    // Retained protocol identity; the complete-only adapter consumes payload text.
     pub item_id: String,
     pub payload: String,
     record: usize,
