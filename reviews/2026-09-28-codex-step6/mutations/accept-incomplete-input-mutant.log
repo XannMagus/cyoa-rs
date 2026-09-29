@@ -1,0 +1,33 @@
+   Compiling cyoa-infrastructure v0.1.0 (/tmp/tmp.lXDFZNuTkJ/work/cyoa-infrastructure)
+warning: fields `written` and `expected` are never read
+   --> cyoa-infrastructure/src/backends/process/unix_impl.rs:211:23
+    |
+211 |     IncompleteInput { written: usize, expected: usize },
+    |     ---------------   ^^^^^^^         ^^^^^^^^
+    |     |
+    |     fields in this variant
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `cyoa-infrastructure` (lib) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.63s
+     Running tests/process_supervisor.rs (/tmp/tmp.lXDFZNuTkJ/target/debug/deps/process_supervisor-c8eef9635b53a88b)
+
+running 1 test
+test incomplete_request_delivery_cannot_report_success ... FAILED
+
+failures:
+
+---- incomplete_request_delivery_cannot_report_success stdout ----
+
+thread 'incomplete_request_delivery_cannot_report_success' (14451) panicked at cyoa-infrastructure/tests/process_supervisor.rs:641:5:
+known undelivered request bytes must not produce success
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    incomplete_request_delivery_cannot_report_success
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 29 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p cyoa-infrastructure --test process_supervisor`

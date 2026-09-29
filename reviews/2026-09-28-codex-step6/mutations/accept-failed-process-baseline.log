@@ -1,0 +1,8 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/process_supervisor.rs (/tmp/tmp.lXDFZNuTkJ/target/debug/deps/process_supervisor-c8eef9635b53a88b)
+
+running 1 test
+test failure_after_a_candidate_record_still_reports_nonzero_exit_not_success ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 29 filtered out; finished in 0.03s
+

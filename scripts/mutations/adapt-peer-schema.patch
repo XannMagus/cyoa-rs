@@ -1,0 +1,13 @@
+--- a/cyoa-infrastructure/src/generation/backend_compat/claude_cli.rs
++++ b/cyoa-infrastructure/src/generation/backend_compat/claude_cli.rs
+@@ -17,8 +17,8 @@
+     if let Some(obj) = schema.as_object_mut() {
+         obj.remove("$schema");
+     }
+-    schema
+-}
++    super::codex_cli::adapt_schema(schema).unwrap()
++}
+ 
+ #[cfg(test)]
+ mod tests {

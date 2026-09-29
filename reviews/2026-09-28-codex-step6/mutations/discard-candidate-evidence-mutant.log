@@ -1,0 +1,24 @@
+   Compiling cyoa-infrastructure v0.1.0 (/tmp/tmp.lXDFZNuTkJ/work/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.58s
+     Running tests/codex_backend.rs (/tmp/tmp.lXDFZNuTkJ/target/debug/deps/codex_backend-1de46461b3248eff)
+
+running 1 test
+test application_receives_complete_candidate_and_diagnostics_on_adapter_timeout ... FAILED
+
+failures:
+
+---- application_receives_complete_candidate_and_diagnostics_on_adapter_timeout stdout ----
+
+thread 'application_receives_complete_candidate_and_diagnostics_on_adapter_timeout' (26106) panicked at cyoa-infrastructure/tests/codex_backend.rs:499:5:
+assertion `left == right` failed: candidate evidence regression
+  left: ""
+ right: " \r\n{\"title\":\"Harbour\",\"world_description\":\"A sheltered harbour — 灯\"}\n"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    application_receives_complete_candidate_and_diagnostics_on_adapter_timeout
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 14 filtered out; finished in 0.54s
+
+error: test failed, to rerun pass `-p cyoa-infrastructure --test codex_backend`

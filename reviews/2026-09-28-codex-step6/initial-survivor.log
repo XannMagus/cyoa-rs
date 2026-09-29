@@ -1,0 +1,513 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running tests/cancellation.rs (target/debug/deps/cancellation-0d91cabdce33133c)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running tests/cancellation.rs (target/debug/deps/cancellation-0d91cabdce33133c)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running unittests src/lib.rs (target/debug/deps/cyoa_application-6edfc3e70559a9a0)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running unittests src/lib.rs (target/debug/deps/cyoa_application-6edfc3e70559a9a0)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running tests/decision_contracts.rs (target/debug/deps/decision_contracts-872e50f15895be0b)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running tests/decision_contracts.rs (target/debug/deps/decision_contracts-872e50f15895be0b)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+   Doc-tests cyoa_core
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+   Doc-tests cyoa_core
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running unittests src/lib.rs (target/debug/deps/cyoa_core-9e66be85f8e47345)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running unittests src/lib.rs (target/debug/deps/cyoa_core-9e66be85f8e47345)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running tests/restore_limits.rs (target/debug/deps/restore_limits-f97fa726360181d5)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running tests/restore_limits.rs (target/debug/deps/restore_limits-f97fa726360181d5)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running tests/summary_merge.rs (target/debug/deps/summary_merge-f2d0da3362755be5)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running tests/summary_merge.rs (target/debug/deps/summary_merge-f2d0da3362755be5)
+   Compiling cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.27s
+     Running tests/backend_contract.rs (target/debug/deps/backend_contract-bf3c1df86b122de7)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/backend_contract.rs (target/debug/deps/backend_contract-bf3c1df86b122de7)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/codex_backend.rs (target/debug/deps/codex_backend-1de46461b3248eff)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/codex_backend.rs (target/debug/deps/codex_backend-1de46461b3248eff)
+   Compiling cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.29s
+     Running tests/codex_story_acceptance.rs (target/debug/deps/codex_story_acceptance-46a5db368345348c)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/codex_story_acceptance.rs (target/debug/deps/codex_story_acceptance-46a5db368345348c)
+   Compiling cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.25s
+     Running tests/generation_lifecycle.rs (target/debug/deps/generation_lifecycle-c39a966f1f7a6e17)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/generation_lifecycle.rs (target/debug/deps/generation_lifecycle-c39a966f1f7a6e17)
+   Compiling cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.29s
+     Running tests/generation_use_cases.rs (target/debug/deps/generation_use_cases-e6aa0399c5fc1cd7)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/generation_use_cases.rs (target/debug/deps/generation_use_cases-e6aa0399c5fc1cd7)
+   Compiling cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.69s
+     Running unittests src/lib.rs (target/debug/deps/cyoa_infrastructure-e3ed95a49fb8bb1c)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running unittests src/lib.rs (target/debug/deps/cyoa_infrastructure-e3ed95a49fb8bb1c)
+   Compiling cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.28s
+     Running tests/phase_zero_acceptance.rs (target/debug/deps/phase_zero_acceptance-0b857b39930a4335)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/phase_zero_acceptance.rs (target/debug/deps/phase_zero_acceptance-0b857b39930a4335)
+   Compiling cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.27s
+     Running tests/process_supervisor.rs (target/debug/deps/process_supervisor-c8eef9635b53a88b)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/process_supervisor.rs (target/debug/deps/process_supervisor-c8eef9635b53a88b)
+   Compiling cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.28s
+     Running tests/prompt_rendering.rs (target/debug/deps/prompt_rendering-05db7be96870d083)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/prompt_rendering.rs (target/debug/deps/prompt_rendering-05db7be96870d083)
+   Compiling cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.20s
+     Running tests/streaming.rs (target/debug/deps/streaming-4f13ed2864d4b4f4)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/streaming.rs (target/debug/deps/streaming-4f13ed2864d4b4f4)
+   Compiling cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.27s
+     Running tests/wire_mapping.rs (target/debug/deps/wire_mapping-a8bbfa6d397271cf)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/wire_mapping.rs (target/debug/deps/wire_mapping-a8bbfa6d397271cf)
+Workspace dependency boundaries verified.
+   Compiling cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+   Compiling cyoa-cli v0.1.0 (/home/xann/cyoa-rs/cyoa-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.16s
+     Running unittests src/lib.rs (target/debug/deps/cyoa_application-45a39aa4abf2eb2b)
+
+running 1 test
+test diagnostics::tests::transport_diagnostics_preserve_non_utf8_bytes_exactly_and_lossy_display_never_panics ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/cancellation.rs (target/debug/deps/cancellation-ea50fdf50fdb8af1)
+
+running 6 tests
+test a_panicking_notifier_does_not_skip_later_notifiers_or_poison_state ... ok
+test dropping_a_subscription_releases_resources_without_waiting_for_cancellation ... ok
+test notifier_registered_before_cancel_runs_once_when_cancel_fires ... ok
+test notifier_registered_after_cancel_already_fired_still_runs_immediately ... ok
+test scoped_notifications_handle_reuse_late_registration_and_reentrant_callbacks ... ok
+test cancellation_is_shared_across_threads_and_isolated_between_requests ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/debug/deps/cyoa-f3642317cab69c33)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/cyoa_core-1bf669f6ea7436fb)
+
+running 26 tests
+test game::tests::initial_summary_gives_protagonist_and_unmet_npcs ... ok
+test game::tests::first_turn_cannot_open_a_chapter ... ok
+test limits::tests::defaults_match_calibre_constants ... ok
+test game::tests::new_chapter_marker_starts_a_second_chapter ... ok
+test game::tests::later_turn_retitles_its_chapter_and_rewind_restores_the_earlier_title ... ok
+test game::tests::rewind_rejects_undoing_more_turns_than_exist ... ok
+test limits::tests::zero_is_accepted_for_count_limits ... ok
+test game::tests::start_and_restore_keep_the_selected_world_and_protagonist_together ... ok
+test game::tests::world_namesakes_survive_into_summary_and_remain_addressable_by_id ... ok
+test game::tests::turn_count_rejects_zero ... ok
+test limits::tests::zero_is_rejected_for_nonzero_limits ... ok
+test text::tests::exchange_text_preserves_every_byte_including_empty_and_whitespace ... ok
+test text::tests::type_names_supply_readable_error_labels ... ok
+test turn::tests::all_blank_or_empty_is_rejected ... ok
+test turn::tests::casefold_duplicate_actions_are_dropped_preserving_order ... ok
+test turn::tests::cost_amount_rejects_negative_and_nonfinite ... ok
+test turn::tests::fewer_kinds_than_actions_fills_from_the_remainder_in_original_order ... ok
+test turn::tests::more_than_three_prefers_one_action_per_kind_in_original_order ... ok
+test world::tests::distinct_playable_namesakes_satisfy_the_minimum ... ok
+test world::tests::exact_records_collapse_within_each_role_but_shared_names_survive ... ok
+test world::tests::npcs_are_capped_at_the_configured_limit ... ok
+test world::tests::npc_limit_applies_to_surviving_entries_including_zero ... ok
+test world::tests::selection_is_checked_against_the_world_it_owns ... ok
+test world::tests::too_few_playable_characters_is_rejected ... ok
+test world::tests::zero_npc_limit_does_not_consume_candidates ... ok
+test game::tests::prose_context_matches_a_naive_transcription_of_the_python_filter ... ok
+
+test result: ok. 26 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/decision_contracts.rs (target/debug/deps/decision_contracts-98ec39038cfed1a4)
+
+running 1 test
+test text_002_unicode_lowercase_is_not_python_casefold ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/restore_limits.rs (target/debug/deps/restore_limits-4363fe19855b7163)
+
+running 4 tests
+test original_limits_remain_available_after_restoring_with_current_settings ... ok
+test current_limits_apply_to_every_snapshot_and_survive_commit_and_rewind ... ok
+test empty_restored_games_use_the_selected_limits_for_their_opening_summary ... ok
+test raising_the_limit_allows_future_events_without_recovering_discarded_ones ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/summary_merge.rs (target/debug/deps/summary_merge-572723525b489c18)
+
+running 24 tests
+test blank_updates_preserve_durable_fields_and_leave_previous_untouched ... ok
+test cast_equality_includes_presentation_order ... ok
+test cast_suffixes_nonadjacent_duplicate_ids_without_dropping_characters ... ok
+test details_establish_the_invariant_before_infallible_character_construction ... ok
+test cap_keeps_last_thirty_and_supports_a_configured_limit ... ok
+test derived_id_collisions_get_a_unique_suffix ... ok
+test cast_supports_id_lookup_without_changing_order_after_rename_or_insertion ... ok
+test character_ids_follow_calibre_slug_rules_and_character_not_byte_limit ... ok
+test domain_constructors_reject_invalid_state ... ok
+test each_nonblank_character_field_changes_independently ... ok
+test events_accumulate_deduplicate_and_consolidate_in_order ... ok
+test exact_deduplication_includes_identity_and_all_character_details ... ok
+test explicit_ids_are_preserved_and_duplicate_names_match_the_last_entry ... ok
+test exact_duplicates_collapse_before_suffixes_are_assigned ... ok
+test first_update_wins_including_new_and_old_name_aliases ... ok
+test id_match_wins_over_conflicting_name_match ... ok
+test merging_deduplicates_before_truncating_and_preserves_configured_limit ... ok
+test name_aliases_only_last_for_the_current_turn ... ok
+test present_delta_values_cannot_be_blank ... ok
+test new_characters_need_name_and_durable_information ... ok
+test rename_keeps_identity_and_name_fallback_ignores_invented_id ... ok
+test suffixing_preserves_existing_ids_and_repaired_ids_support_future_updates ... ok
+test upcoming_events_null_is_not_empty ... ok
+test world_and_situation_can_change_without_losing_characters ... ok
+
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/cyoa_infrastructure-a9cc62eb7c8ecae9)
+
+running 63 tests
+test backends::codex_cli::adapter::tests::cancellation_at_acceptance_overrides_protocol_completion_without_emitting ... ok
+test backends::codex_cli::adapter::tests::nested_cleanup_retains_initiating_failure_payload_and_prefix_without_displaying_buffers ... ok
+test backends::codex_cli::adapter::tests::every_transport_failure_category_remains_distinct_and_never_emits ... ok
+test backends::codex_cli::protocol::tests::live_tool_canary_is_unsupported_even_though_the_cli_exited_successfully ... ok
+test backends::codex_cli::protocol::tests::first_failure_is_sticky_and_keeps_candidate_after_later_records ... ok
+test backends::codex_cli::tests::invalid_model_home_and_search_path_values_are_rejected ... ok
+test backends::codex_cli::tests::executable_resolution_handles_absolute_relative_and_selected_path_names ... ok
+test backends::codex_cli::tests::executable_search_skips_nonexecutables_and_resolves_empty_path_entries ... ok
+test backends::codex_cli::tests::failed_schema_write_is_located_and_workspace_drop_cleans_up ... ok
+test backends::process::split_record_tests::a_trailing_partial_record_without_newline_remains_buffered ... ok
+test backends::process::split_record_tests::a_single_complete_record_is_extracted_and_removed ... ok
+test backends::codex_cli::protocol::tests::invalid_payload_is_retained_and_never_repaired_or_accepted ... ok
+test backends::process::split_record_tests::an_empty_record_between_two_newlines_is_preserved_as_empty ... ok
+test backends::process::split_record_tests::crlf_records_keep_the_carriage_return_attached_to_the_record ... ok
+test backends::process::split_record_tests::empty_buffer_yields_no_records_and_stays_empty ... ok
+test backends::process::split_record_tests::feeding_bytes_across_multiple_calls_reassembles_a_split_record ... ok
+test backends::codex_cli::protocol::tests::order_failures_and_end_of_stream_never_authorize_completion ... ok
+test backends::process::unix_impl::fault_tests::fatal_read_error_is_not_treated_as_would_block ... ok
+test backends::codex_cli::protocol::tests::malformed_required_fields_and_unsupported_items_are_not_candidates ... ok
+test backends::codex_cli::protocol::tests::framing_metadata_and_escaped_text_preserve_exact_candidate_bytes ... ok
+test generation::backend_compat::codex_cli::tests::malformed_property_map_is_a_located_preparation_error ... ok
+test generation::backend_compat::codex_cli::tests::malformed_required_keyword_is_rejected_even_without_properties ... ok
+test generation::backend_compat::codex_cli::tests::a_ref_with_a_union_sibling_is_rejected_at_its_location ... ok
+test generation::backend_compat::codex_cli::tests::required_names_outside_properties_are_rejected_without_losing_constraints ... ok
+test generation::backend_compat::codex_cli::tests::unsupported_dialects_and_structural_keywords_are_located_errors ... ok
+test generation::backend_compat::codex_cli::tests::unsupported_schema_children_report_their_location_and_boolean_constraints_survive ... ok
+test generation::backend_compat::codex_cli::tests::framing_matches_the_committed_discovery_capture_byte_for_byte ... ok
+test generation::backend_compat::codex_cli::tests::transformation_is_idempotent_and_leaves_schema_looking_annotations_opaque ... ok
+test backends::codex_cli::protocol::tests::optional_telemetry_preserves_unknown_zero_and_normalizes_invalid_cache ... ok
+test backends::codex_cli::protocol::tests::frozen_live_story_captures_match_independent_payload_and_usage_expectations ... ok
+test generation::backend_compat::codex_cli::tests::adapted_turn_keeps_order_nullability_defaults_and_empty_strings ... ok
+test backends::codex_cli::tests::preparation_never_launches_the_selected_executable ... ok
+test backends::codex_cli::protocol::tests::frozen_error_transcripts_reject_with_located_reasons_and_candidate_evidence ... ok
+test generation::backend_compat::codex_cli::tests::bundled_schemas_match_independent_discovery_expectations ... ok
+test backends::process::unix_impl::fault_tests::self_pipe_wakes_a_long_poll_without_removing_token_checks ... ok
+test generation::templates::tests::malformed_sources_report_the_source_file ... ok
+test generation::schema::tests::schema_docs_placeholders_render_against_supplied_limits ... ok
+test generation::templates::tests::toml_override_merges_per_key_not_per_file ... ok
+test generation::schema::tests::story_turn_schema_lists_narrative_first ... ok
+test generation::schema::tests::shared_turn_schema_keeps_optional_character_updates ... ok
+test backends::codex_cli::tests::public_generation_preparation_uses_one_rendered_request_for_prompt_and_schema ... ok
+test generation::templates::tests::startup_checks_the_zero_npc_branch_in_prompts_and_schema_docs ... ok
+test generation::backend_compat::claude_cli::tests::adapt_schema_strips_the_root_schema_key_and_nothing_else ... ok
+test generation::templates::tests::data_dependent_render_errors_are_values_with_template_locations ... ok
+test generation::templates::tests::merged_configuration_drives_all_three_generation_requests ... ok
+test generation::templates::tests::configured_turn_fragments_render_once_and_player_text_is_not_a_template ... ok
+test backends::codex_cli::tests::prepared_request_owns_schema_stdin_environment_and_workspace_until_transfer_drop ... ok
+test generation::templates::tests::configured_opening_continuation_and_bridge_match_complete_snapshots ... ok
+test generation::templates::tests::styles_reject_empty_tables_duplicate_keys_and_wrong_shapes ... ok
+test generation::templates::tests::prompt_shape_rejects_missing_wrong_type_and_unknown_keys ... ok
+test generation::templates::tests::empty_schema_descriptions_remove_defaults_and_nested_overrides_apply ... ok
+test backends::process::unix_impl::fault_tests::setup_write_read_poll_and_exit_observation_failures_are_errors ... ok
+test generation::templates::tests::quick_actions_reject_dangling_references_and_empty_groups ... ok
+test generation::templates::tests::unknown_styles_use_configured_first_entry_and_blank_tone_is_omitted ... ok
+test generation::templates::tests::quick_action_instructions_change_when_kinds_table_is_overridden ... ok
+test generation::templates::tests::undefined_template_variable_is_a_render_error ... ok
+test generation::schema::tests::every_generated_object_schema_forbids_additional_properties ... ok
+test generation::schema::tests::generic_schemas_declare_a_root_schema_key ... ok
+test generation::templates::tests::schema_documentation_rejects_unknown_missing_and_invalid_entries ... ok
+test generation::schema::tests::schema_docs_cover_every_field_and_no_others ... ok
+test generation::templates::tests::templates_reject_syntax_wrong_context_and_nested_typos ... ok
+test backends::process::unix_impl::fault_tests::interrupted_reaping_still_has_a_finite_deadline ... ok
+test backends::process::unix_impl::fault_tests::cleanup_failures_preserve_the_initiating_error ... ok
+
+test result: ok. 63 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.02s
+
+     Running unittests src/bin/subprocess_fixture.rs (target/debug/deps/subprocess_fixture-6b131ef00a6dd754)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/backend_contract.rs (target/debug/deps/backend_contract-0ebc8b14fb7c4041)
+
+running 18 tests
+test cached_tokens_cannot_exceed_total_but_unknown_is_not_zero ... ok
+test a_response_with_no_attached_diagnostics_reports_empty ... ok
+test malformed_response_is_an_error_with_original_diagnostics ... ok
+test normalize_input_tokens_distinguishes_unknown_from_zero_and_repairs_only_invalid_cache ... ok
+test successful_response_retains_the_exact_json_it_parsed ... ok
+test with_diagnostics_attaches_transport_bytes_to_an_otherwise_successful_response ... ok
+test crlf_in_diagnostics_is_preserved_without_normalization ... ok
+test cancelling_from_inside_the_streamed_callback_returns_cancelled_with_diagnostics_seen_so_far ... ok
+test adapter_reported_invalid_cache_accounting_normalizes_to_unknown_over_a_real_process_boundary ... ok
+test empty_stdout_with_exit_zero_does_not_construct_a_false_success ... ok
+test fixture_round_trips_quotes_newlines_and_unicode_through_a_real_process_boundary ... ok
+test non_utf8_stderr_diagnostics_survive_the_process_boundary_and_lossy_display_does_not_panic ... ok
+test nonzero_exit_after_emitting_stdout_maps_to_generation_not_unavailable ... ok
+test nonzero_exit_with_no_stdout_maps_to_unavailable_with_exact_stderr_bytes ... ok
+test successful_fixture_transport_attaches_both_captured_streams ... ok
+test fixture_reports_the_exact_argv_and_stdin_prompt_bytes_it_received ... ok
+test complete_only_cancellation_and_timeout_keep_explicit_candidate_without_preview ... ok
+test every_backend_error_variant_maps_to_its_failure_kind_with_exact_diagnostics ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/codex_backend.rs (target/debug/deps/codex_backend-42126d867aa86d13)
+
+running 15 tests
+test failed_auth_exit_is_unavailable_even_with_a_success_looking_status_on_stdout ... ok
+test candidate_without_terminal_is_rejected_after_cleanup ... ok
+test candidate_and_success_terminal_cannot_override_nonzero_process_exit ... ok
+test conflicting_terminal_is_rejected_after_cleanup ... ok
+test silent_cancellation_uses_a_child_handshake_and_pre_cancel_launches_nothing ... ok
+test capped_output_preserves_prefix_metadata_and_a_structured_cause ... ok
+test cancellation_from_the_complete_callback_cannot_return_success ... ok
+test ineligible_message_is_rejected_after_cleanup ... ok
+test successful_response_emits_once_after_cleanup_and_retains_usage_and_exact_request ... ok
+test preparation_failure_and_removed_executable_never_launch_a_generation ... ok
+test no_stdout_failure_and_invalid_protocol_preserve_bytes_with_distinct_categories ... ok
+test preflight_rejects_non_subscription_unknown_and_conflicting_auth_without_generation ... ok
+test protocol_rejection_and_missing_completion_keep_candidate_without_emission ... ok
+test timeout_after_candidate_retains_unemitted_payload_and_reaps_child ... ok
+test application_receives_complete_candidate_and_diagnostics_on_adapter_timeout ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.56s
+
+     Running tests/codex_story_acceptance.rs (target/debug/deps/codex_story_acceptance-dbe91466b301e79d)
+
+running 6 tests
+test zero_npc_limit_survives_cast_selection_opening_and_continuation ... ok
+test real_workspace_cleanup_failure_preserves_the_game_and_candidate ... ok
+test composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context ... ok
+test cancellation_and_output_cap_preserve_state_context_and_explicit_retry ... ok
+test late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once ... ok
+test both_restore_policies_control_actual_requests_snapshots_and_chapter_bridge ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.51s
+
+     Running tests/generation_lifecycle.rs (target/debug/deps/generation_lifecycle-1d5874a2898d6f94)
+
+running 1 test
+test outline_to_selected_world_requires_no_placeholder_cast ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/generation_use_cases.rs (target/debug/deps/generation_use_cases-6486d3dcc087adb0)
+
+running 13 tests
+test cancelled_commands_make_no_backend_calls_and_preserve_state ... ok
+test success_diagnostics_reach_generation_failure_when_outline_cancels_right_after_transport ... ok
+test success_diagnostics_reach_generation_failure_when_turns_own_post_decode_check_cancels ... ok
+test invalid_outline_and_insufficient_cast_are_returned_with_raw_output ... ok
+test preview_then_transport_failure_leaves_state_untouched ... ok
+test cancelling_after_a_streamed_preview_preserves_state_and_partial_diagnostics ... ok
+test scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls ... ok
+test restored_limits_reach_captured_prompt_schema_and_committed_memory ... ok
+test successful_generation_preserves_observed_provenance_and_diagnostics ... ok
+test application_cancellation_after_generation_preserves_evidence ... ok
+test failed_turns_preserve_diagnostics_state_and_single_attempt ... ok
+test validation_failures_retain_transport_diagnostics_for_every_request_kind ... ok
+test chunked_and_complete_transports_commit_the_same_turn_without_duplicate_preview ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.33s
+
+     Running tests/phase_zero_acceptance.rs (target/debug/deps/phase_zero_acceptance-97547bad4c375251)
+
+running 3 tests
+test invalid_rewind_is_an_error_without_state_changes_or_generation ... ok
+test rewinding_the_only_turn_restores_opening_context_without_an_extra_call ... ok
+test full_story_preserves_contracts_through_failure_retry_cancellation_and_rewind ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/process_supervisor.rs (target/debug/deps/process_supervisor-947f0ba00de82374)
+
+running 30 tests
+test cancellation_before_spawn_launches_no_process ... ok
+test a_child_that_never_reads_stdin_still_completes ... ok
+test cancelling_from_inside_the_final_no_newline_record_still_wins_over_exit ... ok
+test request_workspace_is_private_and_unique ... ok
+test env_policy_is_an_explicit_allowlist_not_ambient_inheritance ... ok
+test a_panicking_consumer_still_gets_the_child_cleaned_up ... ok
+test cancelling_from_inside_the_record_consumer_wins_over_a_same_tick_exit ... ok
+test cancellation_while_the_child_is_silent_still_wakes_the_poll_loop_and_returns_promptly ... ok
+test missing_executable_is_a_spawn_error_not_a_panic ... ok
+test requests_do_not_inherit_the_repository_working_directory ... ok
+test nonzero_exit_is_reported_with_diagnostics ... ok
+test incomplete_request_delivery_cannot_report_success ... ok
+test records_written_right_before_exit_are_not_silently_dropped ... ok
+test consumer_rejection_triggers_cleanup_and_reports_the_reason ... ok
+test multiple_records_are_delivered_in_order_and_success_requires_zero_exit ... ok
+test final_record_without_a_trailing_newline_is_still_delivered ... ok
+test broken_stdin_delivery_is_reported_without_hanging ... ok
+test capture_at_the_exact_bound_is_complete_and_preserves_arbitrary_bytes ... ok
+test crlf_records_are_delivered_with_the_carriage_return_intact ... ok
+test failure_after_a_candidate_record_still_reports_nonzero_exit_not_success ... ok
+test a_descendant_retaining_the_inherited_pipe_does_not_hang_the_supervisor ... ok
+test cancelled_token_wins_even_before_its_notifier_runs ... ok
+test output_bound_exceeded_stops_the_child_instead_of_buffering_forever ... ok
+test stdout_larger_than_pipe_capacity_is_fully_delivered_and_diagnostics_agree ... ok
+test captured_output_never_exceeds_either_configured_bound ... ok
+test exact_argv_and_stdin_reach_the_child_and_both_pipes_are_drained ... ok
+test deadline_exceeded_kills_the_child_and_reports_timeout ... ok
+test cancellation_and_deadline_stop_continuous_writers_with_bounded_diagnostics ... ok
+test request_files_live_through_execution_and_are_removed_on_every_outcome ... ok
+test stdin_larger_than_pipe_capacity_is_delivered_in_full_when_the_child_reads_it ... ok
+
+test result: ok. 30 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.48s
+
+     Running tests/prompt_rendering.rs (target/debug/deps/prompt_rendering-97842d43240157f1)
+
+running 11 tests
+test loaded_instructions_contain_no_json_formatting_directive ... ok
+test player_input_versus_no_direction ... ok
+test loaded_turn_instructions_ask_for_schema_field_order ... ok
+test opening_turn_prompt_includes_the_identity_review_addition_exactly_once ... ok
+test interesting_event_includes_threads_only_when_present ... ok
+test turn_prompt_bridge_and_transcript_appear_only_when_nonempty ... ok
+test prose_contract_omits_tone_clause_when_tone_is_default ... ok
+test world_and_cast_prompts_interpolate_the_brief_and_world ... ok
+test rendered_limits_reflect_the_supplied_value_not_a_constant ... ok
+test retitling_instructions_reach_wire_commit_and_rewind ... ok
+test cast_requests_and_schemas_obey_small_caps_and_large_minimums ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/streaming.rs (target/debug/deps/streaming-8eff70f507ec5f91)
+
+running 4 tests
+test only_the_requested_top_level_string_is_streamed ... ok
+test truncated_and_invalid_json_only_yield_available_preview_text ... ok
+test surrogate_pairs_lone_halves_and_escapes_survive_single_character_chunks ... ok
+test arbitrary_scalar_splits_match_the_independent_narrative ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+
+     Running tests/wire_mapping.rs (target/debug/deps/wire_mapping-554674f3b0f360f9)
+
+running 10 tests
+test blank_wire_fields_map_to_none_across_every_optional_field ... ok
+test incomplete_generated_characters_are_dropped_not_erroring_the_whole_cast ... ok
+test blank_narrative_is_rejected_but_blank_scene_description_is_not ... ok
+test blank_quick_action_text_is_filtered_before_selection_not_a_hard_error ... ok
+test new_chapter_marker_carries_a_blank_filtered_title_and_so_does_continue ... ok
+test unknown_quick_action_kind_deserializes_to_other_not_an_error ... ok
+test upcoming_events_null_is_keep_empty_list_is_replace_with_no_threads ... ok
+test world_outline_rejects_blank_title_or_description ... ok
+test wire_defaults_and_nullable_updates_keep_their_distinct_meanings ... ok
+test required_response_text_distinguishes_missing_null_and_empty ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (target/debug/deps/cyoa_presentation-44c3b4e54a4c58b4)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests cyoa_application
+
+running 1 test
+test cyoa-application/src/cancellation.rs - cancellation::CancellationToken (line 64) - compile fail ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+   Doc-tests cyoa_core
+
+running 5 tests
+test cyoa-core/src/world.rs - world::SelectedWorld (line 233) - compile fail ... ok
+test cyoa-core/src/game.rs - game::GameState (line 107) - compile fail ... ok
+test cyoa-core/src/character.rs - character::Character (line 98) - compile fail ... ok
+test cyoa-core/src/character.rs - character::CharacterDetails (line 31) - compile fail ... ok
+test cyoa-core/src/summary.rs - summary::StorySummary (line 113) - compile fail ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+   Doc-tests cyoa_infrastructure
+
+running 1 test
+test cyoa-infrastructure/src/backend.rs - backend::GenerationResponse (line 26) - compile fail ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+   Doc-tests cyoa_presentation
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+Mutation outcome validation verified.
+Checking mutation: name-only-deduplication
+Detected mutation: name-only-deduplication (generation_use_cases/scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls)
+Checking mutation: duplicate-opening-request
+Detected mutation: duplicate-opening-request (generation_use_cases/scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls)
+Checking mutation: default-instead-of-active-limits
+Detected mutation: default-instead-of-active-limits (generation_use_cases/restored_limits_reach_captured_prompt_schema_and_committed_memory)
+Checking mutation: commit-before-reporting-failure
+Detected mutation: commit-before-reporting-failure (phase_zero_acceptance/full_story_preserves_contracts_through_failure_retry_cancellation_and_rewind)
+Checking mutation: capture-past-limit
+Detected mutation: capture-past-limit (process_supervisor/captured_output_never_exceeds_either_configured_bound)
+Checking mutation: accept-incomplete-input
+Detected mutation: accept-incomplete-input (process_supervisor/incomplete_request_delivery_cannot_report_success)
+Checking mutation: ignore-cancelled-token
+Detected mutation: ignore-cancelled-token (process_supervisor/cancelled_token_wins_even_before_its_notifier_runs)
+Checking mutation: accept-failed-process
+Detected mutation: accept-failed-process (process_supervisor/failure_after_a_candidate_record_still_reports_nonzero_exit_not_success)
+Checking mutation: swallow-reader-error
+Detected mutation: swallow-reader-error (lib/backends::process::unix_impl::fault_tests::fatal_read_error_is_not_treated_as_would_block)
+Checking mutation: disable-cancellation-wake
+Detected mutation: disable-cancellation-wake (lib/backends::process::unix_impl::fault_tests::self_pipe_wakes_a_long_poll_without_removing_token_checks)
+Checking mutation: discard-cleanup-cause
+Detected mutation: discard-cleanup-cause (lib/backends::process::unix_impl::fault_tests::cleanup_failures_preserve_the_initiating_error)
+Checking mutation: accept-ineligible-message
+Detected mutation: accept-ineligible-message (codex_backend/ineligible_message_is_rejected_after_cleanup)
+Checking mutation: accept-missing-terminal
+Detected mutation: accept-missing-terminal (codex_backend/candidate_without_terminal_is_rejected_after_cleanup)
+Checking mutation: accept-conflicting-terminal
+Detected mutation: accept-conflicting-terminal (codex_backend/conflicting_terminal_is_rejected_after_cleanup)
+Checking mutation: adapt-shared-schema
+   Compiling cyoa-infrastructure v0.1.0 (/tmp/tmp.V6QiBWlZRC/work/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.55s
+     Running unittests src/lib.rs (/tmp/tmp.V6QiBWlZRC/target/debug/deps/cyoa_infrastructure-e3ed95a49fb8bb1c)
+
+running 1 test
+test generation::schema::tests::shared_turn_schema_keeps_optional_character_updates ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 62 filtered out; finished in 0.01s
+
+Expected one exact failed test: cyoa-infrastructure/lib/generation::schema::tests::shared_turn_schema_keeps_optional_character_updates (exit 0).

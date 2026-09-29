@@ -1,0 +1,34 @@
+   Compiling cyoa-infrastructure v0.1.0 (/tmp/tmp.lXDFZNuTkJ/work/cyoa-infrastructure)
+warning: field `cancel` is never read
+   --> cyoa-infrastructure/src/backends/process/unix_impl.rs:272:5
+    |
+264 | struct Supervisor<'a> {
+    |        ---------- field in this struct
+...
+272 |     cancel: &'a CancellationToken,
+    |     ^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `cyoa-infrastructure` (lib) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.60s
+     Running tests/process_supervisor.rs (/tmp/tmp.lXDFZNuTkJ/target/debug/deps/process_supervisor-c8eef9635b53a88b)
+
+running 1 test
+test cancelled_token_wins_even_before_its_notifier_runs ... FAILED
+
+failures:
+
+---- cancelled_token_wins_even_before_its_notifier_runs stdout ----
+
+thread 'cancelled_token_wins_even_before_its_notifier_runs' (15609) panicked at cyoa-infrastructure/tests/process_supervisor.rs:670:5:
+cancelled token yielded Ok(ProcessOutcome { exit_code: 0, diagnostics: TransportDiagnostics { stdout: CapturedBytes { bytes: [], completeness: Complete }, stderr: CapturedBytes { bytes: [], completeness: Complete } } })
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    cancelled_token_wins_even_before_its_notifier_runs
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 29 filtered out; finished in 0.20s
+
+error: test failed, to rerun pass `-p cyoa-infrastructure --test process_supervisor`

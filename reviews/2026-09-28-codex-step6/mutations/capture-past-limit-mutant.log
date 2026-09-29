@@ -1,0 +1,24 @@
+   Compiling cyoa-infrastructure v0.1.0 (/tmp/tmp.lXDFZNuTkJ/work/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.59s
+     Running tests/process_supervisor.rs (/tmp/tmp.lXDFZNuTkJ/target/debug/deps/process_supervisor-c8eef9635b53a88b)
+
+running 1 test
+test captured_output_never_exceeds_either_configured_bound ... FAILED
+
+failures:
+
+---- captured_output_never_exceeds_either_configured_bound stdout ----
+
+thread 'captured_output_never_exceeds_either_configured_bound' (13293) panicked at cyoa-infrastructure/tests/process_supervisor.rs:706:9:
+assertion `left == right` failed
+  left: [120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120]
+ right: [120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    captured_output_never_exceeds_either_configured_bound
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 29 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p cyoa-infrastructure --test process_supervisor`

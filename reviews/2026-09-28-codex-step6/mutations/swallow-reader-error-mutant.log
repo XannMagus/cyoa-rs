@@ -1,0 +1,22 @@
+   Compiling cyoa-infrastructure v0.1.0 (/tmp/tmp.lXDFZNuTkJ/work/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.51s
+     Running unittests src/lib.rs (/tmp/tmp.lXDFZNuTkJ/target/debug/deps/cyoa_infrastructure-e3ed95a49fb8bb1c)
+
+running 1 test
+test backends::process::unix_impl::fault_tests::fatal_read_error_is_not_treated_as_would_block ... FAILED
+
+failures:
+
+---- backends::process::unix_impl::fault_tests::fatal_read_error_is_not_treated_as_would_block stdout ----
+
+thread 'backends::process::unix_impl::fault_tests::fatal_read_error_is_not_treated_as_would_block' (17938) panicked at cyoa-infrastructure/src/backends/process/unix_impl.rs:712:9:
+assertion failed: matches!(capture.read_once(&Operations::default()), Err(Ending::Io(_)))
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    backends::process::unix_impl::fault_tests::fatal_read_error_is_not_treated_as_would_block
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 62 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p cyoa-infrastructure --lib`

@@ -1,0 +1,22 @@
+   Compiling cyoa-infrastructure v0.1.0 (/tmp/tmp.lXDFZNuTkJ/work/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.56s
+     Running unittests src/lib.rs (/tmp/tmp.lXDFZNuTkJ/target/debug/deps/cyoa_infrastructure-e3ed95a49fb8bb1c)
+
+running 1 test
+test generation::schema::tests::shared_turn_schema_keeps_optional_character_updates ... FAILED
+
+failures:
+
+---- generation::schema::tests::shared_turn_schema_keeps_optional_character_updates stdout ----
+
+thread 'generation::schema::tests::shared_turn_schema_keeps_optional_character_updates' (24063) panicked at cyoa-infrastructure/src/generation/schema.rs:199:9:
+shared schema isolation regression
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    generation::schema::tests::shared_turn_schema_keeps_optional_character_updates
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 62 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p cyoa-infrastructure --lib`

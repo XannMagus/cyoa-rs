@@ -498,6 +498,15 @@ coverage are distinguished in `phase0-acceptance.md`; subprocess and persistence
 obligations remain open. These checks cannot stop an intentional rewrite of both
 contracts and assertions, so contract changes still require review.
 
+Codex adapter step 6 (2026-09-28) adds seven mutations, for eighteen total:
+ineligible messages, missing completion, conflicting terminals (BACKENDS-001),
+shared and peer schema adaptation leakage (ARCH-003), and candidate and diagnostic
+loss on application-visible timeout (BACKENDS-001). Each new mutant requires its
+specific assertion message in addition to the exact test and exit status, so a
+fixture/setup panic cannot count. Protocol tests check cleanup before rejection.
+Optional `CYOA_MUTATION_EVIDENCE_DIR` retains baseline/mutant/restored logs.
+These are offline adapter protections, not additional live-backend evidence.
+
 Review repair R4 (2026-09-25): transport diagnostics belong to
 `cyoa-application::diagnostics`, not domain text. Invalid outline/cast/turn responses
 and cancellation after a typed generation retain those bytes through the application

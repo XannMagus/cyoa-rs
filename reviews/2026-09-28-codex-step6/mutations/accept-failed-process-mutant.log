@@ -1,0 +1,22 @@
+   Compiling cyoa-infrastructure v0.1.0 (/tmp/tmp.lXDFZNuTkJ/work/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.58s
+     Running tests/process_supervisor.rs (/tmp/tmp.lXDFZNuTkJ/target/debug/deps/process_supervisor-c8eef9635b53a88b)
+
+running 1 test
+test failure_after_a_candidate_record_still_reports_nonzero_exit_not_success ... FAILED
+
+failures:
+
+---- failure_after_a_candidate_record_still_reports_nonzero_exit_not_success stdout ----
+
+thread 'failure_after_a_candidate_record_still_reports_nonzero_exit_not_success' (16768) panicked at cyoa-infrastructure/tests/process_supervisor.rs:206:6:
+called `Result::unwrap_err()` on an `Ok` value: ProcessOutcome { exit_code: 3, diagnostics: TransportDiagnostics { stdout: CapturedBytes { bytes: [123, 34, 111, 107, 34, 58, 116, 114, 117, 101, 125, 10], completeness: Complete }, stderr: CapturedBytes { bytes: [], completeness: Complete } } }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    failure_after_a_candidate_record_still_reports_nonzero_exit_not_success
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 29 filtered out; finished in 0.03s
+
+error: test failed, to rerun pass `-p cyoa-infrastructure --test process_supervisor`

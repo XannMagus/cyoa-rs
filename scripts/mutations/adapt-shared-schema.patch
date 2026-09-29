@@ -1,0 +1,11 @@
+--- a/cyoa-infrastructure/src/generation/schema.rs
++++ b/cyoa-infrastructure/src/generation/schema.rs
+@@ -6,7 +6,7 @@
+ use std::collections::{BTreeMap, BTreeSet};
+ 
+ pub(super) fn structure<T: JsonSchema>() -> Value {
+-    Value::from(schemars::generate::SchemaGenerator::default().into_root_schema_for::<T>())
++    super::backend_compat::codex_cli::adapt_schema(Value::from(schemars::generate::SchemaGenerator::default().into_root_schema_for::<T>())).unwrap()
+ }
+ 
+ pub(super) fn documentation_fields() -> BTreeMap<String, BTreeSet<String>> {

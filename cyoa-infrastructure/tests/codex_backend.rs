@@ -169,6 +169,45 @@ fn protocol_rejection_and_missing_completion_keep_candidate_without_emission() {
     }
 }
 
+// Cleanup is checked before the behavioral assertion so a surviving protocol
+// mutant cannot hide a leaked child or workspace behind an early panic.
+fn assert_protocol_rejected(name: &str) {
+    let fixture = Fixture::new(&capture(name), 0);
+    let mut seen = 0;
+    let result = fixture.backend().generate(
+        request(&json!({})),
+        &CancellationSource::default().token(),
+        &mut |_| seen += 1,
+    );
+    fixture.assert_cleanup();
+    if let Err(error) = &result {
+        assert!(
+            matches!(error, BackendError::Generation { .. }),
+            "unexpected transport failure: {error}"
+        );
+    }
+    assert!(
+        result.is_err(),
+        "protocol acceptance regression: {name}: {result:?}"
+    );
+    assert_eq!(seen, 0);
+}
+
+#[test]
+fn ineligible_message_is_rejected_after_cleanup() {
+    assert_protocol_rejected("ineligible.jsonl");
+}
+
+#[test]
+fn candidate_without_terminal_is_rejected_after_cleanup() {
+    assert_protocol_rejected("missing-terminal.jsonl");
+}
+
+#[test]
+fn conflicting_terminal_is_rejected_after_cleanup() {
+    assert_protocol_rejected("conflicting-terminal.jsonl");
+}
+
 #[test]
 fn preflight_rejects_non_subscription_unknown_and_conflicting_auth_without_generation() {
     for status in [
@@ -456,10 +495,16 @@ fn application_receives_complete_candidate_and_diagnostics_on_adapter_timeout() 
         )
         .unwrap_err();
     assert_eq!(error.kind(), FailureKind::Timeout);
-    assert_eq!(error.raw_response().as_str(), payload());
+    fixture.assert_cleanup();
+    assert_eq!(
+        error.raw_response().as_str(),
+        payload(),
+        "candidate evidence regression"
+    );
     assert_eq!(
         error.diagnostics().stdout(),
-        capture("missing-terminal.jsonl")
+        capture("missing-terminal.jsonl"),
+        "diagnostic evidence regression"
     );
     assert_eq!(error.diagnostics().stderr(), b"diagnostic\xff\r\n");
     fixture.assert_cleanup();

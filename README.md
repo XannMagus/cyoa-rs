@@ -43,8 +43,10 @@ outcomes, preserves failure evidence, and checks subscription auth at constructi
 from the bounded live outline smoke. **Step 5 is implemented offline**: composed
 story acceptance checks identity, limits, chapters, cancellation, cleanup failures
 and explicit retry through actual fixture children
-([evidence](reviews/2026-09-28-codex-step5/README.md)). Next are step 6's codec
-mutations and the full live adapter gate. Claude remains a co-equal
+([evidence](reviews/2026-09-28-codex-step5/README.md)). **Step 6 is implemented**:
+seven persistent adapter mutations protect protocol acceptance, shared/peer schema
+isolation and failure evidence ([record](reviews/2026-09-28-codex-step6/README.md)).
+Next is the full live adapter gate. Claude remains a co-equal
 pending implementation with independent acceptance obligations.
 
 - `cyoa-core`: checked domain types, namesake-preserving casts and stable IDs,
@@ -100,17 +102,18 @@ bash scripts/check_contracts.sh
 The shared local/CI gate requires Bash, jq, Git, tar and the Rust toolchain; no
 Python is involved. It checks registered test presence, ignored tests, coverage
 claims, inward dependencies, workspace tests and compile-fail examples. It also
-copies the current source to a temporary directory and verifies that eleven deliberate
+copies the current source to a temporary directory and verifies that eighteen deliberate
 regressions fail their exact registered behavioral tests. Compiler failures and
 missing tests do not count as detected regressions. The isolated build uses cached
 Cargo dependencies after Clippy; the first mutation build costs additional time.
 Run `bash scripts/check_contract_mutations.sh` for only that check.
+Set `CYOA_MUTATION_EVIDENCE_DIR` to retain each baseline, mutant and restored log.
 
 See the [acceptance sequence](docs/decisions/phase0-acceptance.md) and
 [TDD/evidence record](reviews/2026-09-25-phase0-acceptance/README.md). Phase 1
 is [real subprocess adapters and a playable headless loop](docs/plans/phase1-headless-backends.md)
 — transport foundations and Codex Backend reconciliation are implemented and
-Linux-tested, including composed Codex story acceptance. Codec mutations are next;
+Linux-tested, including composed Codex story acceptance and persistent adapter mutations;
 Claude implementation and the full authenticated acceptance gates remain separate
 obligations.
 

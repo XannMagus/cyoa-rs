@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Validate that the selected Rust test actually ran with the expected outcome.
 assert_test_outcome() {
-  local expected=$1 status=$2 name=$3 log=$4 marker summary
+  local expected=$1 status=$2 name=$3 log=$4 failure_contains=${5:-} marker summary
   case "$expected" in
     passed)
       [[ "$status" == 0 ]] || return 1
@@ -15,5 +15,8 @@ assert_test_outcome() {
       ;;
     *) return 1 ;;
   esac
-  grep -Fxq -- "test $name ... $marker" "$log" && grep -Fq -- "$summary" "$log"
+  grep -Fxq -- "test $name ... $marker" "$log" && grep -Fq -- "$summary" "$log" || return 1
+  if [[ "$expected" == failed && -n "$failure_contains" ]]; then
+    grep -Fq -- "$failure_contains" "$log" || return 1
+  fi
 }

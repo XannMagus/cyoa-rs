@@ -86,5 +86,68 @@
     "decision": "STREAM-001",
     "package": "cyoa-infrastructure",
     "file": "cyoa-infrastructure/src/backends/process/unix_impl.rs"
+  },
+  {
+    "id": "accept-ineligible-message",
+    "decision": "BACKENDS-001",
+    "package": "cyoa-infrastructure",
+    "target": "codex_backend",
+    "test": "ineligible_message_is_rejected_after_cleanup",
+    "file": "cyoa-infrastructure/src/backends/codex_cli/protocol.rs",
+    "failure_contains": "protocol acceptance regression"
+  },
+  {
+    "id": "accept-missing-terminal",
+    "decision": "BACKENDS-001",
+    "package": "cyoa-infrastructure",
+    "target": "codex_backend",
+    "test": "candidate_without_terminal_is_rejected_after_cleanup",
+    "file": "cyoa-infrastructure/src/backends/codex_cli/protocol.rs",
+    "failure_contains": "protocol acceptance regression"
+  },
+  {
+    "id": "accept-conflicting-terminal",
+    "decision": "BACKENDS-001",
+    "package": "cyoa-infrastructure",
+    "target": "codex_backend",
+    "test": "conflicting_terminal_is_rejected_after_cleanup",
+    "file": "cyoa-infrastructure/src/backends/codex_cli/protocol.rs",
+    "failure_contains": "protocol acceptance regression"
+  },
+  {
+    "id": "adapt-shared-schema",
+    "decision": "ARCH-003",
+    "package": "cyoa-infrastructure",
+    "target": "lib",
+    "test": "generation::schema::tests::shared_turn_schema_keeps_optional_character_updates",
+    "file": "cyoa-infrastructure/src/generation/schema.rs",
+    "failure_contains": "shared schema isolation regression"
+  },
+  {
+    "id": "adapt-peer-schema",
+    "decision": "ARCH-003",
+    "package": "cyoa-infrastructure",
+    "target": "lib",
+    "test": "generation::backend_compat::claude_cli::tests::adapt_schema_strips_the_root_schema_key_and_nothing_else",
+    "file": "cyoa-infrastructure/src/generation/backend_compat/claude_cli.rs",
+    "failure_contains": "adapt_schema must change nothing else"
+  },
+  {
+    "id": "discard-candidate-evidence",
+    "decision": "BACKENDS-001",
+    "package": "cyoa-infrastructure",
+    "target": "codex_backend",
+    "test": "application_receives_complete_candidate_and_diagnostics_on_adapter_timeout",
+    "file": "cyoa-infrastructure/src/backends/codex_cli/adapter.rs",
+    "failure_contains": "candidate evidence regression"
+  },
+  {
+    "id": "discard-diagnostic-evidence",
+    "decision": "BACKENDS-001",
+    "package": "cyoa-infrastructure",
+    "target": "codex_backend",
+    "test": "application_receives_complete_candidate_and_diagnostics_on_adapter_timeout",
+    "file": "cyoa-infrastructure/src/backends/codex_cli/adapter.rs",
+    "failure_contains": "diagnostic evidence regression"
   }
 ]

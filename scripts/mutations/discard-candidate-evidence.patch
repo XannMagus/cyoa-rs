@@ -1,0 +1,13 @@
+--- a/cyoa-infrastructure/src/backends/codex_cli/adapter.rs
++++ b/cyoa-infrastructure/src/backends/codex_cli/adapter.rs
+@@ -169,8 +169,8 @@
+     let diagnostics = error.diagnostics();
+     match error {
+         SupervisorError::Cancelled { .. } => cancelled(raw, diagnostics),
+-        SupervisorError::Timeout { .. } => BackendError::Timeout {
+-            raw_response: raw,
++        SupervisorError::Timeout { .. } => BackendError::Timeout {
++            raw_response: None,
+             diagnostics,
+         },
+         SupervisorError::Spawn(source) => BackendError::Unavailable {

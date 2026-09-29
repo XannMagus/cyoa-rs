@@ -18,6 +18,11 @@ state-preserving retry ([record](../reviews/2026-09-28-codex-step5/README.md)).
 No new authenticated run was made for this offline acceptance slice. The live
 observations and remaining live questions below keep their original scope.
 
+Step 6, 2026-09-28: seven persistent offline mutations now protect protocol
+acceptance, shared/peer schema isolation and failure evidence. The gate retains
+all eleven prior mutations ([record](../reviews/2026-09-28-codex-step6/README.md)).
+This adds no authenticated observations; step 7 remains the full live adapter gate.
+
 ## Confirmed: actual adapter outline smoke, 0.157.1, 2026-09-27
 
 The opt-in `codex_adapter_smoke` example used bundled outline templates and the

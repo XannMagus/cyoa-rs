@@ -387,7 +387,8 @@
           "generation::backend_compat::codex_cli::tests::unsupported_schema_children_report_their_location_and_boolean_constraints_survive",
           "generation::backend_compat::codex_cli::tests::bundled_schemas_match_independent_discovery_expectations",
           "generation::backend_compat::codex_cli::tests::transformation_is_idempotent_and_leaves_schema_looking_annotations_opaque",
-          "generation::backend_compat::codex_cli::tests::framing_matches_the_committed_discovery_capture_byte_for_byte"
+          "generation::backend_compat::codex_cli::tests::framing_matches_the_committed_discovery_capture_byte_for_byte",
+          "generation::schema::tests::shared_turn_schema_keeps_optional_character_updates"
         ]
       },
       {
@@ -458,7 +459,10 @@
           "preparation_failure_and_removed_executable_never_launch_a_generation",
           "no_stdout_failure_and_invalid_protocol_preserve_bytes_with_distinct_categories",
           "application_receives_complete_candidate_and_diagnostics_on_adapter_timeout",
-          "failed_auth_exit_is_unavailable_even_with_a_success_looking_status_on_stdout"
+          "failed_auth_exit_is_unavailable_even_with_a_success_looking_status_on_stdout",
+          "ineligible_message_is_rejected_after_cleanup",
+          "candidate_without_terminal_is_rejected_after_cleanup",
+          "conflicting_terminal_is_rejected_after_cleanup"
         ]
       },
       {

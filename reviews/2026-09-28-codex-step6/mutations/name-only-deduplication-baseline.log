@@ -1,0 +1,50 @@
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.47
+   Compiling serde_core v1.0.229
+   Compiling hashbrown v0.17.1
+   Compiling equivalent v1.0.2
+   Compiling thiserror v2.0.19
+   Compiling zmij v1.0.23
+   Compiling libc v0.2.189
+   Compiling serde v1.0.229
+   Compiling rustix v1.1.5
+   Compiling ref-cast v1.0.27
+   Compiling serde_json v1.0.151
+   Compiling getrandom v0.4.3
+   Compiling linux-raw-sys v0.12.1
+   Compiling cfg-if v1.0.5
+   Compiling itoa v1.0.18
+   Compiling bitflags v2.13.2
+   Compiling memchr v2.8.3
+   Compiling winnow v1.0.4
+   Compiling toml_writer v1.1.2+spec-1.1.0
+   Compiling dyn-clone v1.0.20
+   Compiling once_cell v1.21.4
+   Compiling memo-map v0.3.4
+   Compiling fastrand v2.5.0
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling indexmap v2.14.0
+   Compiling syn v3.0.3
+   Compiling serde_derive_internals v0.30.0
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling serde_spanned v1.1.1
+   Compiling thiserror-impl v2.0.19
+   Compiling serde_derive v1.0.229
+   Compiling ref-cast-impl v1.0.27
+   Compiling toml v1.1.6+spec-1.1.0
+   Compiling schemars_derive v1.2.2
+   Compiling tempfile v3.27.0
+   Compiling cyoa-core v0.1.0 (/tmp/tmp.lXDFZNuTkJ/work/cyoa-core)
+   Compiling cyoa-application v0.1.0 (/tmp/tmp.lXDFZNuTkJ/work/cyoa-application)
+   Compiling minijinja v2.24.0
+   Compiling schemars v1.2.2
+   Compiling cyoa-infrastructure v0.1.0 (/tmp/tmp.lXDFZNuTkJ/work/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.65s
+     Running tests/generation_use_cases.rs (/tmp/tmp.lXDFZNuTkJ/target/debug/deps/generation_use_cases-e6aa0399c5fc1cd7)
+
+running 1 test
+test scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 0.02s
+

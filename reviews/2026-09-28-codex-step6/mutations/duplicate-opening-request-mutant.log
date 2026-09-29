@@ -1,0 +1,23 @@
+   Compiling cyoa-application v0.1.0 (/tmp/tmp.lXDFZNuTkJ/work/cyoa-application)
+   Compiling cyoa-infrastructure v0.1.0 (/tmp/tmp.lXDFZNuTkJ/work/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.68s
+     Running tests/generation_use_cases.rs (/tmp/tmp.lXDFZNuTkJ/target/debug/deps/generation_use_cases-e6aa0399c5fc1cd7)
+
+running 1 test
+test scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls ... FAILED
+
+failures:
+
+---- scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls stdout ----
+
+thread 'scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls' (9469) panicked at cyoa-infrastructure/tests/generation_use_cases.rs:298:10:
+called `Result::unwrap()` on an `Err` value: GenerationFailure { kind: Unavailable, message: "script exhausted: unexpected generation call", raw_response: RawResponse(""), diagnostics: TransportDiagnostics { stdout: CapturedBytes { bytes: [], completeness: Complete }, stderr: CapturedBytes { bytes: [], completeness: Complete } } }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 12 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p cyoa-infrastructure --test generation_use_cases`

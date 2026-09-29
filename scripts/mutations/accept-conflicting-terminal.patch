@@ -1,0 +1,14 @@
+--- a/cyoa-infrastructure/src/backends/codex_cli/protocol.rs
++++ b/cyoa-infrastructure/src/backends/codex_cli/protocol.rs
+@@ -84,7 +84,10 @@
+         result
+     }
+ 
+-    fn advance(&mut self, event: Event) -> Result<(), ProtocolError> {
++    fn advance(&mut self, event: Event) -> Result<(), ProtocolError> {
++        if matches!((&self.state, &event), (State::Completed(_), Event::Failed)) {
++            return Ok(());
++        }
+         let kind = match (&self.state, &event) {
+             (State::Completed(_), Event::Completed(_)) => Some(ErrorKind::DuplicateTerminal),
+             (State::Completed(_), Event::Failed) => Some(ErrorKind::ConflictingTerminal),

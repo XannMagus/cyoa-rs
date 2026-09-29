@@ -1,0 +1,12 @@
+--- a/cyoa-infrastructure/src/backends/codex_cli/protocol.rs
++++ b/cyoa-infrastructure/src/backends/codex_cli/protocol.rs
+@@ -135,7 +135,8 @@
+                 }
+                 Ok(completion)
+             }
+-            State::Failed(failure) => Err(failure),
++            State::Candidate(candidate) => Ok(Completion { candidate, usage: TokenUsage::default() }),
++            State::Failed(failure) => Err(failure),
+             state => Err(Failure {
+                 error: error(self.records + 1, "$", ErrorKind::Incomplete),
+                 candidate: state.into_candidate(),

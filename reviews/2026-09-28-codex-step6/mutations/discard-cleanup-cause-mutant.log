@@ -1,0 +1,31 @@
+   Compiling cyoa-infrastructure v0.1.0 (/tmp/tmp.lXDFZNuTkJ/work/cyoa-infrastructure)
+warning: unused variable: `initial`
+   --> cyoa-infrastructure/src/backends/process/unix_impl.rs:461:17
+    |
+461 |             let initial = if matches!(ending, Ending::Exited) {
+    |                 ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_initial`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `cyoa-infrastructure` (lib test) generated 1 warning (run `cargo fix --lib -p cyoa-infrastructure --tests` to apply 1 suggestion)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.54s
+     Running unittests src/lib.rs (/tmp/tmp.lXDFZNuTkJ/target/debug/deps/cyoa_infrastructure-e3ed95a49fb8bb1c)
+
+running 1 test
+test backends::process::unix_impl::fault_tests::cleanup_failures_preserve_the_initiating_error ... FAILED
+
+failures:
+
+---- backends::process::unix_impl::fault_tests::cleanup_failures_preserve_the_initiating_error stdout ----
+
+thread 'backends::process::unix_impl::fault_tests::cleanup_failures_preserve_the_initiating_error' (19182) panicked at cyoa-infrastructure/src/backends/process/unix_impl.rs:703:26:
+Cleanup { initial: None, failures: [IoFailure { operation: KillGroup, source: Custom { kind: Other, error: "injected syscall failure" } }, IoFailure { operation: Read, source: Custom { kind: TimedOut, error: "capture did not reach EOF within cleanup grace" } }], diagnostics: TransportDiagnostics { stdout: CapturedBytes { bytes: [114, 101, 97, 100, 121, 10], completeness: Prefix }, stderr: CapturedBytes { bytes: [], completeness: Prefix } } }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    backends::process::unix_impl::fault_tests::cleanup_failures_preserve_the_initiating_error
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 62 filtered out; finished in 2.01s
+
+error: test failed, to rerun pass `-p cyoa-infrastructure --lib`

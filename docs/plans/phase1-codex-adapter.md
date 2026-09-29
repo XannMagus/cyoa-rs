@@ -1,6 +1,6 @@
 # Next slice: a Codex CLI adapter with independently verified completion
 
-Status: **steps 1–5 complete (profile, preparation, codec, reconciliation and composed fixture acceptance); steps 6–7 pending**.
+Status: **steps 1–6 complete (profile, preparation, codec, reconciliation, composed fixture acceptance and persistent mutations); step 7 pending**.
 Planning baseline: `8f8d253`, 2026-09-25; step 1 starts from `4ac538d` with no
 subsequent changes and records CLI 0.157.1 on 2026-09-26 in
 [the discovery evidence](../../reviews/2026-09-26-codex-profile/README.md).
@@ -305,6 +305,12 @@ adapters and their acceptance evidence exist. Never mark a whole contract enforc
 because one backend's fixture passes.
 
 ### 6. Make adapter regressions fail the persistent mutation gate
+
+Implemented 2026-09-28: seven adapter mutations join the eleven existing ones.
+Each new mutant must reach its named behavioral assertion; protocol regressions
+check child/workspace cleanup first. Shared and Claude schema isolation and
+candidate/diagnostic retention have separate mutants. See the
+[step-6 record](../../reviews/2026-09-28-codex-step6/README.md).
 
 Keep all eleven current mutations. Add focused mutations for accepting an ineligible
 message, accepting a candidate without terminal completion, treating conflicting

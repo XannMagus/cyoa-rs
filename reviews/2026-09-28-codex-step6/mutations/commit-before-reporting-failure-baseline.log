@@ -1,0 +1,9 @@
+   Compiling cyoa-infrastructure v0.1.0 (/tmp/tmp.lXDFZNuTkJ/work/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.47s
+     Running tests/phase_zero_acceptance.rs (/tmp/tmp.lXDFZNuTkJ/target/debug/deps/phase_zero_acceptance-0b857b39930a4335)
+
+running 1 test
+test full_story_preserves_contracts_through_failure_retry_cancellation_and_rewind ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.02s
+

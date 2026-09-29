@@ -192,6 +192,20 @@ mod tests {
     }
 
     #[test]
+    fn shared_turn_schema_keeps_optional_character_updates() {
+        let schema = story_turn_schema(&Limits::default());
+        let summary = &schema["$defs"]["SummaryUpdate"];
+        assert!(summary["properties"].get("character_updates").is_some());
+        assert!(
+            !summary["required"]
+                .as_array()
+                .unwrap()
+                .contains(&serde_json::json!("character_updates")),
+            "shared schema isolation regression"
+        );
+    }
+
+    #[test]
     fn story_turn_schema_lists_narrative_first() {
         let schema = story_turn_schema(&Limits::default());
         let properties = schema.get("properties").unwrap().as_object().unwrap();

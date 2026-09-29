@@ -1,0 +1,24 @@
+   Compiling cyoa-core v0.1.0 (/tmp/tmp.lXDFZNuTkJ/work/cyoa-core)
+   Compiling cyoa-application v0.1.0 (/tmp/tmp.lXDFZNuTkJ/work/cyoa-application)
+   Compiling cyoa-infrastructure v0.1.0 (/tmp/tmp.lXDFZNuTkJ/work/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.82s
+     Running tests/generation_use_cases.rs (/tmp/tmp.lXDFZNuTkJ/target/debug/deps/generation_use_cases-e6aa0399c5fc1cd7)
+
+running 1 test
+test scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls ... FAILED
+
+failures:
+
+---- scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls stdout ----
+
+thread 'scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls' (8113) panicked at cyoa-infrastructure/tests/generation_use_cases.rs:273:10:
+called `Result::unwrap()` on an `Err` value: GenerationFailure { kind: InvalidResponse, message: "a world needs at least 2 usable playable characters, found 1", raw_response: RawResponse("{\"characters\":[{\"name\":\"Ajax\",\"description\":\"A sailor\",\"backstory\":\"Grew up at sea\"},{\"name\":\"Ajax\",\"description\":\"A mason\",\"backstory\":\"Built the wall\"}],\"npcs\":[{\"name\":\"Ajax\",\"description\":\"A merchant\",\"backstory\":\"Sells sails\",\"relationships\":\"Knows the sailor\"},{\"name\":\"Ajax\",\"description\":\"A merchant\",\"backstory\":\"Sells sails\",\"relationships\":\"Knows the sailor\"},{\"name\":\"Ajax\",\"description\":\"A guard\",\"backstory\":\"Guards the wall\",\"relationships\":\"Knows the mason\"}]}"), diagnostics: TransportDiagnostics { stdout: CapturedBytes { bytes: [], completeness: Complete }, stderr: CapturedBytes { bytes: [], completeness: Complete } } }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 12 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p cyoa-infrastructure --test generation_use_cases`
