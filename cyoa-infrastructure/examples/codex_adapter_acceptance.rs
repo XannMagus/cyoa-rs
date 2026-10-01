@@ -253,7 +253,7 @@ fn run() -> Result<(), Error> {
         GenerationTemplates::bundled()?,
     ));
     let brief = Brief::new(
-        "A quiet harbour where two unrelated lighthouse keepers both named Ajax uncover a missing bell. Both Ajaxes are distinct playable characters with different histories.",
+        "A quiet harbour where a missing bell draws together a cast of 3–5 distinct playable characters. Exactly two members of the entire cast are named Ajax: two unrelated lighthouse keepers with different histories. Both are playable characters, and each has the name exactly Ajax, without a surname, station label or epithet in the name field. They are distinct people, not alternative versions of one person.",
     )?;
     let limits = Limits::default();
     let outline = cases
