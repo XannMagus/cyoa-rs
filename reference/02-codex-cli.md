@@ -25,7 +25,8 @@ That step added no authenticated observations; step 7 below supplies the live ga
 
 ## Confirmed: composed live adapter gate, 0.159.3, 2026-10-02
 
-Step 7 passed using the opt-in `codex_adapter_acceptance` example and actual
+Step 7 and the subsequent exact-two-Ajax brief passed using the opt-in
+`codex_adapter_acceptance` example and actual
 `StoryUseCases -> GenerationEngine -> CodexCliBackend` with bundled requests.
 [Commands, artifacts and limitations](../reviews/2026-10-02-codex-step7/README.md).
 The installed CLI reported 0.159.3 and ChatGPT login; adapter construction checked
@@ -36,8 +37,15 @@ model was selected, and no model identity or cost appeared in the responses.
   validation, committing two turns. Durations: 46.356, 124.380, 81.850 and 82.717
   seconds. Each had exactly one complete agent message followed by turn.completed,
   one exact payload callback, zero stderr bytes, and observed PID/workspace absence
-  after return. This exercises the existing 0.157.1 profile unchanged on 0.159.3;
-  it is not a universal version-compatibility claim.
+  after return. The first run's cast produced distinct characters with decorated Ajax names. The
+  follow-up constrained the cast to exactly two playable name fields equal to
+  `Ajax`; the model returned four playables named `Ajax`, `Ajax`, `Mara Venn`,
+  `Silas Rook`, and zero NPCs named Ajax. Both equal-name playables were distinct
+  characters and the subsequent opening/continuation succeeded after selecting
+  one playable. Both Ajaxes were not present together in the story summary.
+  This exercises
+  the existing 0.157.1 profile unchanged on 0.159.3; it is not a universal
+  version-compatibility claim. Full follow-up evidence is in the linked review.
 - The next turn was deliberately cancelled one second after observing its real
   schema-bearing child. Cancellation returned in approximately 10 ms, with zero
   payload/prose emissions, direct child PID absent, request directory absent, and
@@ -45,10 +53,13 @@ model was selected, and no model identity or cost appeared in the responses.
   raw cancellation exit code was available; do not invent them. This does not
   prove termination of remote server work or all possible descendants.
 - Opening and continuation updated existing protagonist/Nessa IDs, with three
-  action kinds and durable blank delta fields. The cast generated decorated Ajax
-  alternatives, not exact equal-name records. Exact namesake collisions, changed
-  limits, null/empty upcoming events and a later chapter break were not exercised
-  live by this sequence; their fixture evidence remains separate.
+  action kinds and durable blank delta fields. The cast generated four distinct
+  playable characters with decorated Ajax names, not exact equal-name records.
+  The brief did not restrict the total to exactly two Ajaxes. Changed limits,
+  null/empty upcoming events, a later chapter break and independent updates to
+  same-name characters sharing a summary were not exercised live; their fixture
+  evidence remains separate. The follow-up establishes the exact-name/two-Ajax
+  cast scenario.
 - The first sandboxed attempt failed during app-server initialization with empty
   stdout and a read-only-filesystem error. The approved unsandboxed rerun is a
   separately retained diagnostic attempt, not an adapter retry.

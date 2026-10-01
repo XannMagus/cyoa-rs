@@ -1,0 +1,20 @@
+{
+  "outcome": "accepted",
+  "elapsed_ms": 127834,
+  "requested_model": null,
+  "observed_provenance": "GenerationProvenance { provider: None, model: None, cost: None }",
+  "input_tokens": 15549,
+  "cached_input_tokens": 0,
+  "output_tokens": 2536,
+  "emissions": 1,
+  "exact_single_emission": true,
+  "cleanup": {
+    "pid": 332656,
+    "workspace": "/tmp/cyoa-request-IOEpWC",
+    "pid_absent": true,
+    "workspace_absent": true
+  },
+  "controlled_cancel": false,
+  "cancel_to_return_ms": null,
+  "exit_evidence": "Accepted implies zero exit and reap through production supervisor; cancellation has no public exit-code field. Raw terminal is in stdout.jsonl."
+}

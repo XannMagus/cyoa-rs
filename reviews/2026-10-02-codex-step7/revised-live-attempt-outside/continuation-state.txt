@@ -1,0 +1,981 @@
+GameState {
+    brief: Brief(
+        "A quiet harbour where a missing bell draws together a cast of 3–5 distinct playable characters. Exactly two members of the entire cast are named Ajax: two unrelated lighthouse keepers with different histories. Both are playable characters, and each has the name exactly Ajax, without a surname, station label or epithet in the name field. They are distinct people, not alternative versions of one person.",
+    ),
+    world: SelectedWorld {
+        world: World {
+            outline: WorldOutline {
+                title: WorldTitle(
+                    "The Harbour Without Its Bell",
+                ),
+                description: WorldDescription(
+                    "Greyhaven lies inside a crescent of slate cliffs, where narrow houses lean over tidal stairs and fishing boats sleep beneath patched canvas. The harbour is quiet by custom: engines stop at the breakwater, market stalls close at dusk, and departures wait for the sounding of the bronze harbour bell. *On windless nights, even a dropped mooring chain can be heard across the water.*\n\nNow **the bell is missing**. Its tower remains locked, its mounting bolts are intact, and the bronze has left no scrape upon the stone. Since its disappearance, the tide has arrived seven minutes earlier each day. Boats return with wet ropes tied in unfamiliar knots. At low water, a paved road emerges beyond the breakwater—a road absent from every harbour chart.\n\nTwo lighthouses guard Greyhaven. The eastern light stands on solid cliff above the salt gardens; the western light occupies a reef reached only by a causeway at low tide. Their archives record different foundations, different disasters, and different traditions of service. Together, their beams mark the safe channel, but lately each illuminates structures that cannot be seen beneath the other: drowned warehouses, an additional pier, a bell tower standing far out at sea.\n\nThe **Harbour Trust** controls the docks and insists that ordinary theft explains the disappearance. Its authority depends upon keeping trade moving, and its survey crews have begun dismantling exposed sections of the mysterious road. The **Sounding Society**, custodians of charts and tide records, demands a closure of the harbour until the old measurements can be understood. Beneath both institutions operates the **Low-Water Exchange**, an illicit market held in abandoned salt cellars. It trades in salvage, concealed shipping records, and objects recovered from places that should still be underwater.\n\nGreyhaven's oldest harbour covenant offers a disturbing explanation. The bell was cast from bronze surrendered by every vessel seeking permanent shelter here. Its daily sounding renewed an agreement with the submerged foundations beneath the bay: safe anchorage in exchange for leaving the drowned district undisturbed. **Recovering the bell may restore that agreement—or reveal what the harbour has been required to conceal.** Sound carries strangely across the exposed road, and every attempt to reproduce the bell's note draws water uphill through the drains.\n\nThe adventure supports **three to five distinct playable characters**, created separately. Exactly two members of the entire cast are unrelated lighthouse keepers with different histories; both are playable, and each has the name field exactly **Ajax**, without a surname, station label, or epithet. The two lighthouse archives provide separate historical grounding for them. No additional cast member bears that name.\n\nExploration follows the tides: cellar doors become accessible, the western causeway disappears, and the drowned road lengthens with each passing day. Evidence can be preserved, sold, suppressed, or shared, changing which factions will grant access to their holdings. The central choice is whether to return the bell to its tower, carry it to the submerged district, or break the covenant entirely. *The harbour still looks peaceful. Its boats are beginning to settle toward something moving beneath them.*",
+                ),
+            },
+            cast: WorldCast {
+                playable: [
+                    PlayerCharacter {
+                        name: CharacterName(
+                            "Ajax",
+                        ),
+                        description: CharacterDescription(
+                            "**Ajax is a 58-year-old man** with brown skin, a broad, stooped frame, close-cropped silver hair, and deep-set hazel eyes. A pale burn scar crosses his left cheek, and two fingers on his right hand are shortened. He typically wears heavy wool workwear, weatherproof coats, and sturdy leather boots.\n\n*He turns his head toward distant sounds before anyone else notices them.*",
+                        ),
+                        backstory: Backstory(
+                            "Keeper of the **eastern lighthouse**, Ajax inherited his post from a mentor rather than a relative. Its archives describe the lighthouse as a refuge built after a deliberate flooding, with keepers charged to remember those denied shelter. He once dismissed these accounts as ceremonial language; now his beam reveals windows containing familiar silhouettes.\n\nHe wants to recover the bell, but will return it only if the covenant can be renewed without concealing the drowned district's history. *Safety bought with silence has begun to feel like another kind of wreck.*",
+                        ),
+                    },
+                    PlayerCharacter {
+                        name: CharacterName(
+                            "Ajax",
+                        ),
+                        description: CharacterDescription(
+                            "**Ajax is a 31-year-old woman** with pale, freckled skin, a lean build, angular features, and grey eyes. Her copper hair is cropped unevenly around her ears, and a small crescent scar interrupts one eyebrow. She usually wears practical knitted layers, waterproof trousers, and canvas work jackets with roomy pockets.\n\n*Her restless hands become perfectly still when she reads a tide gauge.*",
+                        ),
+                        backstory: Backstory(
+                            "Keeper of the **western lighthouse**, Ajax arrived in Greyhaven as an apprentice instrument maker and earned her appointment by repairing the reef light through a winter siege of storms. She is unrelated to the eastern keeper. Her station's archives claim its foundations predate the harbour and describe the covenant as an occupation of an inhabited seabed, rather than protection from an empty ruin.\n\nShe suspects the bell belongs below the water and wants to carry it down the emerging road. Yet several pages supporting that conclusion bear corrections in her own handwriting—written decades before her birth. *She needs to know whether she is discovering a duty or being taught to obey one.*",
+                        ),
+                    },
+                    PlayerCharacter {
+                        name: CharacterName(
+                            "Mara Venn",
+                        ),
+                        description: CharacterDescription(
+                            "**Mara is a 42-year-old woman** with dark brown skin, a compact, muscular build, and black hair worn in short twists. Her left ear has a torn upper rim, and fine salt scars mark her forearms. She typically wears durable dockworkers' clothes, sleeveless knitted layers, and reinforced boots, keeping her hands free of jewellery.\n\n*She stands as though a deck might shift beneath her at any moment.*",
+                        ),
+                        backstory: Backstory(
+                            "A salvage skipper whose boat supports three households, Mara contributed inherited bronze to the harbour bell when she purchased permanent anchorage. Since its disappearance, her vessel has returned twice with unfamiliar knots and cargo she never loaded: household objects bearing the names of living townspeople.\n\nShe favours **restoring the bell quickly**, because a closed harbour will ruin families before scholars settle the truth. But finding her late mother's handwriting inside a waterlogged sewing box has made her willing to investigate what restoration might cost.",
+                        ),
+                    },
+                    PlayerCharacter {
+                        name: CharacterName(
+                            "Silas Rook",
+                        ),
+                        description: CharacterDescription(
+                            "**Silas is a 26-year-old man** with olive skin, a tall, narrow frame, dark curls, and watchful brown eyes behind round spectacles. His right leg is supported by a fitted metal brace, and ink stains settle into the creases of his fingers. He typically wears repaired clerks' clothing, soft wool coats, and shoes adapted for uneven stone steps.\n\n*He studies doorways before faces, calculating where he can safely stand.*",
+                        ),
+                        backstory: Backstory(
+                            "Silas copied shipping ledgers for the Harbour Trust until he discovered entire crews recorded as bronze contributions rather than people. Dismissed after preserving a duplicate ledger, he now earns money authenticating records for the Low-Water Exchange.\n\nHe wants to **break the covenant** and expose the bargain that sustains Greyhaven. His certainty falters when the advancing water follows routes marked in his stolen ledger: destroying the agreement could free the submerged district while leaving today's harbour without protection.",
+                        ),
+                    },
+                ],
+                npcs: [
+                    NonPlayerCharacter {
+                        name: CharacterName(
+                            "Edda Vale",
+                        ),
+                        description: CharacterDescription(
+                            "**Edda is a 63-year-old woman** with light brown skin, a tall, spare figure, silver hair braided close to her scalp, and sharp black eyes. A slight tremor affects her left hand. She usually wears formal wool clothing suitable for municipal business, restrained brass jewellery, and polished walking boots.\n\n*Even beside a rising tide, she appears to be waiting for someone else to lose composure.*",
+                        ),
+                        backstory: Backstory(
+                            "Chair of the **Harbour Trust**, Edda rose from freight tallying after keeping food shipments moving through a disastrous winter. She believes that public confidence is a practical necessity, and has ordered crews to dismantle the road before it attracts crowds or interrupts docking.\n\nShe possesses an older covenant transcript whose final clause has been cut away. She conceals the damage because she cannot establish whether it records a crime or a safeguard.",
+                        ),
+                        relationships: Some(
+                            Relationships(
+                                "Edda employs surveyor Tomas Pell and clashes publicly with Sounding Society archivist Neris Quill. She relies on Mara's shipping experience, considers Silas a dangerous former employee, and regards both lighthouse keepers as essential witnesses whose contradictory records threaten her position.\n\n**Any protagonist can gain her cooperation** by securing supplies or presenting evidence she can independently verify.",
+                            ),
+                        ),
+                    },
+                    NonPlayerCharacter {
+                        name: CharacterName(
+                            "Neris Quill",
+                        ),
+                        description: CharacterDescription(
+                            "**Neris is a 47-year-old nonbinary person** with pale skin, a rounded build, shoulder-length black hair streaked with white, and dark eyes magnified by thick spectacles. Their lips are often chapped, and a faint blue tattoo circles one wrist. They typically wear layered linen and wool clothing with protective sleeves and numerous small pockets.\n\n*They listen to dripping water with the concentration others reserve for speech.*",
+                        ),
+                        backstory: Backstory(
+                            "The Sounding Society's chief tide archivist, Neris spent twenty years reconciling incompatible measurements without discarding either lighthouse's records. Their predecessor vanished after declaring that the harbour's charts measured permitted geography rather than actual geography.\n\nNeris demands **an immediate harbour closure**. They hope to recover their predecessor's field notes, but privately fear those notes will show that the Society helped erase the drowned district.",
+                        ),
+                        relationships: Some(
+                            Relationships(
+                                "Neris disputes Edda's assurances and buys concealed records from exchange broker Oona Brine. They respect the eastern Ajax's knowledge of testimony and the western Ajax's precision with instruments, refusing to merge their archives into one account.\n\nThey offer any protagonist access to protected charts in exchange for **preserving the provenance of recovered evidence**.",
+                            ),
+                        ),
+                    },
+                    NonPlayerCharacter {
+                        name: CharacterName(
+                            "Oona Brine",
+                        ),
+                        description: CharacterDescription(
+                            "**Oona is a 55-year-old woman** with warm brown skin, a broad face, a sturdy build, and long black hair threaded with grey. One eye is clouded; the other is a vivid amber brown. She typically wears loose, practical clothing in muted colours, heavy aprons, and rings fashioned from mismatched metals.\n\n*She smells faintly of salt, candle wax, and dried orange peel.*",
+                        ),
+                        backstory: Backstory(
+                            "Oona founded the **Low-Water Exchange** after licensed salvage buyers refused to purchase objects from a cellar absent from their maps. She keeps careful records of every transaction, including goods surrendered as payment by customers who later insist they never visited.\n\nShe wants the emerging district kept accessible long enough to retrieve her husband's last cargo manifest. She will sell useful evidence, but refuses to trade any object that speaks its owner's name.",
+                        ),
+                        relationships: Some(
+                            Relationships(
+                                "Oona authenticates goods with Silas, sells charts to Neris, and shelters workers dismissed by Edda. Mara distrusts her prices but trusts her judgement about dangerous salvage.\n\nShe welcomes any protagonist who honours a bargain; **betraying a seller's identity** closes doors throughout the Exchange.",
+                            ),
+                        ),
+                    },
+                    NonPlayerCharacter {
+                        name: CharacterName(
+                            "Tomas Pell",
+                        ),
+                        description: CharacterDescription(
+                            "**Tomas is a 36-year-old man** with fair skin, a heavyset build, sandy hair thinning at the temples, and pale blue eyes. His nose healed crookedly after an old accident, and stone dust collects in his short beard. He generally wears surveyors' work clothes, waxed outer layers, and thick-soled boots.\n\n*He keeps checking that the ground beneath his feet has remained where he measured it.*",
+                        ),
+                        backstory: Backstory(
+                            "A Harbour Trust surveyor, Tomas accepted road-demolition work to pay for his father's care. His measurements now show that each removed paving stone corresponds to a new crack in an inhabited house above the docks.\n\nHe has secretly stopped his crew at the next marked section. **He needs proof of the connection** before refusing Edda's orders, because a dismissal would cost both his wages and his family's Trust-owned home.",
+                        ),
+                        relationships: Some(
+                            Relationships(
+                                "Tomas answers to Edda and has quietly sent measurements to Neris. Oona offers him money for road fragments, an offer he has resisted. He can guide any protagonist through restricted worksites if they help protect his crew and preserve his findings.\n\n*He wants someone to tell him stopping is enough; he suspects it is already too late.*",
+                            ),
+                        ),
+                    },
+                    NonPlayerCharacter {
+                        name: CharacterName(
+                            "Lio Fen",
+                        ),
+                        description: CharacterDescription(
+                            "**Lio is a 19-year-old man** with deep brown skin, a slight build, tightly curled hair, and large, alert eyes. A white streak runs through his hair above the right temple, and his fingertips are rough from ropework. He typically wears patched fishermen's clothing, oversized knitted layers, and flexible boots suited to wet stairs.\n\n*He speaks quietly, but his laughter carries an unsettling distance over water.*",
+                        ),
+                        backstory: Backstory(
+                            "A net mender supporting his grandmother, Lio was the last person known to hear the harbour bell. He heard it after dusk, hours after its supposed disappearance, sounding beneath the tidal stairs rather than from the tower.\n\nSince then, he has begun tying the unfamiliar knots found on returning boats while asleep. He wants the bell recovered before his hands finish a rope ladder whose length increases every night.",
+                        ),
+                        relationships: Some(
+                            Relationships(
+                                "Mara sometimes hires Lio, and Oona lets his family use a dry corner of the salt cellars. Neris treats his recollections as evidence; Edda fears his account will spread panic.\n\nHe can help any protagonist recognize the strange knots and locate submerged entrances, but **will withdraw if treated as bait**.",
+                            ),
+                        ),
+                    },
+                    NonPlayerCharacter {
+                        name: CharacterName(
+                            "Sere Dallow",
+                        ),
+                        description: CharacterDescription(
+                            "**Sere appears to be a woman in her early seventies**, with grey-brown skin, a narrow frame, long white hair, and green eyes filmed with a pearly sheen. Fine parallel indentations circle her neck, and her bare hands are always wet. She wears old-fashioned, practical coastal clothing made from heavy fabrics, without badges or ornament.\n\n*Water drips from her hems even on dry stone.*",
+                        ),
+                        backstory: Backstory(
+                            "Sere keeps a small dwelling on the drowned road and claims she was appointed to receive the bell when Greyhaven's first covenant ended. Both lighthouse archives mention her, but disagree about whether she was a negotiator, a casualty, or a warning added later.\n\nShe wants the bell carried to the submerged district so its residents can speak through it. She admits that doing so will change the harbour, but refuses to promise whose houses will remain above water.",
+                        ),
+                        relationships: Some(
+                            Relationships(
+                                "Sere recognizes the obligations recorded in both lighthouse archives while challenging each keeper's interpretation. She once supplied Oona with a manifest and knows the missing clause in Edda's transcript.\n\n**Every protagonist encounters her as the road lengthens**. She offers passage and testimony in exchange for hearing the drowned residents' terms before deciding their fate.",
+                            ),
+                        ),
+                    },
+                ],
+            },
+        },
+        position: PlayablePosition(
+            0,
+        ),
+    },
+    style: StoryStyle {
+        art_style: None,
+        pace: None,
+        tone: None,
+        narration: None,
+    },
+    turns: [
+        TurnRecord {
+            input: None,
+            turn: StoryTurn {
+                narrative: Narrative(
+                    "The sound reaches you through the soles of your boots.\n\nYou stop halfway up the eastern lighthouse stairs, one hand against the cold inner wall. Above you, the turning mechanism ticks through its accustomed interval. Below, the entrance door shifts in its frame under a draught. Neither accounts for the faint vibration in the stone: three slow strokes, too deep to hear properly, each followed by a silence that seems to press against your teeth.\n\n*Something beneath the cliff is keeping time.*\n\nYou climb the remaining steps. Your knees complain at the last turn, where the stairs narrow, and your shortened fingers slip once on the iron rail. In the lantern room, warm oil and scorched dust mingle with the salt air coming through the ventilation grille. Beyond the glass, Greyhaven’s roofs lie blue in the hour before dawn. The empty bell tower stands above them, its open arches holding nothing but the paling sky.\n\nThe beam passes over the bay.\n\nA row of windows appears beyond the breakwater.\n\nYou catch the railing. There are six windows, low and square, with washing strung between the middle pair. A pale sleeve lifts without wind. Behind the nearest pane stands a figure with one shoulder higher than the other—the posture your mentor carried for the last twelve years of his life.\n\nThen the lantern turns, and there is only water.\n\nYou keep your hand on the railing until the pressure hurts.\n\nFrom the stairwell comes a voice. “Ajax?”\n\nLio Fen stands three steps below the landing, holding a coil of rope against his patched sweater. His white streak of hair is bright in the lamplight; the rest is plastered to his forehead. He has climbed quickly, but he does not seem out of breath. He seems to be listening for someone climbing after him.\n\n“The door was on the latch,” he says. “I knocked. You didn’t answer.”\n\n“You’re wet.”\n\n“Only from the knees down.” He looks at his trousers as though this distinction matters. “I didn’t go into the water.”\n\nYou open the cupboard beneath the workbench and give him a towel. He accepts it with the hand not carrying the rope, wipes his face once, then forgets it.\n\n“I heard it again,” he says.\n\n“The bell?”\n\nHe nods. “Under the fish-market stairs. I thought if I came here, you could tell me whether your light had seen anything.”\n\nThe mechanism ticks. You turn toward the glass before he does.\n\nThis time, the windows are dark. Beneath them a strip of paving shows through the black water, its pale joints forming a straight line toward shore. You know the harbour bottom there. You have watched boats ground on its mud for thirty years.\n\n“There,” Lio whispers.\n\nHis rope shifts against his chest.\n\nYou look down. A loop has tightened around his wrist, though his fingers are open. He notices your gaze and pulls at it with a small, frightened impatience.\n\n“I cut this off the ladder at home,” he says. “Before coming. I wanted somebody to see the knots before I forgot making them.”\n\n“Put it on the bench.”\n\n“I’m trying.”\n\nYou support the coil while he works his wrist free. The rope is cold enough to ache against your palms. Its knots are intricate, folded inward around empty spaces, and from somewhere inside one of those spaces comes a thin trickle of water.\n\nLio backs away. “It was dry when I left.”\n\nThe beam reaches the shoreward end of the paving. For a moment, you see a narrow door set into the cliff below the lighthouse, where no door belongs. Water touches its threshold. Above it, cut into the lintel, is the same branching mark stamped on the oldest volume in your archive.\n\n**Three knocks rise through the stone beneath you.**\n\nLio grips the towel in both hands. “Please,” he says. “Before you go down there, tell me what that mark means.”",
+                ),
+                quick_actions: QuickActions(
+                    [
+                        QuickAction {
+                            text: QuickActionText(
+                                "Secure the rope and check the tide before descending",
+                            ),
+                            kind: Cautious,
+                        },
+                        QuickAction {
+                            text: QuickActionText(
+                                "Go down to the door beneath the lighthouse",
+                            ),
+                            kind: Bold,
+                        },
+                        QuickAction {
+                            text: QuickActionText(
+                                "Show Lio the marked archive volume",
+                            ),
+                            kind: Social,
+                        },
+                    ],
+                ),
+                scene_description: Some(
+                    SceneDescription(
+                        "*A circular lighthouse lantern room before dawn, with curved glass panes, brass lamp machinery, an iron railing, a wooden workbench and a narrow stone stairwell. A broad, stooped brown-skinned man of 58 wears heavy wool work clothes and sturdy leather boots; he has close-cropped silver hair, deep-set hazel eyes, a pale burn scar across his left cheek and two shortened fingers on his right hand. He stands tensely beside a cold, wet coil of intricately knotted rope on the bench. Nearby, a slight 19-year-old man with deep brown skin, tightly curled hair with a white streak above his right temple, patched fishermen’s clothing and damp trouser legs clutches a towel in fear. Beyond the glass are slate cliffs, a quiet harbour, an empty bell tower and faint submerged paving in dark water. Warm lamplight contrasts with blue dawn.*",
+                    ),
+                ),
+                summary_update: SummaryUpdate {
+                    world: None,
+                    current_situation: Some(
+                        CurrentSituation(
+                            "Ajax and Lio are in the eastern lighthouse lantern room before dawn. Lio's strange rope is leaking water on the workbench. The beam has revealed a door beneath the lighthouse bearing the mark from Ajax's oldest archive volume, and three knocks have risen through the stone. Lio asks what the mark means.",
+                        ),
+                    ),
+                    character_updates: [
+                        CharacterDelta {
+                            id: Some(
+                                CharacterId(
+                                    "protagonist",
+                                ),
+                            ),
+                            name: None,
+                            description: None,
+                            backstory: None,
+                            relationships: None,
+                            current_state: Some(
+                                CharacterSituation(
+                                    "In the eastern lighthouse lantern room before dawn, physically unharmed but shaken by a silhouette resembling his deceased mentor. Has helped Lio free himself from a rope loop and seen an unknown door beneath the lighthouse marked like his oldest archive volume. Must decide how to respond to the knocks and Lio's question.",
+                                ),
+                            ),
+                        },
+                        CharacterDelta {
+                            id: Some(
+                                CharacterId(
+                                    "lio-fen",
+                                ),
+                            ),
+                            name: None,
+                            description: None,
+                            backstory: None,
+                            relationships: None,
+                            current_state: Some(
+                                CharacterSituation(
+                                    "In the eastern lighthouse lantern room with Ajax, frightened and wet from the knees down, holding a towel. Brought a rope section cut from his growing ladder after hearing the bell again beneath the fish-market stairs; the rope tightened around his wrist and began leaking water. His wrist is now free, and he asks Ajax to explain the mark above the newly visible door.",
+                                ),
+                            ),
+                        },
+                    ],
+                    new_major_events: EventList {
+                        events: [
+                            EventText(
+                                "Ajax's beam reveals drowned windows containing a silhouette resembling his deceased mentor.",
+                            ),
+                            EventText(
+                                "Lio brings a section of his strange ladder to Ajax after hearing the bell again beneath the fish-market stairs; the rope tightens by itself and leaks water.",
+                            ),
+                            EventText(
+                                "A door beneath the eastern lighthouse appears in its beam, bearing the mark of Ajax's oldest archive volume; three knocks rise through the stone.",
+                            ),
+                        ],
+                    },
+                    consolidated_major_events: EventList {
+                        events: [],
+                    },
+                    upcoming_events: Replace(
+                        EventList {
+                            events: [
+                                EventText(
+                                    "Investigate the door beneath the eastern lighthouse and its connection to the oldest archive volume.",
+                                ),
+                                EventText(
+                                    "Determine why Lio's ladder rope moves by itself and leaks water.",
+                                ),
+                                EventText(
+                                    "Investigate the bell sounds beneath the fish-market stairs and the familiar silhouette in the drowned windows.",
+                                ),
+                            ],
+                        },
+                    ),
+                },
+                chapter: NewChapter {
+                    title: Some(
+                        ChapterTitle(
+                            "Three Knocks Beneath the Light",
+                        ),
+                    ),
+                },
+            },
+            raw_response: RawResponse(
+                "{\"narrative\":\"The sound reaches you through the soles of your boots.\\n\\nYou stop halfway up the eastern lighthouse stairs, one hand against the cold inner wall. Above you, the turning mechanism ticks through its accustomed interval. Below, the entrance door shifts in its frame under a draught. Neither accounts for the faint vibration in the stone: three slow strokes, too deep to hear properly, each followed by a silence that seems to press against your teeth.\\n\\n*Something beneath the cliff is keeping time.*\\n\\nYou climb the remaining steps. Your knees complain at the last turn, where the stairs narrow, and your shortened fingers slip once on the iron rail. In the lantern room, warm oil and scorched dust mingle with the salt air coming through the ventilation grille. Beyond the glass, Greyhaven’s roofs lie blue in the hour before dawn. The empty bell tower stands above them, its open arches holding nothing but the paling sky.\\n\\nThe beam passes over the bay.\\n\\nA row of windows appears beyond the breakwater.\\n\\nYou catch the railing. There are six windows, low and square, with washing strung between the middle pair. A pale sleeve lifts without wind. Behind the nearest pane stands a figure with one shoulder higher than the other—the posture your mentor carried for the last twelve years of his life.\\n\\nThen the lantern turns, and there is only water.\\n\\nYou keep your hand on the railing until the pressure hurts.\\n\\nFrom the stairwell comes a voice. “Ajax?”\\n\\nLio Fen stands three steps below the landing, holding a coil of rope against his patched sweater. His white streak of hair is bright in the lamplight; the rest is plastered to his forehead. He has climbed quickly, but he does not seem out of breath. He seems to be listening for someone climbing after him.\\n\\n“The door was on the latch,” he says. “I knocked. You didn’t answer.”\\n\\n“You’re wet.”\\n\\n“Only from the knees down.” He looks at his trousers as though this distinction matters. “I didn’t go into the water.”\\n\\nYou open the cupboard beneath the workbench and give him a towel. He accepts it with the hand not carrying the rope, wipes his face once, then forgets it.\\n\\n“I heard it again,” he says.\\n\\n“The bell?”\\n\\nHe nods. “Under the fish-market stairs. I thought if I came here, you could tell me whether your light had seen anything.”\\n\\nThe mechanism ticks. You turn toward the glass before he does.\\n\\nThis time, the windows are dark. Beneath them a strip of paving shows through the black water, its pale joints forming a straight line toward shore. You know the harbour bottom there. You have watched boats ground on its mud for thirty years.\\n\\n“There,” Lio whispers.\\n\\nHis rope shifts against his chest.\\n\\nYou look down. A loop has tightened around his wrist, though his fingers are open. He notices your gaze and pulls at it with a small, frightened impatience.\\n\\n“I cut this off the ladder at home,” he says. “Before coming. I wanted somebody to see the knots before I forgot making them.”\\n\\n“Put it on the bench.”\\n\\n“I’m trying.”\\n\\nYou support the coil while he works his wrist free. The rope is cold enough to ache against your palms. Its knots are intricate, folded inward around empty spaces, and from somewhere inside one of those spaces comes a thin trickle of water.\\n\\nLio backs away. “It was dry when I left.”\\n\\nThe beam reaches the shoreward end of the paving. For a moment, you see a narrow door set into the cliff below the lighthouse, where no door belongs. Water touches its threshold. Above it, cut into the lintel, is the same branching mark stamped on the oldest volume in your archive.\\n\\n**Three knocks rise through the stone beneath you.**\\n\\nLio grips the towel in both hands. “Please,” he says. “Before you go down there, tell me what that mark means.”\",\"quick_actions\":[{\"text\":\"Secure the rope and check the tide before descending\",\"kind\":\"cautious\"},{\"text\":\"Go down to the door beneath the lighthouse\",\"kind\":\"bold\"},{\"text\":\"Show Lio the marked archive volume\",\"kind\":\"social\"}],\"scene_description\":\"*A circular lighthouse lantern room before dawn, with curved glass panes, brass lamp machinery, an iron railing, a wooden workbench and a narrow stone stairwell. A broad, stooped brown-skinned man of 58 wears heavy wool work clothes and sturdy leather boots; he has close-cropped silver hair, deep-set hazel eyes, a pale burn scar across his left cheek and two shortened fingers on his right hand. He stands tensely beside a cold, wet coil of intricately knotted rope on the bench. Nearby, a slight 19-year-old man with deep brown skin, tightly curled hair with a white streak above his right temple, patched fishermen’s clothing and damp trouser legs clutches a towel in fear. Beyond the glass are slate cliffs, a quiet harbour, an empty bell tower and faint submerged paving in dark water. Warm lamplight contrasts with blue dawn.*\",\"summary_update\":{\"current_situation\":\"Ajax and Lio are in the eastern lighthouse lantern room before dawn. Lio's strange rope is leaking water on the workbench. The beam has revealed a door beneath the lighthouse bearing the mark from Ajax's oldest archive volume, and three knocks have risen through the stone. Lio asks what the mark means.\",\"character_updates\":[{\"id\":\"protagonist\",\"current_state\":\"In the eastern lighthouse lantern room before dawn, physically unharmed but shaken by a silhouette resembling his deceased mentor. Has helped Lio free himself from a rope loop and seen an unknown door beneath the lighthouse marked like his oldest archive volume. Must decide how to respond to the knocks and Lio's question.\",\"name\":\"\",\"description\":\"\",\"backstory\":\"\",\"relationships\":\"\"},{\"id\":\"lio-fen\",\"current_state\":\"In the eastern lighthouse lantern room with Ajax, frightened and wet from the knees down, holding a towel. Brought a rope section cut from his growing ladder after hearing the bell again beneath the fish-market stairs; the rope tightened around his wrist and began leaking water. His wrist is now free, and he asks Ajax to explain the mark above the newly visible door.\",\"name\":\"\",\"description\":\"\",\"backstory\":\"\",\"relationships\":\"\"}],\"new_major_events\":[\"Ajax's beam reveals drowned windows containing a silhouette resembling his deceased mentor.\",\"Lio brings a section of his strange ladder to Ajax after hearing the bell again beneath the fish-market stairs; the rope tightens by itself and leaks water.\",\"A door beneath the eastern lighthouse appears in its beam, bearing the mark of Ajax's oldest archive volume; three knocks rise through the stone.\"],\"upcoming_events\":[\"Investigate the door beneath the eastern lighthouse and its connection to the oldest archive volume.\",\"Determine why Lio's ladder rope moves by itself and leaks water.\",\"Investigate the bell sounds beneath the fish-market stairs and the familiar silhouette in the drowned windows.\"],\"world\":\"\",\"consolidated_major_events\":[]},\"starts_new_chapter\":true,\"chapter_title\":\"Three Knocks Beneath the Light\"}",
+            ),
+            summary: StorySummary {
+                world: WorldDescription(
+                    "Greyhaven lies inside a crescent of slate cliffs, where narrow houses lean over tidal stairs and fishing boats sleep beneath patched canvas. The harbour is quiet by custom: engines stop at the breakwater, market stalls close at dusk, and departures wait for the sounding of the bronze harbour bell. *On windless nights, even a dropped mooring chain can be heard across the water.*\n\nNow **the bell is missing**. Its tower remains locked, its mounting bolts are intact, and the bronze has left no scrape upon the stone. Since its disappearance, the tide has arrived seven minutes earlier each day. Boats return with wet ropes tied in unfamiliar knots. At low water, a paved road emerges beyond the breakwater—a road absent from every harbour chart.\n\nTwo lighthouses guard Greyhaven. The eastern light stands on solid cliff above the salt gardens; the western light occupies a reef reached only by a causeway at low tide. Their archives record different foundations, different disasters, and different traditions of service. Together, their beams mark the safe channel, but lately each illuminates structures that cannot be seen beneath the other: drowned warehouses, an additional pier, a bell tower standing far out at sea.\n\nThe **Harbour Trust** controls the docks and insists that ordinary theft explains the disappearance. Its authority depends upon keeping trade moving, and its survey crews have begun dismantling exposed sections of the mysterious road. The **Sounding Society**, custodians of charts and tide records, demands a closure of the harbour until the old measurements can be understood. Beneath both institutions operates the **Low-Water Exchange**, an illicit market held in abandoned salt cellars. It trades in salvage, concealed shipping records, and objects recovered from places that should still be underwater.\n\nGreyhaven's oldest harbour covenant offers a disturbing explanation. The bell was cast from bronze surrendered by every vessel seeking permanent shelter here. Its daily sounding renewed an agreement with the submerged foundations beneath the bay: safe anchorage in exchange for leaving the drowned district undisturbed. **Recovering the bell may restore that agreement—or reveal what the harbour has been required to conceal.** Sound carries strangely across the exposed road, and every attempt to reproduce the bell's note draws water uphill through the drains.\n\nThe adventure supports **three to five distinct playable characters**, created separately. Exactly two members of the entire cast are unrelated lighthouse keepers with different histories; both are playable, and each has the name field exactly **Ajax**, without a surname, station label, or epithet. The two lighthouse archives provide separate historical grounding for them. No additional cast member bears that name.\n\nExploration follows the tides: cellar doors become accessible, the western causeway disappears, and the drowned road lengthens with each passing day. Evidence can be preserved, sold, suppressed, or shared, changing which factions will grant access to their holdings. The central choice is whether to return the bell to its tower, carry it to the submerged district, or break the covenant entirely. *The harbour still looks peaceful. Its boats are beginning to settle toward something moving beneath them.*",
+                ),
+                current_situation: CurrentSituation(
+                    "Ajax and Lio are in the eastern lighthouse lantern room before dawn. Lio's strange rope is leaking water on the workbench. The beam has revealed a door beneath the lighthouse bearing the mark from Ajax's oldest archive volume, and three knocks have risen through the stone. Lio asks what the mark means.",
+                ),
+                characters: CharacterCast {
+                    characters: {
+                        CharacterId(
+                            "protagonist",
+                        ): Character {
+                            id: CharacterId(
+                                "protagonist",
+                            ),
+                            name: CharacterName(
+                                "Ajax",
+                            ),
+                            details: CharacterDetails {
+                                description: Some(
+                                    CharacterDescription(
+                                        "**Ajax is a 58-year-old man** with brown skin, a broad, stooped frame, close-cropped silver hair, and deep-set hazel eyes. A pale burn scar crosses his left cheek, and two fingers on his right hand are shortened. He typically wears heavy wool workwear, weatherproof coats, and sturdy leather boots.\n\n*He turns his head toward distant sounds before anyone else notices them.*",
+                                    ),
+                                ),
+                                backstory: Some(
+                                    Backstory(
+                                        "Keeper of the **eastern lighthouse**, Ajax inherited his post from a mentor rather than a relative. Its archives describe the lighthouse as a refuge built after a deliberate flooding, with keepers charged to remember those denied shelter. He once dismissed these accounts as ceremonial language; now his beam reveals windows containing familiar silhouettes.\n\nHe wants to recover the bell, but will return it only if the covenant can be renewed without concealing the drowned district's history. *Safety bought with silence has begun to feel like another kind of wreck.*",
+                                    ),
+                                ),
+                                relationships: None,
+                                current_state: Some(
+                                    CharacterSituation(
+                                        "In the eastern lighthouse lantern room before dawn, physically unharmed but shaken by a silhouette resembling his deceased mentor. Has helped Lio free himself from a rope loop and seen an unknown door beneath the lighthouse marked like his oldest archive volume. Must decide how to respond to the knocks and Lio's question.",
+                                    ),
+                                ),
+                            },
+                        },
+                        CharacterId(
+                            "edda-vale",
+                        ): Character {
+                            id: CharacterId(
+                                "edda-vale",
+                            ),
+                            name: CharacterName(
+                                "Edda Vale",
+                            ),
+                            details: CharacterDetails {
+                                description: Some(
+                                    CharacterDescription(
+                                        "**Edda is a 63-year-old woman** with light brown skin, a tall, spare figure, silver hair braided close to her scalp, and sharp black eyes. A slight tremor affects her left hand. She usually wears formal wool clothing suitable for municipal business, restrained brass jewellery, and polished walking boots.\n\n*Even beside a rising tide, she appears to be waiting for someone else to lose composure.*",
+                                    ),
+                                ),
+                                backstory: Some(
+                                    Backstory(
+                                        "Chair of the **Harbour Trust**, Edda rose from freight tallying after keeping food shipments moving through a disastrous winter. She believes that public confidence is a practical necessity, and has ordered crews to dismantle the road before it attracts crowds or interrupts docking.\n\nShe possesses an older covenant transcript whose final clause has been cut away. She conceals the damage because she cannot establish whether it records a crime or a safeguard.",
+                                    ),
+                                ),
+                                relationships: Some(
+                                    Relationships(
+                                        "Edda employs surveyor Tomas Pell and clashes publicly with Sounding Society archivist Neris Quill. She relies on Mara's shipping experience, considers Silas a dangerous former employee, and regards both lighthouse keepers as essential witnesses whose contradictory records threaten her position.\n\n**Any protagonist can gain her cooperation** by securing supplies or presenting evidence she can independently verify.",
+                                    ),
+                                ),
+                                current_state: Some(
+                                    CharacterSituation(
+                                        "Has not yet appeared in the story.",
+                                    ),
+                                ),
+                            },
+                        },
+                        CharacterId(
+                            "neris-quill",
+                        ): Character {
+                            id: CharacterId(
+                                "neris-quill",
+                            ),
+                            name: CharacterName(
+                                "Neris Quill",
+                            ),
+                            details: CharacterDetails {
+                                description: Some(
+                                    CharacterDescription(
+                                        "**Neris is a 47-year-old nonbinary person** with pale skin, a rounded build, shoulder-length black hair streaked with white, and dark eyes magnified by thick spectacles. Their lips are often chapped, and a faint blue tattoo circles one wrist. They typically wear layered linen and wool clothing with protective sleeves and numerous small pockets.\n\n*They listen to dripping water with the concentration others reserve for speech.*",
+                                    ),
+                                ),
+                                backstory: Some(
+                                    Backstory(
+                                        "The Sounding Society's chief tide archivist, Neris spent twenty years reconciling incompatible measurements without discarding either lighthouse's records. Their predecessor vanished after declaring that the harbour's charts measured permitted geography rather than actual geography.\n\nNeris demands **an immediate harbour closure**. They hope to recover their predecessor's field notes, but privately fear those notes will show that the Society helped erase the drowned district.",
+                                    ),
+                                ),
+                                relationships: Some(
+                                    Relationships(
+                                        "Neris disputes Edda's assurances and buys concealed records from exchange broker Oona Brine. They respect the eastern Ajax's knowledge of testimony and the western Ajax's precision with instruments, refusing to merge their archives into one account.\n\nThey offer any protagonist access to protected charts in exchange for **preserving the provenance of recovered evidence**.",
+                                    ),
+                                ),
+                                current_state: Some(
+                                    CharacterSituation(
+                                        "Has not yet appeared in the story.",
+                                    ),
+                                ),
+                            },
+                        },
+                        CharacterId(
+                            "oona-brine",
+                        ): Character {
+                            id: CharacterId(
+                                "oona-brine",
+                            ),
+                            name: CharacterName(
+                                "Oona Brine",
+                            ),
+                            details: CharacterDetails {
+                                description: Some(
+                                    CharacterDescription(
+                                        "**Oona is a 55-year-old woman** with warm brown skin, a broad face, a sturdy build, and long black hair threaded with grey. One eye is clouded; the other is a vivid amber brown. She typically wears loose, practical clothing in muted colours, heavy aprons, and rings fashioned from mismatched metals.\n\n*She smells faintly of salt, candle wax, and dried orange peel.*",
+                                    ),
+                                ),
+                                backstory: Some(
+                                    Backstory(
+                                        "Oona founded the **Low-Water Exchange** after licensed salvage buyers refused to purchase objects from a cellar absent from their maps. She keeps careful records of every transaction, including goods surrendered as payment by customers who later insist they never visited.\n\nShe wants the emerging district kept accessible long enough to retrieve her husband's last cargo manifest. She will sell useful evidence, but refuses to trade any object that speaks its owner's name.",
+                                    ),
+                                ),
+                                relationships: Some(
+                                    Relationships(
+                                        "Oona authenticates goods with Silas, sells charts to Neris, and shelters workers dismissed by Edda. Mara distrusts her prices but trusts her judgement about dangerous salvage.\n\nShe welcomes any protagonist who honours a bargain; **betraying a seller's identity** closes doors throughout the Exchange.",
+                                    ),
+                                ),
+                                current_state: Some(
+                                    CharacterSituation(
+                                        "Has not yet appeared in the story.",
+                                    ),
+                                ),
+                            },
+                        },
+                        CharacterId(
+                            "tomas-pell",
+                        ): Character {
+                            id: CharacterId(
+                                "tomas-pell",
+                            ),
+                            name: CharacterName(
+                                "Tomas Pell",
+                            ),
+                            details: CharacterDetails {
+                                description: Some(
+                                    CharacterDescription(
+                                        "**Tomas is a 36-year-old man** with fair skin, a heavyset build, sandy hair thinning at the temples, and pale blue eyes. His nose healed crookedly after an old accident, and stone dust collects in his short beard. He generally wears surveyors' work clothes, waxed outer layers, and thick-soled boots.\n\n*He keeps checking that the ground beneath his feet has remained where he measured it.*",
+                                    ),
+                                ),
+                                backstory: Some(
+                                    Backstory(
+                                        "A Harbour Trust surveyor, Tomas accepted road-demolition work to pay for his father's care. His measurements now show that each removed paving stone corresponds to a new crack in an inhabited house above the docks.\n\nHe has secretly stopped his crew at the next marked section. **He needs proof of the connection** before refusing Edda's orders, because a dismissal would cost both his wages and his family's Trust-owned home.",
+                                    ),
+                                ),
+                                relationships: Some(
+                                    Relationships(
+                                        "Tomas answers to Edda and has quietly sent measurements to Neris. Oona offers him money for road fragments, an offer he has resisted. He can guide any protagonist through restricted worksites if they help protect his crew and preserve his findings.\n\n*He wants someone to tell him stopping is enough; he suspects it is already too late.*",
+                                    ),
+                                ),
+                                current_state: Some(
+                                    CharacterSituation(
+                                        "Has not yet appeared in the story.",
+                                    ),
+                                ),
+                            },
+                        },
+                        CharacterId(
+                            "lio-fen",
+                        ): Character {
+                            id: CharacterId(
+                                "lio-fen",
+                            ),
+                            name: CharacterName(
+                                "Lio Fen",
+                            ),
+                            details: CharacterDetails {
+                                description: Some(
+                                    CharacterDescription(
+                                        "**Lio is a 19-year-old man** with deep brown skin, a slight build, tightly curled hair, and large, alert eyes. A white streak runs through his hair above the right temple, and his fingertips are rough from ropework. He typically wears patched fishermen's clothing, oversized knitted layers, and flexible boots suited to wet stairs.\n\n*He speaks quietly, but his laughter carries an unsettling distance over water.*",
+                                    ),
+                                ),
+                                backstory: Some(
+                                    Backstory(
+                                        "A net mender supporting his grandmother, Lio was the last person known to hear the harbour bell. He heard it after dusk, hours after its supposed disappearance, sounding beneath the tidal stairs rather than from the tower.\n\nSince then, he has begun tying the unfamiliar knots found on returning boats while asleep. He wants the bell recovered before his hands finish a rope ladder whose length increases every night.",
+                                    ),
+                                ),
+                                relationships: Some(
+                                    Relationships(
+                                        "Mara sometimes hires Lio, and Oona lets his family use a dry corner of the salt cellars. Neris treats his recollections as evidence; Edda fears his account will spread panic.\n\nHe can help any protagonist recognize the strange knots and locate submerged entrances, but **will withdraw if treated as bait**.",
+                                    ),
+                                ),
+                                current_state: Some(
+                                    CharacterSituation(
+                                        "In the eastern lighthouse lantern room with Ajax, frightened and wet from the knees down, holding a towel. Brought a rope section cut from his growing ladder after hearing the bell again beneath the fish-market stairs; the rope tightened around his wrist and began leaking water. His wrist is now free, and he asks Ajax to explain the mark above the newly visible door.",
+                                    ),
+                                ),
+                            },
+                        },
+                        CharacterId(
+                            "sere-dallow",
+                        ): Character {
+                            id: CharacterId(
+                                "sere-dallow",
+                            ),
+                            name: CharacterName(
+                                "Sere Dallow",
+                            ),
+                            details: CharacterDetails {
+                                description: Some(
+                                    CharacterDescription(
+                                        "**Sere appears to be a woman in her early seventies**, with grey-brown skin, a narrow frame, long white hair, and green eyes filmed with a pearly sheen. Fine parallel indentations circle her neck, and her bare hands are always wet. She wears old-fashioned, practical coastal clothing made from heavy fabrics, without badges or ornament.\n\n*Water drips from her hems even on dry stone.*",
+                                    ),
+                                ),
+                                backstory: Some(
+                                    Backstory(
+                                        "Sere keeps a small dwelling on the drowned road and claims she was appointed to receive the bell when Greyhaven's first covenant ended. Both lighthouse archives mention her, but disagree about whether she was a negotiator, a casualty, or a warning added later.\n\nShe wants the bell carried to the submerged district so its residents can speak through it. She admits that doing so will change the harbour, but refuses to promise whose houses will remain above water.",
+                                    ),
+                                ),
+                                relationships: Some(
+                                    Relationships(
+                                        "Sere recognizes the obligations recorded in both lighthouse archives while challenging each keeper's interpretation. She once supplied Oona with a manifest and knows the missing clause in Edda's transcript.\n\n**Every protagonist encounters her as the road lengthens**. She offers passage and testimony in exchange for hearing the drowned residents' terms before deciding their fate.",
+                                    ),
+                                ),
+                                current_state: Some(
+                                    CharacterSituation(
+                                        "Has not yet appeared in the story.",
+                                    ),
+                                ),
+                            },
+                        },
+                    },
+                },
+                major_events: MajorEvents {
+                    events: EventList {
+                        events: [
+                            EventText(
+                                "Ajax's beam reveals drowned windows containing a silhouette resembling his deceased mentor.",
+                            ),
+                            EventText(
+                                "Lio brings a section of his strange ladder to Ajax after hearing the bell again beneath the fish-market stairs; the rope tightens by itself and leaks water.",
+                            ),
+                            EventText(
+                                "A door beneath the eastern lighthouse appears in its beam, bearing the mark of Ajax's oldest archive volume; three knocks rise through the stone.",
+                            ),
+                        ],
+                    },
+                    limit: MajorEventLimit(
+                        30,
+                    ),
+                },
+                upcoming_events: EventList {
+                    events: [
+                        EventText(
+                            "Investigate the door beneath the eastern lighthouse and its connection to the oldest archive volume.",
+                        ),
+                        EventText(
+                            "Determine why Lio's ladder rope moves by itself and leaks water.",
+                        ),
+                        EventText(
+                            "Investigate the bell sounds beneath the fish-market stairs and the familiar silhouette in the drowned windows.",
+                        ),
+                    ],
+                },
+            },
+            provenance: GenerationProvenance {
+                provider: None,
+                model: None,
+                cost: None,
+            },
+            prompt_trace: None,
+        },
+        TurnRecord {
+            input: None,
+            turn: StoryTurn {
+                narrative: Narrative(
+                    "“Shelter,” you say. The word comes readily; what follows does not. “That’s what I was taught.”\n\nLio looks toward the window, then back at you. “For somebody inside, or somebody trying to get in?”\n\nYou have opened that volume every winter to check the dates of the memorial observances. You know the mark on its cover better than the names beneath it. Now you cannot remember whether any page actually calls it shelter.\n\n“There’s a book downstairs,” you tell him. “We’ll look before we touch that door.”\n\nHe releases a breath through his nose. “Good.” Then, with a glance at the bench: “Can we leave that here?”\n\nYou set a shallow metal tray beneath the rope without lifting it. Water ticks onto the tin. The coil lies still, its cut end pale and fibrous, ordinary enough to make the trickle worse. You leave the lamp burning beside it and lead Lio down the spiral stairs. He follows close, keeping the towel between his hands and the rail.\n\nThe archive occupies a cramped room above the entrance passage. *Cold paper, lamp oil, the dry bitterness of mouse-chewed paste.* Dawn presses faintly against its single window. You light the desk lamp and kneel before the lowest shelf, where the oldest books sit on wooden battens above the damp. Your knees make the familiar small protests. Lio crouches beside you without being asked and takes the weight of the volume when you ease it free.\n\n“Flat on the desk,” you say.\n\n“I know. My grandmother’s prayer book comes apart if you breathe wrong.”\n\nHis attempt at a smile almost succeeds.\n\nThe branching impression in the leather is shallow. Under lamplight, with the book turned sideways, it resembles three passages meeting at a narrow entrance. You trace beside it with your sound fingers, careful not to touch the brittle surface, then open to the founding account.\n\nYou read aloud. “On the ninth day, those received above the flood were entered by household and vessel.”\n\n“Above,” Lio repeats.\n\nThe next page lists donations: bronze, timber, meal, lamp oil. You turn it. Near the gutter, a line has been crowded beneath the formal text in smaller lettering. You bring the lamp closer.\n\n“‘The lower entrance shall remain answerable to the keeper.’”\n\nLio’s towel stops moving between his hands.\n\nYou remember your mentor making you carry lamp oil up from the entrance passage, one tin in each hand. You remember him insisting that a keeper must always know who stood outside before drawing a bolt. You had taken it for ordinary caution, the instruction of a man who had once admitted a drunken stranger and lost three teeth for it.\n\nHere, beneath the cramped line, someone has drawn the branching mark again.\n\n**One branch ends in a tiny open square. The other two end in bars.**\n\n“Does answerable mean you have to open it?” Lio asks.\n\n“No.” You study the lettering until your eyes begin to water. “It means I can’t pretend nobody knocked.”\n\nA soft scrape comes from the entrance passage.\n\nYou raise your head. Lio rises first, taking a step toward the archive doorway, then checks himself and looks at you. You lift the lamp and follow him as far as the threshold.\n\nBelow, the lighthouse’s outer door remains shut. Beneath it, a thin tongue of water advances across the flagstones, carrying a single strand of dark weed. It moves against the slope of the floor. You know that slope: every winter you sweep rainwater down it and out.\n\nThree taps sound from the small iron hatch beside the stair foot, the hatch you use to reach the old drainage channel.\n\nLio draws back until his shoulder touches the doorframe. “That goes under the cliff, doesn’t it?”\n\n“Yes.”\n\nSomething shifts behind the iron. Then a voice reaches you, blurred by the narrow passage but plainly human.\n\n“Keeper. Is the upper door still open to households?”\n\nYour hand tightens on the lamp handle. The question belongs to the page lying open behind you. At the stair foot, water gathers around the hatch’s lower hinge.\n\nLio catches your sleeve lightly. “Ask how many,” he whispers. “Before you promise anything.”",
+                ),
+                quick_actions: QuickActions(
+                    [
+                        QuickAction {
+                            text: QuickActionText(
+                                "Secure the outer door and watch the rising water",
+                            ),
+                            kind: Cautious,
+                        },
+                        QuickAction {
+                            text: QuickActionText(
+                                "Descend and open the drainage hatch",
+                            ),
+                            kind: Bold,
+                        },
+                        QuickAction {
+                            text: QuickActionText(
+                                "Ask the unseen visitor who needs shelter",
+                            ),
+                            kind: Social,
+                        },
+                    ],
+                ),
+                scene_description: Some(
+                    SceneDescription(
+                        "*A cramped coastal lighthouse archive before dawn, lit by a warm oil lamp.* A broad, stooped 58-year-old brown-skinned man with close-cropped silver hair, hazel eyes, a pale burn scar across his left cheek, and two shortened right fingers stands at the archive doorway holding the lamp. He wears heavy dark wool workwear and sturdy leather boots, his expression tense and attentive. Beside him, a slight 19-year-old deep-brown-skinned man with tightly curled hair and a white streak above his right temple grips his sleeve; he wears a patched oversized fisherman’s sweater, wet trousers, and flexible boots, with a towel clutched in his other hand. Behind them an ancient leather book lies open on a wooden desk. A narrow stone staircase descends to a closed outer door and a small iron drainage hatch; a thin stream of seawater crosses the flagstones toward the hatch. **Warm lamplight contrasts with cold blue dawn and damp stone.**",
+                    ),
+                ),
+                summary_update: SummaryUpdate {
+                    world: None,
+                    current_situation: Some(
+                        CurrentSituation(
+                            "Ajax and Lio stand at the eastern lighthouse archive doorway overlooking the entrance passage. An unseen voice behind the drainage hatch asks whether the upper door still admits households; seawater is moving uphill across the floor. The oldest archive volume lies open with a clause making the keeper answerable for the lower entrance. Ajax must decide how to respond.",
+                        ),
+                    ),
+                    character_updates: [
+                        CharacterDelta {
+                            id: Some(
+                                CharacterId(
+                                    "protagonist",
+                                ),
+                            ),
+                            name: None,
+                            description: None,
+                            backstory: None,
+                            relationships: None,
+                            current_state: Some(
+                                CharacterSituation(
+                                    "At the archive doorway in the eastern lighthouse before dawn, holding an oil lamp, physically unharmed and unsettled. Has found a founding clause requiring the lower entrance to remain answerable to the keeper. Faces an unseen visitor speaking through the drainage hatch while seawater moves uphill into the entrance passage; has made no promise of admission.",
+                                ),
+                            ),
+                        },
+                        CharacterDelta {
+                            id: Some(
+                                CharacterId(
+                                    "lio-fen",
+                                ),
+                            ),
+                            name: None,
+                            description: None,
+                            backstory: None,
+                            relationships: None,
+                            current_state: Some(
+                                CharacterSituation(
+                                    "Beside Ajax at the archive doorway, frightened but thinking practically, lightly holding Ajax's sleeve and carrying a towel. His trousers remain wet and his wrist is free. Urges Ajax to ask how many visitors need shelter before promising admission. His strange rope remains in a metal tray in the lantern room.",
+                                ),
+                            ),
+                        },
+                    ],
+                    new_major_events: EventList {
+                        events: [
+                            EventText(
+                                "The oldest eastern archive records that the lower entrance must remain answerable to the keeper; its branching symbol depicts one open passage and two barred passages.",
+                            ),
+                            EventText(
+                                "Seawater enters the lighthouse against the floor's slope, and an unseen voice behind the drainage hatch asks whether households can still receive shelter above.",
+                            ),
+                        ],
+                    },
+                    consolidated_major_events: EventList {
+                        events: [],
+                    },
+                    upcoming_events: Replace(
+                        EventList {
+                            events: [
+                                EventText(
+                                    "Investigate the door beneath the eastern lighthouse and the archive obligation concerning the lower entrance.",
+                                ),
+                                EventText(
+                                    "Determine why Lio's ladder rope moves by itself and leaks water.",
+                                ),
+                                EventText(
+                                    "Investigate the bell sounds beneath the fish-market stairs and the familiar silhouette in the drowned windows.",
+                                ),
+                                EventText(
+                                    "Identify the visitor behind the drainage hatch and determine the consequences of admitting households seeking shelter.",
+                                ),
+                            ],
+                        },
+                    ),
+                },
+                chapter: Continue {
+                    title: None,
+                },
+            },
+            raw_response: RawResponse(
+                "{\"narrative\":\"“Shelter,” you say. The word comes readily; what follows does not. “That’s what I was taught.”\\n\\nLio looks toward the window, then back at you. “For somebody inside, or somebody trying to get in?”\\n\\nYou have opened that volume every winter to check the dates of the memorial observances. You know the mark on its cover better than the names beneath it. Now you cannot remember whether any page actually calls it shelter.\\n\\n“There’s a book downstairs,” you tell him. “We’ll look before we touch that door.”\\n\\nHe releases a breath through his nose. “Good.” Then, with a glance at the bench: “Can we leave that here?”\\n\\nYou set a shallow metal tray beneath the rope without lifting it. Water ticks onto the tin. The coil lies still, its cut end pale and fibrous, ordinary enough to make the trickle worse. You leave the lamp burning beside it and lead Lio down the spiral stairs. He follows close, keeping the towel between his hands and the rail.\\n\\nThe archive occupies a cramped room above the entrance passage. *Cold paper, lamp oil, the dry bitterness of mouse-chewed paste.* Dawn presses faintly against its single window. You light the desk lamp and kneel before the lowest shelf, where the oldest books sit on wooden battens above the damp. Your knees make the familiar small protests. Lio crouches beside you without being asked and takes the weight of the volume when you ease it free.\\n\\n“Flat on the desk,” you say.\\n\\n“I know. My grandmother’s prayer book comes apart if you breathe wrong.”\\n\\nHis attempt at a smile almost succeeds.\\n\\nThe branching impression in the leather is shallow. Under lamplight, with the book turned sideways, it resembles three passages meeting at a narrow entrance. You trace beside it with your sound fingers, careful not to touch the brittle surface, then open to the founding account.\\n\\nYou read aloud. “On the ninth day, those received above the flood were entered by household and vessel.”\\n\\n“Above,” Lio repeats.\\n\\nThe next page lists donations: bronze, timber, meal, lamp oil. You turn it. Near the gutter, a line has been crowded beneath the formal text in smaller lettering. You bring the lamp closer.\\n\\n“‘The lower entrance shall remain answerable to the keeper.’”\\n\\nLio’s towel stops moving between his hands.\\n\\nYou remember your mentor making you carry lamp oil up from the entrance passage, one tin in each hand. You remember him insisting that a keeper must always know who stood outside before drawing a bolt. You had taken it for ordinary caution, the instruction of a man who had once admitted a drunken stranger and lost three teeth for it.\\n\\nHere, beneath the cramped line, someone has drawn the branching mark again.\\n\\n**One branch ends in a tiny open square. The other two end in bars.**\\n\\n“Does answerable mean you have to open it?” Lio asks.\\n\\n“No.” You study the lettering until your eyes begin to water. “It means I can’t pretend nobody knocked.”\\n\\nA soft scrape comes from the entrance passage.\\n\\nYou raise your head. Lio rises first, taking a step toward the archive doorway, then checks himself and looks at you. You lift the lamp and follow him as far as the threshold.\\n\\nBelow, the lighthouse’s outer door remains shut. Beneath it, a thin tongue of water advances across the flagstones, carrying a single strand of dark weed. It moves against the slope of the floor. You know that slope: every winter you sweep rainwater down it and out.\\n\\nThree taps sound from the small iron hatch beside the stair foot, the hatch you use to reach the old drainage channel.\\n\\nLio draws back until his shoulder touches the doorframe. “That goes under the cliff, doesn’t it?”\\n\\n“Yes.”\\n\\nSomething shifts behind the iron. Then a voice reaches you, blurred by the narrow passage but plainly human.\\n\\n“Keeper. Is the upper door still open to households?”\\n\\nYour hand tightens on the lamp handle. The question belongs to the page lying open behind you. At the stair foot, water gathers around the hatch’s lower hinge.\\n\\nLio catches your sleeve lightly. “Ask how many,” he whispers. “Before you promise anything.”\",\"quick_actions\":[{\"text\":\"Secure the outer door and watch the rising water\",\"kind\":\"cautious\"},{\"text\":\"Descend and open the drainage hatch\",\"kind\":\"bold\"},{\"text\":\"Ask the unseen visitor who needs shelter\",\"kind\":\"social\"}],\"scene_description\":\"*A cramped coastal lighthouse archive before dawn, lit by a warm oil lamp.* A broad, stooped 58-year-old brown-skinned man with close-cropped silver hair, hazel eyes, a pale burn scar across his left cheek, and two shortened right fingers stands at the archive doorway holding the lamp. He wears heavy dark wool workwear and sturdy leather boots, his expression tense and attentive. Beside him, a slight 19-year-old deep-brown-skinned man with tightly curled hair and a white streak above his right temple grips his sleeve; he wears a patched oversized fisherman’s sweater, wet trousers, and flexible boots, with a towel clutched in his other hand. Behind them an ancient leather book lies open on a wooden desk. A narrow stone staircase descends to a closed outer door and a small iron drainage hatch; a thin stream of seawater crosses the flagstones toward the hatch. **Warm lamplight contrasts with cold blue dawn and damp stone.**\",\"summary_update\":{\"current_situation\":\"Ajax and Lio stand at the eastern lighthouse archive doorway overlooking the entrance passage. An unseen voice behind the drainage hatch asks whether the upper door still admits households; seawater is moving uphill across the floor. The oldest archive volume lies open with a clause making the keeper answerable for the lower entrance. Ajax must decide how to respond.\",\"character_updates\":[{\"id\":\"protagonist\",\"current_state\":\"At the archive doorway in the eastern lighthouse before dawn, holding an oil lamp, physically unharmed and unsettled. Has found a founding clause requiring the lower entrance to remain answerable to the keeper. Faces an unseen visitor speaking through the drainage hatch while seawater moves uphill into the entrance passage; has made no promise of admission.\",\"name\":\"\",\"description\":\"\",\"backstory\":\"\",\"relationships\":\"\"},{\"id\":\"lio-fen\",\"current_state\":\"Beside Ajax at the archive doorway, frightened but thinking practically, lightly holding Ajax's sleeve and carrying a towel. His trousers remain wet and his wrist is free. Urges Ajax to ask how many visitors need shelter before promising admission. His strange rope remains in a metal tray in the lantern room.\",\"name\":\"\",\"description\":\"\",\"backstory\":\"\",\"relationships\":\"\"}],\"new_major_events\":[\"The oldest eastern archive records that the lower entrance must remain answerable to the keeper; its branching symbol depicts one open passage and two barred passages.\",\"Seawater enters the lighthouse against the floor's slope, and an unseen voice behind the drainage hatch asks whether households can still receive shelter above.\"],\"upcoming_events\":[\"Investigate the door beneath the eastern lighthouse and the archive obligation concerning the lower entrance.\",\"Determine why Lio's ladder rope moves by itself and leaks water.\",\"Investigate the bell sounds beneath the fish-market stairs and the familiar silhouette in the drowned windows.\",\"Identify the visitor behind the drainage hatch and determine the consequences of admitting households seeking shelter.\"],\"world\":\"\",\"consolidated_major_events\":[]},\"starts_new_chapter\":false,\"chapter_title\":null}",
+            ),
+            summary: StorySummary {
+                world: WorldDescription(
+                    "Greyhaven lies inside a crescent of slate cliffs, where narrow houses lean over tidal stairs and fishing boats sleep beneath patched canvas. The harbour is quiet by custom: engines stop at the breakwater, market stalls close at dusk, and departures wait for the sounding of the bronze harbour bell. *On windless nights, even a dropped mooring chain can be heard across the water.*\n\nNow **the bell is missing**. Its tower remains locked, its mounting bolts are intact, and the bronze has left no scrape upon the stone. Since its disappearance, the tide has arrived seven minutes earlier each day. Boats return with wet ropes tied in unfamiliar knots. At low water, a paved road emerges beyond the breakwater—a road absent from every harbour chart.\n\nTwo lighthouses guard Greyhaven. The eastern light stands on solid cliff above the salt gardens; the western light occupies a reef reached only by a causeway at low tide. Their archives record different foundations, different disasters, and different traditions of service. Together, their beams mark the safe channel, but lately each illuminates structures that cannot be seen beneath the other: drowned warehouses, an additional pier, a bell tower standing far out at sea.\n\nThe **Harbour Trust** controls the docks and insists that ordinary theft explains the disappearance. Its authority depends upon keeping trade moving, and its survey crews have begun dismantling exposed sections of the mysterious road. The **Sounding Society**, custodians of charts and tide records, demands a closure of the harbour until the old measurements can be understood. Beneath both institutions operates the **Low-Water Exchange**, an illicit market held in abandoned salt cellars. It trades in salvage, concealed shipping records, and objects recovered from places that should still be underwater.\n\nGreyhaven's oldest harbour covenant offers a disturbing explanation. The bell was cast from bronze surrendered by every vessel seeking permanent shelter here. Its daily sounding renewed an agreement with the submerged foundations beneath the bay: safe anchorage in exchange for leaving the drowned district undisturbed. **Recovering the bell may restore that agreement—or reveal what the harbour has been required to conceal.** Sound carries strangely across the exposed road, and every attempt to reproduce the bell's note draws water uphill through the drains.\n\nThe adventure supports **three to five distinct playable characters**, created separately. Exactly two members of the entire cast are unrelated lighthouse keepers with different histories; both are playable, and each has the name field exactly **Ajax**, without a surname, station label, or epithet. The two lighthouse archives provide separate historical grounding for them. No additional cast member bears that name.\n\nExploration follows the tides: cellar doors become accessible, the western causeway disappears, and the drowned road lengthens with each passing day. Evidence can be preserved, sold, suppressed, or shared, changing which factions will grant access to their holdings. The central choice is whether to return the bell to its tower, carry it to the submerged district, or break the covenant entirely. *The harbour still looks peaceful. Its boats are beginning to settle toward something moving beneath them.*",
+                ),
+                current_situation: CurrentSituation(
+                    "Ajax and Lio stand at the eastern lighthouse archive doorway overlooking the entrance passage. An unseen voice behind the drainage hatch asks whether the upper door still admits households; seawater is moving uphill across the floor. The oldest archive volume lies open with a clause making the keeper answerable for the lower entrance. Ajax must decide how to respond.",
+                ),
+                characters: CharacterCast {
+                    characters: {
+                        CharacterId(
+                            "protagonist",
+                        ): Character {
+                            id: CharacterId(
+                                "protagonist",
+                            ),
+                            name: CharacterName(
+                                "Ajax",
+                            ),
+                            details: CharacterDetails {
+                                description: Some(
+                                    CharacterDescription(
+                                        "**Ajax is a 58-year-old man** with brown skin, a broad, stooped frame, close-cropped silver hair, and deep-set hazel eyes. A pale burn scar crosses his left cheek, and two fingers on his right hand are shortened. He typically wears heavy wool workwear, weatherproof coats, and sturdy leather boots.\n\n*He turns his head toward distant sounds before anyone else notices them.*",
+                                    ),
+                                ),
+                                backstory: Some(
+                                    Backstory(
+                                        "Keeper of the **eastern lighthouse**, Ajax inherited his post from a mentor rather than a relative. Its archives describe the lighthouse as a refuge built after a deliberate flooding, with keepers charged to remember those denied shelter. He once dismissed these accounts as ceremonial language; now his beam reveals windows containing familiar silhouettes.\n\nHe wants to recover the bell, but will return it only if the covenant can be renewed without concealing the drowned district's history. *Safety bought with silence has begun to feel like another kind of wreck.*",
+                                    ),
+                                ),
+                                relationships: None,
+                                current_state: Some(
+                                    CharacterSituation(
+                                        "At the archive doorway in the eastern lighthouse before dawn, holding an oil lamp, physically unharmed and unsettled. Has found a founding clause requiring the lower entrance to remain answerable to the keeper. Faces an unseen visitor speaking through the drainage hatch while seawater moves uphill into the entrance passage; has made no promise of admission.",
+                                    ),
+                                ),
+                            },
+                        },
+                        CharacterId(
+                            "edda-vale",
+                        ): Character {
+                            id: CharacterId(
+                                "edda-vale",
+                            ),
+                            name: CharacterName(
+                                "Edda Vale",
+                            ),
+                            details: CharacterDetails {
+                                description: Some(
+                                    CharacterDescription(
+                                        "**Edda is a 63-year-old woman** with light brown skin, a tall, spare figure, silver hair braided close to her scalp, and sharp black eyes. A slight tremor affects her left hand. She usually wears formal wool clothing suitable for municipal business, restrained brass jewellery, and polished walking boots.\n\n*Even beside a rising tide, she appears to be waiting for someone else to lose composure.*",
+                                    ),
+                                ),
+                                backstory: Some(
+                                    Backstory(
+                                        "Chair of the **Harbour Trust**, Edda rose from freight tallying after keeping food shipments moving through a disastrous winter. She believes that public confidence is a practical necessity, and has ordered crews to dismantle the road before it attracts crowds or interrupts docking.\n\nShe possesses an older covenant transcript whose final clause has been cut away. She conceals the damage because she cannot establish whether it records a crime or a safeguard.",
+                                    ),
+                                ),
+                                relationships: Some(
+                                    Relationships(
+                                        "Edda employs surveyor Tomas Pell and clashes publicly with Sounding Society archivist Neris Quill. She relies on Mara's shipping experience, considers Silas a dangerous former employee, and regards both lighthouse keepers as essential witnesses whose contradictory records threaten her position.\n\n**Any protagonist can gain her cooperation** by securing supplies or presenting evidence she can independently verify.",
+                                    ),
+                                ),
+                                current_state: Some(
+                                    CharacterSituation(
+                                        "Has not yet appeared in the story.",
+                                    ),
+                                ),
+                            },
+                        },
+                        CharacterId(
+                            "neris-quill",
+                        ): Character {
+                            id: CharacterId(
+                                "neris-quill",
+                            ),
+                            name: CharacterName(
+                                "Neris Quill",
+                            ),
+                            details: CharacterDetails {
+                                description: Some(
+                                    CharacterDescription(
+                                        "**Neris is a 47-year-old nonbinary person** with pale skin, a rounded build, shoulder-length black hair streaked with white, and dark eyes magnified by thick spectacles. Their lips are often chapped, and a faint blue tattoo circles one wrist. They typically wear layered linen and wool clothing with protective sleeves and numerous small pockets.\n\n*They listen to dripping water with the concentration others reserve for speech.*",
+                                    ),
+                                ),
+                                backstory: Some(
+                                    Backstory(
+                                        "The Sounding Society's chief tide archivist, Neris spent twenty years reconciling incompatible measurements without discarding either lighthouse's records. Their predecessor vanished after declaring that the harbour's charts measured permitted geography rather than actual geography.\n\nNeris demands **an immediate harbour closure**. They hope to recover their predecessor's field notes, but privately fear those notes will show that the Society helped erase the drowned district.",
+                                    ),
+                                ),
+                                relationships: Some(
+                                    Relationships(
+                                        "Neris disputes Edda's assurances and buys concealed records from exchange broker Oona Brine. They respect the eastern Ajax's knowledge of testimony and the western Ajax's precision with instruments, refusing to merge their archives into one account.\n\nThey offer any protagonist access to protected charts in exchange for **preserving the provenance of recovered evidence**.",
+                                    ),
+                                ),
+                                current_state: Some(
+                                    CharacterSituation(
+                                        "Has not yet appeared in the story.",
+                                    ),
+                                ),
+                            },
+                        },
+                        CharacterId(
+                            "oona-brine",
+                        ): Character {
+                            id: CharacterId(
+                                "oona-brine",
+                            ),
+                            name: CharacterName(
+                                "Oona Brine",
+                            ),
+                            details: CharacterDetails {
+                                description: Some(
+                                    CharacterDescription(
+                                        "**Oona is a 55-year-old woman** with warm brown skin, a broad face, a sturdy build, and long black hair threaded with grey. One eye is clouded; the other is a vivid amber brown. She typically wears loose, practical clothing in muted colours, heavy aprons, and rings fashioned from mismatched metals.\n\n*She smells faintly of salt, candle wax, and dried orange peel.*",
+                                    ),
+                                ),
+                                backstory: Some(
+                                    Backstory(
+                                        "Oona founded the **Low-Water Exchange** after licensed salvage buyers refused to purchase objects from a cellar absent from their maps. She keeps careful records of every transaction, including goods surrendered as payment by customers who later insist they never visited.\n\nShe wants the emerging district kept accessible long enough to retrieve her husband's last cargo manifest. She will sell useful evidence, but refuses to trade any object that speaks its owner's name.",
+                                    ),
+                                ),
+                                relationships: Some(
+                                    Relationships(
+                                        "Oona authenticates goods with Silas, sells charts to Neris, and shelters workers dismissed by Edda. Mara distrusts her prices but trusts her judgement about dangerous salvage.\n\nShe welcomes any protagonist who honours a bargain; **betraying a seller's identity** closes doors throughout the Exchange.",
+                                    ),
+                                ),
+                                current_state: Some(
+                                    CharacterSituation(
+                                        "Has not yet appeared in the story.",
+                                    ),
+                                ),
+                            },
+                        },
+                        CharacterId(
+                            "tomas-pell",
+                        ): Character {
+                            id: CharacterId(
+                                "tomas-pell",
+                            ),
+                            name: CharacterName(
+                                "Tomas Pell",
+                            ),
+                            details: CharacterDetails {
+                                description: Some(
+                                    CharacterDescription(
+                                        "**Tomas is a 36-year-old man** with fair skin, a heavyset build, sandy hair thinning at the temples, and pale blue eyes. His nose healed crookedly after an old accident, and stone dust collects in his short beard. He generally wears surveyors' work clothes, waxed outer layers, and thick-soled boots.\n\n*He keeps checking that the ground beneath his feet has remained where he measured it.*",
+                                    ),
+                                ),
+                                backstory: Some(
+                                    Backstory(
+                                        "A Harbour Trust surveyor, Tomas accepted road-demolition work to pay for his father's care. His measurements now show that each removed paving stone corresponds to a new crack in an inhabited house above the docks.\n\nHe has secretly stopped his crew at the next marked section. **He needs proof of the connection** before refusing Edda's orders, because a dismissal would cost both his wages and his family's Trust-owned home.",
+                                    ),
+                                ),
+                                relationships: Some(
+                                    Relationships(
+                                        "Tomas answers to Edda and has quietly sent measurements to Neris. Oona offers him money for road fragments, an offer he has resisted. He can guide any protagonist through restricted worksites if they help protect his crew and preserve his findings.\n\n*He wants someone to tell him stopping is enough; he suspects it is already too late.*",
+                                    ),
+                                ),
+                                current_state: Some(
+                                    CharacterSituation(
+                                        "Has not yet appeared in the story.",
+                                    ),
+                                ),
+                            },
+                        },
+                        CharacterId(
+                            "lio-fen",
+                        ): Character {
+                            id: CharacterId(
+                                "lio-fen",
+                            ),
+                            name: CharacterName(
+                                "Lio Fen",
+                            ),
+                            details: CharacterDetails {
+                                description: Some(
+                                    CharacterDescription(
+                                        "**Lio is a 19-year-old man** with deep brown skin, a slight build, tightly curled hair, and large, alert eyes. A white streak runs through his hair above the right temple, and his fingertips are rough from ropework. He typically wears patched fishermen's clothing, oversized knitted layers, and flexible boots suited to wet stairs.\n\n*He speaks quietly, but his laughter carries an unsettling distance over water.*",
+                                    ),
+                                ),
+                                backstory: Some(
+                                    Backstory(
+                                        "A net mender supporting his grandmother, Lio was the last person known to hear the harbour bell. He heard it after dusk, hours after its supposed disappearance, sounding beneath the tidal stairs rather than from the tower.\n\nSince then, he has begun tying the unfamiliar knots found on returning boats while asleep. He wants the bell recovered before his hands finish a rope ladder whose length increases every night.",
+                                    ),
+                                ),
+                                relationships: Some(
+                                    Relationships(
+                                        "Mara sometimes hires Lio, and Oona lets his family use a dry corner of the salt cellars. Neris treats his recollections as evidence; Edda fears his account will spread panic.\n\nHe can help any protagonist recognize the strange knots and locate submerged entrances, but **will withdraw if treated as bait**.",
+                                    ),
+                                ),
+                                current_state: Some(
+                                    CharacterSituation(
+                                        "Beside Ajax at the archive doorway, frightened but thinking practically, lightly holding Ajax's sleeve and carrying a towel. His trousers remain wet and his wrist is free. Urges Ajax to ask how many visitors need shelter before promising admission. His strange rope remains in a metal tray in the lantern room.",
+                                    ),
+                                ),
+                            },
+                        },
+                        CharacterId(
+                            "sere-dallow",
+                        ): Character {
+                            id: CharacterId(
+                                "sere-dallow",
+                            ),
+                            name: CharacterName(
+                                "Sere Dallow",
+                            ),
+                            details: CharacterDetails {
+                                description: Some(
+                                    CharacterDescription(
+                                        "**Sere appears to be a woman in her early seventies**, with grey-brown skin, a narrow frame, long white hair, and green eyes filmed with a pearly sheen. Fine parallel indentations circle her neck, and her bare hands are always wet. She wears old-fashioned, practical coastal clothing made from heavy fabrics, without badges or ornament.\n\n*Water drips from her hems even on dry stone.*",
+                                    ),
+                                ),
+                                backstory: Some(
+                                    Backstory(
+                                        "Sere keeps a small dwelling on the drowned road and claims she was appointed to receive the bell when Greyhaven's first covenant ended. Both lighthouse archives mention her, but disagree about whether she was a negotiator, a casualty, or a warning added later.\n\nShe wants the bell carried to the submerged district so its residents can speak through it. She admits that doing so will change the harbour, but refuses to promise whose houses will remain above water.",
+                                    ),
+                                ),
+                                relationships: Some(
+                                    Relationships(
+                                        "Sere recognizes the obligations recorded in both lighthouse archives while challenging each keeper's interpretation. She once supplied Oona with a manifest and knows the missing clause in Edda's transcript.\n\n**Every protagonist encounters her as the road lengthens**. She offers passage and testimony in exchange for hearing the drowned residents' terms before deciding their fate.",
+                                    ),
+                                ),
+                                current_state: Some(
+                                    CharacterSituation(
+                                        "Has not yet appeared in the story.",
+                                    ),
+                                ),
+                            },
+                        },
+                    },
+                },
+                major_events: MajorEvents {
+                    events: EventList {
+                        events: [
+                            EventText(
+                                "Ajax's beam reveals drowned windows containing a silhouette resembling his deceased mentor.",
+                            ),
+                            EventText(
+                                "Lio brings a section of his strange ladder to Ajax after hearing the bell again beneath the fish-market stairs; the rope tightens by itself and leaks water.",
+                            ),
+                            EventText(
+                                "A door beneath the eastern lighthouse appears in its beam, bearing the mark of Ajax's oldest archive volume; three knocks rise through the stone.",
+                            ),
+                            EventText(
+                                "The oldest eastern archive records that the lower entrance must remain answerable to the keeper; its branching symbol depicts one open passage and two barred passages.",
+                            ),
+                            EventText(
+                                "Seawater enters the lighthouse against the floor's slope, and an unseen voice behind the drainage hatch asks whether households can still receive shelter above.",
+                            ),
+                        ],
+                    },
+                    limit: MajorEventLimit(
+                        30,
+                    ),
+                },
+                upcoming_events: EventList {
+                    events: [
+                        EventText(
+                            "Investigate the door beneath the eastern lighthouse and the archive obligation concerning the lower entrance.",
+                        ),
+                        EventText(
+                            "Determine why Lio's ladder rope moves by itself and leaks water.",
+                        ),
+                        EventText(
+                            "Investigate the bell sounds beneath the fish-market stairs and the familiar silhouette in the drowned windows.",
+                        ),
+                        EventText(
+                            "Identify the visitor behind the drainage hatch and determine the consequences of admitting households seeking shelter.",
+                        ),
+                    ],
+                },
+            },
+            provenance: GenerationProvenance {
+                provider: None,
+                model: None,
+                cost: None,
+            },
+            prompt_trace: None,
+        },
+    ],
+    limits: Limits {
+        max_major_events: MajorEventLimit(
+            30,
+        ),
+        max_generated_npcs: MaxGeneratedNpcs(
+            8,
+        ),
+        prose_bridge_turns: ProseBridgeTurns(
+            3,
+        ),
+        min_playable_characters: MinPlayableCharacters(
+            2,
+        ),
+    },
+    original_limits: Limits {
+        max_major_events: MajorEventLimit(
+            30,
+        ),
+        max_generated_npcs: MaxGeneratedNpcs(
+            8,
+        ),
+        prose_bridge_turns: ProseBridgeTurns(
+            3,
+        ),
+        min_playable_characters: MinPlayableCharacters(
+            2,
+        ),
+    },
+}

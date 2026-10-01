@@ -1,0 +1,201 @@
+GameState {
+    brief: Brief(
+        "A quiet harbour where a missing bell draws together a cast of 3–5 distinct playable characters. Exactly two members of the entire cast are named Ajax: two unrelated lighthouse keepers with different histories. Both are playable characters, and each has the name exactly Ajax, without a surname, station label or epithet in the name field. They are distinct people, not alternative versions of one person.",
+    ),
+    world: SelectedWorld {
+        world: World {
+            outline: WorldOutline {
+                title: WorldTitle(
+                    "The Harbour Without Its Bell",
+                ),
+                description: WorldDescription(
+                    "Greyhaven lies inside a crescent of slate cliffs, where narrow houses lean over tidal stairs and fishing boats sleep beneath patched canvas. The harbour is quiet by custom: engines stop at the breakwater, market stalls close at dusk, and departures wait for the sounding of the bronze harbour bell. *On windless nights, even a dropped mooring chain can be heard across the water.*\n\nNow **the bell is missing**. Its tower remains locked, its mounting bolts are intact, and the bronze has left no scrape upon the stone. Since its disappearance, the tide has arrived seven minutes earlier each day. Boats return with wet ropes tied in unfamiliar knots. At low water, a paved road emerges beyond the breakwater—a road absent from every harbour chart.\n\nTwo lighthouses guard Greyhaven. The eastern light stands on solid cliff above the salt gardens; the western light occupies a reef reached only by a causeway at low tide. Their archives record different foundations, different disasters, and different traditions of service. Together, their beams mark the safe channel, but lately each illuminates structures that cannot be seen beneath the other: drowned warehouses, an additional pier, a bell tower standing far out at sea.\n\nThe **Harbour Trust** controls the docks and insists that ordinary theft explains the disappearance. Its authority depends upon keeping trade moving, and its survey crews have begun dismantling exposed sections of the mysterious road. The **Sounding Society**, custodians of charts and tide records, demands a closure of the harbour until the old measurements can be understood. Beneath both institutions operates the **Low-Water Exchange**, an illicit market held in abandoned salt cellars. It trades in salvage, concealed shipping records, and objects recovered from places that should still be underwater.\n\nGreyhaven's oldest harbour covenant offers a disturbing explanation. The bell was cast from bronze surrendered by every vessel seeking permanent shelter here. Its daily sounding renewed an agreement with the submerged foundations beneath the bay: safe anchorage in exchange for leaving the drowned district undisturbed. **Recovering the bell may restore that agreement—or reveal what the harbour has been required to conceal.** Sound carries strangely across the exposed road, and every attempt to reproduce the bell's note draws water uphill through the drains.\n\nThe adventure supports **three to five distinct playable characters**, created separately. Exactly two members of the entire cast are unrelated lighthouse keepers with different histories; both are playable, and each has the name field exactly **Ajax**, without a surname, station label, or epithet. The two lighthouse archives provide separate historical grounding for them. No additional cast member bears that name.\n\nExploration follows the tides: cellar doors become accessible, the western causeway disappears, and the drowned road lengthens with each passing day. Evidence can be preserved, sold, suppressed, or shared, changing which factions will grant access to their holdings. The central choice is whether to return the bell to its tower, carry it to the submerged district, or break the covenant entirely. *The harbour still looks peaceful. Its boats are beginning to settle toward something moving beneath them.*",
+                ),
+            },
+            cast: WorldCast {
+                playable: [
+                    PlayerCharacter {
+                        name: CharacterName(
+                            "Ajax",
+                        ),
+                        description: CharacterDescription(
+                            "**Ajax is a 58-year-old man** with brown skin, a broad, stooped frame, close-cropped silver hair, and deep-set hazel eyes. A pale burn scar crosses his left cheek, and two fingers on his right hand are shortened. He typically wears heavy wool workwear, weatherproof coats, and sturdy leather boots.\n\n*He turns his head toward distant sounds before anyone else notices them.*",
+                        ),
+                        backstory: Backstory(
+                            "Keeper of the **eastern lighthouse**, Ajax inherited his post from a mentor rather than a relative. Its archives describe the lighthouse as a refuge built after a deliberate flooding, with keepers charged to remember those denied shelter. He once dismissed these accounts as ceremonial language; now his beam reveals windows containing familiar silhouettes.\n\nHe wants to recover the bell, but will return it only if the covenant can be renewed without concealing the drowned district's history. *Safety bought with silence has begun to feel like another kind of wreck.*",
+                        ),
+                    },
+                    PlayerCharacter {
+                        name: CharacterName(
+                            "Ajax",
+                        ),
+                        description: CharacterDescription(
+                            "**Ajax is a 31-year-old woman** with pale, freckled skin, a lean build, angular features, and grey eyes. Her copper hair is cropped unevenly around her ears, and a small crescent scar interrupts one eyebrow. She usually wears practical knitted layers, waterproof trousers, and canvas work jackets with roomy pockets.\n\n*Her restless hands become perfectly still when she reads a tide gauge.*",
+                        ),
+                        backstory: Backstory(
+                            "Keeper of the **western lighthouse**, Ajax arrived in Greyhaven as an apprentice instrument maker and earned her appointment by repairing the reef light through a winter siege of storms. She is unrelated to the eastern keeper. Her station's archives claim its foundations predate the harbour and describe the covenant as an occupation of an inhabited seabed, rather than protection from an empty ruin.\n\nShe suspects the bell belongs below the water and wants to carry it down the emerging road. Yet several pages supporting that conclusion bear corrections in her own handwriting—written decades before her birth. *She needs to know whether she is discovering a duty or being taught to obey one.*",
+                        ),
+                    },
+                    PlayerCharacter {
+                        name: CharacterName(
+                            "Mara Venn",
+                        ),
+                        description: CharacterDescription(
+                            "**Mara is a 42-year-old woman** with dark brown skin, a compact, muscular build, and black hair worn in short twists. Her left ear has a torn upper rim, and fine salt scars mark her forearms. She typically wears durable dockworkers' clothes, sleeveless knitted layers, and reinforced boots, keeping her hands free of jewellery.\n\n*She stands as though a deck might shift beneath her at any moment.*",
+                        ),
+                        backstory: Backstory(
+                            "A salvage skipper whose boat supports three households, Mara contributed inherited bronze to the harbour bell when she purchased permanent anchorage. Since its disappearance, her vessel has returned twice with unfamiliar knots and cargo she never loaded: household objects bearing the names of living townspeople.\n\nShe favours **restoring the bell quickly**, because a closed harbour will ruin families before scholars settle the truth. But finding her late mother's handwriting inside a waterlogged sewing box has made her willing to investigate what restoration might cost.",
+                        ),
+                    },
+                    PlayerCharacter {
+                        name: CharacterName(
+                            "Silas Rook",
+                        ),
+                        description: CharacterDescription(
+                            "**Silas is a 26-year-old man** with olive skin, a tall, narrow frame, dark curls, and watchful brown eyes behind round spectacles. His right leg is supported by a fitted metal brace, and ink stains settle into the creases of his fingers. He typically wears repaired clerks' clothing, soft wool coats, and shoes adapted for uneven stone steps.\n\n*He studies doorways before faces, calculating where he can safely stand.*",
+                        ),
+                        backstory: Backstory(
+                            "Silas copied shipping ledgers for the Harbour Trust until he discovered entire crews recorded as bronze contributions rather than people. Dismissed after preserving a duplicate ledger, he now earns money authenticating records for the Low-Water Exchange.\n\nHe wants to **break the covenant** and expose the bargain that sustains Greyhaven. His certainty falters when the advancing water follows routes marked in his stolen ledger: destroying the agreement could free the submerged district while leaving today's harbour without protection.",
+                        ),
+                    },
+                ],
+                npcs: [
+                    NonPlayerCharacter {
+                        name: CharacterName(
+                            "Edda Vale",
+                        ),
+                        description: CharacterDescription(
+                            "**Edda is a 63-year-old woman** with light brown skin, a tall, spare figure, silver hair braided close to her scalp, and sharp black eyes. A slight tremor affects her left hand. She usually wears formal wool clothing suitable for municipal business, restrained brass jewellery, and polished walking boots.\n\n*Even beside a rising tide, she appears to be waiting for someone else to lose composure.*",
+                        ),
+                        backstory: Backstory(
+                            "Chair of the **Harbour Trust**, Edda rose from freight tallying after keeping food shipments moving through a disastrous winter. She believes that public confidence is a practical necessity, and has ordered crews to dismantle the road before it attracts crowds or interrupts docking.\n\nShe possesses an older covenant transcript whose final clause has been cut away. She conceals the damage because she cannot establish whether it records a crime or a safeguard.",
+                        ),
+                        relationships: Some(
+                            Relationships(
+                                "Edda employs surveyor Tomas Pell and clashes publicly with Sounding Society archivist Neris Quill. She relies on Mara's shipping experience, considers Silas a dangerous former employee, and regards both lighthouse keepers as essential witnesses whose contradictory records threaten her position.\n\n**Any protagonist can gain her cooperation** by securing supplies or presenting evidence she can independently verify.",
+                            ),
+                        ),
+                    },
+                    NonPlayerCharacter {
+                        name: CharacterName(
+                            "Neris Quill",
+                        ),
+                        description: CharacterDescription(
+                            "**Neris is a 47-year-old nonbinary person** with pale skin, a rounded build, shoulder-length black hair streaked with white, and dark eyes magnified by thick spectacles. Their lips are often chapped, and a faint blue tattoo circles one wrist. They typically wear layered linen and wool clothing with protective sleeves and numerous small pockets.\n\n*They listen to dripping water with the concentration others reserve for speech.*",
+                        ),
+                        backstory: Backstory(
+                            "The Sounding Society's chief tide archivist, Neris spent twenty years reconciling incompatible measurements without discarding either lighthouse's records. Their predecessor vanished after declaring that the harbour's charts measured permitted geography rather than actual geography.\n\nNeris demands **an immediate harbour closure**. They hope to recover their predecessor's field notes, but privately fear those notes will show that the Society helped erase the drowned district.",
+                        ),
+                        relationships: Some(
+                            Relationships(
+                                "Neris disputes Edda's assurances and buys concealed records from exchange broker Oona Brine. They respect the eastern Ajax's knowledge of testimony and the western Ajax's precision with instruments, refusing to merge their archives into one account.\n\nThey offer any protagonist access to protected charts in exchange for **preserving the provenance of recovered evidence**.",
+                            ),
+                        ),
+                    },
+                    NonPlayerCharacter {
+                        name: CharacterName(
+                            "Oona Brine",
+                        ),
+                        description: CharacterDescription(
+                            "**Oona is a 55-year-old woman** with warm brown skin, a broad face, a sturdy build, and long black hair threaded with grey. One eye is clouded; the other is a vivid amber brown. She typically wears loose, practical clothing in muted colours, heavy aprons, and rings fashioned from mismatched metals.\n\n*She smells faintly of salt, candle wax, and dried orange peel.*",
+                        ),
+                        backstory: Backstory(
+                            "Oona founded the **Low-Water Exchange** after licensed salvage buyers refused to purchase objects from a cellar absent from their maps. She keeps careful records of every transaction, including goods surrendered as payment by customers who later insist they never visited.\n\nShe wants the emerging district kept accessible long enough to retrieve her husband's last cargo manifest. She will sell useful evidence, but refuses to trade any object that speaks its owner's name.",
+                        ),
+                        relationships: Some(
+                            Relationships(
+                                "Oona authenticates goods with Silas, sells charts to Neris, and shelters workers dismissed by Edda. Mara distrusts her prices but trusts her judgement about dangerous salvage.\n\nShe welcomes any protagonist who honours a bargain; **betraying a seller's identity** closes doors throughout the Exchange.",
+                            ),
+                        ),
+                    },
+                    NonPlayerCharacter {
+                        name: CharacterName(
+                            "Tomas Pell",
+                        ),
+                        description: CharacterDescription(
+                            "**Tomas is a 36-year-old man** with fair skin, a heavyset build, sandy hair thinning at the temples, and pale blue eyes. His nose healed crookedly after an old accident, and stone dust collects in his short beard. He generally wears surveyors' work clothes, waxed outer layers, and thick-soled boots.\n\n*He keeps checking that the ground beneath his feet has remained where he measured it.*",
+                        ),
+                        backstory: Backstory(
+                            "A Harbour Trust surveyor, Tomas accepted road-demolition work to pay for his father's care. His measurements now show that each removed paving stone corresponds to a new crack in an inhabited house above the docks.\n\nHe has secretly stopped his crew at the next marked section. **He needs proof of the connection** before refusing Edda's orders, because a dismissal would cost both his wages and his family's Trust-owned home.",
+                        ),
+                        relationships: Some(
+                            Relationships(
+                                "Tomas answers to Edda and has quietly sent measurements to Neris. Oona offers him money for road fragments, an offer he has resisted. He can guide any protagonist through restricted worksites if they help protect his crew and preserve his findings.\n\n*He wants someone to tell him stopping is enough; he suspects it is already too late.*",
+                            ),
+                        ),
+                    },
+                    NonPlayerCharacter {
+                        name: CharacterName(
+                            "Lio Fen",
+                        ),
+                        description: CharacterDescription(
+                            "**Lio is a 19-year-old man** with deep brown skin, a slight build, tightly curled hair, and large, alert eyes. A white streak runs through his hair above the right temple, and his fingertips are rough from ropework. He typically wears patched fishermen's clothing, oversized knitted layers, and flexible boots suited to wet stairs.\n\n*He speaks quietly, but his laughter carries an unsettling distance over water.*",
+                        ),
+                        backstory: Backstory(
+                            "A net mender supporting his grandmother, Lio was the last person known to hear the harbour bell. He heard it after dusk, hours after its supposed disappearance, sounding beneath the tidal stairs rather than from the tower.\n\nSince then, he has begun tying the unfamiliar knots found on returning boats while asleep. He wants the bell recovered before his hands finish a rope ladder whose length increases every night.",
+                        ),
+                        relationships: Some(
+                            Relationships(
+                                "Mara sometimes hires Lio, and Oona lets his family use a dry corner of the salt cellars. Neris treats his recollections as evidence; Edda fears his account will spread panic.\n\nHe can help any protagonist recognize the strange knots and locate submerged entrances, but **will withdraw if treated as bait**.",
+                            ),
+                        ),
+                    },
+                    NonPlayerCharacter {
+                        name: CharacterName(
+                            "Sere Dallow",
+                        ),
+                        description: CharacterDescription(
+                            "**Sere appears to be a woman in her early seventies**, with grey-brown skin, a narrow frame, long white hair, and green eyes filmed with a pearly sheen. Fine parallel indentations circle her neck, and her bare hands are always wet. She wears old-fashioned, practical coastal clothing made from heavy fabrics, without badges or ornament.\n\n*Water drips from her hems even on dry stone.*",
+                        ),
+                        backstory: Backstory(
+                            "Sere keeps a small dwelling on the drowned road and claims she was appointed to receive the bell when Greyhaven's first covenant ended. Both lighthouse archives mention her, but disagree about whether she was a negotiator, a casualty, or a warning added later.\n\nShe wants the bell carried to the submerged district so its residents can speak through it. She admits that doing so will change the harbour, but refuses to promise whose houses will remain above water.",
+                        ),
+                        relationships: Some(
+                            Relationships(
+                                "Sere recognizes the obligations recorded in both lighthouse archives while challenging each keeper's interpretation. She once supplied Oona with a manifest and knows the missing clause in Edda's transcript.\n\n**Every protagonist encounters her as the road lengthens**. She offers passage and testimony in exchange for hearing the drowned residents' terms before deciding their fate.",
+                            ),
+                        ),
+                    },
+                ],
+            },
+        },
+        position: PlayablePosition(
+            0,
+        ),
+    },
+    style: StoryStyle {
+        art_style: None,
+        pace: None,
+        tone: None,
+        narration: None,
+    },
+    turns: [],
+    limits: Limits {
+        max_major_events: MajorEventLimit(
+            30,
+        ),
+        max_generated_npcs: MaxGeneratedNpcs(
+            8,
+        ),
+        prose_bridge_turns: ProseBridgeTurns(
+            3,
+        ),
+        min_playable_characters: MinPlayableCharacters(
+            2,
+        ),
+    },
+    original_limits: Limits {
+        max_major_events: MajorEventLimit(
+            30,
+        ),
+        max_generated_npcs: MaxGeneratedNpcs(
+            8,
+        ),
+        prose_bridge_turns: ProseBridgeTurns(
+            3,
+        ),
+        min_playable_characters: MinPlayableCharacters(
+            2,
+        ),
+    },
+}

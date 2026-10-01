@@ -99,13 +99,59 @@ start; continuation supplies `starts_new_chapter: false` and a null title. This 
 not a later chapter-boundary or retitling probe. Upcoming events are populated
 replacement lists in both turns, not null/empty cases.
 
-The cast model interpreted the brief as four decorated Ajax player alternatives
-and one conditional “Ajax of the Other Lantern” NPC. No exact equal-name records
-or ID collisions were generated, and the prose-dependent NPC description is a
-fiction-quality limitation, not a domain/adapter failure. The shared invariants
-were preserved; no response was edited or extra model call made to force coverage.
+The cast contains four distinct playable characters with decorated Ajax names
+and one conditional “Ajax of the Other Lantern” NPC. The original brief did not
+say **exactly** two Ajaxes, while the bundled prompt requested 3–5 playable
+characters. Four distinct playable Ajaxes therefore did not violate an exact-two
+constraint: no such constraint was supplied. No exact equal-name records or ID
+collisions were generated. The shared invariants were preserved; no response was
+edited or extra model call made to force coverage.
 The existing composed fixture tests remain the evidence for exact namesakes,
 collision repair, restored limits, chapter transitions and null/empty threads.
 
 Step 7 is complete for the bounded adapter scope. Next is the peer adapter slice,
 with its independent live status, followed by presentation/headless acceptance.
+
+## Brief clarification after the live run
+
+Following user clarification, the opt-in harness now requests 3–5 distinct playable
+characters with exactly two Ajaxes across the entire cast, both playable and each
+using the exact name `Ajax`. Their different histories distinguish them without
+decorating their name fields. This targets the intended equal-name scenario while
+respecting the bundled cast-size request. The preserved attempts above used the
+original brief; the subsequent revised run is recorded below. This change affects
+only the synthetic harness brief, not bundled generation prompts or game rules.
+
+## Revised brief run, 2026-10-02
+
+The revised prompt was then run live in a fresh `revised-live-attempt-outside/`
+directory. The first sandbox attempt is retained separately in
+`revised-live-attempt/`; Codex initialization failed on the read-only filesystem.
+The outside-sandbox run used the existing ChatGPT login, Codex 0.159.3, the real
+adapter and the same bounded requests/cancellation sequence.
+
+The cast response passed the stated constraint exactly:
+
+```text
+Playable names: Ajax, Ajax, Mara Venn, Silas Rook
+Exact "Ajax" playable count: 2
+Exact "Ajax" NPC count: 0
+```
+
+Both Ajaxes were distinct people with different histories and descriptions. The
+two other playables and all six NPCs had other names. No generated playable had a
+surname, station label or epithet in its name field. The cast had four playables,
+within the bundled 3–5 request. This directly exercises a real cast response
+containing two equal names. Selection keeps the chosen playable and the NPCs;
+the two playable Ajaxes were not both present in the subsequent story summary.
+The harness's later turn requests succeeded. Independent updates to two same-name
+characters in one summary remain covered by the composed fixture tests.
+
+Outline, cast, opening and continuation all succeeded in 41.893, 127.834, 73.444
+and 72.648 seconds. Each emitted one exact complete payload, reported no model
+identity, and returned after observed child and workspace cleanup. Controlled
+cancellation returned in about 10 ms with no output, absent PID/workspace and
+unchanged state. The top-level harness recorded `accepted: true`, five generation
+calls and two committed turns. Token usage and exact payloads are retained in that
+attempt directory. This run confirms the clarified cast constraint for this model
+response; it does not guarantee future model calls obey every instruction.
