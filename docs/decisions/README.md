@@ -295,8 +295,9 @@ a build/test dependency violates this decision even if the source uses it.
 
 ### BACKENDS-001 Two co-equal subscription CLI backends
 
-**Partial: Codex adapter and composed real-child fixture acceptance implemented;
-complete live acceptance and Claude adapter pending.** Claude and Codex are peers behind inward-owned ports, not primary and
+**Partial: Codex adapter, composed real-child fixture acceptance and bounded live
+adapter acceptance implemented; Claude adapter and both live headless gates pending.**
+Claude and Codex are peers behind inward-owned ports, not primary and
 fallback. Use stateless calls and subscription auth; never silently switch to paid
 API auth. Test the shared contract against scripted and both concrete adapters.
 Each backend needs its own actual live evidence before "verified" or v1 completion;

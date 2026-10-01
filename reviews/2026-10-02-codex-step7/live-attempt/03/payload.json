@@ -1,0 +1,55 @@
+{
+  "narrative": "The envelope catches beneath your two crooked fingers, and you have to set down the lamp to free it without tearing the paper. Whoever sealed it used no wax. A strip of flour paste holds the flap, still soft from the rain.\n\nAcross your kitchen table, Nessa Pike watches you work. Water drips from her auburn curls onto the shoulders of her knitted jersey. Behind her, the window frames the harbour far below: slate roofs, a thin fringe of boats, the breakwater disappearing into evening mist. North Lantern’s revolving machinery ticks through the ceiling, steady enough that you ordinarily cease to hear it.\n\n“Went to the island first,” she says. “He told me to bring it up here. Said if anyone was measuring things behind his back, it would probably be you.”\n\n“Very charitable.”\n\n“He used longer words.” Her silver tooth catches the lamplight, but the smile goes quickly. “Read it.”\n\nYou put on the spectacles hanging against your wool waistcoat. Inside is a single sheet, folded around a narrow sliver of paper. The sheet carries three lines in a square, deliberate hand.\n\n**Eleven feet, four inches from the quay datum to the seventh tread.**\n\n**You measured it. Who asked you to remove it?**\n\n**The market stair will be dry tonight.**\n\nFor a moment your spectacles seem badly adjusted. You lift them, rub the bridge of your nose, replace them. The figures remain.\n\nYou remember kneeling with the brass rule against wet stone. A labourer holds your lamp; his sleeve steams above its chimney. Later, in a warmer room, your supervisor turns the revised drawing toward you and rests one clean fingernail on the blank space. *A harmless correction.* You sign because the calculations governing the quay are unchanged, because the workmen need their wages, because you understand the drawings better than you understand the reasons for them.\n\nNessa leans forward. “That means something.”\n\n“It’s a measurement I made.”\n\n“How long ago?”\n\n“Twelve years.”\n\nShe looks toward the harbour. Her hand closes around the strap of her delivery bag.\n\nThe enclosed sliver is tracing paper, brittle at its creases. You hold it flat with your left hand. Seven shallow steps descend beside a wall marked with the old survey hatch for masonry retained in place. At the bottom sits a little rectangle labelled **speaking pipe**. The stair itself bears no title, but you recognise the angle where its landing meets the quay. Your pencil once hesitates there over a crack in the stone; even the hesitation survives in the copied line.\n\n“Where did you get this?” you ask.\n\n“In the Low Lantern supply box. Under the oil receipt.” Nessa pauses. “Yesterday, when I left that receipt, there wasn’t a letter.”\n\nFrom the passage outside your kitchen comes a low metallic knock.\n\nYou both turn.\n\nA second follows, deeper, felt through the table beneath your palm. The lamp flame draws sideways although the window is shut. Then comes the third note, with the thin, wavering tail you remember from fogbound mornings when the Homecoming Bell still hangs above the breakwater.\n\nNessa stands so abruptly that her chair scrapes the flags.\n\n“That’s it,” she says. “That’s what we heard under the stalls.”\n\nYou take the lamp into the passage. Beside the outer door, North Lantern’s disused speaking tube protrudes from the plaster, its brass mouth covered by a hinged cap. A bead of water gathers along the rim. You touch it with your sound fingers, then smell them.\n\nPeat. Cold iron.\n\n“That pipe should be stopped below the headland,” you say.\n\n“Should be?”\n\nYou lift the cap. Air moves against your face, damp and surprisingly warm. Far down the tube something scrapes, stops, then scrapes again. Distance means nothing inside a pipe; you cannot tell whether you hear movement beneath your boots or across the inlet.\n\nNessa comes only as far as the kitchen doorway. “My storeroom’s over that stair. Iven put mortar across the bottom door last winter.” She swallows. “I’ve got the key. But if we go down to the market, we go while there are people about.”\n\nThe tube exhales again. Behind you, the lighthouse clock begins striking six. Your evening inspection is due, the market lies a steep twenty minutes downhill, and the copied stair rests beside the lamp’s empty place on your table. Nessa waits with her wet bag in one hand, watching what you do with the other.",
+  "quick_actions": [
+    {
+      "text": "Secure the speaking tube and complete the lighthouse inspection",
+      "kind": "cautious"
+    },
+    {
+      "text": "Take Nessa’s key and head straight for the market stair",
+      "kind": "bold"
+    },
+    {
+      "text": "Ask Nessa about the disturbances beneath her storeroom",
+      "kind": "social"
+    }
+  ],
+  "scene_description": "An atmospheric lighthouse interior at rainy dusk, a narrow plaster passage adjoining a modest kitchen with a wooden table. A tall, stooped 54-year-old man with brown skin, close-cropped grey curls, hazel eyes, a pale scar through his left eyebrow and two crooked right fingers stands holding an oil lamp beside an open brass speaking tube beaded with water. He wears practical dark wool layers, sturdy boots and spectacles on a cord, his expression troubled and attentive. In the kitchen doorway stands a short, sturdy 34-year-old woman with freckled brown skin, green eyes, tied auburn curls damp from rain and a glimpse of a silver front tooth. She wears a wet knitted jersey and waterproof work layers and grips a delivery bag anxiously. An unfolded letter and narrow architectural tracing lie on the table. Through the kitchen window, slate harbour roofs and distant boats fade into mist.",
+  "summary_update": {
+    "current_situation": "At North Lantern at six in the evening, Ajax has received a misdirected anonymous letter quoting his omitted stair measurement and promising that the market stair will be dry tonight. The Homecoming Bell has sounded through the disused speaking tube, which now releases damp air smelling of peat and iron. Nessa waits with access to her market storeroom while Ajax must choose between station duties, immediate investigation and questioning her.",
+    "character_updates": [
+      {
+        "id": "protagonist",
+        "current_state": "At North Lantern beside the open speaking tube, holding an oil lamp and wearing his spectacles. Troubled by an anonymous letter quoting his twelve-year-old measurement and a tracing of the omitted seven-step market stair with a speaking pipe at its foot. Has heard the bell through the tube; his evening lighthouse inspection is due. The letter and tracing remain on his kitchen table.",
+        "name": "",
+        "description": "",
+        "backstory": "",
+        "relationships": ""
+      },
+      {
+        "id": "nessa-pike",
+        "current_state": "At North Lantern's kitchen doorway, rain-wet and anxious, carrying her delivery bag and the key to her market storeroom. Delivered a letter found in Low Lantern's supply box beneath an oil receipt she left yesterday. Heard the bell through North Lantern's speaking tube and identified it with sounds beneath the stalls. Offers access to the market stair but wants to go while other people are present.",
+        "name": "",
+        "description": "",
+        "backstory": "",
+        "relationships": ""
+      }
+    ],
+    "new_major_events": [
+      "Nessa delivers an anonymous letter routed through Low Lantern, quoting Ajax's omitted stair measurement and predicting a dry market stair tonight.",
+      "An enclosed tracing depicts the omitted seven-step stair and a speaking pipe at its foot.",
+      "The Homecoming Bell sounds through North Lantern's disused speaking tube, which releases damp air smelling of peat and iron.",
+      "Nessa reveals that her storeroom lies above the market stair and that Iven mortared its bottom door last winter."
+    ],
+    "upcoming_events": [
+      "Identify the anonymous correspondent and how the letter entered Low Lantern's supply box.",
+      "Investigate the market stair during the promised dry interval tonight.",
+      "Determine why North Lantern's supposedly stopped speaking tube carries the bell and damp air.",
+      "Complete North Lantern's evening inspection."
+    ],
+    "world": "",
+    "consolidated_major_events": []
+  },
+  "starts_new_chapter": true,
+  "chapter_title": "The Seventh Tread"
+}

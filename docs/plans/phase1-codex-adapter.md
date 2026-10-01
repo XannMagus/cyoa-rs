@@ -1,6 +1,8 @@
 # Next slice: a Codex CLI adapter with independently verified completion
 
-Status: **steps 1–6 complete (profile, preparation, codec, reconciliation, composed fixture acceptance and persistent mutations); step 7 pending**.
+Status: **steps 1–7 complete**, including the 2026-10-02 live adapter gate on
+Codex 0.159.3. [Evidence](../../reviews/2026-10-02-codex-step7/README.md).
+Next: [Claude adapter handoff](phase1-claude-adapter-handoff.md), then presentation.
 Planning baseline: `8f8d253`, 2026-09-25; step 1 starts from `4ac538d` with no
 subsequent changes and records CLI 0.157.1 on 2026-09-26 in
 [the discovery evidence](../../reviews/2026-09-26-codex-profile/README.md).
@@ -149,7 +151,7 @@ behavior is retained throughout.
 ### 1. Freeze the supported Codex protocol profile
 
 **Complete, 2026-09-26; no production adapter claim.** The
-[current profile](../../reference/02-codex-cli.md#supported-profile-01571-step-1-policy-not-yet-implemented)
+[current profile](../../reference/02-codex-cli.md#supported-profile-01571-implemented-also-exercised-on-01593)
 freezes complete-only, one-agent-message acceptance, framed combined stdin,
 all-properties-required plus annotated-ref union adaptation, and partial isolation.
 The live tool canary has commentary and a second agent message with no final
@@ -237,8 +239,8 @@ supervisor. Cancellation/timeout now retain explicit candidates; structured
 transport causes retain nested failures without embedding diagnostic buffers in
 messages. Real-child fixtures and a bounded live outline smoke passed.
 [Evidence and limitations](../../reviews/2026-09-27-codex-step4/README.md).
-Step 5 subsequently added composed fixture acceptance; step 7's full live gate
-remains pending.
+Step 5 subsequently added composed fixture acceptance; step 7 completed the
+bounded live adapter gate on 2026-10-02.
 
 Implement `Backend::generate` by invoking the existing supervisor once, feeding its
 records to the codec, and accepting a response only after both parts succeed.
@@ -325,6 +327,15 @@ are harness failures, not successful mutation detection. Recheck architectural
 ownership after green rather than weakening invariants to make tests pass.
 
 ### 7. Verify the finished adapter live and write the peer handoff
+
+**Complete, 2026-10-02.** Bundled outline/cast/opening/continuation passed through
+the real adapter and use cases on 0.159.3. Controlled cancellation returned with
+the observed PID/workspace absent and the entire game unchanged. Four successes
+emitted one complete payload each; model identity remained unreported. The initial
+outer-sandbox failure and explicitly approved rerun are retained separately in
+the linked evidence above. The peer handoff does not claim Claude implementation
+or live headless acceptance. Exact namesake collisions, null/empty thread updates,
+restored-limit policies and chapter breaks retain their distinct fixture evidence.
 
 Run the real adapter's opt-in harness against authenticated Codex using bundled
 outline/cast/opening/continuation requests. Include one controlled cancellation with

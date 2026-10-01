@@ -1,11 +1,11 @@
-# `codex exec` — composed fixture acceptance complete; full live gate pending
+# `codex exec` — adapter fixture and live gates complete; headless gate pending
 
 Co-equal companion to `01-claude-cli.md`. Step 1 of the Codex adapter plan is
 complete: **0.157.1, 2026-09-26**, authenticated using ChatGPT. Bundled outline,
 cast, opening, continuation and zero-NPC requests were probed, plus explicit
 null/empty and isolation canaries. [Full evidence and reproduction](../reviews/2026-09-26-codex-profile/README.md).
 This freezes a narrow protocol. The subsequent step-4 evidence below exercises
-the actual Backend for one outline; complete acceptance remains pending.
+the actual Backend for one outline; step 7 below adds composed live acceptance.
 Claude's implementation/live gates remain independent.
 
 Implementation status, 2026-09-27: steps 1–4 now include request preparation,
@@ -21,7 +21,40 @@ observations and remaining live questions below keep their original scope.
 Step 6, 2026-09-28: seven persistent offline mutations now protect protocol
 acceptance, shared/peer schema isolation and failure evidence. The gate retains
 all eleven prior mutations ([record](../reviews/2026-09-28-codex-step6/README.md)).
-This adds no authenticated observations; step 7 remains the full live adapter gate.
+That step added no authenticated observations; step 7 below supplies the live gate.
+
+## Confirmed: composed live adapter gate, 0.159.3, 2026-10-02
+
+Step 7 passed using the opt-in `codex_adapter_acceptance` example and actual
+`StoryUseCases -> GenerationEngine -> CodexCliBackend` with bundled requests.
+[Commands, artifacts and limitations](../reviews/2026-10-02-codex-step7/README.md).
+The installed CLI reported 0.159.3 and ChatGPT login; adapter construction checked
+subscription authentication using the selected invocation environment. No explicit
+model was selected, and no model identity or cost appeared in the responses.
+
+- Outline, cast, opening and continuation passed transport, protocol and domain
+  validation, committing two turns. Durations: 46.356, 124.380, 81.850 and 82.717
+  seconds. Each had exactly one complete agent message followed by turn.completed,
+  one exact payload callback, zero stderr bytes, and observed PID/workspace absence
+  after return. This exercises the existing 0.157.1 profile unchanged on 0.159.3;
+  it is not a universal version-compatibility claim.
+- The next turn was deliberately cancelled one second after observing its real
+  schema-bearing child. Cancellation returned in approximately 10 ms, with zero
+  payload/prose emissions, direct child PID absent, request directory absent, and
+  complete game equality with the pre-call clone. No candidate, terminal usage or
+  raw cancellation exit code was available; do not invent them. This does not
+  prove termination of remote server work or all possible descendants.
+- Opening and continuation updated existing protagonist/Nessa IDs, with three
+  action kinds and durable blank delta fields. The cast generated decorated Ajax
+  alternatives, not exact equal-name records. Exact namesake collisions, changed
+  limits, null/empty upcoming events and a later chapter break were not exercised
+  live by this sequence; their fixture evidence remains separate.
+- The first sandboxed attempt failed during app-server initialization with empty
+  stdout and a read-only-filesystem error. The approved unsandboxed rerun is a
+  separately retained diagnostic attempt, not an adapter retry.
+
+The bounded adapter gate is complete. Claude implementation, both headless gates,
+full account/tool isolation and the remaining questions below stay open.
 
 ## Confirmed: actual adapter outline smoke, 0.157.1, 2026-09-27
 
@@ -79,10 +112,10 @@ from this smoke. No real cancellation or composed cast/turn story was exercised.
   turn.failed, exit 1, no usage. The initial outer-sandbox initialization failure
   instead had empty stdout and stderr only; its explicit rerun is retained.
 
-## Supported profile 0.157.1 (step 1 policy, not yet implemented)
+## Supported profile 0.157.1 (implemented; also exercised on 0.159.3)
 
 This is an intentionally conservative **adapter acceptance policy**, not a claim
-that every valid Codex run has this shape. Steps 2–6 must implement and test it.
+that every valid Codex run has this shape. Steps 2–6 implement and test it.
 
 Invocation: resolved absolute executable, private request cwd, explicit auth-home
 environment above, subscription-mode preflight using the same selection, and:
@@ -99,7 +132,7 @@ Do not import Claude's root-key removal, alter shared DTOs/templates/schemas, ad
 nullability, or expose arbitrary config/argv overrides. Explicit model overrides
 are not exercised by this profile; configured is never synonymous with observed.
 
-Protocol rules to implement:
+Implemented protocol rules:
 
 1. One thread.started with nonempty thread_id, then one turn.started, then one
    item.completed whose item has nonempty id, type agent_message and string text,
@@ -136,24 +169,25 @@ Protocol rules to implement:
    absent for these transcripts.
 
 The [synthetic fixture manifest](../reviews/2026-09-26-codex-profile/synthetic/expectations.json)
-specifies future acceptance outcomes independently of a codec. These fixtures
-are not live observations or existing implementation tests. The real tool-canary
+specifies acceptance outcomes independently of the codec. Synthetic fixtures
+are not live observations; the codec now exercises these outcomes. The real tool-canary
 transcript is an explicit unsupported-profile example despite its CLI exit 0.
 
-## Open questions after step 1
+## Remaining open questions after step 7
 
 - Full account/global instruction, skill/plugin/MCP and tool isolation is **not
   verified**. The byte-limit canary covers local AGENTS.md only. Read-only does
   not disable reads/tools; rejecting their events cannot prevent earlier effects.
-- Other CLI versions, explicit model choices, longer/different-mode streaming,
+- CLI versions beyond the exercised 0.157.1/0.159.3 runs, explicit model choices, longer/different-mode streaming,
   recovery after error notices and a reliable discriminator among multiple agent
   messages remain outside this profile until independently exercised.
 - Rate-limit/unsatisfiable-schema/sandbox-denial outcomes and failure/cancellation
   usage are unexercised. Do not exhaust quota to manufacture evidence.
-- Complete CodexCliBackend live acceptance, live cancellation,
-  composed identities/limits/story behavior and the headless gate remain pending.
-  Candidate retention and transport reconciliation now have fixture evidence.
-  Supervisor Linux tests and payload boundary inspection are different evidence.
+- The bounded CodexCliBackend live story/cancellation gate is complete. Broader
+  live identity/limit edge cases and the headless gate remain pending. Candidate
+  retention after cancellation with an existing payload remains fixture evidence;
+  the live cancelled request had no candidate. Supervisor tests and exact payload
+  inspection remain different evidence from future model behavior.
 
 ## Historical observations (0.155.1, retained with original scope)
 

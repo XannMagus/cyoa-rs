@@ -18,11 +18,13 @@ Use that document for the next phase rather than implementing historical sketche
 below literally. Its features remain planned until their acceptance evidence exists.
 The immediate adapter slice is detailed in [the Codex adapter plan](docs/plans/phase1-codex-adapter.md),
 including evidence gates, atomic commits and cross-backend acceptance obligations.
-Steps 1–6 are complete: frozen live discovery, isolated request preparation,
+Steps 1–7 are complete: frozen live discovery, isolated request preparation,
 private protocol decoding, Codex Backend reconciliation and composed story
-acceptance through real fixture children, and persistent adapter mutations.
-One bundled outline passed a live smoke; the full live adapter gate, Claude's implementation and
-headless acceptance remain pending.
+acceptance through real fixture children, persistent adapter mutations, and the
+2026-10-02 live outline/cast/opening/continuation/cancellation gate on Codex 0.159.3.
+See the [live evidence](reviews/2026-10-02-codex-step7/README.md) and
+[Claude adapter handoff](docs/plans/phase1-claude-adapter-handoff.md).
+Claude's implementation and both backends' headless acceptance remain pending.
 
 ## Context
 

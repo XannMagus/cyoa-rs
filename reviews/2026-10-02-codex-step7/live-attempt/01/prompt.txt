@@ -1,0 +1,3 @@
+Create the world for an adventure game based on this description:
+
+A quiet harbour where two unrelated lighthouse keepers both named Ajax uncover a missing bell. Both Ajaxes are distinct playable characters with different histories.

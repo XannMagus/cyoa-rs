@@ -1,0 +1,142 @@
+The summary of the story so far, as JSON:
+{
+  "world": "Greyhaven is a quiet harbour built around a narrow inlet, where slate roofs shine after rain and fishing boats settle into black mud at low tide. Beyond the breakwater, pale shoals shift with every winter storm. Two lighthouses mark the safe approach: **North Lantern**, on a chalk headland connected to town by a steep road, and **Low Lantern**, on a tidal island reached by a causeway that disappears twice a day. *On still evenings, the harbour seems small enough to hear a spoon touch the bottom of a cup.*\n\nThe two lighthouse posts belong to separate services, each with its own records, equipment and traditions. Their keepers happen to share the name Ajax, despite being unrelated and having different histories. Harbour paperwork distinguishes them by station. This coincidence becomes important when messages addressed only to “Ajax” begin arriving at the wrong lighthouse, exposing discrepancies that neither station’s records can explain alone.\n\nFor generations, the bronze **Homecoming Bell** hung at the outer end of the breakwater. Its sound carried through fog when neither lighthouse could be seen. It also marked the closing of the tidal sluices beneath the quay, warning boats to clear the channel before the current turned. Twelve years ago, the bell vanished during a night of exceptional low water. The official register records it as lost to the sea; the salvage ledger records payment for its recovery. No recovered bell appears in the harbour inventory.\n\nNow its distinctive three-note peal has returned, sounding from beneath the inlet whenever the tide falls below the lowest step of the old fish market. Neither lighthouse can locate it consistently. Sometimes the sound rises through North Lantern’s disused speaking tube; sometimes Low Lantern’s foundations vibrate as though struck. **At each sounding, one sealed passage beneath the harbour opens—and another floods.** The phenomenon follows the tides closely enough to investigate, but leaves only short windows for exploration.\n\nBeneath Greyhaven lies an older harbour: submerged loading stairs, vaulted salt stores and a network of sluice tunnels cut through the rock. The present breakwater was built over its entrance after a catastrophic flood. Surviving charts disagree about the lower channels, and alterations in the stone suggest that some doors were deliberately concealed. Fresh water runs through parts of the tunnels, bringing the smell of peat from inland marshes; others hold seawater so clear that lantern light reveals mooring rings far below.\n\nThree local institutions have competing claims on what lies underground. The **Harbour Board** controls shipping, dredging and the official archives, and fears that reopening the old works will undermine the quay. The **Sounding Guild**, a cooperative of pilots and salvage crews, wants access to the buried channels and insists that the missing bell remains salvage owed to the harbour. The **Salt Chapel** preserves flood memorials and handwritten tide observations, treating the bell as a warning device whose removal broke an old obligation. Each holds useful evidence; each has reasons to keep part of it private.\n\nGreyhaven’s unease grows through ordinary details: wet footprints inside locked stores, ropes drawn taut on empty moorings, a tide gauge reading higher than the water beside it. The uncanny has limits. The bell sounds only on falling water, its echoes travel through connected stone and flooded passages, and nothing heard below can be trusted to indicate distance. *A noise that seems just beyond a door may belong to the far side of the harbour.*\n\nThe central mystery is what happened to the bell, why its recovery was concealed, and whether returning it to the breakwater would restore the harbour’s defences or disable something built in its absence. An approaching spring tide will test the failing sluices. Exploration, archive work and cooperation between the two lighthouse stations can reveal how the buried system operates, while the choice of whom to trust determines access to boats, keys and charts. **Greyhaven’s survival depends on understanding the bell before deciding where it belongs.**",
+  "major_events": [
+    "Nessa delivers an anonymous letter routed through Low Lantern, quoting Ajax's omitted stair measurement and predicting a dry market stair tonight.",
+    "An enclosed tracing depicts the omitted seven-step stair and a speaking pipe at its foot.",
+    "The Homecoming Bell sounds through North Lantern's disused speaking tube, which releases damp air smelling of peat and iron.",
+    "Nessa reveals that her storeroom lies above the market stair and that Iven mortared its bottom door last winter."
+  ],
+  "characters": [
+    {
+      "name": "Ajax of North Lantern — The Former Surveyor",
+      "description": "**Ajax is a 54-year-old man** with a tall, stooped frame, brown skin, close-cropped grey curls and deep-set hazel eyes. A pale scar divides his left eyebrow, and two fingers on his right hand are permanently crooked. He typically wears practical wool layers, weatherproof coats and sturdy boots, carrying spectacles on a cord.\n\n*He studies doorways as though measuring what they conceal.*",
+      "backstory": "Before becoming North Lantern’s keeper, Ajax surveyed the Harbour Board’s quay repairs. Twelve years ago, he signed a revised drawing that omitted a stairway he had personally measured; his supervisor called it a harmless correction.\n\n**A misdirected letter addressed only to “Ajax” quotes that missing measurement.** He wants to establish whether his work helped conceal the bell, but fears that exposing the truth could destabilize the quay he helped preserve.",
+      "relationships": "",
+      "current_state": "At North Lantern beside the open speaking tube, holding an oil lamp and wearing his spectacles. Troubled by an anonymous letter quoting his twelve-year-old measurement and a tracing of the omitted seven-step market stair with a speaking pipe at its foot. Has heard the bell through the tube; his evening lighthouse inspection is due. The letter and tracing remain on his kitchen table.",
+      "id": "protagonist"
+    },
+    {
+      "name": "Ajax of the Other Lantern",
+      "description": "**The unchosen lighthouse keeper is an unrelated person also named Ajax.** When the player chooses North Lantern, this Ajax is Low Lantern’s keeper: a stocky, 43-year-old man with tawny skin, a shaved head, a salt-grey beard and a missing little finger, usually wearing heavy maritime workwear.\n\nWhen the player chooses Low Lantern, this Ajax is North Lantern’s keeper: a tall, 58-year-old woman with dark skin, silver braids, amber eyes and round spectacles, usually wearing wool separates and practical weatherproof coats. *Either has the watchful fatigue of someone who sleeps between alarms.*",
+      "backstory": "The other Ajax has served at their station for nine years and guards its service’s independence. They initially blame the misdirected correspondence on careless harbour clerks, until a letter describes a sealed cavity beneath their own lighthouse.\n\n**Their records supply the timings missing from the protagonist’s observations.** They want to keep both lights operational through the spring tide and will risk their position to investigate, once cooperation earns their trust.",
+      "relationships": "**This Ajax always keeps the opposite lighthouse from the protagonist**, remaining a separate person rather than an additional version of the chosen character. Their relationship begins with irritation over wrongly delivered messages and can develop into close professional trust.\n\nThey exchange observations with Mara Venn, quarrel with Elspeth Rook over access to station records, and rely on Nessa Pike for supplies. *Sharing a name becomes their private joke before it becomes their strongest investigative advantage.*",
+      "current_state": "Has not yet appeared in the story.",
+      "id": "ajax-of-the-other-lantern"
+    },
+    {
+      "name": "Elspeth Rook",
+      "description": "**Elspeth is a 61-year-old woman** with a compact build, light brown skin, straight silver hair cut at the jaw and dark eyes beneath heavy lids. Her right cheek bears a small crescent birthmark. She typically wears restrained tailored clothing, sensible shoes and weatherproof outerwear, keeping her archive keys on a plain brass chain.\n\n*She holds papers by their edges, even when they are already ruined.*",
+      "backstory": "The Harbour Board’s chief archivist entered the bell as lost to the sea on instructions from a chairman now dead. She retained the original recovery receipt because destroying it felt worse than concealing it.\n\n**She knows which records were altered, but not what the recovered bell now controls.** Her chief fear is that public revelations will prompt hurried excavation before the quay can be secured.",
+      "relationships": "**Elspeth controls access to the official register and construction plans.** She respects either keeper’s responsibility for shipping but tests their discretion before releasing evidence.\n\nShe disputes ownership of the salvage ledger with Tomas Brine and has quietly supplied Mara Venn with copies of flood reports. *Her enemies mistake caution for an absence of conscience.*",
+      "current_state": "Has not yet appeared in the story.",
+      "id": "elspeth-rook"
+    },
+    {
+      "name": "Tomas Brine",
+      "description": "**Tomas is a 39-year-old man** with a heavyset frame, fair skin reddened by wind, sandy hair and a short uneven beard. His blue eyes sit above a nose broken more than once, and faded tattoos of sounding marks encircle his wrists. He favours loose working clothes, reinforced boots and sleeveless waterproof layers.\n\n*His cheerful voice becomes carefully flat whenever the missing bell is mentioned.*",
+      "backstory": "Tomas leads the Sounding Guild’s salvage crews. His late mother authorized payment for recovering the bell, then refused to identify its destination. He inherited her ledger and the suspicion that her silence protected someone powerful.\n\n**He wants the bell recognized as recovered property and the buried channels opened to the cooperative.** He also needs to learn whether his mother concealed a theft or helped prevent another flood.",
+      "relationships": "**Tomas can provide boats, divers and the salvage ledger** to either protagonist. A former salvage keeper earns his familiarity; other keepers must demonstrate that they take crew safety seriously.\n\nHe resents Elspeth’s restrictions, buys tide information from Nessa, and trusts Iven Sedge’s workmanship more than his explanations. *He will accept a lost profit sooner than a lost crew member.*",
+      "current_state": "Has not yet appeared in the story.",
+      "id": "tomas-brine"
+    },
+    {
+      "name": "Mara Venn",
+      "description": "**Mara is a 68-year-old woman** with a slender frame, deep brown skin, closely cropped white hair and keen black eyes. Arthritis has enlarged her knuckles, and a narrow scar runs along her throat. She generally wears plain layered dresses, knitted shawls and flat boots suitable for damp stone floors.\n\n*She listens through pauses that other people hurry to fill.*",
+      "backstory": "Mara tends the Salt Chapel’s flood memorials and maintains tide observations begun by her grandfather. Her records suggest the bell once signalled a sequence of sluice operations, rather than merely warning boats.\n\n**She concealed a maintenance book after the Board dismissed it as superstition.** She wants the old obligation understood before anyone returns the bell to its former mounting.",
+      "relationships": "**Mara offers memorial records, tide notebooks and a key to the chapel’s buried stair.** She welcomes either keeper but insists that observations distinguish what was heard from what was assumed.\n\nElspeth sometimes brings her documents after dark. Mara remembers Iven as an apprentice and challenges Tomas’s belief that recovery alone establishes ownership. *She treats the dead as witnesses whose testimony still needs checking.*",
+      "current_state": "Has not yet appeared in the story.",
+      "id": "mara-venn"
+    },
+    {
+      "name": "Iven Sedge",
+      "description": "**Iven is a 56-year-old man** with a thickset body, weathered olive skin, thinning black hair and a drooping grey moustache. One clouded eye looks slightly outward, and lime dust permanently whitens the creases of his hands. He usually wears patched tradesmen’s clothing, leather aprons and broad boots.\n\n*He taps unfamiliar walls before leaning against them.*",
+      "backstory": "A mason responsible for sluice repairs, Iven helped seal a lower passage shortly after the bell was recovered. He was told the new stonework would prevent a repeat of the catastrophic flood. Recently, cracks have appeared in precisely the joints he was instructed to leave flexible.\n\n**He knows where the concealed doors stand and which walls bear the quay’s weight.** He wants to repair the failing system, but admitting what he built could cost his livelihood.",
+      "relationships": "**Iven supplies practical knowledge of the tunnels to either Ajax**, provided they agree to inspect damage before forcing doors. The Board employs him, the Guild hires him, and the Chapel remembers the workers injured on his projects.\n\nHe owes Nessa a debt for sheltering his family during a cellar flood. *Every institution claims his loyalty; none has asked what the stone is doing now.*",
+      "current_state": "Has not yet appeared in the story.",
+      "id": "iven-sedge"
+    },
+    {
+      "name": "Nessa Pike",
+      "description": "**Nessa is a 34-year-old woman** with a short, sturdy build, freckled brown skin, green eyes and dense auburn curls usually tied back. A silver front tooth flashes when she smiles, and her palms are rough from handling ropes and crates. She typically wears washable work clothes, heavy knitwear and practical waterproof layers.\n\n*She keeps one foot pointed toward the door whenever the tide is falling.*",
+      "backstory": "Nessa runs a fish-market stall and carries supplies across the causeway. Her storeroom has acquired wet footprints despite an intact lock, while a mooring outside strains against something no one can see.\n\n**She has recorded each disturbance beside her delivery times.** She wants reliable warnings and protection for the market families, whose homes sit directly above the old salt stores.",
+      "relationships": "**Nessa is the protagonist’s dependable link between the two stations**, delivering misdirected letters and noticing when messages disappear. She sells provisions to Tomas’s crews and presses Elspeth for flood precautions the Board keeps postponing.\n\nHer friendship with Iven gives her access to repair gossip, while Mara helps her compare disturbances with historic tides. *She judges every proposed solution by whose kitchen will flood first.*",
+      "current_state": "At North Lantern's kitchen doorway, rain-wet and anxious, carrying her delivery bag and the key to her market storeroom. Delivered a letter found in Low Lantern's supply box beneath an oil receipt she left yesterday. Heard the bell through North Lantern's speaking tube and identified it with sounds beneath the stalls. Offers access to the market stair but wants to go while other people are present.",
+      "id": "nessa-pike"
+    }
+  ],
+  "current_situation": "At North Lantern at six in the evening, Ajax has received a misdirected anonymous letter quoting his omitted stair measurement and promising that the market stair will be dry tonight. The Homecoming Bell has sounded through the disused speaking tube, which now releases damp air smelling of peat and iron. Nessa waits with access to her market storeroom while Ajax must choose between station duties, immediate investigation and questioning her.",
+  "upcoming_events": [
+    "Identify the anonymous correspondent and how the letter entered Low Lantern's supply box.",
+    "Investigate the market stair during the promised dry interval tonight.",
+    "Determine why North Lantern's supposedly stopped speaking tube carries the bell and damp air.",
+    "Complete North Lantern's evening inspection."
+  ]
+}
+
+The prose of the current chapter so far, which the reader has already read:
+
+The envelope catches beneath your two crooked fingers, and you have to set down the lamp to free it without tearing the paper. Whoever sealed it used no wax. A strip of flour paste holds the flap, still soft from the rain.
+
+Across your kitchen table, Nessa Pike watches you work. Water drips from her auburn curls onto the shoulders of her knitted jersey. Behind her, the window frames the harbour far below: slate roofs, a thin fringe of boats, the breakwater disappearing into evening mist. North Lantern’s revolving machinery ticks through the ceiling, steady enough that you ordinarily cease to hear it.
+
+“Went to the island first,” she says. “He told me to bring it up here. Said if anyone was measuring things behind his back, it would probably be you.”
+
+“Very charitable.”
+
+“He used longer words.” Her silver tooth catches the lamplight, but the smile goes quickly. “Read it.”
+
+You put on the spectacles hanging against your wool waistcoat. Inside is a single sheet, folded around a narrow sliver of paper. The sheet carries three lines in a square, deliberate hand.
+
+**Eleven feet, four inches from the quay datum to the seventh tread.**
+
+**You measured it. Who asked you to remove it?**
+
+**The market stair will be dry tonight.**
+
+For a moment your spectacles seem badly adjusted. You lift them, rub the bridge of your nose, replace them. The figures remain.
+
+You remember kneeling with the brass rule against wet stone. A labourer holds your lamp; his sleeve steams above its chimney. Later, in a warmer room, your supervisor turns the revised drawing toward you and rests one clean fingernail on the blank space. *A harmless correction.* You sign because the calculations governing the quay are unchanged, because the workmen need their wages, because you understand the drawings better than you understand the reasons for them.
+
+Nessa leans forward. “That means something.”
+
+“It’s a measurement I made.”
+
+“How long ago?”
+
+“Twelve years.”
+
+She looks toward the harbour. Her hand closes around the strap of her delivery bag.
+
+The enclosed sliver is tracing paper, brittle at its creases. You hold it flat with your left hand. Seven shallow steps descend beside a wall marked with the old survey hatch for masonry retained in place. At the bottom sits a little rectangle labelled **speaking pipe**. The stair itself bears no title, but you recognise the angle where its landing meets the quay. Your pencil once hesitates there over a crack in the stone; even the hesitation survives in the copied line.
+
+“Where did you get this?” you ask.
+
+“In the Low Lantern supply box. Under the oil receipt.” Nessa pauses. “Yesterday, when I left that receipt, there wasn’t a letter.”
+
+From the passage outside your kitchen comes a low metallic knock.
+
+You both turn.
+
+A second follows, deeper, felt through the table beneath your palm. The lamp flame draws sideways although the window is shut. Then comes the third note, with the thin, wavering tail you remember from fogbound mornings when the Homecoming Bell still hangs above the breakwater.
+
+Nessa stands so abruptly that her chair scrapes the flags.
+
+“That’s it,” she says. “That’s what we heard under the stalls.”
+
+You take the lamp into the passage. Beside the outer door, North Lantern’s disused speaking tube protrudes from the plaster, its brass mouth covered by a hinged cap. A bead of water gathers along the rim. You touch it with your sound fingers, then smell them.
+
+Peat. Cold iron.
+
+“That pipe should be stopped below the headland,” you say.
+
+“Should be?”
+
+You lift the cap. Air moves against your face, damp and surprisingly warm. Far down the tube something scrapes, stops, then scrapes again. Distance means nothing inside a pipe; you cannot tell whether you hear movement beneath your boots or across the inlet.
+
+Nessa comes only as far as the kitchen doorway. “My storeroom’s over that stair. Iven put mortar across the bottom door last winter.” She swallows. “I’ve got the key. But if we go down to the market, we go while there are people about.”
+
+The tube exhales again. Behind you, the lighthouse clock begins striking six. Your evening inspection is due, the market lies a steep twenty minutes downhill, and the copied stair rests beside the lamp’s empty place on your table. Nessa waits with her wet bag in one hand, watching what you do with the other.
+
+The reader offers no direction.
+Write the next passage of the novel, continuing seamlessly from where the chapter's prose ends.

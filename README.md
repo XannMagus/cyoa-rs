@@ -26,7 +26,8 @@ propagation and owned request directories.
 Claude evidence was refreshed on 2026-09-25; Codex's
 [0.157.1 protocol profile](reviews/2026-09-26-codex-profile/README.md) was frozen on
 2026-09-26 using bounded bundled-request probes, with full account/tool isolation
-still unverified. Codex has an executable adapter and one live outline smoke;
+still unverified. Codex has an executable adapter and a completed live adapter gate
+on 0.159.3 (outline, cast, opening, continuation and controlled cancellation);
 Claude's executable adapter and headless play remain pending.
 See the [Phase 1 plan](docs/plans/phase1-headless-backends.md)
 and each backend reference file for the remaining work; offline transport tests
@@ -46,8 +47,11 @@ and explicit retry through actual fixture children
 ([evidence](reviews/2026-09-28-codex-step5/README.md)). **Step 6 is implemented**:
 seven persistent adapter mutations protect protocol acceptance, shared/peer schema
 isolation and failure evidence ([record](reviews/2026-09-28-codex-step6/README.md)).
-Next is the full live adapter gate. Claude remains a co-equal
-pending implementation with independent acceptance obligations.
+**Step 7 passed live on 2026-10-02**: four successful generations and controlled
+cancellation with observed PID/workspace cleanup and unchanged game state
+([evidence](reviews/2026-10-02-codex-step7/README.md)). Next is the
+[Claude adapter slice](docs/plans/phase1-claude-adapter-handoff.md), with independent
+live acceptance, followed by presentation/headless work. No playable UI is claimed.
 
 - `cyoa-core`: checked domain types, namesake-preserving casts and stable IDs,
   summary deltas, typed limits, owned protagonist selection, turns, chapters and
