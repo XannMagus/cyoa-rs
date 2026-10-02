@@ -2,6 +2,8 @@
 
 use clap::{CommandFactory, Parser};
 
+pub mod session;
+
 /// A standalone choose-your-own-adventure game, ported from calibre.
 #[derive(Debug, Parser)]
 #[command(

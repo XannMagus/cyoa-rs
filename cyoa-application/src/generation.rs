@@ -143,7 +143,7 @@ impl<G: StoryGenerator> StoryUseCases<G> {
         self.generator
     }
     pub fn rewind(&mut self, state: &mut GameState, count: TurnCount) -> Result<(), InvalidRewind> {
-        state.rewind(count)
+        rewind(state, count)
     }
     pub fn generate_outline(
         &mut self,
@@ -191,6 +191,10 @@ impl<G: StoryGenerator> StoryUseCases<G> {
         );
         Ok(())
     }
+}
+/// Local command; requires no generator or inference worker.
+pub fn rewind(state: &mut GameState, count: TurnCount) -> Result<(), InvalidRewind> {
+    state.rewind(count)
 }
 fn check_cancelled(
     cancel: &CancellationToken,

@@ -479,6 +479,12 @@ caps. Persistence and live subprocess adapters remain pending.
 
 ### STREAM-001 Preview text never authorizes a state commit
 
+Controller slice (2026-10-02): presentation retains canonical state, tracks typed
+request IDs/base revisions, and rejects stale, duplicate and cancelled terminal
+results. `tests/session.rs` checks full state preservation and separate failure
+evidence, lifecycle selection and snapshot replacement without a second commit.
+Worker execution and headless I/O are separate subsequent evidence.
+
 **Partial: scanner, scripted generation, vendor-neutral process supervision,
 Codex protocol decoding and Backend reconciliation, and offline Claude event
 decoding and Backend reconciliation, enforced, with a bounded live adapter run for

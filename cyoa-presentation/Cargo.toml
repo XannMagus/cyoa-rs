@@ -7,6 +7,8 @@ license.workspace = true
 
 [dependencies]
 cyoa-application.workspace = true
+cyoa-core.workspace = true
+thiserror.workspace = true
 clap.workspace = true
 
 [lints]

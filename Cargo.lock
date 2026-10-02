@@ -157,6 +157,8 @@ version = "0.1.0"
 dependencies = [
  "clap",
  "cyoa-application",
+ "cyoa-core",
+ "thiserror",
 ]
 
 [[package]]
