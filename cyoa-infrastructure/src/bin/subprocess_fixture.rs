@@ -135,7 +135,13 @@ fn main() {
     let argv: Vec<String> = std::env::args().collect();
     // Vendor-fixture mode keeps the production argv/stdin contract intact.
     // Only this test binary reads a scenario from its selected fake HOME.
-    let vendor_mode = matches!(argv.get(1).map(String::as_str), Some("exec" | "login"));
+    // `exec`/`login status` imitate Codex's argv; `-p …`/`auth status --json`
+    // imitate Claude's. The fixture never interprets either vendor's protocol.
+    let vendor_mode = matches!(
+        argv.get(1).map(String::as_str),
+        Some("exec" | "login" | "-p" | "auth")
+    );
+    let codex_generation = argv.get(1).map(String::as_str) == Some("exec");
     let scenario_json = if vendor_mode {
         std::fs::read_to_string(
             std::path::PathBuf::from(std::env::var_os("HOME").unwrap()).join("cyoa-fixture.json"),
@@ -165,8 +171,13 @@ fn main() {
         .unwrap();
     }
 
-    if argv.get(1).map(String::as_str) == Some("login") {
-        assert_eq!(&argv[1..], &["login", "status"]);
+    if let Some(status_command @ ("login" | "auth")) = argv.get(1).map(String::as_str) {
+        let expected: &[&str] = if status_command == "login" {
+            &["login", "status"]
+        } else {
+            &["auth", "status", "--json"]
+        };
+        assert_eq!(&argv[1..], expected);
         if scenario.auth_stdout {
             print!("{}", scenario.auth_status);
         } else {
@@ -198,7 +209,7 @@ fn main() {
 
     if let Some(report_path) = &scenario.report_path {
         let report = Report {
-            schema: if vendor_mode {
+            schema: if codex_generation {
                 Some(std::fs::read("schema.json").expect("prepared schema exists"))
             } else {
                 None
@@ -238,7 +249,9 @@ fn main() {
         );
         // Remove only the known prepared file and then an empty directory. Never
         // recursively delete an arbitrary path. The parent test removes the marker.
-        std::fs::remove_file(cwd.join("schema.json")).unwrap();
+        if codex_generation {
+            std::fs::remove_file(cwd.join("schema.json")).unwrap();
+        }
         std::env::set_current_dir(std::env::var_os("HOME").unwrap()).unwrap();
         std::fs::remove_dir(&cwd).unwrap();
         std::fs::write(&cwd, b"fixture cleanup obstruction").unwrap();

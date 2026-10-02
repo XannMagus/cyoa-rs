@@ -1,13 +1,15 @@
-//! Claude invocation configuration and owned request preparation.
+//! Claude invocation configuration, owned request preparation and the adapter.
 //!
 //! Owns the fixed-profile `claude -p` invocation frozen in
 //! `reference/01-claude-cli.md` ("Supported profile (CLI 2.1.286)"): argv, an
 //! explicit HOME/PATH environment, the prompt on stdin and an empty request
-//! workspace as the child's cwd. It never launches anything itself.
+//! workspace as the child's cwd. Preparation never launches anything; the adapter
+//! accepts output only after the vendor-neutral supervisor completes request
+//! delivery, child reaping and workspace cleanup.
 
-// Consumed by the adapter in a later step of the Claude slice.
-#[cfg_attr(not(test), allow(dead_code))]
+mod adapter;
 mod protocol;
+pub use adapter::ClaudeCliBackend;
 
 use crate::{
     backends::{

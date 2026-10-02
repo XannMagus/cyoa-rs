@@ -296,7 +296,9 @@ a build/test dependency violates this decision even if the source uses it.
 ### BACKENDS-001 Two co-equal subscription CLI backends
 
 **Partial: Codex adapter, composed real-child fixture acceptance and bounded live
-adapter acceptance implemented; Claude adapter and both live headless gates pending.**
+adapter acceptance implemented; Claude adapter implemented with real-child fixture
+tests; Claude composed acceptance, Claude live acceptance and both live headless
+gates pending.**
 Claude and Codex are peers behind inward-owned ports, not primary and
 fallback. Use stateless calls and subscription auth; never silently switch to paid
 API auth. Test the shared contract against scripted and both concrete adapters.
@@ -337,6 +339,24 @@ advisor-suppression instruction is appended to this invocation only; shared
 templates never contain it (ARCH-003). A single argument of 131072 bytes or more, or
 containing NUL, fails preparation before any child exists. There is still no Claude
 codec, `Backend` or live adapter claim; those follow in later steps.
+
+Claude adapter step 5 (2026-10-02) adds `ClaudeCliBackend`. Construction runs
+`auth status --json` through the same executable and environment and accepts only
+`loggedIn` + `authMethod: claude.ai` + `apiProvider: firstParty`; anything unknown,
+conflicting or a nonzero exit fails closed as `Unavailable` and launches no
+generation child. Each `generate` call launches one child through the existing
+supervisor with no retry. Correlated preview fragments are forwarded as they arrive
+(tentative; the final `structured_output` wins when it disagrees); a stream with no
+previews emits the complete payload once after reconciliation. A result candidate
+cannot override a nonzero exit, incomplete delivery, observed cancellation, deadline,
+output cap, protocol or cleanup failure, and the candidate and transport bytes
+survive each failure up to the application boundary. Nineteen real-child tests
+(`tests/claude_backend.rs`) check argv/stdin/env, classification, cleanup and
+launch counts; the fixture binary gained a Claude argv mode without changing Codex's.
+These tests were written after the adapter, not red-first, and are protected by the
+persistent mutations of a later step. Fixture payloads are synthetic: offline evidence,
+not authenticated behavior. The transport-error mapping is duplicated from the Codex
+adapter, deliberately, so this slice does not edit the peer's file.
 
 ### PRODUCT-001 Standalone TUI, persistence, export, and image boundary
 
@@ -411,8 +431,8 @@ caps. Persistence and live subprocess adapters remain pending.
 
 **Partial: scanner, scripted generation, vendor-neutral process supervision,
 Codex protocol decoding and Backend reconciliation, and offline Claude event
-decoding, enforced; Claude Backend reconciliation and presentation acceptance
-pending.** `StreamingStringField` extracts only the requested root
+decoding and Backend reconciliation, enforced; Claude live evidence and
+presentation acceptance pending.** `StreamingStringField` extracts only the requested root
 string, across valid UTF-8 chunks. It is a preview scanner, not JSON validation.
 Escapes and surrogate pairs are decoded; lone surrogate halves become U+FFFD
 because Rust cannot represent them as scalar values. Truncated escape sequences

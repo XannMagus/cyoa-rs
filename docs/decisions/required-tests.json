@@ -154,6 +154,16 @@
           "real_workspace_cleanup_failure_preserves_the_game_and_candidate",
           "cancellation_and_output_cap_preserve_state_context_and_explicit_retry"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "claude_backend",
+        "tests": [
+          "result_cannot_override_nonzero_exit_and_previews_are_tentative_evidence",
+          "protocol_rejections_keep_candidate_evidence_and_clean_up",
+          "successful_response_forwards_previews_then_returns_exact_payload_usage_and_provenance",
+          "application_receives_candidate_and_diagnostics_on_adapter_timeout"
+        ]
       }
     ]
   },
@@ -495,6 +505,31 @@
           "backends::claude_cli::protocol::tests::frozen_completed_variants_emit_expected_previews_payload_usage_and_provenance",
           "backends::claude_cli::protocol::tests::live_failure_captures_are_rejected_at_the_expected_record"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "claude_backend",
+        "tests": [
+          "result_cannot_override_nonzero_exit_and_previews_are_tentative_evidence",
+          "protocol_rejections_keep_candidate_evidence_and_clean_up",
+          "is_error_result_is_rejected_after_cleanup",
+          "stream_without_a_result_is_rejected_after_cleanup",
+          "duplicate_result_is_rejected_after_cleanup",
+          "ambiguous_payload_blocks_are_rejected_after_cleanup",
+          "preflight_rejects_non_subscription_unknown_and_conflicting_auth_without_generation",
+          "failed_auth_exit_is_unavailable_even_with_a_success_looking_status_on_stdout",
+          "timeout_after_result_retains_unemitted_candidate_and_reaps_child",
+          "silent_cancellation_uses_a_child_handshake_and_pre_cancel_launches_nothing",
+          "cancellation_from_a_preview_stops_the_live_child_and_keeps_the_evidence",
+          "capped_output_preserves_prefix_metadata_and_a_structured_cause",
+          "successful_response_forwards_previews_then_returns_exact_payload_usage_and_provenance",
+          "complete_only_stream_emits_the_payload_once_after_cleanup",
+          "final_payload_wins_when_it_disagrees_with_the_preview",
+          "cancellation_from_the_complete_callback_cannot_return_success",
+          "preparation_failure_and_removed_executable_never_launch_a_generation",
+          "no_stdout_failure_and_invalid_protocol_preserve_bytes_with_distinct_categories",
+          "application_receives_candidate_and_diagnostics_on_adapter_timeout"
+        ]
       }
     ]
   },
@@ -762,6 +797,20 @@
           "late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once",
           "real_workspace_cleanup_failure_preserves_the_game_and_candidate",
           "cancellation_and_output_cap_preserve_state_context_and_explicit_retry"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "claude_backend",
+        "tests": [
+          "silent_cancellation_uses_a_child_handshake_and_pre_cancel_launches_nothing",
+          "timeout_after_result_retains_unemitted_candidate_and_reaps_child",
+          "cancellation_from_a_preview_stops_the_live_child_and_keeps_the_evidence",
+          "cancellation_from_the_complete_callback_cannot_return_success",
+          "final_payload_wins_when_it_disagrees_with_the_preview",
+          "complete_only_stream_emits_the_payload_once_after_cleanup",
+          "capped_output_preserves_prefix_metadata_and_a_structured_cause",
+          "successful_response_forwards_previews_then_returns_exact_payload_usage_and_provenance"
         ]
       }
     ]
