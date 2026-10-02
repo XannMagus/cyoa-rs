@@ -150,18 +150,30 @@ Build and check with a stable toolchain supporting Rust edition 2024:
 cargo run -p cyoa-cli -- --help
 cargo fmt --all --check
 cargo clippy --workspace --all-targets --locked -- -D warnings
+cargo install cargo-mutants --version 27.1.0 --locked
+cargo install cargo-nextest --version 0.9.132 --locked
 bash scripts/check_contracts.sh
 ```
 
 The shared local/CI gate requires Bash, jq, Git, tar and the Rust toolchain; no
 Python is involved. It checks registered test presence, ignored tests, coverage
 claims, inward dependencies, workspace tests and compile-fail examples. It also
-copies the current source to a temporary directory and verifies that thirty-five deliberate
+copies the current source to a temporary directory and verifies that 37 deliberate
 regressions fail their exact registered behavioral tests. Compiler failures and
 missing tests do not count as detected regressions. The isolated build uses cached
 Cargo dependencies after Clippy; the first mutation build costs additional time.
 Run `bash scripts/check_contract_mutations.sh` for only that check.
 Set `CYOA_MUTATION_EVIDENCE_DIR` to retain each baseline, mutant and restored log.
+
+The gate also runs **automatically generated mutations across `cyoa-core`**, using
+only the domain's own tests. Install the pinned tools once as above. Run
+`bash scripts/check_domain_mutations.sh` for that sweep alone; reports live in
+`mutants.out/` and CI uploads them. Survivors fail the gate; compile-invalid
+mutations are separate from detections. The initial strengthened sweep detected
+96 mutations through test failures and two through bounded per-test nontermination,
+with 78 compile-invalid cases and two documented behavior-equivalent exclusions.
+See [scope and limitations](docs/testing/domain-mutations.md) and
+[evidence](reviews/2026-10-03-domain-mutations/README.md).
 
 See the [acceptance sequence](docs/decisions/phase0-acceptance.md) and
 [TDD/evidence record](reviews/2026-09-25-phase0-acceptance/README.md). Phase 1

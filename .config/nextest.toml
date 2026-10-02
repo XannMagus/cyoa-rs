@@ -1,0 +1,5 @@
+[profile.domain-mutations]
+# Pure domain tests normally finish in milliseconds. Mutated loops must be bounded.
+slow-timeout = { period = "5s", terminate-after = 2, grace-period = "0s" }
+retries = 0
+fail-fast = true

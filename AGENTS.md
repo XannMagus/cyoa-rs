@@ -68,6 +68,12 @@ not be counted as detected regressions. Keep domain, boundary, orchestration and
 live-backend evidence distinct. See `docs/decisions/phase0-acceptance.md` before
 starting the next phase.
 
+The gate also runs pinned cargo-mutants/cargo-nextest against `cyoa-core` and only
+its own tests (TESTING-001). Install the documented tool versions before running
+the gate; see `docs/testing/domain-mutations.md`. Never allowlist a behavior-changing
+survivor. Review and justify behavior-equivalent exclusions; keep compile-invalid
+mutations and per-test nontermination failures distinct from assertion failures.
+
 Avoid Python for project tooling. Prefer shell scripts for small checks or Rust
 utilities for larger tools. The copied Python under `reference/calibre/` is source
 reference for the port, not a tooling dependency.

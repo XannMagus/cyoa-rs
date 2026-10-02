@@ -1277,5 +1277,22 @@
         ]
       }
     ]
+  },
+  {
+    "id": "TESTING-001",
+    "coverage": "enforced",
+    "checks": [
+      {
+        "package": "cyoa-core",
+        "target": "domain_invariants",
+        "tests": [
+          "chapters_expose_zero_based_numbers_and_one_based_ordinals",
+          "changing_style_preserves_committed_story_and_other_game_settings",
+          "npc_relationships_survive_initial_summary_construction",
+          "optional_turn_fields_and_audit_record_survive_commit",
+          "cost_amount_preserves_valid_values_and_rejects_nonfinite_or_negative_values"
+        ]
+      }
+    ]
   }
 ]

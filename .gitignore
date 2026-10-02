@@ -1,4 +1,5 @@
 /target
+/mutants.out*/
 *.log
 .DS_Store
 

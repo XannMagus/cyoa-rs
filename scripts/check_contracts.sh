@@ -72,4 +72,5 @@ done < <(jq -r '[.[].checks[] | [.package, .target]] | unique[] | @tsv' "$regist
 bash scripts/check_architecture.sh
 cargo test --workspace --locked --offline
 bash scripts/check_contract_mutations.sh
+bash scripts/check_domain_mutations.sh
 printf '%s\n' 'Project contracts verified. Pending feature obligations remain listed in docs/decisions.'

@@ -1112,6 +1112,15 @@ stdout" — async buys nothing and forces the TUI into a runtime bridge.
 
 ## Testing
 
+Explicit user decision (2026-10-03): automated Rust mutation testing is required
+for the domain's own tests. `scripts/check_domain_mutations.sh` runs pinned
+cargo-mutants/nextest on `cyoa-core` within the contract gate. Keep the existing
+handwritten mutations for the wider harness; equivalent automated scrutiny of
+integration/infrastructure is not required. Reject survivors and review each
+behavior-equivalent exclusion. Preserve compiler-invalid, assertion-failure and
+nontermination evidence separately; never claim universal mutation-proofness.
+See TESTING-001 and [domain mutation testing](docs/testing/domain-mutations.md).
+
 Project-contract regressions have priority over Python differential expectations.
 Every recorded implemented deviation must retain its tests in
 `docs/decisions/required-tests.json`; deleting, ignoring, or moving a required test

@@ -1,0 +1,17 @@
+# Mutate the domain only, and require its own tests to detect defects.
+examine_globs = ["cyoa-core/src/**/*.rs"]
+test_package = ["cyoa-core"]
+test_tool = "nextest"
+additional_cargo_args = ["--locked", "--offline"]
+additional_cargo_test_args = ["--profile", "domain-mutations"]
+minimum_test_timeout = 30
+
+# Only behavior-equivalent mutations may be excluded; see docs/testing/domain-mutations.md.
+exclude_re = [
+    # A successfully constructed CharacterCast is always nonempty.
+    'replace CharacterCast::is_empty -> bool with false$',
+    # At exactly three chosen actions the loop immediately breaks without changes.
+    # Pin the location: moving this comparison requires renewed equivalence review,
+    # and a new comparison elsewhere in this function must still be mutated.
+    '^cyoa-core/src/turn\.rs:94:25: replace < with <= in QuickActions::select$',
+]

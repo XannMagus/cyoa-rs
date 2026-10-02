@@ -293,6 +293,28 @@ a build/test dependency violates this decision even if the source uses it.
 
 ## Backend and product completion obligations
 
+### TESTING-001 Automated mutation scrutiny of the domain suite
+
+**Enforced. Explicit user decision, 2026-10-03.** Core invariants require automated
+mutation generation to assess the effectiveness of their own domain tests. The
+contract gate additionally runs pinned cargo-mutants against all `cyoa-core`
+source, using only that crate's tests. The wider harness retains its handwritten
+mutations; equivalent scrutiny of infrastructure/integration is not required.
+New domain regressions cover chapter ordinals, style changes without history
+changes, NPC relationships, optional turn/audit fields and cost values. Existing
+contract expectations and registrations remain intact.
+
+Every generated compilable mutation must be detected; no surviving-mutation
+baseline is allowed. Only reviewed behavior-equivalent mutations may be excluded,
+with specific reasoning. Build-invalid mutations are not detections. Nextest
+per-test deadlines bound mutation-induced nontermination; report those separately
+from assertion failures. An outer runner timeout or missing/invalid test invocation
+fails the gate. Macros/derives and fault classes outside the generator's patterns
+remain outside this evidence: passing does not prove arbitrary implementation
+correctness. See `docs/testing/domain-mutations.md` for scope, exact exclusions,
+tool versions and invocation, and `reviews/2026-10-03-domain-mutations/README.md`
+for the observed initial gaps and strengthened sweep.
+
 ### BACKENDS-001 Two co-equal subscription CLI backends
 
 **Partial: Codex adapter, composed real-child fixture acceptance and bounded live
