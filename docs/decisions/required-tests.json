@@ -140,7 +140,8 @@
         "package": "cyoa-infrastructure",
         "target": "lib",
         "tests": [
-          "backends::codex_cli::adapter::tests::nested_cleanup_retains_initiating_failure_payload_and_prefix_without_displaying_buffers"
+          "backends::codex_cli::adapter::tests::nested_cleanup_retains_initiating_failure_payload_and_prefix_without_displaying_buffers",
+          "backends::claude_cli::tests::prepared_request_has_exact_argv_environment_stdin_and_empty_workspace"
         ]
       },
       {
@@ -286,7 +287,9 @@
           "backends::codex_cli::tests::executable_search_skips_nonexecutables_and_resolves_empty_path_entries",
           "backends::codex_cli::tests::preparation_never_launches_the_selected_executable",
           "backends::codex_cli::tests::failed_schema_write_is_located_and_workspace_drop_cleans_up",
-          "backends::codex_cli::tests::public_generation_preparation_uses_one_rendered_request_for_prompt_and_schema"
+          "backends::codex_cli::tests::public_generation_preparation_uses_one_rendered_request_for_prompt_and_schema",
+          "backends::claude_cli::tests::invalid_model_home_config_dir_and_search_path_values_are_rejected",
+          "backends::claude_cli::tests::preparation_never_launches_the_selected_executable"
         ]
       }
     ]
@@ -396,7 +399,9 @@
         "target": "lib",
         "tests": [
           "backends::codex_cli::protocol::tests::frozen_live_story_captures_match_independent_payload_and_usage_expectations",
-          "backends::codex_cli::protocol::tests::live_tool_canary_is_unsupported_even_though_the_cli_exited_successfully"
+          "backends::codex_cli::protocol::tests::live_tool_canary_is_unsupported_even_though_the_cli_exited_successfully",
+          "backends::claude_cli::tests::schema_argument_is_the_claude_adaptation_of_the_shared_schema_and_nothing_else",
+          "backends::claude_cli::tests::advisor_suppression_is_local_to_the_claude_invocation"
         ]
       },
       {
@@ -476,6 +481,14 @@
           "zero_npc_limit_survives_cast_selection_opening_and_continuation",
           "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "backends::claude_cli::tests::nul_and_oversize_arguments_fail_preparation_before_any_launch",
+          "backends::claude_cli::tests::a_configured_model_is_inserted_before_the_prompt_arguments"
+        ]
       }
     ]
   },
@@ -535,7 +548,9 @@
         "tests": [
           "generation::backend_compat::codex_cli::tests::adapted_turn_keeps_order_nullability_defaults_and_empty_strings",
           "backends::codex_cli::tests::prepared_request_owns_schema_stdin_environment_and_workspace_until_transfer_drop",
-          "backends::codex_cli::tests::public_generation_preparation_uses_one_rendered_request_for_prompt_and_schema"
+          "backends::codex_cli::tests::public_generation_preparation_uses_one_rendered_request_for_prompt_and_schema",
+          "backends::claude_cli::tests::public_generation_preparation_uses_one_rendered_request_for_prompt_and_schema",
+          "backends::claude_cli::tests::narrative_stays_the_first_property_in_the_schema_argument"
         ]
       }
     ]

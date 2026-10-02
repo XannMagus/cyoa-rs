@@ -3,6 +3,7 @@
 //! vendor's own event shapes on top of this generic supervisor; this module
 //! must never inspect Claude/Codex event names.
 
+pub mod claude_cli;
 pub mod codex_cli;
 pub mod executable;
 pub mod process;

@@ -220,6 +220,12 @@ rather than assume the suppression instruction is bulletproof against every
 possible request shape, and item 9's live-acceptance run should confirm it
 holds across the full turn sequence, not just these two isolated probes.
 
+*Update 2026-10-02:* the invocation builder now exists
+(`backends::claude_cli::PreparedClaudeRequest`, constant
+`backend_compat::claude_cli::ADVISOR_SUPPRESSION`), and the suppression held in six
+further live calls (see the profile section above). Both facts are offline/probe
+evidence; the adapter has not yet been run end to end.
+
 ### Content-block identity: text and tool blocks that are not the payload
 
 A single opening-turn call produced, in order: `thinking`, **`text`**,

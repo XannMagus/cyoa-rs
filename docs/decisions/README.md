@@ -329,6 +329,15 @@ offline enforcement across contracts, not a new live-fiction claim. Complete-onl
 candidate callback cancellation is exercised; incremental preview disagreement
 is outside this supported profile. Existing Phase 0 tests remain unchanged.
 
+Claude adapter step 3 (2026-10-02) adds `backends::claude_cli` preparation only:
+the fixed `claude -p` profile frozen in `reference/01-claude-cli.md`, an explicit
+HOME/PATH (and optional `CLAUDE_CONFIG_DIR`) environment, the prompt on stdin, an
+empty request workspace, no `--bare` and no `--model` unless configured. The
+advisor-suppression instruction is appended to this invocation only; shared
+templates never contain it (ARCH-003). A single argument of 131072 bytes or more, or
+containing NUL, fails preparation before any child exists. There is still no Claude
+codec, `Backend` or live adapter claim; those follow in later steps.
+
 ### PRODUCT-001 Standalone TUI, persistence, export, and image boundary
 
 **Pending.** Rust TUI and headless demo replace the Qt/calibre host. Keep vendor and

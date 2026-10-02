@@ -5,6 +5,15 @@
 
 use serde_json::Value;
 
+/// Appended (via `--append-system-prompt`) to this backend's invocation only.
+/// The account-level advisor server tool cannot be disabled locally, but asking
+/// the model not to consult it removed every advisor block and the extra model
+/// call in all six live calls of `reviews/2026-10-02-claude-step1` (and two of
+/// 2026-09-25). Codex has no advisor tool, so this must never enter the shared,
+/// backend-agnostic instructions that `GenerationTemplates` renders.
+pub const ADVISOR_SUPPRESSION: &str =
+    "Do not consult the advisor tool for this task. Answer directly.";
+
 /// `claude -p --json-schema` rejects a root `"$schema"` key outright —
 /// verified live, `01-claude-cli.md`'s "Verified test #3": `"not a valid
 /// JSON Schema: no schema with key or ref ..."`. This is `claude -p`'s own
