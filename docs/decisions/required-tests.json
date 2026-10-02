@@ -157,7 +157,8 @@
           "backends::codex_cli::adapter::tests::nested_cleanup_retains_initiating_failure_payload_and_prefix_without_displaying_buffers",
           "backends::claude_cli::tests::prepared_request_has_exact_argv_environment_stdin_and_empty_workspace",
           "backends::claude_cli::protocol::tests::result_payload_is_the_exact_span_not_a_reserialization",
-          "backends::claude_cli::protocol::tests::first_failure_is_sticky_and_later_records_cannot_repair_it"
+          "backends::claude_cli::protocol::tests::first_failure_is_sticky_and_later_records_cannot_repair_it",
+          "backends::claude_cli::protocol::tests::malformed_terminal_metadata_keeps_the_exact_candidate_span"
         ]
       },
       {
@@ -176,7 +177,8 @@
           "result_cannot_override_nonzero_exit_and_previews_are_tentative_evidence",
           "protocol_rejections_keep_candidate_evidence_and_clean_up",
           "successful_response_forwards_previews_then_returns_exact_payload_usage_and_provenance",
-          "application_receives_candidate_and_diagnostics_on_adapter_timeout"
+          "application_receives_candidate_and_diagnostics_on_adapter_timeout",
+          "malformed_result_metadata_keeps_the_candidate_visible_to_the_application"
         ]
       },
       {
@@ -565,7 +567,8 @@
           "backends::claude_cli::tests::a_configured_model_is_inserted_before_the_prompt_arguments",
           "backends::claude_cli::protocol::tests::frozen_error_variants_reject_with_located_reasons_and_candidate_evidence",
           "backends::claude_cli::protocol::tests::frozen_completed_variants_emit_expected_previews_payload_usage_and_provenance",
-          "backends::claude_cli::protocol::tests::live_failure_captures_are_rejected_at_the_expected_record"
+          "backends::claude_cli::protocol::tests::live_failure_captures_are_rejected_at_the_expected_record",
+          "backends::claude_cli::protocol::tests::malformed_terminal_metadata_keeps_the_exact_candidate_span"
         ]
       },
       {
@@ -590,7 +593,8 @@
           "cancellation_from_the_complete_callback_cannot_return_success",
           "preparation_failure_and_removed_executable_never_launch_a_generation",
           "no_stdout_failure_and_invalid_protocol_preserve_bytes_with_distinct_categories",
-          "application_receives_candidate_and_diagnostics_on_adapter_timeout"
+          "application_receives_candidate_and_diagnostics_on_adapter_timeout",
+          "malformed_result_metadata_keeps_the_candidate_visible_to_the_application"
         ]
       },
       {
@@ -854,7 +858,8 @@
           "backends::claude_cli::protocol::tests::preview_is_forwarded_at_the_delta_record_and_never_waits_for_the_result",
           "backends::claude_cli::protocol::tests::first_failure_is_sticky_and_later_records_cannot_repair_it",
           "backends::claude_cli::protocol::tests::ping_is_tolerated_and_a_stream_error_event_is_a_vendor_error",
-          "backends::claude_cli::protocol::tests::malformed_required_fields_and_unsupported_records_are_rejected_not_ignored"
+          "backends::claude_cli::protocol::tests::malformed_required_fields_and_unsupported_records_are_rejected_not_ignored",
+          "backends::claude_cli::protocol::tests::malformed_terminal_metadata_keeps_the_exact_candidate_span"
         ]
       },
       {

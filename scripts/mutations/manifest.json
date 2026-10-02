@@ -248,5 +248,14 @@
     "test": "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context",
     "file": "cyoa-infrastructure/src/generation/templates/rendering.rs",
     "failure_contains": "shared instructions leak regression"
+  },
+  {
+    "id": "drop-candidate-on-malformed-metadata",
+    "decision": "BACKENDS-001",
+    "package": "cyoa-infrastructure",
+    "target": "claude_backend",
+    "test": "malformed_result_metadata_keeps_the_candidate_visible_to_the_application",
+    "file": "cyoa-infrastructure/src/backends/claude_cli/protocol.rs",
+    "failure_contains": "metadata candidate regression"
   }
 ]

@@ -388,6 +388,14 @@ rate limits, descendants or server-side work after cancellation. The harness's f
 advisor counter over-reported (substring match on slash-command listings); the
 structural recount is in the evidence. Both live headless gates remain pending.
 
+Claude review repair 1 (2026-10-02): the codec extracts the exact `structured_output`
+span before validating the result's terminal metadata, so a result whose `is_error`
+or `subtype` is missing, mistyped or blank is still rejected (`InvalidField`) but now
+hands its candidate to the application instead of dropping it; transport bytes were
+already retained. A thirtieth mutation (`drop-candidate-on-malformed-metadata`)
+protects it at the real-child boundary. See
+`reviews/2026-10-02-claude-review-repairs/README.md`.
+
 ### PRODUCT-001 Standalone TUI, persistence, export, and image boundary
 
 **Pending.** Rust TUI and headless demo replace the Qt/calibre host. Keep vendor and

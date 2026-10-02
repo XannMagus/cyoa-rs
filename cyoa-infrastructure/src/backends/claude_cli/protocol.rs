@@ -343,11 +343,6 @@ impl Protocol {
             #[serde(borrow)]
             structured_output: Option<&'a RawValue>,
         }
-        let is_error = value
-            .get("is_error")
-            .and_then(Value::as_bool)
-            .ok_or_else(|| reject(n, "$.is_error", ErrorKind::InvalidField))?;
-        let subtype = str_field(value, "subtype", n, "$.subtype")?;
         let raw: Raw =
             serde_json::from_str(text).map_err(|_| reject(n, "$", ErrorKind::InvalidJson))?;
         // Only an object can be a candidate; a null/absent value is "missing".
@@ -362,6 +357,18 @@ impl Protocol {
             error: error(n, location, kind),
             candidate: candidate.clone(),
         };
+        // The candidate span is extracted before the terminal metadata is
+        // validated, so a malformed result still hands its exact payload to the
+        // application as audit evidence (it can never authorize a commit).
+        let is_error = value
+            .get("is_error")
+            .and_then(Value::as_bool)
+            .ok_or_else(|| fail("$.is_error", ErrorKind::InvalidField))?;
+        let subtype = value
+            .get("subtype")
+            .and_then(Value::as_str)
+            .filter(|subtype| !subtype.trim().is_empty())
+            .ok_or_else(|| fail("$.subtype", ErrorKind::InvalidField))?;
         // Neither a payload nor subtype "success" overrides is_error (the live
         // bad-model result carried subtype "success" with is_error true).
         if is_error {

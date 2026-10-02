@@ -688,3 +688,29 @@ fn application_receives_candidate_and_diagnostics_on_adapter_timeout() {
     );
     assert_eq!(error.diagnostics().stderr(), b"diagnostic\xff\r\n");
 }
+
+#[test]
+fn malformed_result_metadata_keeps_the_candidate_visible_to_the_application() {
+    let payload = r#"{"narrative":"kept","n":1}"#;
+    let init =
+        r#"{"type":"system","subtype":"init","apiKeySource":"none","model":"claude-sonnet-5-5"}"#;
+    // Valid payload, but the terminal metadata is malformed (no is_error).
+    let result =
+        format!(r#"{{"type":"result","subtype":"success","structured_output":{payload}}}"#);
+    let stdout = format!("{init}\n{result}\n").into_bytes();
+    let fixture = Fixture::new(&stdout, 0);
+    let outcome = fixture.backend().generate(
+        request(&json!({})),
+        &CancellationSource::default().token(),
+        &mut |_| {},
+    );
+    fixture.assert_cleanup();
+    let error = outcome.expect_err("malformed terminal metadata must not succeed");
+    assert!(matches!(error, BackendError::Generation { .. }), "{error}");
+    assert_eq!(
+        evidence(&error).0,
+        payload,
+        "metadata candidate regression: the separate candidate field was lost"
+    );
+    assert_eq!(evidence(&error).1.stdout(), stdout);
+}

@@ -230,7 +230,12 @@ fn live_failure_captures_are_rejected_at_the_expected_record() {
 #[test]
 fn result_payload_is_the_exact_span_not_a_reserialization() {
     // Odd spacing, key order and an escape the compact serializer would rewrite.
-    let span = r#"{"b" : 1,  "a":"é",  "c":[1 , 2]}"#;
+    // The backslash is built from a char so the escape cannot be decoded away when
+    // this source is written or displayed: a compact serializer would turn the
+    // six-character escape into a single "é", changing the bytes.
+    let span = format!(r#"{{"b" : 1,  "a":"{}u00e9",  "c":[1 , 2]}}"#, '\\');
+    let span = span.as_str();
+    assert!(span.contains(&format!("{}u00e9", '\\')));
     let result = result_with(&format!(r#""structured_output":{span}"#));
     let done = run(&[INIT, &result]).outcome.unwrap();
     assert_eq!(done.candidate.payload, span, "exact span regression");
@@ -409,4 +414,61 @@ fn malformed_required_fields_and_unsupported_records_are_rejected_not_ignored() 
     .outcome
     .unwrap_err();
     assert_eq!(kind(&unsupported), "Unsupported");
+}
+
+#[test]
+fn malformed_terminal_metadata_keeps_the_exact_candidate_span() {
+    // Odd spacing proves the span is retained, not re-serialized.
+    let span = format!(r#"{{"b" : 1,  "a":"{}u00e9"}}"#, '\\');
+    let span = span.as_str();
+    for (label, fields, location) in [
+        (
+            "missing is_error",
+            format!(r#""subtype":"success","structured_output":{span}"#),
+            "$.is_error",
+        ),
+        (
+            "non-bool is_error",
+            format!(r#""subtype":"success","is_error":"no","structured_output":{span}"#),
+            "$.is_error",
+        ),
+        (
+            "missing subtype",
+            format!(r#""is_error":false,"structured_output":{span}"#),
+            "$.subtype",
+        ),
+        (
+            "blank subtype",
+            format!(r#""subtype":"  ","is_error":false,"structured_output":{span}"#),
+            "$.subtype",
+        ),
+    ] {
+        let result = format!(r#"{{"type":"result",{fields}}}"#);
+        let failure = run(&[INIT, &result]).outcome.unwrap_err();
+        assert_eq!(
+            (
+                kind(&failure).as_str(),
+                failure.error.record,
+                failure.error.location.as_str()
+            ),
+            ("InvalidField", 2, location),
+            "{label}"
+        );
+        assert_eq!(
+            failure.candidate.map(|c| c.payload).as_deref(),
+            Some(span),
+            "metadata candidate regression: {label}"
+        );
+    }
+    // Without an object payload there is nothing to retain.
+    for fields in [
+        r#""subtype":"success""#,
+        r#""subtype":"success","structured_output":"text""#,
+        r#""subtype":"success","structured_output":null"#,
+    ] {
+        let result = format!(r#"{{"type":"result",{fields}}}"#);
+        let failure = run(&[INIT, &result]).outcome.unwrap_err();
+        assert_eq!(kind(&failure), "InvalidField", "{fields}");
+        assert!(failure.candidate.is_none(), "{fields}");
+    }
 }

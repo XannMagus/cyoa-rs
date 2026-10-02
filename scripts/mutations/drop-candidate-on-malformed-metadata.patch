@@ -1,0 +1,11 @@
+--- a/cyoa-infrastructure/src/backends/claude_cli/protocol.rs
++++ b/cyoa-infrastructure/src/backends/claude_cli/protocol.rs
+@@ -363,7 +363,7 @@
+         let is_error = value
+             .get("is_error")
+             .and_then(Value::as_bool)
+-            .ok_or_else(|| fail("$.is_error", ErrorKind::InvalidField))?;
++            .ok_or_else(|| reject(n, "$.is_error", ErrorKind::InvalidField))?;
+         let subtype = value
+             .get("subtype")
+             .and_then(Value::as_str)

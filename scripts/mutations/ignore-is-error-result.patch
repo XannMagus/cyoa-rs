@@ -1,7 +1,7 @@
 --- a/cyoa-infrastructure/src/backends/claude_cli/protocol.rs
 +++ b/cyoa-infrastructure/src/backends/claude_cli/protocol.rs
-@@ -364,7 +364,7 @@ impl Protocol {
-         };
+@@ -371,7 +371,7 @@
+             .ok_or_else(|| fail("$.subtype", ErrorKind::InvalidField))?;
          // Neither a payload nor subtype "success" overrides is_error (the live
          // bad-model result carried subtype "success" with is_error true).
 -        if is_error {
