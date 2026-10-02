@@ -8,6 +8,11 @@ gate. **None of that is started.** Both backends are co-equal; neither adapter's
 adapter gate is the headless gate. Read PLAN.md, the project contracts and the
 required-test registry first, as always.
 
+The next slice now has a detailed
+[controller and worker plan](phase1-controller-and-worker.md), written after the
+Claude review repairs (`9801577`, `d22db81`). Those repairs raise the retained
+mutation baseline from 29 to 31; the controller remains unimplemented.
+
 ## What exists to build on
 
 - `StoryUseCases<GenerationEngine<B>>` with `B: Backend` for `CodexCliBackend` or
@@ -47,7 +52,7 @@ required-test registry first, as always.
 
 1. Items 6–8: controller and worker ownership with typed request IDs and base
    revisions; memory-only headless and demo commands; extend the gate (keep all 29
-   mutations, add presentation ones).
+   original mutations plus both review-repair mutations (31 total), add presentation ones).
 2. Item 9, **once per backend**: roughly six turns through a chapter break with real
    player input, a real cancel then explicit retry, and honest reporting of what was
    not observed. A fixture or an adapter-gate run does not substitute.

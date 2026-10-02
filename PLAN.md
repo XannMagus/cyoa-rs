@@ -31,6 +31,9 @@ children, eleven persistent mutations, and the 2026-10-02 live outline/cast/open
 continuation/cancellation gate ([evidence](reviews/2026-10-02-claude-step8/README.md)).
 Both backends' headless acceptance remains pending; see the
 [presentation/headless handoff](docs/plans/phase1-presentation-handoff.md).
+The next slice is expanded in the
+[controller and worker implementation plan](docs/plans/phase1-controller-and-worker.md).
+It is planned, not implemented; headless input/output follows that slice.
 
 ## Context
 

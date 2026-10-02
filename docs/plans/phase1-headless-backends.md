@@ -400,6 +400,10 @@ with a fake executable is never labelled an authenticated vendor result.
 
 ### 6. Add presentation lifecycle and worker ownership
 
+Detailed next-slice design and commit/test sequence:
+[controller and worker implementation plan](phase1-controller-and-worker.md).
+This design is still planned; the requirements below remain authoritative.
+
 Expose parsed command intent from presentation so `main.rs` can wire concrete
 adapters without presentation importing infrastructure. Inject typed use cases or
 an inward-owned factory; avoid a service locator or a new message bus.
