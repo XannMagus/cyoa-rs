@@ -472,3 +472,118 @@ fn malformed_terminal_metadata_keeps_the_exact_candidate_span() {
         assert!(failure.candidate.is_none(), "{fields}");
     }
 }
+
+#[test]
+fn duplicate_control_fields_make_a_record_ambiguous_and_are_rejected() {
+    // serde_json::Value keeps the last of two equal keys, so without an explicit
+    // check `"is_error":true,"is_error":false` reads as success and a duplicated
+    // `apiKeySource` could hide a metered key behind a trailing "none".
+    let message = r#"{"type":"stream_event","event":{"type":"message_start"}}"#;
+    let block = r#"{"type":"stream_event","event":{"type":"content_block_start","index":0,"content_block":{"type":"tool_use","name":"StructuredOutput"}}}"#;
+    let cases: [(&str, Vec<&str>, usize); 9] = [
+        (
+            "duplicate is_error",
+            vec![
+                INIT,
+                r#"{"type":"result","subtype":"success","is_error":true,"is_error":false,"structured_output":{"a":1}}"#,
+            ],
+            2,
+        ),
+        (
+            "duplicate subtype",
+            vec![
+                INIT,
+                r#"{"type":"result","subtype":"error_max_turns","subtype":"success","is_error":false,"structured_output":{"a":1}}"#,
+            ],
+            2,
+        ),
+        (
+            "duplicate record type",
+            vec![
+                INIT,
+                r#"{"type":"result","type":"user","subtype":"success","is_error":false,"structured_output":{"a":1}}"#,
+            ],
+            2,
+        ),
+        (
+            "two structured_output spans",
+            vec![
+                INIT,
+                r#"{"type":"result","subtype":"success","is_error":false,"structured_output":{"a":1},"structured_output":{"a":2}}"#,
+            ],
+            2,
+        ),
+        (
+            "duplicate apiKeySource",
+            vec![
+                r#"{"type":"system","subtype":"init","apiKeySource":"ANTHROPIC_API_KEY","apiKeySource":"none"}"#,
+            ],
+            1,
+        ),
+        (
+            "duplicate event type",
+            vec![
+                INIT,
+                r#"{"type":"stream_event","event":{"type":"message_start","type":"message_stop"}}"#,
+            ],
+            2,
+        ),
+        (
+            "duplicate content_block name",
+            vec![
+                INIT,
+                message,
+                r#"{"type":"stream_event","event":{"type":"content_block_start","index":0,"content_block":{"type":"tool_use","name":"StructuredOutput","name":"other"}}}"#,
+            ],
+            3,
+        ),
+        (
+            "duplicate delta partial_json",
+            vec![
+                INIT,
+                message,
+                block,
+                r#"{"type":"stream_event","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"{","partial_json":"}"}}}"#,
+            ],
+            4,
+        ),
+        (
+            "duplicate event index",
+            vec![
+                INIT,
+                message,
+                r#"{"type":"stream_event","event":{"type":"content_block_start","index":0,"index":1,"content_block":{"type":"text"}}}"#,
+            ],
+            3,
+        ),
+    ];
+    for (label, lines, record) in cases {
+        let failure = run(&lines)
+            .outcome
+            .expect_err(&format!("duplicate field regression: {label}"));
+        assert_eq!(
+            (kind(&failure).as_str(), failure.error.record),
+            ("DuplicateField", record),
+            "{label}"
+        );
+    }
+    // The unambiguous payload span is still audit evidence when only a control
+    // field is duplicated; two payload spans are ambiguous and retain nothing.
+    let failure = run(&[INIT, r#"{"type":"result","subtype":"success","is_error":true,"is_error":false,"structured_output":{"a":1}}"#])
+        .outcome
+        .unwrap_err();
+    assert_eq!(
+        failure.candidate.map(|c| c.payload).as_deref(),
+        Some(r#"{"a":1}"#)
+    );
+    let failure = run(&[INIT, r#"{"type":"result","subtype":"success","is_error":false,"structured_output":{"a":1},"structured_output":{"a":2}}"#])
+        .outcome
+        .unwrap_err();
+    assert!(failure.candidate.is_none());
+    // Model-authored content is not control data: duplicates nested in an assistant
+    // message or a tool input are tolerated rather than failing the stream.
+    let assistant =
+        r#"{"type":"assistant","message":{"content":[{"type":"tool_use","input":{"k":1,"k":2}}]}}"#;
+    let result = result_with(r#""structured_output":{"a":1}"#);
+    assert!(run(&[INIT, assistant, &result]).outcome.is_ok());
+}

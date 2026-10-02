@@ -34,3 +34,36 @@ part of the test never ran; the odd spacing in the same span still
 proved exactness and the `reserialize-structured-output` mutant was genuinely
 detected, but the comment overstated what was tested. Both spans now build the
 backslash from a char (`'\\'`) with an assertion that the escape is really present.
+
+## Repair 2 — conflicting duplicate control fields could pass as success
+
+**Finding.** The codec parsed each record into `serde_json::Value`, which silently
+keeps the last of two equal keys. Reproduced on the unfixed code: a result with
+`"is_error":true,"is_error":false` was accepted, both as a codec `Completion` and, at
+the real-child boundary, as a commit-eligible `GenerationResponse`. The same hole
+covered `subtype`, the record `type`, `event.type`/`index`, `content_block.name`,
+`delta.partial_json`, and `init.apiKeySource` (a trailing `"none"` would have hidden a
+metered key). My earlier duplicate-key check only covered the payload span.
+
+**Fix.** Before any control field is interpreted, reject a record that has duplicate
+keys in a *control object*: the record itself, `event`, `event.content_block`,
+`event.delta` (new `ErrorKind::DuplicateField`). The existing payload visitor became
+one scope-parameterised visitor used for both. Model-authored content is not control
+data: nested duplicates in an assistant message or tool input are tolerated (a positive
+control in the test), and `structured_output` keeps its own `InvalidPayload` rule. When
+only a control field is duplicated, the unambiguous payload span is kept as audit
+evidence; two `structured_output` spans retain nothing. The candidate extraction was
+factored into shared helpers.
+
+**TDD.** A nine-case codec test and a real-child test were written first and observed
+red (the first case returned `Completion` / `GenerationResponse`). Both pass after the
+fix, as do replays of all seven frozen live captures (no false positive on real
+traffic) and the composed acceptance. The factoring made
+`reserialize-structured-output.patch` stale; it was regenerated with the same edit. A
+new mutation, `accept-last-duplicate-field`, disables the check and is detected by the
+real-child test.
+
+## Verification
+
+Each commit passes fmt, warnings-denied Clippy and the full gate (31 mutations after
+repair 2): `contracts-repair1.log`, `contracts-repair2.log`. Offline protections only.

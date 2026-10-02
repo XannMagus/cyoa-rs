@@ -714,3 +714,37 @@ fn malformed_result_metadata_keeps_the_candidate_visible_to_the_application() {
     );
     assert_eq!(evidence(&error).1.stdout(), stdout);
 }
+
+#[test]
+fn ambiguous_control_fields_cannot_authorize_success_at_the_real_boundary() {
+    let init =
+        r#"{"type":"system","subtype":"init","apiKeySource":"none","model":"claude-sonnet-5-5"}"#;
+    let metered = r#"{"type":"system","subtype":"init","apiKeySource":"ANTHROPIC_API_KEY","apiKeySource":"none"}"#;
+    let payload = r#"{"narrative":"kept"}"#;
+    let ambiguous_result = format!(
+        r#"{{"type":"result","subtype":"success","is_error":true,"is_error":false,"structured_output":{payload}}}"#
+    );
+    for (label, stdout, retained) in [
+        (
+            "duplicate is_error",
+            format!("{init}\n{ambiguous_result}\n"),
+            payload,
+        ),
+        ("duplicate apiKeySource", format!("{metered}\n"), ""),
+    ] {
+        let fixture = Fixture::new(stdout.as_bytes(), 0);
+        let outcome = fixture.backend().generate(
+            request(&json!({})),
+            &CancellationSource::default().token(),
+            &mut |_| {},
+        );
+        fixture.assert_cleanup();
+        let error = outcome.expect_err(&format!("ambiguous result regression: {label}"));
+        assert!(
+            matches!(error, BackendError::Generation { .. }),
+            "{label}: {error}"
+        );
+        assert_eq!(evidence(&error).0, retained, "{label}");
+        assert_eq!(evidence(&error).1.stdout(), stdout.as_bytes(), "{label}");
+    }
+}

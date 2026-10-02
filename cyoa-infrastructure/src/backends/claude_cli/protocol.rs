@@ -16,7 +16,7 @@ use cyoa_core::{
 };
 use serde::{
     Deserialize,
-    de::{DeserializeSeed, Deserializer, MapAccess, SeqAccess, Visitor},
+    de::{DeserializeSeed, Deserializer, IgnoredAny, MapAccess, SeqAccess, Visitor},
 };
 use serde_json::{Value, value::RawValue};
 use std::collections::{HashMap, HashSet};
@@ -40,6 +40,9 @@ pub(super) enum ErrorKind {
     /// Two `StructuredOutput` blocks in one assistant message.
     AmbiguousPayload,
     DuplicateResult,
+    /// Two equal keys in an object that carries control fields (the record, `event`,
+    /// `content_block` or `delta`): which value counts would be arbitrary.
+    DuplicateField,
     /// `is_error`, a non-success subtype or a stream `error` event.
     VendorError,
     MissingPayload,
@@ -182,6 +185,15 @@ impl Protocol {
             serde_json::from_str(text).map_err(|_| reject(n, "$", ErrorKind::InvalidJson))?;
         if !value.is_object() {
             return Err(reject(n, "$", ErrorKind::InvalidField));
+        }
+        // `Value` keeps the last of two equal keys silently, so ambiguity must be
+        // rejected before any control field is interpreted.
+        if has_duplicate_keys(text, is_control_object) {
+            return Err(Rejection {
+                error: error(n, "$", ErrorKind::DuplicateField),
+                // Best effort: an unambiguous payload span is still audit evidence.
+                candidate: candidate_of(text),
+            });
         }
         let kind = str_field(&value, "type", n, "$.type")?;
         if let State::Finished(done) = &self.state {
@@ -338,21 +350,9 @@ impl Protocol {
     }
 
     fn result(&mut self, text: &str, value: &Value, n: usize) -> Result<(), Rejection> {
-        #[derive(Deserialize)]
-        struct Raw<'a> {
-            #[serde(borrow)]
-            structured_output: Option<&'a RawValue>,
-        }
-        let raw: Raw =
+        let raw: RawResult =
             serde_json::from_str(text).map_err(|_| reject(n, "$", ErrorKind::InvalidJson))?;
-        // Only an object can be a candidate; a null/absent value is "missing".
-        let candidate = raw
-            .structured_output
-            .map(RawValue::get)
-            .filter(|span| span.starts_with('{'))
-            .map(|span| Candidate {
-                payload: span.to_owned(),
-            });
+        let candidate = candidate_from(raw.structured_output);
         let fail = |location: &str, kind: ErrorKind| Rejection {
             error: error(n, location, kind),
             candidate: candidate.clone(),
@@ -383,7 +383,7 @@ impl Protocol {
         let Some(candidate) = candidate.clone() else {
             return Err(fail("$.structured_output", ErrorKind::MissingPayload));
         };
-        if has_duplicate_keys(&candidate.payload) {
+        if has_duplicate_keys(&candidate.payload, |_| true) {
             return Err(fail("$.structured_output", ErrorKind::InvalidPayload));
         }
         let provenance = provenance(value, stream.model.as_ref());
@@ -394,6 +394,30 @@ impl Protocol {
         });
         Ok(())
     }
+}
+
+#[derive(Deserialize)]
+struct RawResult<'a> {
+    #[serde(borrow)]
+    structured_output: Option<&'a RawValue>,
+}
+
+/// Only an object can be a candidate; a null or absent value is "missing".
+fn candidate_from(span: Option<&RawValue>) -> Option<Candidate> {
+    span.map(RawValue::get)
+        .filter(|span| span.starts_with('{'))
+        .map(|span| Candidate {
+            payload: span.to_owned(),
+        })
+}
+
+/// The exact span of an unambiguous `structured_output`, if the record has one.
+fn candidate_of(text: &str) -> Option<Candidate> {
+    candidate_from(
+        serde_json::from_str::<RawResult>(text)
+            .ok()?
+            .structured_output,
+    )
 }
 
 fn error(record: usize, location: &str, kind: ErrorKind) -> ProtocolError {
@@ -488,19 +512,51 @@ fn provenance(result: &Value, model: Option<&ModelName>) -> GenerationProvenance
     }
 }
 
+/// Objects that carry control fields (`type`, `subtype`, `is_error`, `apiKeySource`,
+/// `event.type`/`index`, `content_block.type`/`name`, `delta.type`/`partial_json`).
+/// Model-authored content (`message`, tool inputs, `structured_output`) is not
+/// control data and is deliberately outside this scope.
+fn is_control_object(path: &[String]) -> bool {
+    matches!(
+        path.iter()
+            .map(String::as_str)
+            .collect::<Vec<_>>()
+            .as_slice(),
+        [] | ["event"] | ["event", "content_block"] | ["event", "delta"]
+    )
+}
+
 /// A syntactically valid span can still be ambiguous: two equal keys in one
-/// object mean different consumers read different values. Reject, never pick.
-/// Excessive nesting also fails here and is likewise not a payload.
-fn has_duplicate_keys(span: &str) -> bool {
-    struct Unique;
+/// object mean different consumers read different values (`serde_json::Value`
+/// silently keeps the last). Reject, never pick. Only objects selected by
+/// `in_scope` (by key path) are checked; other subtrees are skipped unexamined.
+/// Excessive nesting also fails here and is likewise not valid.
+fn has_duplicate_keys(span: &str, in_scope: fn(&[String]) -> bool) -> bool {
+    struct Unique {
+        path: Vec<String>,
+        in_scope: fn(&[String]) -> bool,
+    }
+    impl Unique {
+        fn child(&self, key: &str) -> Unique {
+            let mut path = self.path.clone();
+            path.push(key.to_owned());
+            Unique {
+                path,
+                in_scope: self.in_scope,
+            }
+        }
+    }
     impl<'de> DeserializeSeed<'de> for Unique {
         type Value = ();
         fn deserialize<D: Deserializer<'de>>(self, d: D) -> Result<(), D::Error> {
-            d.deserialize_any(UniqueVisitor)
+            if (self.in_scope)(&self.path) {
+                d.deserialize_any(self)
+            } else {
+                d.deserialize_ignored_any(IgnoredAny).map(|_| ())
+            }
         }
     }
-    struct UniqueVisitor;
-    impl<'de> Visitor<'de> for UniqueVisitor {
+    impl<'de> Visitor<'de> for Unique {
         type Value = ();
         fn expecting(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
             f.write_str("any JSON value")
@@ -524,22 +580,28 @@ fn has_duplicate_keys(span: &str) -> bool {
             Ok(())
         }
         fn visit_seq<A: SeqAccess<'de>>(self, mut seq: A) -> Result<(), A::Error> {
-            while seq.next_element_seed(Unique)?.is_some() {}
+            while seq.next_element_seed(self.child("[]"))?.is_some() {}
             Ok(())
         }
         fn visit_map<A: MapAccess<'de>>(self, mut map: A) -> Result<(), A::Error> {
             let mut seen = HashSet::new();
             while let Some(key) = map.next_key::<String>()? {
+                let child = self.child(&key);
                 if !seen.insert(key) {
                     return Err(serde::de::Error::custom("duplicate key"));
                 }
-                map.next_value_seed(Unique)?;
+                map.next_value_seed(child)?;
             }
             Ok(())
         }
     }
     let mut deserializer = serde_json::Deserializer::from_str(span);
-    Unique.deserialize(&mut deserializer).is_err()
+    Unique {
+        path: vec![],
+        in_scope,
+    }
+    .deserialize(&mut deserializer)
+    .is_err()
 }
 
 #[cfg(test)]

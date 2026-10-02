@@ -568,7 +568,8 @@
           "backends::claude_cli::protocol::tests::frozen_error_variants_reject_with_located_reasons_and_candidate_evidence",
           "backends::claude_cli::protocol::tests::frozen_completed_variants_emit_expected_previews_payload_usage_and_provenance",
           "backends::claude_cli::protocol::tests::live_failure_captures_are_rejected_at_the_expected_record",
-          "backends::claude_cli::protocol::tests::malformed_terminal_metadata_keeps_the_exact_candidate_span"
+          "backends::claude_cli::protocol::tests::malformed_terminal_metadata_keeps_the_exact_candidate_span",
+          "backends::claude_cli::protocol::tests::duplicate_control_fields_make_a_record_ambiguous_and_are_rejected"
         ]
       },
       {
@@ -594,7 +595,8 @@
           "preparation_failure_and_removed_executable_never_launch_a_generation",
           "no_stdout_failure_and_invalid_protocol_preserve_bytes_with_distinct_categories",
           "application_receives_candidate_and_diagnostics_on_adapter_timeout",
-          "malformed_result_metadata_keeps_the_candidate_visible_to_the_application"
+          "malformed_result_metadata_keeps_the_candidate_visible_to_the_application",
+          "ambiguous_control_fields_cannot_authorize_success_at_the_real_boundary"
         ]
       },
       {
@@ -859,7 +861,8 @@
           "backends::claude_cli::protocol::tests::first_failure_is_sticky_and_later_records_cannot_repair_it",
           "backends::claude_cli::protocol::tests::ping_is_tolerated_and_a_stream_error_event_is_a_vendor_error",
           "backends::claude_cli::protocol::tests::malformed_required_fields_and_unsupported_records_are_rejected_not_ignored",
-          "backends::claude_cli::protocol::tests::malformed_terminal_metadata_keeps_the_exact_candidate_span"
+          "backends::claude_cli::protocol::tests::malformed_terminal_metadata_keeps_the_exact_candidate_span",
+          "backends::claude_cli::protocol::tests::duplicate_control_fields_make_a_record_ambiguous_and_are_rejected"
         ]
       },
       {

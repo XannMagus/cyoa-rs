@@ -257,5 +257,14 @@
     "test": "malformed_result_metadata_keeps_the_candidate_visible_to_the_application",
     "file": "cyoa-infrastructure/src/backends/claude_cli/protocol.rs",
     "failure_contains": "metadata candidate regression"
+  },
+  {
+    "id": "accept-last-duplicate-field",
+    "decision": "BACKENDS-001",
+    "package": "cyoa-infrastructure",
+    "target": "claude_backend",
+    "test": "ambiguous_control_fields_cannot_authorize_success_at_the_real_boundary",
+    "file": "cyoa-infrastructure/src/backends/claude_cli/protocol.rs",
+    "failure_contains": "ambiguous result regression"
   }
 ]

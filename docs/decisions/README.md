@@ -396,6 +396,18 @@ already retained. A thirtieth mutation (`drop-candidate-on-malformed-metadata`)
 protects it at the real-child boundary. See
 `reviews/2026-10-02-claude-review-repairs/README.md`.
 
+Claude review repair 2 (2026-10-02): two equal keys in an object that carries control
+fields make a stream-json record ambiguous, and the codec now rejects it
+(`DuplicateField`) before interpreting any field. `serde_json::Value` silently keeps
+the last duplicate, so `"is_error":true,"is_error":false` had been accepted as
+success (and a duplicated `apiKeySource` could have hidden a metered key behind a
+trailing `"none"`). Checked objects are the record, `event`, and the event's
+`content_block` and `delta`; model-authored content (assistant messages, tool inputs)
+is not control data and stays tolerated, and `structured_output` keeps its own
+`InvalidPayload` rule. An unambiguous payload span is retained as evidence when only
+a control field is duplicated. A thirty-first mutation (`accept-last-duplicate-field`)
+protects it at the real-child boundary.
+
 ### PRODUCT-001 Standalone TUI, persistence, export, and image boundary
 
 **Pending.** Rust TUI and headless demo replace the Qt/calibre host. Keep vendor and
