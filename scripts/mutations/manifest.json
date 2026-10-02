@@ -293,5 +293,14 @@
     "test": "stale_and_duplicate_completions_never_replace_current_state",
     "file": "cyoa-presentation/src/session.rs",
     "failure_contains": "double commit regression"
+  },
+  {
+    "id": "ignore-headless-interrupt",
+    "decision": "STREAM-001",
+    "package": "cyoa-cli",
+    "target": "headless",
+    "test": "sigint_alone_cancels_idle_generation_before_any_fallback_command",
+    "file": "cyoa-presentation/src/headless.rs",
+    "failure_contains": "idle SIGINT cancellation regression"
   }
 ]

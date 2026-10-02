@@ -410,8 +410,8 @@ protects it at the real-child boundary.
 
 ### PRODUCT-001 Standalone TUI, persistence, export, and image boundary
 
-**Partial: terminal-independent controller/worker enforced; headless/demo, TUI,
-persistence and export pending.** Rust TUI and headless demo replace the Qt/calibre host. Keep vendor and
+**Partial: terminal-independent controller/worker and Linux headless/demo enforced;
+TUI, persistence and export pending.** Rust TUI and headless demo replace the Qt/calibre host. Keep vendor and
 filesystem work in adapters, one generation in flight, UI-owned canonical state,
 worker progress messages, cancellable children, cached narrative wrapping. Do not
 hold a state mutex during a model call. Save atomically with backup and versioned
@@ -427,6 +427,18 @@ Three presentation mutations protect stale acceptance, cancelled success and a
 second commit of a returned turn (34 total). This establishes no playable command,
 stdin/signal shutdown, saves, rendering cache or exports. Evidence:
 `reviews/2026-10-02-controller-worker/README.md`.
+
+Headless item 7 adds shipped `play --headless --backend claude|codex` and
+`play --headless --demo`, manual outline replacement, checked selection, one
+opening call, explicit retry, action numbering, literal slash input and read-only
+canonical inspection. Memory-only status is explicit. Linux readiness polling
+and SIGINT flags avoid a blocked input thread; EOF, quit, invalid input and output
+errors close/join workers. Nonblocking output treats pipe backpressure as an I/O
+failure. Previews have tentative/discarded/final boundaries; divergent final text
+replaces them and matching text is not duplicated. Thirteen binary tests exercise
+demo and both actual adapters over synthetic children, not vendor auth. Item 8
+retains every existing mutation and adds bounded idle-SIGINT coverage (35 total).
+Live headless evidence remains separate from these offline checks.
 
 ## Review discipline
 
@@ -499,12 +511,14 @@ cancellation authority for Drop cleanup, and fault explicitly on worker panic.
 Real thread tests cover silent cancellation, cancelled queued success, retry,
 spawn failure and bounded progress without consumer backpressure. Presentation
 preview overflow is explicitly marked incomplete; it does not invalidate an
-otherwise successful generation. Headless input/signal shutdown remains pending.
+otherwise successful generation. Headless input/signal shutdown is implemented
+on Linux and checked at the binary boundary; other hosts remain unsupported by
+this terminal adapter.
 
 **Partial: scanner, scripted generation, vendor-neutral process supervision,
 Codex protocol decoding and Backend reconciliation, and offline Claude event
 decoding and Backend reconciliation, enforced, with a bounded live adapter run for
-each backend; controller/worker acceptance enforced, headless I/O pending.** `StreamingStringField` extracts only the requested root
+each backend; controller/worker and Linux headless I/O acceptance enforced.** `StreamingStringField` extracts only the requested root
 string, across valid UTF-8 chunks. It is a preview scanner, not JSON validation.
 Escapes and surrogate pairs are decoded; lone surrogate halves become U+FFFD
 because Rust cannot represent them as scalar values. Truncated escape sequences

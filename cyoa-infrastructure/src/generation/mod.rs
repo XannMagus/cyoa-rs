@@ -8,6 +8,7 @@
 //! a live backend.
 
 pub mod backend_compat;
+pub mod demo;
 pub mod engine;
 mod limits_context;
 mod prompts;

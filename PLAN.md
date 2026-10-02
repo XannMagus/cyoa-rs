@@ -34,7 +34,9 @@ Both backends' headless acceptance remains pending; see the
 The next slice is expanded in the
 [controller and worker implementation plan](docs/plans/phase1-controller-and-worker.md).
 The controller/worker slice is implemented and tested offline through both adapter
-fixtures; headless input/output follows it. See the
+fixtures. Linux headless play and demo now drive that runtime, with binary tests
+through both adapters and cancellable input/output shutdown. Live headless gates
+remain separate, pending obligations. See the
 [implementation record](reviews/2026-10-02-controller-worker/README.md).
 
 ## Context

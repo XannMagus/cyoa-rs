@@ -11,5 +11,9 @@ cyoa-core.workspace = true
 thiserror.workspace = true
 clap.workspace = true
 
+[target.'cfg(target_os = "linux")'.dependencies]
+rustix = { version = "1", features = ["event", "fs"] }
+signal-hook = "0.3"
+
 [lints]
 workspace = true

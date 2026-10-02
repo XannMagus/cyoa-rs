@@ -32,7 +32,8 @@ was frozen on 2026-10-02 from production-invocation probes; `ClaudeCliBackend` h
 real-child fixture tests, composed story acceptance and eleven persistent
 mutations, and **passed its own live adapter gate on 2026-10-02**
 ([evidence](reviews/2026-10-02-claude-step8/README.md)): the same four bundled
-requests plus a controlled cancellation. Headless play remains pending for both.
+requests plus a controlled cancellation. Headless play is implemented and tested
+offline for both; each live headless gate remains pending.
 See the [Phase 1 plan](docs/plans/phase1-headless-backends.md)
 and each backend reference file for the remaining work; offline transport tests
 do not establish live vendor behavior.
@@ -61,8 +62,9 @@ with an independent live headless gate per backend. The
 implemented offline: canonical session ownership, typed request IDs/revisions,
 stale/cancelled-result rejection, bounded progress, thread join and explicit retry.
 The complete story and both actual adapters are exercised through controlled child
-fixtures; all 34 behavioral mutations are retained. Headless I/O and demo are next.
-No playable UI is claimed.
+fixtures. Linux headless play and the credential-free demo are implemented;
+the gate retains all 34 mutations and adds an idle-SIGINT check (35 total).
+TUI, saves/autosave and export remain pending.
 
 - `cyoa-core`: checked domain types, namesake-preserving casts and stable IDs,
   summary deltas, typed limits, owned protagonist selection, turns, chapters and
@@ -78,8 +80,8 @@ No playable UI is claimed.
   local advisor-suppression instruction live in `backend_compat::claude_cli`. Codex
   and Claude each have isolated request preparation, a private protocol codec and an
   executable `Backend` reconciled with the supervisor.
-- `cyoa-presentation`: session controller, owned worker/runtime and terminal
-  help/version output; gameplay UI and headless input/output are pending.
+- `cyoa-presentation`: session controller, owned worker/runtime, explicit CLI
+  intent and Linux headless input/output with cancellation and shutdown.
 - `cyoa-cli`: executable and composition root.
 - `reference/`: source material and each backend's separate live-verification record.
 
@@ -90,7 +92,40 @@ override conflicting Python behavior. Nonblank business-text types normalize inp
 audit text preserves every byte. Raw JSON and narrative previews cannot authorize a
 turn commit. Errors and observed cancellation leave the complete game unchanged;
 retry is explicit. The terminal-independent controller enforces canonical ownership
-and stale-worker rejection; terminal input/rendering remain future presentation work.
+and stale-worker rejection; the headless view drives this same controller.
+
+## Play headless (Linux)
+
+```sh
+cargo run -p cyoa-cli -- play --headless --demo
+cargo run -p cyoa-cli -- play --headless --backend codex
+cargo run -p cyoa-cli -- play --headless --backend claude
+```
+
+Enter a brief, accept the outline with an empty line (or `/edit` its title and
+description), then choose a one-based character number. Play with ordinary text,
+an empty line to continue, or `/action N`. Ordinary numbers remain player text;
+`//` sends an initial slash. `/event` requests an interesting event. `/help`,
+`/inspect`, `/diagnostics`, `/retry`, `/cancel` and `/quit` are available.
+Retry repeats the failed intent only when a failure/cancellation has finished.
+Unsupported commands make no inference call. All state is in memory only.
+
+Story prose goes to stdout; prompts, actions, diagnostics and preview status go to
+stderr. Preview prose is tentative until a committed marker; failures discard it,
+and a disagreeing final passage is printed as a correction. Ctrl-C during
+generation cancels and joins the worker; idle Ctrl-C, `/quit` and EOF exit. Input
+while busy is rejected except the control/query commands. Scripts must wait for
+stage prompts rather than queue an entire game; EOF during generation cancels it.
+Input lines are UTF-8, bounded to 64 KiB. A closed or stalled output pipe is an I/O
+error and closes the session instead of blocking cancellation.
+
+Choose exactly one backend or demo. Optional `--executable`, `--home`,
+`--config-dir` and `--model` apply only to a selected vendor; there is no fallback
+or API-key login change. HOME/PATH and the chosen vendor's config-directory
+environment variable supply defaults. Auth preflight runs before the UI and is
+cancellable by Ctrl-C. Demo `harbour-v1` replays the frozen Phase 0 story through
+the same controller and engine, without a vendor executable, auth or network;
+five prerecorded turns then explicitly exhaust. Choices do not alter its fiction.
 
 `GenerationTemplates::bundled()` validates configuration structure and owns fallible
 rendering. World, cast and turn requests use the same instance. The opening identity

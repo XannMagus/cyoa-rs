@@ -2,7 +2,8 @@
 
 Status: **transport foundations repaired; Codex and Claude adapters, composed
 fixture acceptance and bounded live adapter gates implemented; controller/worker
-implemented offline; headless play/acceptance pending.**
+implemented offline; Linux headless/demo play and binary acceptance implemented;
+both live headless gates pending.**
 Written 2026-09-25 against `3dfce38`; implementation initially landed in
 `c8c7f8b`..`a28ba66`, then underwent the [process-supervisor review](../../reviews/2026-09-25-process-supervisor/README.md)
 and [documented repairs](../../reviews/2026-09-25-supervisor-repairs/README.md).

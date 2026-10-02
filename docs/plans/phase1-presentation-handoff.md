@@ -4,8 +4,8 @@ Written 2026-10-02 after the Claude adapter slice (steps 0–8) landed on
 `phase1-claude-adapter`. Scope: Phase 1 items 6–9 of
 [the Phase 1 plan](phase1-headless-backends.md) — presentation lifecycle and worker
 ownership, headless/demo commands, the extended contract gate and the live headless
-gate. **Controller/worker item 6 is implemented offline; headless items 7–9 remain
-pending.** Both backends are co-equal; neither adapter's live
+gate. **Controller/worker item 6 is implemented offline; headless items 7–8 are
+implemented offline; item 9 remains pending.** Both backends are co-equal; neither adapter's live
 adapter gate is the headless gate. Read PLAN.md, the project contracts and the
 required-test registry first, as always.
 
@@ -52,8 +52,9 @@ see its [implementation record](../../reviews/2026-10-02-controller-worker/READM
 
 ## Obligations that remain
 
-1. Items 7–8: memory-only headless and demo commands, input/output/signal shutdown
-   and binary acceptance; extend the gate while retaining all 34 current mutations.
+1. Items 7–8 are implemented offline: memory-only headless and demo commands,
+   Linux input/output/signal shutdown and binary acceptance. The gate retains all
+   34 existing mutations and adds a bounded idle-SIGINT mutation (35 total).
    Item 6's typed IDs/revisions, canonical ownership, joining and cancellation are
    implemented; they do not establish stoppable terminal input.
 2. Item 9, **once per backend**: roughly six turns through a chapter break with real

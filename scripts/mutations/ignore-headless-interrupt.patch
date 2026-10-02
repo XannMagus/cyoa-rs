@@ -1,0 +1,11 @@
+--- a/cyoa-presentation/src/headless.rs
++++ b/cyoa-presentation/src/headless.rs
+@@ -93,7 +93,7 @@
+                     runtime.controller().phase(),
+                     Phase::Running | Phase::Cancelling
+                 ) {
+-                    runtime.dispatch(Intent::Cancel).map_err(io::Error::other)?;
++                    // MUTATION: ignore Ctrl-C while the worker is idle on output.
+                     writeln!(control, "Cancellation requested; waiting for cleanup.")?;
+                 } else {
+                     runtime.dispatch(Intent::Quit).map_err(io::Error::other)?;
