@@ -489,6 +489,18 @@ impl SessionController {
             Acceptance::Failed
         }
     }
+    pub(crate) fn dispatch_failed(&mut self, key: RequestKey, message: String) {
+        if self.active_key() == Some(key) {
+            let Operation::Running(p) = std::mem::replace(&mut self.operation, Operation::Ready)
+            else {
+                unreachable!()
+            };
+            self.operation = Operation::Failed {
+                work: p.work,
+                failure: Failure::Worker(message),
+            };
+        }
+    }
     fn active_key(&self) -> Option<RequestKey> {
         match &self.operation {
             Operation::Running(p) | Operation::Cancelling(p) | Operation::Closing(Some(p)) => {
@@ -506,5 +518,52 @@ impl Drop for SessionController {
             }
             _ => (),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn exhausted_counters_and_wrong_base_revision_cannot_start_or_commit() {
+        let mut session = SessionController::new(Limits::default(), StoryStyle::default());
+        session.last_id = u64::MAX;
+        assert_eq!(
+            session
+                .submit_brief(Brief::new("brief").unwrap())
+                .unwrap_err(),
+            SessionError::Exhausted
+        );
+        assert_eq!(session.phase(), Phase::Ready);
+        session.last_id = 0;
+        session.revision = SessionRevision(u64::MAX);
+        assert_eq!(
+            session
+                .submit_brief(Brief::new("brief").unwrap())
+                .unwrap_err(),
+            SessionError::Exhausted
+        );
+        session.revision = SessionRevision(0);
+        let request = session.submit_brief(Brief::new("brief").unwrap()).unwrap();
+        let wrong = RequestKey {
+            id: request.key.id,
+            revision: SessionRevision(1),
+        };
+        let failure = GenerationFailure::new(
+            generation::FailureKind::InvalidResponse,
+            "bad",
+            cyoa_core::text::RawResponse::new(""),
+            cyoa_application::diagnostics::TransportDiagnostics::empty(),
+        );
+        assert_eq!(
+            session.complete(Completion {
+                key: wrong,
+                outcome: Err(failure)
+            }),
+            Acceptance::Ignored,
+            "revision regression"
+        );
+        assert_eq!(session.phase(), Phase::Running);
+        assert_eq!(session.revision(), SessionRevision(0));
     }
 }

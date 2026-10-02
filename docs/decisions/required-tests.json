@@ -375,6 +375,26 @@
           "lifecycle_keeps_edited_outline_selection_and_one_opening",
           "wrong_kind_faults_and_quit_waits_for_active_completion"
         ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "worker",
+        "tests": [
+          "silent_cancel_joins_before_retry_and_preserves_generator_and_evidence",
+          "joined_success_queued_before_cancel_is_discarded",
+          "panic_faults_without_committing_and_quit_remains_available",
+          "paused_progress_consumer_cannot_block_completion_or_exceed_budget",
+          "dropping_runner_cancels_and_joins_silent_request"
+        ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "lib",
+        "tests": [
+          "worker::tests::mailbox_budget_is_cumulative_and_does_not_split_unicode",
+          "worker::tests::failed_spawn_keeps_use_cases_available_for_explicit_retry",
+          "session::tests::exhausted_counters_and_wrong_base_revision_cannot_start_or_commit"
+        ]
       }
     ]
   },
@@ -641,6 +661,26 @@
           "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context",
           "a_disagreeing_preview_is_shown_but_only_the_final_payload_is_committed",
           "an_enforce_retry_stream_commits_only_the_structured_payload"
+        ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "worker",
+        "tests": [
+          "silent_cancel_joins_before_retry_and_preserves_generator_and_evidence",
+          "joined_success_queued_before_cancel_is_discarded",
+          "panic_faults_without_committing_and_quit_remains_available",
+          "paused_progress_consumer_cannot_block_completion_or_exceed_budget",
+          "dropping_runner_cancels_and_joins_silent_request"
+        ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "lib",
+        "tests": [
+          "worker::tests::mailbox_budget_is_cumulative_and_does_not_split_unicode",
+          "worker::tests::failed_spawn_keeps_use_cases_available_for_explicit_retry",
+          "session::tests::exhausted_counters_and_wrong_base_revision_cannot_start_or_commit"
         ]
       }
     ]
@@ -946,6 +986,26 @@
           "stale_and_duplicate_completions_never_replace_current_state",
           "lifecycle_keeps_edited_outline_selection_and_one_opening",
           "wrong_kind_faults_and_quit_waits_for_active_completion"
+        ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "worker",
+        "tests": [
+          "silent_cancel_joins_before_retry_and_preserves_generator_and_evidence",
+          "joined_success_queued_before_cancel_is_discarded",
+          "panic_faults_without_committing_and_quit_remains_available",
+          "paused_progress_consumer_cannot_block_completion_or_exceed_budget",
+          "dropping_runner_cancels_and_joins_silent_request"
+        ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "lib",
+        "tests": [
+          "worker::tests::mailbox_budget_is_cumulative_and_does_not_split_unicode",
+          "worker::tests::failed_spawn_keeps_use_cases_available_for_explicit_retry",
+          "session::tests::exhausted_counters_and_wrong_base_revision_cannot_start_or_commit"
         ]
       }
     ]

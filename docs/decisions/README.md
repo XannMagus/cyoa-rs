@@ -485,6 +485,13 @@ results. `tests/session.rs` checks full state preservation and separate failure
 evidence, lifecycle selection and snapshot replacement without a second commit.
 Worker execution and headless I/O are separate subsequent evidence.
 
+The owned runner/runtime now recover use cases only after thread join, retain
+cancellation authority for Drop cleanup, and fault explicitly on worker panic.
+Real thread tests cover silent cancellation, cancelled queued success, retry,
+spawn failure and bounded progress without consumer backpressure. Presentation
+preview overflow is explicitly marked incomplete; it does not invalidate an
+otherwise successful generation. Headless input/signal shutdown remains pending.
+
 **Partial: scanner, scripted generation, vendor-neutral process supervision,
 Codex protocol decoding and Backend reconciliation, and offline Claude event
 decoding and Backend reconciliation, enforced, with a bounded live adapter run for
