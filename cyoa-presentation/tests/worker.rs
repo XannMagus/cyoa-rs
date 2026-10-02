@@ -267,3 +267,35 @@ fn dropping_runner_cancels_and_joins_silent_request() {
     drop(runner);
     assert!(token.is_cancelled());
 }
+
+#[test]
+fn quick_action_and_player_text_share_the_same_generation_intent() {
+    let (cases, _, calls) = fake([Mode::Success]);
+    let mut runtime = SessionRuntime::new(
+        SessionController::from_game(committed(game())),
+        cases,
+        PreviewLimit::default(),
+    );
+    assert!(runtime.dispatch(Intent::Action(0)).is_err());
+    runtime.dispatch(Intent::Action(1)).unwrap();
+    settle(&mut runtime);
+    assert_eq!(
+        *calls.lock().unwrap(),
+        [TurnDirection::Player(
+            cyoa_core::text::PlayerInput::new("Search 雪").unwrap()
+        )]
+    );
+    assert_eq!(
+        runtime
+            .controller()
+            .game()
+            .unwrap()
+            .turns()
+            .last()
+            .unwrap()
+            .input()
+            .unwrap()
+            .as_str(),
+        "Search 雪"
+    );
+}

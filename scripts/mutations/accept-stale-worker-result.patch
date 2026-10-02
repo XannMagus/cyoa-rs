@@ -1,0 +1,11 @@
+--- a/cyoa-presentation/src/session.rs
++++ b/cyoa-presentation/src/session.rs
+@@ -410,7 +410,7 @@
+     }
+     /// Called only after the runner has joined and recovered the use cases.
+     pub fn complete(&mut self, completion: Completion) -> Acceptance {
+-        if self.active_key() != Some(completion.key) || completion.key.revision != self.revision {
++        if self.active_key().is_none() {
+             return Acceptance::Ignored;
+         }
+         let old = std::mem::replace(&mut self.operation, Operation::Ready);

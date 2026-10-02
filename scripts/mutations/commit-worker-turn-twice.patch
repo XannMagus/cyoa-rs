@@ -1,0 +1,20 @@
+--- a/cyoa-presentation/src/session.rs
++++ b/cyoa-presentation/src/session.rs
+@@ -460,7 +460,16 @@
+                     (Work::Cast { brief, .. }, WorkSuccess::Cast(world)) => {
+                         Stage::CastSelection { brief, world }
+                     }
+-                    (Work::Turn { .. }, WorkSuccess::Turn(game)) => Stage::Playing { game },
++                    (Work::Turn { .. }, WorkSuccess::Turn(mut game)) => {
++                        let last = game.turns().last().unwrap().clone();
++                        game.commit_turn(last.turn().clone(), cyoa_core::turn::TurnGenerationRecord {
++                            input: last.input().cloned(),
++                            raw_response: last.raw_response().clone(),
++                            provenance: last.provenance().clone(),
++                            prompt_trace: last.prompt_trace().cloned(),
++                        });
++                        Stage::Playing { game }
++                    },
+                     _ => {
+                         self.operation = Operation::Faulted(Failure::Worker(
+                             "worker returned the wrong result kind".into(),

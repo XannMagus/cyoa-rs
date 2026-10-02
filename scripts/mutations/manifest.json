@@ -266,5 +266,32 @@
     "test": "ambiguous_control_fields_cannot_authorize_success_at_the_real_boundary",
     "file": "cyoa-infrastructure/src/backends/claude_cli/protocol.rs",
     "failure_contains": "ambiguous result regression"
+  },
+  {
+    "id": "accept-stale-worker-result",
+    "decision": "STREAM-001",
+    "package": "cyoa-presentation",
+    "target": "session",
+    "test": "stale_and_duplicate_completions_never_replace_current_state",
+    "file": "cyoa-presentation/src/session.rs",
+    "failure_contains": "stale completion regression"
+  },
+  {
+    "id": "accept-cancelled-worker-success",
+    "decision": "BACKENDS-001",
+    "package": "cyoa-cli",
+    "target": "controller_backends",
+    "test": "both_joined_adapter_successes_are_rejected_if_cancel_wins_acceptance",
+    "file": "cyoa-presentation/src/session.rs",
+    "failure_contains": "cancelled success regression"
+  },
+  {
+    "id": "commit-worker-turn-twice",
+    "decision": "STREAM-001",
+    "package": "cyoa-presentation",
+    "target": "session",
+    "test": "stale_and_duplicate_completions_never_replace_current_state",
+    "file": "cyoa-presentation/src/session.rs",
+    "failure_contains": "double commit regression"
   }
 ]

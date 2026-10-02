@@ -217,6 +217,14 @@
           "lifecycle_keeps_edited_outline_selection_and_one_opening",
           "wrong_kind_faults_and_quit_waits_for_active_completion"
         ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "controller_backends",
+        "tests": [
+          "both_adapters_preserve_controller_state_through_failure_cancel_retry_and_quit",
+          "both_joined_adapter_successes_are_rejected_if_cancel_wins_acceptance"
+        ]
       }
     ]
   },
@@ -260,6 +268,13 @@
           "stale_and_duplicate_completions_never_replace_current_state",
           "lifecycle_keeps_edited_outline_selection_and_one_opening",
           "wrong_kind_faults_and_quit_waits_for_active_completion"
+        ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "session",
+        "tests": [
+          "obsolete_cast_cannot_replace_an_edited_outline_and_actions_are_checked"
         ]
       }
     ]
@@ -434,6 +449,13 @@
         "tests": [
           "complete_controller_story_preserves_context_retry_identity_chapters_and_rewind",
           "controller_zero_npcs_and_both_restore_policies_use_active_limits"
+        ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "worker",
+        "tests": [
+          "quick_action_and_player_text_share_the_same_generation_intent"
         ]
       }
     ]
@@ -737,6 +759,14 @@
         "tests": [
           "complete_controller_story_preserves_context_retry_identity_chapters_and_rewind",
           "controller_zero_npcs_and_both_restore_policies_use_active_limits"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "controller_backends",
+        "tests": [
+          "both_adapters_preserve_controller_state_through_failure_cancel_retry_and_quit",
+          "both_joined_adapter_successes_are_rejected_if_cancel_wins_acceptance"
         ]
       }
     ]
@@ -1071,6 +1101,14 @@
           "complete_controller_story_preserves_context_retry_identity_chapters_and_rewind",
           "controller_zero_npcs_and_both_restore_policies_use_active_limits"
         ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "controller_backends",
+        "tests": [
+          "both_adapters_preserve_controller_state_through_failure_cancel_retry_and_quit",
+          "both_joined_adapter_successes_are_rejected_if_cancel_wins_acceptance"
+        ]
       }
     ]
   },
@@ -1107,6 +1145,14 @@
         "tests": [
           "complete_controller_story_preserves_context_retry_identity_chapters_and_rewind",
           "controller_zero_npcs_and_both_restore_policies_use_active_limits"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "controller_backends",
+        "tests": [
+          "both_adapters_preserve_controller_state_through_failure_cancel_retry_and_quit",
+          "both_joined_adapter_successes_are_rejected_if_cancel_wins_acceptance"
         ]
       }
     ]

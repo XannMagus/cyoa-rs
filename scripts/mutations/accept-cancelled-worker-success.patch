@@ -1,0 +1,14 @@
+--- a/cyoa-presentation/src/session.rs
++++ b/cyoa-presentation/src/session.rs
+@@ -377,9 +377,9 @@
+             else {
+                 unreachable!()
+             };
+-            pending.source.cancel();
++            // Ignore the user's cancellation disposition.
+             self.preview.clear();
+-            self.operation = Operation::Cancelling(pending);
++            self.operation = Operation::Running(pending);
+         }
+     }
+     pub fn quit(&mut self) {

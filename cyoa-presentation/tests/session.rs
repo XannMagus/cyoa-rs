@@ -175,3 +175,47 @@ fn wrong_kind_faults_and_quit_waits_for_active_completion() {
         Acceptance::Closed
     );
 }
+
+#[test]
+fn obsolete_cast_cannot_replace_an_edited_outline_and_actions_are_checked() {
+    let mut s = SessionController::new(Limits::default(), StoryStyle::default());
+    let r = s.submit_brief(Brief::new("bell").unwrap()).unwrap();
+    s.complete(Completion {
+        key: r.key(),
+        outcome: Ok(WorkSuccess::Outline(generated(outline("first")))),
+    });
+    let old = s.accept_outline().unwrap();
+    s.cancel();
+    s.complete(Completion {
+        key: old.key(),
+        outcome: Err(failure()),
+    });
+    s.replace_outline(outline("second")).unwrap();
+    let fresh = s.accept_outline().unwrap();
+    let before = s.stage().clone();
+    assert_eq!(
+        s.complete(Completion {
+            key: old.key(),
+            outcome: Ok(WorkSuccess::Cast(world()))
+        }),
+        Acceptance::Ignored
+    );
+    assert_eq!(s.stage(), &before);
+    assert_eq!(s.phase(), Phase::Running);
+    let world = cyoa_core::world::World::new(outline("second"), world().cast().clone());
+    s.complete(Completion {
+        key: fresh.key(),
+        outcome: Ok(WorkSuccess::Cast(world)),
+    });
+    s.select(PlayablePosition::new(0)).unwrap();
+    let r = s.take_turn(TurnDirection::Continue).unwrap();
+    s.complete(Completion {
+        key: r.key(),
+        outcome: Ok(WorkSuccess::Turn(Box::new(committed(
+            s.game().unwrap().clone(),
+        )))),
+    });
+    assert_eq!(s.action(0).unwrap_err(), SessionError::Selection);
+    assert_eq!(s.action(2).unwrap_err(), SessionError::Selection);
+    assert!(!s.action(1).unwrap().token().is_cancelled());
+}
