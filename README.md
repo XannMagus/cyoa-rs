@@ -33,7 +33,10 @@ real-child fixture tests, composed story acceptance and eleven persistent
 mutations, and **passed its own live adapter gate on 2026-10-02**
 ([evidence](reviews/2026-10-02-claude-step8/README.md)): the same four bundled
 requests plus a controlled cancellation. Headless play is implemented and tested
-offline for both; each live headless gate remains pending.
+offline for both. Codex also passed the shipped six-turn live headless gate with
+chapter breaks, stable rename, cancellation and explicit retry
+([evidence](reviews/2026-10-02-headless/README.md)); Claude's live headless gate
+remains pending.
 See the [Phase 1 plan](docs/plans/phase1-headless-backends.md)
 and each backend reference file for the remaining work; offline transport tests
 do not establish live vendor behavior.
@@ -152,7 +155,7 @@ bash scripts/check_contracts.sh
 The shared local/CI gate requires Bash, jq, Git, tar and the Rust toolchain; no
 Python is involved. It checks registered test presence, ignored tests, coverage
 claims, inward dependencies, workspace tests and compile-fail examples. It also
-copies the current source to a temporary directory and verifies that thirty-one deliberate
+copies the current source to a temporary directory and verifies that thirty-five deliberate
 regressions fail their exact registered behavioral tests. Compiler failures and
 missing tests do not count as detected regressions. The isolated build uses cached
 Cargo dependencies after Clippy; the first mutation build costs additional time.
@@ -164,8 +167,10 @@ See the [acceptance sequence](docs/decisions/phase0-acceptance.md) and
 is [real subprocess adapters and a playable headless loop](docs/plans/phase1-headless-backends.md)
 — transport foundations and Codex Backend reconciliation are implemented and
 Linux-tested for both backends, including composed story acceptance, persistent
-adapter mutations and a bounded live adapter gate each; presentation lifecycle and
-the full authenticated headless acceptance gates remain separate obligations.
+adapter mutations and a bounded live adapter gate each. Controller/worker and Linux
+headless/demo acceptance are implemented. Codex's live headless gate is complete;
+Claude's requires its own authenticated session. Persistence can proceed independently,
+but neither Phase 1 parity nor v1 completion is claimed before the peer gate.
 
 ## Where to start
 

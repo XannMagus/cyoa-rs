@@ -59,8 +59,10 @@ or event sourcing. These boundaries supersede the original module placement and
 "one layer of types" guidance in the plan.
 
 The scripted Phase 0 engine, generation use cases, streaming and complete story
-acceptance scenario are implemented. Playable UI and real subprocess adapters are
-pending — see `README.md`'s "Status". The contract gate also runs isolated behavioral
+acceptance scenario are implemented. Both real subprocess adapters and Linux
+headless/demo play are implemented; Codex's live headless gate passed and Claude's
+remains pending. TUI, persistence and export are subsequent work — see `README.md`'s
+"Status". The contract gate also runs isolated behavioral
 mutations; stale patches, compiler failures and missing tests must fail the gate,
 not be counted as detected regressions. Keep domain, boundary, orchestration and
 live-backend evidence distinct. See `docs/decisions/phase0-acceptance.md` before

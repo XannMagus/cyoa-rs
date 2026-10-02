@@ -1,4 +1,4 @@
-# `codex exec` — adapter fixture and live gates complete; headless gate pending
+# `codex exec` — adapter and live headless gates complete
 
 Co-equal companion to `01-claude-cli.md`. Step 1 of the Codex adapter plan is
 complete: **0.157.1, 2026-09-26**, authenticated using ChatGPT. Bundled outline,
@@ -22,6 +22,45 @@ Step 6, 2026-09-28: seven persistent offline mutations now protect protocol
 acceptance, shared/peer schema isolation and failure evidence. The gate retains
 all eleven prior mutations ([record](../reviews/2026-09-28-codex-step6/README.md)).
 That step added no authenticated observations; step 7 below supplies the live gate.
+
+## Confirmed: shipped live headless gate, 0.159.3, 2026-10-02
+
+The actual `cyoa play --headless --backend codex` command passed Phase 1 item 9
+using bundled configuration and subscription auth preflight. No model override
+was requested; this profile does not report an observed model identity.
+[Command, PTY transcript, canonical inspections, PID/workspace evidence and
+limitations](../reviews/2026-10-02-headless/README.md).
+
+- Generated and accepted an outline and a four-person playable cast, selected one
+  character, then committed six coherent passages with action selection, ordinary
+  player text and empty-line continuation. Three action kinds were offered each
+  time (cautious/bold/social initially, investigation on the last passage).
+  Codex remained complete-only; this is not incremental token-stream evidence.
+- Canonical inspection showed chapter 0 `The Empty Frame`, chapter 1
+  `The Water Between` after the crossing, and chapter 2 `The Warning Station`
+  at six turns. Harbour clues and permissions remained relevant across the
+  transition into the island investigation. This is one story, not proof of
+  arbitrary future model compliance.
+- Player input renamed Tessa Brine to Tessa Reed. The same `tessa-brine` ID remained
+  in subsequent inspections, with the same seven summary IDs and no alias fork.
+  Major events and upcoming threads persisted in the canonical summary; this PTY
+  gate did not capture the raw successful JSON, so null-vs-list wire updates and
+  exact final payload bytes remain separately established by adapter/fixture tests.
+- `/cancel` stopped a real silent-output request. Its direct child PID and private
+  workspace were observed absent. Before/after canonical query bodies were equal,
+  with one turn and revision 4; `/retry` explicitly launched one new child and
+  committed the second turn. Eight children (cast onwards) and their workspaces
+  were observed and all disappeared, as did the application on `/quit` with exit 0.
+  The initial outline predates the PID observer. No claim about remote server work
+  or every possible descendant follows from direct-child evidence.
+- Cast limitation: the brief requested exactly two literal Ajax names, but this
+  run returned `Ajax the sailor` and `Ajax the mason` with distinct descriptions,
+  plus Nell and Orin. The literal name-field request was not fully met. The earlier
+  exact-two-Ajax adapter follow-up below did meet it; neither observation guarantees
+  arbitrary future naming compliance. No adapter or shared-schema change was made.
+
+Codex's live headless gate is complete. Claude's independent live headless gate,
+full account/tool isolation and the remaining questions below stay open.
 
 ## Confirmed: composed live adapter gate, 0.159.3, 2026-10-02
 
@@ -64,8 +103,8 @@ model was selected, and no model identity or cost appeared in the responses.
   stdout and a read-only-filesystem error. The approved unsandboxed rerun is a
   separately retained diagnostic attempt, not an adapter retry.
 
-The bounded adapter gate is complete. Claude implementation, both headless gates,
-full account/tool isolation and the remaining questions below stay open.
+The bounded adapter gate is complete. The later headless gate is recorded above;
+Claude's own live headless gate and full account/tool isolation stay open.
 
 ## Confirmed: actual adapter outline smoke, 0.157.1, 2026-09-27
 
@@ -194,8 +233,8 @@ transcript is an explicit unsupported-profile example despite its CLI exit 0.
   messages remain outside this profile until independently exercised.
 - Rate-limit/unsatisfiable-schema/sandbox-denial outcomes and failure/cancellation
   usage are unexercised. Do not exhaust quota to manufacture evidence.
-- The bounded CodexCliBackend live story/cancellation gate is complete. Broader
-  live identity/limit edge cases and the headless gate remain pending. Candidate
+- The bounded CodexCliBackend live story/cancellation and shipped headless gates
+  are complete. Broader live identity/limit edge cases remain pending. Candidate
   retention after cancellation with an existing payload remains fixture evidence;
   the live cancelled request had no candidate. Supervisor tests and exact payload
   inspection remain different evidence from future model behavior.

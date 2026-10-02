@@ -5,7 +5,7 @@ Written 2026-10-02 after the Claude adapter slice (steps 0–8) landed on
 [the Phase 1 plan](phase1-headless-backends.md) — presentation lifecycle and worker
 ownership, headless/demo commands, the extended contract gate and the live headless
 gate. **Controller/worker item 6 is implemented offline; headless items 7–8 are
-implemented offline; item 9 remains pending.** Both backends are co-equal; neither adapter's live
+implemented offline; item 9 passed for Codex and remains pending for Claude.** Both backends are co-equal; neither adapter's live
 adapter gate is the headless gate. Read PLAN.md, the project contracts and the
 required-test registry first, as always.
 
@@ -57,9 +57,13 @@ see its [implementation record](../../reviews/2026-10-02-controller-worker/READM
    34 existing mutations and adds a bounded idle-SIGINT mutation (35 total).
    Item 6's typed IDs/revisions, canonical ownership, joining and cancellation are
    implemented; they do not establish stoppable terminal input.
-2. Item 9, **once per backend**: roughly six turns through a chapter break with real
-   player input, a real cancel then explicit retry, and honest reporting of what was
-   not observed. A fixture or an adapter-gate run does not substitute.
+2. Item 9, **once per backend**: Codex passed six turns through two chapter breaks,
+   real player input, a stable rename, cancellation/cleanup and explicit retry
+   ([evidence](../../reviews/2026-10-02-headless/README.md)). Claude must still run
+   this same gate through `cyoa play --headless --backend claude`, record its CLI
+   version/model selection and transcript, inspect canonical state with `/inspect`,
+   and verify child/workspace cleanup. A fixture or adapter gate does not substitute.
+   Read the Codex record's limitations without assuming they describe Claude.
 3. Not yet exercised live for Claude: `--model` (never passed), rate-limit/overload
    shapes, a rejected-then-retried payload block, preview/final disagreement, the
    `ping`/`error` stream events (documentation-only), signal exit codes and

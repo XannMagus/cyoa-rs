@@ -1,0 +1,5 @@
+2026-10-02: cargo test -p cyoa-cli --test headless --locked --offline
+chosen_backend_is_required_and_demo_never_resolves_a_vendor failed:
+error: unexpected argument 'play' found
+Usage: cyoa
+The scaffold rejected the now-required demo command before implementation.

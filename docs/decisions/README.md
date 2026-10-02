@@ -297,8 +297,8 @@ a build/test dependency violates this decision even if the source uses it.
 
 **Partial: Codex adapter, composed real-child fixture acceptance and bounded live
 adapter acceptance implemented; Claude adapter, composed real-child fixture
-acceptance and bounded live adapter acceptance implemented; both live headless gates
-pending.**
+acceptance and bounded live adapter acceptance implemented; Codex shipped live
+headless gate complete, Claude live headless gate pending.**
 Claude and Codex are peers behind inward-owned ports, not primary and
 fallback. Use stateless calls and subscription auth; never silently switch to paid
 API auth. Test the shared contract against scripted and both concrete adapters.
@@ -386,7 +386,8 @@ game unchanged with the direct child PID and workspace absent afterwards. Eviden
 presentation, covers one account/org and one run, and says nothing about `--model`,
 rate limits, descendants or server-side work after cancellation. The harness's first
 advisor counter over-reported (substring match on slash-command listings); the
-structural recount is in the evidence. Both live headless gates remain pending.
+structural recount is in the evidence. Both live headless gates were pending at
+that adapter checkpoint; the later Codex gate is recorded below.
 
 Claude review repair 1 (2026-10-02): the codec extracts the exact `structured_output`
 span before validating the result's terminal metadata, so a result whose `is_error`
@@ -439,6 +440,12 @@ replaces them and matching text is not duplicated. Thirteen binary tests exercis
 demo and both actual adapters over synthetic children, not vendor auth. Item 8
 retains every existing mutation and adds bounded idle-SIGINT coverage (35 total).
 Live headless evidence remains separate from these offline checks.
+
+Codex's shipped live headless gate passed six turns through two chapter breaks,
+stable same-person rename, real cancellation with unchanged canonical state,
+explicit retry and quit. Observed direct child PIDs and workspaces disappeared.
+Claude's independent live headless gate remains pending. See
+`reviews/2026-10-02-headless/README.md` for the transcript and exact limitations.
 
 ## Review discipline
 
@@ -504,7 +511,7 @@ Controller slice (2026-10-02): presentation retains canonical state, tracks type
 request IDs/base revisions, and rejects stale, duplicate and cancelled terminal
 results. `tests/session.rs` checks full state preservation and separate failure
 evidence, lifecycle selection and snapshot replacement without a second commit.
-Worker execution and headless I/O are separate subsequent evidence.
+Worker execution and headless I/O have separate acceptance tests.
 
 The owned runner/runtime now recover use cases only after thread join, retain
 cancellation authority for Drop cleanup, and fault explicitly on worker panic.

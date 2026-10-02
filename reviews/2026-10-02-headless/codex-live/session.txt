@@ -1,0 +1,566 @@
+Script started on 2026-10-02 23:13:16+02:00 [COMMAND="sh reviews/2026-10-02-headless/codex-live/run.sh" TERM="xterm-256color" TTY="/dev/pts/7" COLUMNS="80" LINES="24"]
+This session is memory only: no saves or autosave.
+Brief: enter a nonblank adventure idea. /help lists commands.
+A quiet harbour mystery about a missing tide bell. Create a cast of 3–5 playable characters with exactly two distinct people named Ajax, a sailor and a mason; every other playable and NPC has a different name. Keep their identities distinct. The story should make a short journey from harbour to island, with a chapter break during that journey. Atmospheric but brisk.
+Generating; /cancel or Ctrl-C cancels, /quit exits.
+Outline: The Bell Beyond the Breakwater
+*Grey water, wet rope, and the soft knock of boats against their moorings.* The harbour of Merewick lies beneath chalk cliffs, its warehouses gathered around a narrow tidal channel. Twice each day, a bronze tide bell sounds from the outer pier to announce safe passage across the submerged sill. This morning its frame stands empty. There are no broken bolts, no drag marks, and no bell beneath the pier—only a strand of island eelgrass caught around the fastening pin.
+
+**The missing bell threatens the harbour’s next departure.** Without its signal, the harbour guild has closed the channel. The ferry cooperative wants passage restored before its stores spoil; the breakwater trust insists that the empty frame be examined before anything is replaced. Their disagreement unfolds through notices, shuttered offices, and the steadily growing queue of loaded carts. The mystery stays intimate: something essential has vanished from a place where every sound carries.
+
+The playable roster contains four distinct identities: **Ajax, the sailor; Ajax, the mason; Nell, the chartmaker; and Orin, the ferry keeper.** The two people named Ajax remain separate throughout, identified in choices and dialogue as **Ajax the sailor** and **Ajax the mason**. Nell and Orin are separate playable people; any NPC introduced later must have a unique name different from every playable name.
+
+The route is short: the bell frame, the customs steps, then a crossing to **Wren Island**, scarcely a mile offshore. Clues connect these places: pale mortar dust beneath the frame, a fresh scrape on the customs landing, and an abandoned receipt for transporting an unusually heavy cargo. Each can be investigated quickly, but the falling tide limits the time available to launch.
+
+**A chapter break falls during the crossing**, when the boat passes the breakwater and Merewick’s familiar harbour sounds fade. *Ahead, a single dull note travels across the water.* Beyond that break, the island’s sheltered cove opens onto a disused lime kiln, an old bell foundation, and a tidal storehouse whose lower door will soon disappear beneath the returning sea.
+
+The island holds the reason for the disappearance as well as the bell. Its abandoned signal station once warned the harbour of a dangerous cross-current, and recent repairs suggest that warning system is being restored without guild approval. Recovering the bell will reopen the harbour; understanding why it was moved may expose a neglected danger on the very route it is meant to protect. The final choice concerns where the bell belongs, what evidence reaches Merewick, and whether safe passage can be restored before dusk.
+Outline review: empty line accepts; /edit replaces title and description.
+
+Generating; /cancel or Ctrl-C cancels, /quit exits.
+Character 1: Ajax the sailor — **Ajax the sailor** is a lean, brown-skinned man of thirty-six with close-cropped black curls, dark eyes, and a white scar cutting through his left eyebrow. His palms are rope-calloused, and one shoulder sits slightly higher than the other. He typically wears practical wool layers, loose seafaring trousers, and salt-stiffened waterproof clothing.
+
+*He keeps his balance even when the ground is still.*
+Ajax sailed coastal cargo boats before returning to Merewick after a cross-current nearly capsized his vessel beside Wren Island. The guild recorded the incident as poor seamanship; he remembers water moving against the tide.
+
+**He wants the harbour reopened, but refuses to mistake a ringing bell for proof of safe passage.** The island eelgrass offers him a familiar trail, and the note heard during the crossing may confirm a warning he has spent years trying to explain.
+Character 2: Ajax the mason — **Ajax the mason** is a broad-built, pale-skinned man of fifty-two with a shaved head, a thick reddish-grey beard, and small blue eyes beneath heavy brows. Chalk dust gathers in the creases of his hands, and his right index finger bends stiffly from an old fracture. He typically wears durable canvas work clothes, knitted waistcoats, and heavy leather boots.
+
+*He studies buildings as other people study faces.*
+Ajax maintained Merewick’s piers until the breakwater trust postponed repairs he considered essential. He also worked on Wren Island’s old signal station and knows its bell foundation could still bear a substantial load.
+
+**He believes the mortar dust beneath the empty frame can distinguish careful removal from structural failure.** His priority is to preserve evidence before a hurried replacement hides it, even if that earns him another accusation of obstructing trade.
+Character 3: Nell — **Nell** is a slender, olive-skinned woman of twenty-nine with a long dark braid, amber eyes, and freckles scattered across a narrow nose. A small ink stain permanently shadows the edge of one thumbnail; she wears round spectacles with a repaired brass hinge. Her usual clothing consists of plain linen shirts, wool skirts or trousers, and weatherproof coats with roomy pockets.
+
+*Her gaze moves between the shoreline and the space where a line ought to be.*
+Nell inherited a chartmaking business and discovered that recent harbour charts repeat soundings taken decades earlier. Her own measurements near Wren Island disagree with the approved channel markings, but the guild has declined to publish them.
+
+**She wants reliable evidence made public.** The missing bell may reveal who has been repairing the abandoned warning station—and whether their observations support hers. She fears an easy recovery could bury the more consequential discovery.
+Character 4: Orin — **Orin** is a sturdy, dark-skinned man of forty-four with a soft belly, a closely trimmed beard, and short hair greying at the temples. His left ear has a small notch, and his face settles naturally into a tired, attentive expression. He typically wears patched wool clothing, practical aprons, and waterproof outer layers suited to handling passengers and cargo.
+
+*He notices who is waiting before he notices what they carry.*
+Orin keeps the ferry cooperative’s boats, schedules, and accounts running. Several island households depend on his crossings, while spoiled cargo could leave the cooperative unable to pay its crews.
+
+**He needs passage restored before dusk, but will not knowingly send passengers into danger.** An abandoned receipt for unusually heavy cargo resembles the cooperative’s paperwork. Following it could save the ferry service or expose something done using its good name.
+Character selection: enter a one-based number.
+1
+Generating; /cancel or Ctrl-C cancels, /quit exits.
+The fastening pin is cold enough to ache against your thumb. You steady yourself beside the empty bell frame while a wave breaks beneath the pier, sending spray through the gaps between the planks. Where bronze should hang, there is only a pale rectangle of sky and the slow swing of a loose rope.
+
+*The harbour sounds wrong without it.* A cart rattles over the quay behind you; somewhere among the moorings, a block squeals. Each noise reaches you separately, stripped of the note that ordinarily gathers them into the business of departure.
+
+You draw a strand of eelgrass from around the pin. Its flat blade is dark green at the base, translucent where it has dried. You know the weed beds on Wren Island’s sheltered side: you have hauled enough of them off anchors. Merewick’s shingle shore grows little like this.
+
+“Leave that where you found it.”
+
+Celand Rook stands at the shoreward end of the frame, his walking stick planted between two wet boards. His carefully mended coat is buttoned to the throat. He watches your hand before he meets your eyes.
+
+“Too late for that,” you say. “But I can show you exactly where.”
+
+He approaches with small, testing steps. “The trust needs an examination before anyone puts another bell up. We cannot assume the fittings are sound.”
+
+You look along the iron strap. No fracture. No bent eye. The pin has been withdrawn and replaced, its retaining wedge seated neatly enough that whoever did it must have taken time.
+
+“Someone lowered it,” you say. “They didn’t tear it down.”
+
+“That remains to be established.”
+
+You crouch. Your waterproof coat creaks across your uneven shoulders, and a seam presses against an old ache. Beneath the frame, caught in a sheltered groove between the boards, lies a scatter of pale grit. You touch one grain with a damp fingertip. It crumbles, leaving a chalky smear.
+
+Celand shifts his stick. The ferrule comes down beside your hand.
+
+“Mortar?” you ask.
+
+“Possibly. This is a harbour beside chalk cliffs, Ajax the sailor. Pale dust is hardly extraordinary.”
+
+“Under a sheltered frame, after last night’s rain?”
+
+He draws his lips together. Before he answers, quick footsteps drum along the pier.
+
+Tessa Brine arrives carrying a folded tarpaulin under one arm. Wind has reddened her cheeks; her cropped hair lies flat and wet against her forehead. She glances at the empty frame, then at Celand, and exhales through her nose.
+
+“The cheese cart is back,” she says. “Its owner wants to know whether he should unload or pray.”
+
+“The channel is closed,” Celand replies. “The warden’s notice is quite explicit.”
+
+“Yes, I read it. So did everyone standing idle beside it.” She turns to you. “What have you found?”
+
+You show her the grass and the chalk on your finger. Her impatience sharpens into attention.
+
+“Wren?”
+
+“Perhaps.”
+
+“That’s enough to ask at customs.” She adjusts the tarpaulin against her hip. “Something heavy went down those steps before dawn. I heard the tackle from the cooperative shed. Thought somebody had finally decided to shift the spare mooring stone.”
+
+Celand’s gaze moves towards the warehouses.
+
+“Who was working it?” you ask.
+
+“Couldn’t see from where I was.” Tessa studies you a moment. “I can spare a dinghy. If this takes you out there, you’ll want to launch while there’s still water under the landing.”
+
+Beyond her shoulder, the ebb draws a brown seam across the mouth of the channel. You watch it split around the outer piles. For an instant you remember another seam beside Wren Island, travelling across your bow against everything the tide should have been doing, and the deck rising beneath your feet.
+
+**A bell can announce a passage. It cannot make one safe.**
+
+“Let us establish what happened here first,” Celand says. His voice is quieter now. “Once people decide where to lay blame, facts become inconvenient.”
+
+Tessa tucks the tarpaulin more firmly under her arm. “And once the landing dries, facts will need a longer boat hook.”
+
+You stand with the eelgrass between your fingers. The customs roof shows above the quay, scarcely five minutes away; beside your boot, the sheltered groove still holds its pale dust. Celand waits close enough to watch where you put your hands. Tessa looks towards the falling water.
+[committed turn 1]
+Action 1: Inspect the fittings and preserve the mortar dust (Cautious)
+Action 2: Head straight to the customs landing (Bold)
+Action 3: Question Celand about recent mortar repairs (Social)
+Play: enter text, empty line to continue, or /action N.
+/inspect
+/action 2
+Inspection: phase=Ready revision=4
+Turns: 1
+Chapter: 0 title=Some("The Empty Frame")
+World: "*Grey water, wet rope, and the soft knock of boats against their moorings.* The harbour of Merewick lies beneath chalk cliffs, its warehouses gathered around a narrow tidal channel. Twice each day, a bronze tide bell sounds from the outer pier to announce safe passage across the submerged sill. This morning its frame stands empty. There are no broken bolts, no drag marks, and no bell beneath the pier—only a strand of island eelgrass caught around the fastening pin.\n\n**The missing bell threatens the harbour’s next departure.** Without its signal, the harbour guild has closed the channel. The ferry cooperative wants passage restored before its stores spoil; the breakwater trust insists that the empty frame be examined before anything is replaced. Their disagreement unfolds through notices, shuttered offices, and the steadily growing queue of loaded carts. The mystery stays intimate: something essential has vanished from a place where every sound carries.\n\nThe playable roster contains four distinct identities: **Ajax, the sailor; Ajax, the mason; Nell, the chartmaker; and Orin, the ferry keeper.** The two people named Ajax remain separate throughout, identified in choices and dialogue as **Ajax the sailor** and **Ajax the mason**. Nell and Orin are separate playable people; any NPC introduced later must have a unique name different from every playable name.\n\nThe route is short: the bell frame, the customs steps, then a crossing to **Wren Island**, scarcely a mile offshore. Clues connect these places: pale mortar dust beneath the frame, a fresh scrape on the customs landing, and an abandoned receipt for transporting an unusually heavy cargo. Each can be investigated quickly, but the falling tide limits the time available to launch.\n\n**A chapter break falls during the crossing**, when the boat passes the breakwater and Merewick’s familiar harbour sounds fade. *Ahead, a single dull note travels across the water.* Beyond that break, the island’s sheltered cove opens onto a disused lime kiln, an old bell foundation, and a tidal storehouse whose lower door will soon disappear beneath the returning sea.\n\nThe island holds the reason for the disappearance as well as the bell. Its abandoned signal station once warned the harbour of a dangerous cross-current, and recent repairs suggest that warning system is being restored without guild approval. Recovering the bell will reopen the harbour; understanding why it was moved may expose a neglected danger on the very route it is meant to protect. The final choice concerns where the bell belongs, what evidence reaches Merewick, and whether safe passage can be restored before dusk."
+Situation: "Ajax the sailor is at the empty bell frame on Merewick’s outer pier with Celand Rook and Tessa Brine. He holds island eelgrass, has found possible mortar dust, and must choose between examining the frame, questioning Celand or proceeding to the customs landing while the tide falls."
+Identity: protagonist name="Ajax the sailor" state=Some("At the empty bell frame, physically uninjured with a familiar shoulder ache, holding eelgrass removed from the fastening pin. Has examined intact fittings and found pale grit resembling mortar; suspects deliberate removal and an island connection. Considering further examination or visiting customs before launching becomes difficult.")
+Identity: mara-venn name="Mara Venn" state=Some("Has not yet appeared in the story.")
+Identity: tessa-brine name="Tessa Brine" state=Some("At the bell frame carrying a folded tarpaulin, impatient about delayed cargo but attentive to the island clue. Has offered Ajax a dinghy and urges action before the customs landing becomes too shallow.")
+Identity: celand-rook name="Celand Rook" state=Some("At the bell frame carrying his walking stick, guarded about Ajax’s observations. Insists on examining the fittings before replacement, disputes the significance of the pale dust and urges establishing facts before blame.")
+Identity: hester-quill name="Hester Quill" state=Some("Has not yet appeared in the story.")
+Identity: perrin-vale name="Perrin Vale" state=Some("Has not yet appeared in the story.")
+Identity: sable-fen name="Sable Fen" state=Some("Has not yet appeared in the story.")
+Major event: "Ajax finds island eelgrass on the fastening pin, intact bell fittings and possible mortar dust beneath the frame, suggesting deliberate removal."
+Major event: "Tessa reports hearing heavy cargo tackle at the customs steps before dawn and offers Ajax a dinghy."
+Upcoming event: "Determine who removed the bell and whether the customs landing’s predawn cargo was connected."
+Upcoming event: "Investigate the island eelgrass and possible mortar dust."
+Upcoming event: "Reach a launch decision before the falling tide makes the customs landing unusable."
+Generating; /cancel or Ctrl-C cancels, /quit exits.
+/cancel
+Cancellation requested (only active generation is affected).
+Generation cancelled after cleanup. State unchanged.
+Use /retry to repeat the failed intent, or /quit. /diagnostics shows retained evidence.
+/inspect
+/retry
+Inspection: phase=Failed revision=4
+Turns: 1
+Chapter: 0 title=Some("The Empty Frame")
+World: "*Grey water, wet rope, and the soft knock of boats against their moorings.* The harbour of Merewick lies beneath chalk cliffs, its warehouses gathered around a narrow tidal channel. Twice each day, a bronze tide bell sounds from the outer pier to announce safe passage across the submerged sill. This morning its frame stands empty. There are no broken bolts, no drag marks, and no bell beneath the pier—only a strand of island eelgrass caught around the fastening pin.\n\n**The missing bell threatens the harbour’s next departure.** Without its signal, the harbour guild has closed the channel. The ferry cooperative wants passage restored before its stores spoil; the breakwater trust insists that the empty frame be examined before anything is replaced. Their disagreement unfolds through notices, shuttered offices, and the steadily growing queue of loaded carts. The mystery stays intimate: something essential has vanished from a place where every sound carries.\n\nThe playable roster contains four distinct identities: **Ajax, the sailor; Ajax, the mason; Nell, the chartmaker; and Orin, the ferry keeper.** The two people named Ajax remain separate throughout, identified in choices and dialogue as **Ajax the sailor** and **Ajax the mason**. Nell and Orin are separate playable people; any NPC introduced later must have a unique name different from every playable name.\n\nThe route is short: the bell frame, the customs steps, then a crossing to **Wren Island**, scarcely a mile offshore. Clues connect these places: pale mortar dust beneath the frame, a fresh scrape on the customs landing, and an abandoned receipt for transporting an unusually heavy cargo. Each can be investigated quickly, but the falling tide limits the time available to launch.\n\n**A chapter break falls during the crossing**, when the boat passes the breakwater and Merewick’s familiar harbour sounds fade. *Ahead, a single dull note travels across the water.* Beyond that break, the island’s sheltered cove opens onto a disused lime kiln, an old bell foundation, and a tidal storehouse whose lower door will soon disappear beneath the returning sea.\n\nThe island holds the reason for the disappearance as well as the bell. Its abandoned signal station once warned the harbour of a dangerous cross-current, and recent repairs suggest that warning system is being restored without guild approval. Recovering the bell will reopen the harbour; understanding why it was moved may expose a neglected danger on the very route it is meant to protect. The final choice concerns where the bell belongs, what evidence reaches Merewick, and whether safe passage can be restored before dusk."
+Situation: "Ajax the sailor is at the empty bell frame on Merewick’s outer pier with Celand Rook and Tessa Brine. He holds island eelgrass, has found possible mortar dust, and must choose between examining the frame, questioning Celand or proceeding to the customs landing while the tide falls."
+Identity: protagonist name="Ajax the sailor" state=Some("At the empty bell frame, physically uninjured with a familiar shoulder ache, holding eelgrass removed from the fastening pin. Has examined intact fittings and found pale grit resembling mortar; suspects deliberate removal and an island connection. Considering further examination or visiting customs before launching becomes difficult.")
+Identity: mara-venn name="Mara Venn" state=Some("Has not yet appeared in the story.")
+Identity: tessa-brine name="Tessa Brine" state=Some("At the bell frame carrying a folded tarpaulin, impatient about delayed cargo but attentive to the island clue. Has offered Ajax a dinghy and urges action before the customs landing becomes too shallow.")
+Identity: celand-rook name="Celand Rook" state=Some("At the bell frame carrying his walking stick, guarded about Ajax’s observations. Insists on examining the fittings before replacement, disputes the significance of the pale dust and urges establishing facts before blame.")
+Identity: hester-quill name="Hester Quill" state=Some("Has not yet appeared in the story.")
+Identity: perrin-vale name="Perrin Vale" state=Some("Has not yet appeared in the story.")
+Identity: sable-fen name="Sable Fen" state=Some("Has not yet appeared in the story.")
+Major event: "Ajax finds island eelgrass on the fastening pin, intact bell fittings and possible mortar dust beneath the frame, suggesting deliberate removal."
+Major event: "Tessa reports hearing heavy cargo tackle at the customs steps before dawn and offers Ajax a dinghy."
+Upcoming event: "Determine who removed the bell and whether the customs landing’s predawn cargo was connected."
+Upcoming event: "Investigate the island eelgrass and possible mortar dust."
+Upcoming event: "Reach a launch decision before the falling tide makes the customs landing unusable."
+Generating; /cancel or Ctrl-C cancels, /quit exits.
+“Customs first,” you say.
+
+You fold the eelgrass into your handkerchief and step past Celand. His stick lifts a fraction, leaving the way clear. Tessa falls into step beside you, her boots striking the boards with a brisk, uneven rhythm.
+
+“I’ll get the boat down,” she says. “Ask Hester about the night book. She keeps one under the counter because people become inventive after office hours.”
+
+At the quay she turns towards the cooperative shed. You continue between loaded carts, brushing a hanging sack with your shoulder. A carter sits beneath his wagon chewing a stalk of straw; beside him, whey drips from a wicker hamper into the gutter. *The smell of salt gives way to wet canvas, horse sweat, and something sweet beginning to spoil.*
+
+The customs steps descend between walls furred green below the high-water mark. Three exposed treads shine with slime. On the landing beneath them, a fresh scrape cuts through the dark surface of the stone, broad at one end and narrowing towards the water. Pale chips lie in its track.
+
+“Mind your footing, Ajax the sailor. That step has ambitions.”
+
+Hester Quill stands in the open customs doorway, a wool shawl pinned high across her chest. She holds a cup in one hand and a folded sheet in the other. Her eyes follow yours to the damaged stone.
+
+“When?” you ask.
+
+“Between my last inspection yesterday and opening this morning. Which is the only answer I can swear to.” She sets the cup on the windowsill. “If you want the answer I suspect, come up here before you join the cargo.”
+
+You climb the two steps to her doorway. Behind her, shelves bow beneath ledgers; a small stove breathes out the smell of singed tea leaves. She unfolds the sheet against a board and keeps one corner pinned with her thumb.
+
+“Found the carrier’s copy blowing against the stair rail. Kept my duplicate, naturally.”
+
+The ink has feathered where rain caught it, but the destination remains legible: **Wren Island, sheltered cove**. The goods are entered as *signal fittings*. Below that, the declared weight makes your fingers tighten against the doorpost.
+
+“That’s a great deal of fittings.”
+
+“Quite.” Hester taps the charge with a blunt nail. “Paid for a heavy lift, too. An ordinary box goes down on two backs. This went on the landing tackle.”
+
+“Who carried it?”
+
+Her gaze shifts past you.
+
+A young man stands beside a coil of hauling rope halfway down the steps. His copper curls are plastered beneath the edge of a cheap waterproof hood. At your glance he draws one sleeve over his wrist, but you catch the raw red band beneath it.
+
+“Perrin,” Hester says. “Come where we can hear you.”
+
+He climbs one tread and stops. “The receipt’s right.”
+
+“Then nobody needs to improve it,” she replies.
+
+You turn enough to leave him space beside the wall. “Did you see what was wrapped?”
+
+His mouth works before any sound comes. “Bronze. At the bottom. The sacking slipped when we lowered it.” He looks towards the harbour mouth. “I was told it was station work.”
+
+“Who told you?”
+
+“Let him answer without an audience growing,” says another voice.
+
+Mara Venn approaches along the quay, silver hair tucked behind her ears, a leather document wallet held against her sober coat. She stops above Perrin rather than beside you. He presses his shoulder to the stone.
+
+“Ajax the sailor,” she says. “If you intend to cross, you need to speak to me first. The closure applies to small boats as well.”
+
+Below, an oar knocks against the landing. Tessa brings the dinghy alongside, catches an iron ring, and looks up at the gathering faces.
+
+“One conversation’s worth of water left here,” she calls.
+
+Mara glances down at the boat, then back to the receipt beneath Hester’s hand. Her expression tightens.
+
+“Show me that.”
+
+Perrin catches your eye. His voice drops until it scarcely carries beyond the doorway.
+
+“I can tell you where they put it. But if she writes my name down first, I’ll have no work by tomorrow.”
+
+The dinghy settles lower against the steps as another thin wash drains away. Hester keeps her thumb on the paper. Mara waits with her wallet open, and Perrin waits for you to decide whom to answer.
+[committed turn 2]
+Action 1: Wait for Mara to examine the receipt before boarding (Cautious)
+Action 2: Board Tessa’s dinghy despite the closure (Bold)
+Action 3: Ask Mara to hear Perrin without threatening his livelihood (Social)
+Play: enter text, empty line to continue, or /action N.
+Tessa tells me Brine is her work name and asks me to call her Tessa Reed; she remains the same person. I ask Mara to hear Perrin without punishing him, secure permission for a safety inspection, and launch for Wren Island while there is still water. Bring the chapter to a close as we pass the breakwater.
+Generating; /cancel or Ctrl-C cancels, /quit exits.
+“Hear him first,” you tell Mara. “He carried a load under instructions. If telling you what he saw costs him his living, the next man will keep quiet.”
+
+Perrin looks down at his covered wrist. Mara’s thumb rests against the clasp of her wallet; for a moment, only the little slap of water beneath the landing answers you.
+
+“I cannot promise that every act goes without consequence,” she says.
+
+“I’m asking you not to punish a witness for speaking. And to let me inspect the island before you send anyone across with a replacement bell.”
+
+Hester lifts the receipt. “You can record the consignment without issuing a verdict on the lad. There’s room on the paper for that distinction.”
+
+Mara gives her a narrow look, then closes the wallet without taking out her pencil.
+
+“Your statement alone will not be grounds for barring you from harbour work,” she tells Perrin. “If anyone claims otherwise, send them to me. Now tell us who engaged you.”
+
+His shoulders loosen a little, though his hand stays tucked into his sleeve. “Sable Fen. She said the station needed its voice back. We landed at the sheltered cove, by the split rock with the white top. Took the load up past the lime kiln. There’s an old square of stone above it. That’s where we left it.”
+
+Mara’s mouth tightens at the name. You watch her absorb it before you speak.
+
+“An inspection,” you say. “The bell, its fittings, and the water on the approach. No ferry passengers. No declaration that the channel is safe merely because we find bronze.”
+
+“Bring back something I can act on.” She holds your gaze. “Locations. Conditions. Whoever is there, if they will come. You have clearance for that crossing. **The channel remains closed to traffic.**”
+
+Hester passes her the receipt at last. Below you, Tessa lets out a sharp breath.
+
+“Splendid. Permission floats. Come down.”
+
+You descend with one hand on the wall. The lowest tread is slick beneath your boot, and the dinghy’s stern has begun to touch mud. Tessa braces an oar against the landing while you step aboard, placing your weight over the centreline. Wet wood, tar, and the sour smell of exposed harbour silt rise around you.
+
+“Take the bow oar,” she says. “I’m coming. Somebody needs to see what we’re reopening for.”
+
+She passes you the painter, then pauses with one boot still on the stone.
+
+“One thing, Ajax the sailor. Brine’s my work name. Cooperative notices, invoices, arguments.” Her quick smile shows the gap in her teeth. “Call me Tessa Reed.”
+
+“Tessa Reed,” you say, making room for her.
+
+“That’ll do.”
+
+She steps in and pushes hard. The stern grates once, a sound you feel through the sole of your boot, then lifts free. You pull the painter aboard and set your blade. Behind you, Perrin raises his uncovered hand in a small, uncertain farewell. Mara stands above him with the receipt held flat against her wallet.
+
+The first strokes bite shallow water. Your aching shoulder protests, then settles into the familiar work. Tessa matches you without chatter. Between the moorings, floating weed trails seaward; you keep clear of a submerged chain whose position you remember by the lean of its buoy.
+
+*Every yard gained leaves less stone beneath you and more water ahead.*
+
+At the outer pier, the empty frame rises against the chalk cliffs. Beyond it the breakwater throws a darker strip across the sea, its end marked by a squat iron beacon. You ease your stroke as the dinghy approaches its shelter’s edge. Outside, the small waves travel at an angle to those within, and a narrow line of foam stretches towards Wren Island.
+
+Tessa follows your eyes. “That line trouble you?”
+
+“Keep your blade in the water a moment.”
+
+The boat passes the last stones. Cart wheels, shouted names, and the knocking of moored hulls fall away behind the wall. You feel the bow take a slight sideways pull beneath your knees.
+
+Then, across the open water, **a single dull note** reaches you from the island.
+
+Tessa turns towards it, her oar held still. You have the breakwater close behind, the foam line ahead, and just enough room to choose your approach.
+[committed turn 3]
+Action 1: Hold in the breakwater’s lee and assess the drift (Cautious)
+Action 2: Row across the foam line towards the sheltered cove (Bold)
+Action 3: Ask Tessa Reed to help measure the sideways pull (Social)
+Play: enter text, empty line to continue, or /action N.
+/inspect
+
+Inspection: phase=Ready revision=6
+Turns: 3
+Chapter: 0 title=Some("The Empty Frame")
+World: "*Grey water, wet rope, and the soft knock of boats against their moorings.* The harbour of Merewick lies beneath chalk cliffs, its warehouses gathered around a narrow tidal channel. Twice each day, a bronze tide bell sounds from the outer pier to announce safe passage across the submerged sill. This morning its frame stands empty. There are no broken bolts, no drag marks, and no bell beneath the pier—only a strand of island eelgrass caught around the fastening pin.\n\n**The missing bell threatens the harbour’s next departure.** Without its signal, the harbour guild has closed the channel. The ferry cooperative wants passage restored before its stores spoil; the breakwater trust insists that the empty frame be examined before anything is replaced. Their disagreement unfolds through notices, shuttered offices, and the steadily growing queue of loaded carts. The mystery stays intimate: something essential has vanished from a place where every sound carries.\n\nThe playable roster contains four distinct identities: **Ajax, the sailor; Ajax, the mason; Nell, the chartmaker; and Orin, the ferry keeper.** The two people named Ajax remain separate throughout, identified in choices and dialogue as **Ajax the sailor** and **Ajax the mason**. Nell and Orin are separate playable people; any NPC introduced later must have a unique name different from every playable name.\n\nThe route is short: the bell frame, the customs steps, then a crossing to **Wren Island**, scarcely a mile offshore. Clues connect these places: pale mortar dust beneath the frame, a fresh scrape on the customs landing, and an abandoned receipt for transporting an unusually heavy cargo. Each can be investigated quickly, but the falling tide limits the time available to launch.\n\n**A chapter break falls during the crossing**, when the boat passes the breakwater and Merewick’s familiar harbour sounds fade. *Ahead, a single dull note travels across the water.* Beyond that break, the island’s sheltered cove opens onto a disused lime kiln, an old bell foundation, and a tidal storehouse whose lower door will soon disappear beneath the returning sea.\n\nThe island holds the reason for the disappearance as well as the bell. Its abandoned signal station once warned the harbour of a dangerous cross-current, and recent repairs suggest that warning system is being restored without guild approval. Recovering the bell will reopen the harbour; understanding why it was moved may expose a neglected danger on the very route it is meant to protect. The final choice concerns where the bell belongs, what evidence reaches Merewick, and whether safe passage can be restored before dusk."
+Situation: "Ajax the sailor and Tessa Reed have launched with Mara’s permission for a safety inspection and just passed Merewick’s breakwater. A sideways pull affects the dinghy near a foam line, and a single dull bell note reaches them from Wren Island. They must choose how to approach the island."
+Identity: protagonist name="Ajax the sailor" state=Some("Aboard the dinghy just beyond the breakwater with Tessa Reed, holding an oar and carrying the eelgrass in his handkerchief. Uninjured with his familiar shoulder ache. Has secured inspection clearance and learned Sable Fen ordered the bell transported to the old stone foundation above Wren Island’s lime kiln. Notices a sideways pull and hears a bell note from the island.")
+Identity: mara-venn name="Mara Venn" state=Some("At the customs steps holding the cargo receipt against her document wallet. Has permitted Ajax’s crossing solely for a safety inspection while maintaining the general channel closure. Promises Perrin that his statement alone will not bar him from harbour work and awaits actionable evidence from the island.")
+Identity: tessa-brine name="Tessa Reed" state=Some("Aboard the dinghy with Ajax the sailor just beyond the breakwater, holding her oar still and watching Wren Island after hearing the bell. Accompanies the safety inspection to establish what reopening would entail. Has asked Ajax to call her Tessa Reed.")
+Identity: celand-rook name="Celand Rook" state=Some("At the bell frame carrying his walking stick, guarded about Ajax’s observations. Insists on examining the fittings before replacement, disputes the significance of the pale dust and urges establishing facts before blame.")
+Identity: hester-quill name="Hester Quill" state=Some("At the customs doorway, retaining her duplicate receipt after passing the recovered carrier’s copy to Mara. Has supported hearing Perrin without prejudging him and watched the inspection party launch.")
+Identity: perrin-vale name="Perrin Vale" state=Some("At the customs steps, relieved somewhat by Mara’s promise of protection from employment penalties based solely on his statement. Has identified Sable Fen as his employer and described leaving the cargo at the old stone foundation above the lime kiln, reached from the sheltered cove beside a white-topped split rock. His wrist abrasion remains untreated.")
+Identity: sable-fen name="Sable Fen" state=Some("Has not yet appeared in the story.")
+Major event: "Ajax finds island eelgrass on the fastening pin, intact bell fittings and possible mortar dust beneath the frame, suggesting deliberate removal."
+Major event: "Tessa reports hearing heavy cargo tackle at the customs steps before dawn and offers Ajax a dinghy."
+Major event: "Ajax reaches customs and finds a fresh landing scrape beside a receipt for a heavy lift of signal fittings to Wren Island’s sheltered cove."
+Major event: "Perrin admits the wrapped cargo contained bronze and offers its location while asking protection from loss of work."
+Major event: "Mara blocks an unapproved crossing as Tessa brings a dinghy to the rapidly drying landing."
+Major event: "Mara protects Perrin from employment penalties based solely on his testimony; he identifies Sable Fen and the bell’s destination above the island lime kiln."
+Major event: "Mara authorizes a safety inspection crossing while retaining the general channel closure."
+Major event: "Tessa reveals Brine is her work name and asks Ajax to call her Tessa Reed; she joins the crossing."
+Major event: "The dinghy passes the breakwater, encounters a sideways pull near a foam line, and its occupants hear a dull bell note from Wren Island."
+Upcoming event: "Locate Sable Fen and inspect the bell at the old foundation above Wren Island’s lime kiln."
+Upcoming event: "Investigate the island eelgrass and possible mortar dust."
+Upcoming event: "Assess the sideways pull and the safety of the island approach."
+Upcoming event: "Bring actionable inspection evidence back to Mara while the harbour remains closed."
+Generating; /cancel or Ctrl-C cancels, /quit exits.
+The sound thins until you cannot distinguish it from the wind. Your hands remain on the oar. Beneath its blade, the water presses steadily from the side, a force too smooth to belong to the little waves knocking against the hull.
+
+“Don’t pull against it yet,” you say.
+
+Tessa looks back at you. “Wasn’t planning to spend my strength arguing with the sea.” But she lowers her blade a little farther, watching your hands.
+
+You let the dinghy drift for three breaths. The iron beacon moves across the shoulder of the distant customs roof. Ahead, a loose tuft of weed follows the foam towards the island, while another, scarcely a boat’s length away, slides across its path.
+
+“There,” you say.
+
+“I see weed.”
+
+“Watch the space between them.”
+
+Her eyes narrow. The two tufts part, one travelling seaward, the other slipping towards the chalk cliffs. She turns her head to check the harbour behind you, and her quick expression stills.
+
+“That would put a loaded ferry sideways.”
+
+“It might.” Your shoulder aches where you hold the oar against the pressure. *You know how easily certainty grows out of fear.* “We need more than one look. Keep us on this side of the foam.”
+
+Together you work obliquely towards the island, taking the longer approach through water whose movement you can read. Each stroke brings a small resistance, then release. You count without meaning to, listening for the hollow slap that tells you a wave has found the broad side of the boat. Tessa adjusts before you need to ask. For all her haste ashore, she gives the water her full attention.
+
+The breakwater dwindles behind you. Wren Island rises into detail: grass flattened along the ridge, black seams in pale stone, a broken chimney standing above a low roofless building. Near its foot, the split rock shows a cap of white seabird droppings. Beyond it, a narrow cove holds darker, quieter water.
+
+“Perrin’s rock,” Tessa says. “And there’s your landing.”
+
+A strip of shingle lies beneath a rough stone stair. You bring the dinghy around the rock with your blade ready to check its swing. The sideways pressure eases abruptly, leaving your muscles braced against something that is no longer there. A faint smell of burnt lime reaches you beneath the salt.
+
+Someone stands on the stair.
+
+The woman wears a weathered coat over thick knitted wool, her silver-streaked hair tied close to her head. One hand rests on the wall; she holds her stiff leg carefully as she descends. She studies the dinghy’s wake before looking at either of you.
+
+“You came round the outside,” she calls. “Good.”
+
+“Sable Fen?” you ask.
+
+“Yes.” Her gaze settles on the scar through your eyebrow. “Ajax the sailor.”
+
+Tessa lifts her oar clear. “You have something half the harbour is waiting for.”
+
+Sable’s jaw tightens. “And half the harbour ought to wait.”
+
+The dinghy glides close enough for you to see the little lime burns across her knuckles. Above her, beyond the kiln’s broken chimney, a timber crosspiece stands on an old square foundation. Beneath it hangs bronze, dark against the sky.
+
+**The bell is here.**
+
+Sable follows your glance. “Before you ask me to lower it, tell me what happened at the foam.”
+
+Your bow touches shingle with a soft crunch. Tessa catches the painter but stays aboard, looking between you and the woman on the steps. Sable makes no move to take the rope. Behind her, the narrow stair climbs towards the bell; beside your boot, clear water begins to draw away from the stones.
+[committed turn 4]
+Action 1: Secure the dinghy and check the retreat route (Cautious)
+Action 2: Step ashore and demand access to the bell (Bold)
+Action 3: Describe the sideways pull and question Sable (Social)
+Play: enter text, empty line to continue, or /action N.
+/inspect
+Begin the island investigation as a new chapter. I secure the dinghy above the returning tide, describe the sideways pull to Sable, and inspect the bell foundation with her. Ask how restoring this warning station will protect the harbour rather than merely reopen it.
+Inspection: phase=Ready revision=7
+Turns: 4
+Chapter: 1 title=Some("The Water Between")
+World: "*Grey water, wet rope, and the soft knock of boats against their moorings.* The harbour of Merewick lies beneath chalk cliffs, its warehouses gathered around a narrow tidal channel. Twice each day, a bronze tide bell sounds from the outer pier to announce safe passage across the submerged sill. This morning its frame stands empty. There are no broken bolts, no drag marks, and no bell beneath the pier—only a strand of island eelgrass caught around the fastening pin.\n\n**The missing bell threatens the harbour’s next departure.** Without its signal, the harbour guild has closed the channel. The ferry cooperative wants passage restored before its stores spoil; the breakwater trust insists that the empty frame be examined before anything is replaced. Their disagreement unfolds through notices, shuttered offices, and the steadily growing queue of loaded carts. The mystery stays intimate: something essential has vanished from a place where every sound carries.\n\nThe playable roster contains four distinct identities: **Ajax, the sailor; Ajax, the mason; Nell, the chartmaker; and Orin, the ferry keeper.** The two people named Ajax remain separate throughout, identified in choices and dialogue as **Ajax the sailor** and **Ajax the mason**. Nell and Orin are separate playable people; any NPC introduced later must have a unique name different from every playable name.\n\nThe route is short: the bell frame, the customs steps, then a crossing to **Wren Island**, scarcely a mile offshore. Clues connect these places: pale mortar dust beneath the frame, a fresh scrape on the customs landing, and an abandoned receipt for transporting an unusually heavy cargo. Each can be investigated quickly, but the falling tide limits the time available to launch.\n\n**A chapter break falls during the crossing**, when the boat passes the breakwater and Merewick’s familiar harbour sounds fade. *Ahead, a single dull note travels across the water.* Beyond that break, the island’s sheltered cove opens onto a disused lime kiln, an old bell foundation, and a tidal storehouse whose lower door will soon disappear beneath the returning sea.\n\nThe island holds the reason for the disappearance as well as the bell. Its abandoned signal station once warned the harbour of a dangerous cross-current, and recent repairs suggest that warning system is being restored without guild approval. Recovering the bell will reopen the harbour; understanding why it was moved may expose a neglected danger on the very route it is meant to protect. The final choice concerns where the bell belongs, what evidence reaches Merewick, and whether safe passage can be restored before dusk."
+Situation: "Ajax the sailor and Tessa have reached Wren Island’s sheltered cove by skirting the foam line. Their dinghy’s bow touches shingle below the lime kiln. Sable Fen meets them on the stone stairs, asks what happened at the foam, and the missing bell is visible on the foundation above."
+Identity: protagonist name="Ajax the sailor" state=Some("In the dinghy with its bow on shingle at Wren Island’s sheltered cove, holding an oar and carrying the eelgrass in his handkerchief. Uninjured, with shoulder ache from rowing. Has observed opposing movements of floating weed near the foam line, taken a wider approach, and sighted the missing bell. Faces Sable Fen’s question about the current.")
+Identity: mara-venn name="Mara Venn" state=Some("At the customs steps holding the cargo receipt against her document wallet. Has permitted Ajax’s crossing solely for a safety inspection while maintaining the general channel closure. Promises Perrin that his statement alone will not bar him from harbour work and awaits actionable evidence from the island.")
+Identity: tessa-brine name="Tessa Reed" state=Some("Aboard the dinghy at Wren Island’s sheltered cove, holding the painter after rowing with Ajax. Uninjured and guarded. Has witnessed differing water movements near the foam line and challenged Sable about the harbour’s need for the bell.")
+Identity: celand-rook name="Celand Rook" state=Some("At the bell frame carrying his walking stick, guarded about Ajax’s observations. Insists on examining the fittings before replacement, disputes the significance of the pale dust and urges establishing facts before blame.")
+Identity: hester-quill name="Hester Quill" state=Some("At the customs doorway, retaining her duplicate receipt after passing the recovered carrier’s copy to Mara. Has supported hearing Perrin without prejudging him and watched the inspection party launch.")
+Identity: perrin-vale name="Perrin Vale" state=Some("At the customs steps, relieved somewhat by Mara’s promise of protection from employment penalties based solely on his statement. Has identified Sable Fen as his employer and described leaving the cargo at the old stone foundation above the lime kiln, reached from the sheltered cove beside a white-topped split rock. His wrist abrasion remains untreated.")
+Identity: sable-fen name="Sable Fen" state=Some("On the stone stairs above the sheltered cove beside the lime kiln, bracing herself against a wall because of her stiff knee. Recognises Ajax the sailor, approves his wider approach, and asks him to describe the water at the foam line before discussing lowering the bell. Wary of the visitors’ intention to recover it.")
+Major event: "Ajax finds island eelgrass on the fastening pin, intact bell fittings and possible mortar dust beneath the frame, suggesting deliberate removal."
+Major event: "Tessa reports hearing heavy cargo tackle at the customs steps before dawn and offers Ajax a dinghy."
+Major event: "Ajax reaches customs and finds a fresh landing scrape beside a receipt for a heavy lift of signal fittings to Wren Island’s sheltered cove."
+Major event: "Perrin admits the wrapped cargo contained bronze and offers its location while asking protection from loss of work."
+Major event: "Mara blocks an unapproved crossing as Tessa brings a dinghy to the rapidly drying landing."
+Major event: "Mara protects Perrin from employment penalties based solely on his testimony; he identifies Sable Fen and the bell’s destination above the island lime kiln."
+Major event: "Mara authorizes a safety inspection crossing while retaining the general channel closure."
+Major event: "Tessa reveals Brine is her work name and asks Ajax to call her Tessa Reed; she joins the crossing."
+Major event: "The dinghy passes the breakwater, encounters a sideways pull near a foam line, and its occupants hear a dull bell note from Wren Island."
+Major event: "Ajax and Tessa observe divergent water movements near the foam line and reach the sheltered cove by a wider approach."
+Major event: "They meet Sable Fen and sight the missing bell hanging above the island lime kiln."
+Upcoming event: "Locate Sable Fen and inspect the bell at the old foundation above Wren Island’s lime kiln."
+Upcoming event: "Investigate the island eelgrass and possible mortar dust."
+Upcoming event: "Assess the sideways pull and the safety of the island approach."
+Upcoming event: "Bring actionable inspection evidence back to Mara while the harbour remains closed."
+Generating; /cancel or Ctrl-C cancels, /quit exits.
+You lay the oar across the thwarts and step into water cold enough to bite through your boots. Shingle shifts beneath your soles. With Tessa lifting at the stern, you haul the dinghy beyond the dark fringe of weed that marks the last high water, then make its painter fast around a sound stone outcrop.
+
+“Enough rope to launch again,” Tessa says, checking your knot. “No generosity beyond that.”
+
+You leave the oars inside, clear of the ground. Your shoulder throbs when you straighten. Sable waits on the lowest dry step, her eyes moving from the secured boat to the water draining between the pebbles.
+
+“The pull came across the blades,” you tell her. “Steady pressure. Beyond the breakwater, before we reached the foam. Two pieces of weed close together went different ways—one seaward along the line, one towards the cliffs.”
+
+“Did the bow turn?”
+
+“Yes. We held outside it and came round the split rock. The pressure stopped as we entered the cove.”
+
+Sable rubs a lime-whitened thumb against the wall. “That is where I find its edge on this part of the ebb. Sometimes farther out.”
+
+“Sometimes?” Tessa asks.
+
+“Wind changes it. So does the height of the tide.” Sable looks back at you. “I can show you what I have written. I cannot promise the water will keep to my page.”
+
+That answer earns more of your attention than certainty would. You follow her up the stair, keeping room behind her stiff leg. *The cove’s soft wash sinks below the scrape of boots and the dry whisper of grass.* At the kiln, old ash lies in sheltered cracks, and the broken chimney carries a sharp mineral smell. Above it, the bell hangs from a new crosspiece seated between weathered stone uprights.
+
+You stop within reach of the bronze. One familiar casting flaw runs like a crooked stitch beside the rim. Beneath it, the square foundation has been cleared of nettles; pale mortar fills several joints, still darker where damp remains within it. Sable watches as you crouch.
+
+“You brought the dust back with you,” you say, unfolding your handkerchief. The eelgrass lies limp against the cloth. “There was pale grit beneath the harbour frame. This weed was caught on the fastening pin.”
+
+“The lifting sling lay here while we readied the timber,” she says. “We landed through weed last night. I should have cleaned it.”
+
+Tessa folds her arms. “You should have left a notice.”
+
+“Yes.” Sable’s reply comes quietly. “I thought an empty frame would make them stop. A notice never has.”
+
+You examine the timber ends, the iron straps, the stone beneath their load. The bolts have washers; the wood shows no splitting around them. At one corner, however, a hairline gap follows an old joint beyond the fresh repair. You press your thumb beside it without leaning your weight onto the upright.
+
+“Can you lower it without pulling sideways on this?”
+
+“From the tackle behind the kiln. Slowly.”
+
+“No ringing it hard until someone who knows stone has examined that corner.”
+
+Sable nods, though her mouth tightens. Tessa looks up at the bell and then across the water towards Merewick, where the warehouses appear scarcely larger than stacked boxes.
+
+“How does restoring this station protect the harbour?” you ask. “People hear bronze and think they can sail. What tells them this is a warning?”
+
+Sable reaches beneath the crosspiece and catches the short striker cord. She holds it still.
+
+“**The harbour bell gives passage at the sill. This station must tell them when the island approach is dangerous.** The old practice was three separated strokes and a black board raised towards Merewick. One stroke today was a test. Nobody ashore has been told to use it.”
+
+“Then it cannot protect a ferry yet,” you say.
+
+“No.” Her fingers loosen from the cord. “It needs a watcher here, someone answering on the pier, and an agreed signal. It also needs measurements they will believe.”
+
+“People need feeding while you arrange all that,” Tessa says, but the sharpness has left her voice.
+
+Sable points below the kiln. A squat storehouse stands against the rock, its lower doorway fringed with wet green weed.
+
+“My tide book is down there. Bearings, times, copies of the letters. The tackle too.” She glances at the cove. “The lower door is clear now. When the flood reaches it, we lose that entrance.”
+
+You rise beside the doubtful joint. Within arm’s reach hangs the harbour’s means of reopening; below you waits the evidence that might keep its boats alive. Sable offers you the striker cord, while Tessa watches the storehouse door.
+[committed turn 5]
+Action 1: Secure the striker and check the foundation before moving the bell (Cautious)
+Action 2: Go straight to the storehouse and recover the tide book (Bold)
+Action 3: Ask Sable and Tessa to agree on a workable warning system (Social)
+Play: enter text, empty line to continue, or /action N.
+/action 2
+Generating; /cancel or Ctrl-C cancels, /quit exits.
+You leave the cord in Sable’s hand.
+
+“The book first. Show me the way.”
+
+She releases the striker carefully, letting it settle without touching bronze, and turns towards the kiln. Tessa follows close behind you. The path drops between a retaining wall and a slope of loose chalk; below it, the storehouse roof catches the light in dull patches of slate. You shorten your stride where the stones shift. Sable takes the descent sideways, her stiff knee held straight, one palm brushing the wall.
+
+“Mind the last step,” she says. “It looks wider than it is.”
+
+The doorway stands beneath a timber lintel blackened by years of wetting. Its lowest hinge has rusted into a rough orange lump, and a fan of eelgrass lies across the threshold. Water ticks somewhere inside. You can smell old hemp, salt and the cold, closed smell of stone that seldom dries.
+
+Sable lifts the latch. The door opens only a hand’s breadth before its bottom catches.
+
+“Swollen again,” she mutters.
+
+You put your shoulder beside hers, keeping your aching arm close to your body, and push with your legs. Wood scrapes over grit. The gap widens enough for you to slip through, then Tessa braces the door with a flat stone.
+
+“Useful sort of building,” she says. “Tries to keep both people and water.”
+
+Inside, your eyes adjust slowly. Thin daylight enters through a barred opening high in the seaward wall. Coils of rope hang above a tide stain; below them, an iron-bound tackle block rests on a pallet, its hook wrapped in sacking. A narrow stair climbs towards a shut upper hatch. Along the back wall, boards laid across stone brackets hold jars, folded canvas and a small wooden chest.
+
+“There.” Sable points to the chest. “Lift it down level. The lid has no proper catch.”
+
+You bring it to a dry patch of floor. Its wood feels unexpectedly light. Within lies a thick book wrapped in oilcloth, with a packet of papers tucked alongside it. Sable kneels with a small, involuntary breath and folds the covering back.
+
+**The tide book is dry.**
+
+You lift it free. The cover has softened at the corners, and several pages carry thumb marks the colour of rust. Inside, close handwriting fills ruled columns: tide height, wind, bearings from the beacon and split rock, the direction of floating weed. Small sketches occupy the margins. Some entries are crossed through and corrected; others end in a plain admission—*view obscured*, *timing uncertain*, *no second observation*.
+
+“When I couldn’t see, I wrote that,” Sable says, watching your face. “My father used to say an empty square was better than a handsome lie.”
+
+Tessa bends over your shoulder. “How long?”
+
+“This book, eleven months. Older ones upstairs.”
+
+You turn a page and find a sketch of the foam line drawn across two bearings you recognise. Beneath it, Sable has recorded a boat turning against its helm on a falling tide. Your fingers stop at the edge of the paper.
+
+“That position,” you say. “That is close to where we felt it.”
+
+“Close,” she agrees. “We should put your crossing beside it, with today’s wind. Before memory tidies it up.”
+
+Tessa looks towards the doorway. “And somebody besides us should watch the next one.”
+
+Sable passes you the packet. There are copies of warnings addressed to the breakwater trust, and two replies. One bears Celand Rook’s signature. You read the short paragraph twice: observations received; an inspection deferred until funds permit; existing harbour arrangements to remain in use. There is no survey attached.
+
+Tessa’s lips press together. “Mara can act on a signature.”
+
+“She can ask him what followed it,” you say. “This tells us what he answered. We still need to establish what the water does.”
+
+You wrap the book and correspondence together, then tuck the bundle securely inside your waterproof coat. Outside, a small wave brushes the threshold and withdraws, leaving a bright skin over the stone. Sable looks at the tackle block. Tessa looks at the upper stair.
+
+“The older books may show whether it’s getting worse,” Sable says. “But the lowering gear needs two hands, and I cannot carry it up that slope alone.”
+
+You stand with the recovered evidence against your chest. The lower door remains open; beyond it, the path leads back towards the bell’s doubtful footing. There is time to make another choice, but the water has begun to claim the step.
+[committed turn 6]
+Action 1: Carry the recovered evidence outside to dry ground (Cautious)
+Action 2: Help Tessa haul out the bell-lowering tackle (Bold)
+Action 3: Ask Sable to show you the older tide books upstairs (Investigate)
+Play: enter text, empty line to continue, or /action N.
+/inspect
+/quit
+Inspection: phase=Ready revision=9
+Turns: 6
+Chapter: 2 title=Some("The Warning Station")
+World: "*Grey water, wet rope, and the soft knock of boats against their moorings.* The harbour of Merewick lies beneath chalk cliffs, its warehouses gathered around a narrow tidal channel. Twice each day, a bronze tide bell sounds from the outer pier to announce safe passage across the submerged sill. This morning its frame stands empty. There are no broken bolts, no drag marks, and no bell beneath the pier—only a strand of island eelgrass caught around the fastening pin.\n\n**The missing bell threatens the harbour’s next departure.** Without its signal, the harbour guild has closed the channel. The ferry cooperative wants passage restored before its stores spoil; the breakwater trust insists that the empty frame be examined before anything is replaced. Their disagreement unfolds through notices, shuttered offices, and the steadily growing queue of loaded carts. The mystery stays intimate: something essential has vanished from a place where every sound carries.\n\nThe playable roster contains four distinct identities: **Ajax, the sailor; Ajax, the mason; Nell, the chartmaker; and Orin, the ferry keeper.** The two people named Ajax remain separate throughout, identified in choices and dialogue as **Ajax the sailor** and **Ajax the mason**. Nell and Orin are separate playable people; any NPC introduced later must have a unique name different from every playable name.\n\nThe route is short: the bell frame, the customs steps, then a crossing to **Wren Island**, scarcely a mile offshore. Clues connect these places: pale mortar dust beneath the frame, a fresh scrape on the customs landing, and an abandoned receipt for transporting an unusually heavy cargo. Each can be investigated quickly, but the falling tide limits the time available to launch.\n\n**A chapter break falls during the crossing**, when the boat passes the breakwater and Merewick’s familiar harbour sounds fade. *Ahead, a single dull note travels across the water.* Beyond that break, the island’s sheltered cove opens onto a disused lime kiln, an old bell foundation, and a tidal storehouse whose lower door will soon disappear beneath the returning sea.\n\nThe island holds the reason for the disappearance as well as the bell. Its abandoned signal station once warned the harbour of a dangerous cross-current, and recent repairs suggest that warning system is being restored without guild approval. Recovering the bell will reopen the harbour; understanding why it was moved may expose a neglected danger on the very route it is meant to protect. The final choice concerns where the bell belongs, what evidence reaches Merewick, and whether safe passage can be restored before dusk."
+Situation: "Ajax, Tessa and Sable are inside the tidal storehouse. Ajax has recovered the dry tide book and warning correspondence and secured them inside his waterproof coat. Returning water has begun washing the entrance step. Bell-lowering tackle remains on a pallet, and older observation books are upstairs; Ajax must choose whether to leave with the evidence, recover the tackle or examine the older records."
+Identity: protagonist name="Ajax the sailor" state=Some("Inside the tidal storehouse with Tessa and Sable, uninjured with an aching shoulder and wet boots. Carries Sable’s dry tide book and warning correspondence wrapped in oilcloth inside his waterproof coat, as well as the previously collected eelgrass. Has recognised a recorded current position close to today’s crossing and read Celand’s signed inspection deferral. Considering evacuation, tackle recovery or older records.")
+Identity: mara-venn name="Mara Venn" state=Some("At the customs steps holding the cargo receipt against her document wallet. Has permitted Ajax’s crossing solely for a safety inspection while maintaining the general channel closure. Promises Perrin that his statement alone will not bar him from harbour work and awaits actionable evidence from the island.")
+Identity: tessa-brine name="Tessa Reed" state=Some("Inside the tidal storehouse, uninjured and alert to the returning water. Has braced the lower door open with a stone, examined the recovered records and suggested independent observation of the current. Watching the upper stair while the heavy lowering tackle remains to be recovered.")
+Identity: celand-rook name="Celand Rook" state=Some("At the bell frame carrying his walking stick, guarded about Ajax’s observations. Insists on examining the fittings before replacement, disputes the significance of the pale dust and urges establishing facts before blame.")
+Identity: hester-quill name="Hester Quill" state=Some("At the customs doorway, retaining her duplicate receipt after passing the recovered carrier’s copy to Mara. Has supported hearing Perrin without prejudging him and watched the inspection party launch.")
+Identity: perrin-vale name="Perrin Vale" state=Some("At the customs steps, relieved somewhat by Mara’s promise of protection from employment penalties based solely on his statement. Has identified Sable Fen as his employer and described leaving the cargo at the old stone foundation above the lime kiln, reached from the sheltered cove beside a white-topped split rock. His wrist abrasion remains untreated.")
+Identity: sable-fen name="Sable Fen" state=Some("Inside the tidal storehouse beside the open chest, managing her stiff knee. Has entrusted Ajax with her tide book and warning correspondence, offered to record today’s crossing and revealed older books upstairs. Needs help carrying the lowering tackle up the slope before water blocks the entrance.")
+Major event: "Ajax finds island eelgrass on the fastening pin, intact bell fittings and possible mortar dust beneath the frame, suggesting deliberate removal."
+Major event: "Tessa reports hearing heavy cargo tackle at the customs steps before dawn and offers Ajax a dinghy."
+Major event: "Ajax reaches customs and finds a fresh landing scrape beside a receipt for a heavy lift of signal fittings to Wren Island’s sheltered cove."
+Major event: "Perrin admits the wrapped cargo contained bronze and offers its location while asking protection from loss of work."
+Major event: "Mara blocks an unapproved crossing as Tessa brings a dinghy to the rapidly drying landing."
+Major event: "Mara protects Perrin from employment penalties based solely on his testimony; he identifies Sable Fen and the bell’s destination above the island lime kiln."
+Major event: "Mara authorizes a safety inspection crossing while retaining the general channel closure."
+Major event: "Tessa reveals Brine is her work name and asks Ajax to call her Tessa Reed; she joins the crossing."
+Major event: "The dinghy passes the breakwater, encounters a sideways pull near a foam line, and its occupants hear a dull bell note from Wren Island."
+Major event: "Ajax and Tessa observe divergent water movements near the foam line and reach the sheltered cove by a wider approach."
+Major event: "They meet Sable Fen and sight the missing bell hanging above the island lime kiln."
+Major event: "Ajax and Tessa secure the dinghy above high water and examine the island bell foundation with Sable."
+Major event: "Sable connects the harbour’s mortar grit and eelgrass to the lifting sling used during the bell transfer."
+Major event: "Ajax finds a questionable foundation joint and advises against hard ringing before a masonry inspection."
+Major event: "Sable explains that the old island warning used three separated strokes and a black board; restoring protection requires agreed signals, watchers and credible measurements."
+Major event: "Sable identifies the tidal storehouse as holding her tide book, warning letters and bell-lowering tackle."
+Major event: "Ajax recovers Sable’s dry tide book and warning correspondence from the tidal storehouse."
+Major event: "The book records a current position close to Ajax’s observed sideways pull; a signed reply from Celand acknowledges observations and defers inspection for lack of funds."
+Major event: "Sable reveals older observation books upstairs as returning water begins washing the storehouse entrance."
+Upcoming event: "Assess the questionable bell foundation joint and safely lower or secure the bell."
+Upcoming event: "Assess the sideways pull and the safety of the island approach using Sable’s observations and possible older records upstairs."
+Upcoming event: "Recover the bell-lowering tackle before the returning tide blocks the storehouse’s lower entrance."
+Upcoming event: "Establish an agreed warning protocol and staffing for the island station."
+Upcoming event: "Bring the recovered tide book and correspondence to Mara while the harbour remains closed, and establish what followed Celand’s acknowledged inspection deferral."
+Session closed; in-memory state discarded.
+
+Script done on 2026-10-02 23:40:39+02:00 [COMMAND_EXIT_CODE="0"]

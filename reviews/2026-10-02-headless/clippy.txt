@@ -1,0 +1,4 @@
+    Checking cyoa-presentation v0.1.0 (/home/xann/cyoa-rs/cyoa-presentation)
+    Checking cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+    Checking cyoa-cli v0.1.0 (/home/xann/cyoa-rs/cyoa-cli)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.50s

@@ -1,0 +1,47 @@
+Installed CLI: codex-cli 0.159.3 (2026-10-02, `codex --version`).
+Shipped command: target/debug/cyoa play --headless --backend codex
+No model override; adapter profile does not report observed model identity.
+Subscription auth preflight succeeded. No login-mode or vendor fallback.
+The first outline predates PID observation. All observed subsequent children are
+identified only by PID and private cwd, with kernel kill -0 and path absence checks.
+Cast: 4 playables; Ajax the sailor, Ajax the mason, Nell, Orin. The two intended
+Ajaxes have role qualifiers in name fields; the exact-two-literal-"Ajax" naming
+request is not fully met. Their descriptions/backstories are distinct. No claim
+of strict prompt compliance is made. This is not a domain count-validation bug.
+Opening: 1 successful committed turn, chapter 0 "The Empty Frame"; cautious,
+bold, social actions offered. Canonical summary has seven IDs, including stable
+protagonist/tessa-brine/celand-rook and previously unencountered NPCs.
+Cancelled the real `/action 2` generation via `/cancel` before a candidate existed.
+Child 904144 and /tmp/cyoa-request-oI1b1h absent after cancellation.
+Ready revision 4 and Failed revision 4 both have one turn. Canonical query bodies
+are byte-equal after stripping PTY CRLF (before-cancel.txt / after-cancel.txt).
+Explicit `/retry` starts one new child 924832; there is no implicit retry.
+Retry committed turn 2. The reader's selected action sent Ajax to customs, where
+Hester/Perrin produced the heavy-cargo receipt and Mara enforced the closure.
+Actions again had cautious/bold/social kinds. Child 924832 and its workspace
+were absent after completion. New explicit prose input requests a same-person
+Tessa Brine -> Tessa Reed rename and launch, for later identity inspection.
+Turn 3 committed with ordinary player prose. Read-only inspection shows
+`Identity: tessa-brine name="Tessa Reed"`, with the same seven summary IDs and no
+new alias entry. Tessa's work-name reveal and Mara's permission are remembered as
+major events, and updated upcoming threads refer to the island safety inspection.
+Chapter remains 0 "The Empty Frame" at the end of the breakwater scene. The next
+request is an empty-line continuation; chapter-break acceptance is not yet claimed.
+Turn 4 is an accepted empty-line continuation. Canonical inspection shows
+chapter 1 "The Water Between", with seamless boat/current/island continuity.
+Existing Tessa ID/name stays stable across the chapter break. The earlier harbour
+major events and four inspection threads persist in canonical summary. The wire
+null-vs-list shape was not captured in this PTY gate and is not claimed live;
+that distinction is independently enforced by the scripted/adapter regressions.
+Turns 5 and 6 committed the island investigation and tide-book recovery.
+Final inspection: Ready, revision 9, Turns 6, chapter 2 "The Warning Station".
+Tessa retains ID tessa-brine and name Tessa Reed; the seven original summary IDs
+remain. Earlier harbour events survive alongside new evidence/inspection threads.
+The final quick actions have cautious/bold/investigate kinds.
+Quit returned exit 0. Observer reports the application and all eight observed
+children/workspaces absent. Total story generation requests: outline + cast + six
+accepted turns + one cancelled request = nine. Outline was not PID-observed.
+The six passages arrived complete, with no incremental preview marker. This is
+complete-only behavior, not fabricated streaming. All narrative appeared once.
+Exact successful wire payloads, telemetry, null-vs-list updates, rate limits,
+long-story scale, every descendant and remote server termination were not observed.
