@@ -1,0 +1,5 @@
+Found 176 mutants to test
+ok       Unmutated baseline in 2s build + 0s test
+ INFO Auto-set test timeout to 30s
+176 mutants tested in 54s: 98 caught, 78 unviable
+Domain mutation gate passed. Unviable mutants are not test detections; review limits remain documented.

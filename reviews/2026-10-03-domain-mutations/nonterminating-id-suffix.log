@@ -1,0 +1,248 @@
+
+*** cyoa-core/src/ids.rs:34:20: replace += with *= in CharacterId::unique
+
+*** mutation diff:
+--- cyoa-core/src/ids.rs
++++ replace += with *= in CharacterId::unique
+@@ -26,13 +26,13 @@
+         })
+     }
+ 
+     pub(crate) fn unique(&self, is_taken: impl Fn(&Self) -> bool) -> Self {
+         let mut candidate = self.clone();
+         let mut suffix = 2_u64;
+         while is_taken(&candidate) {
+             candidate = Self(format!("{}-{suffix}", self.0));
+-            suffix += 1;
++            suffix *= /* ~ changed by cargo-mutants ~ */ 1;
+         }
+         candidate
+     }
+ }
+
+
+*** cargo nextest run --no-run --verbose --package=cyoa-core@0.1.0 --locked --offline
+   Compiling cyoa-core v0.1.0 (/tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/cyoa-core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.36s
+
+*** result: Success
+
+*** cargo nextest run --verbose --package=cyoa-core@0.1.0 --locked --offline --profile domain-mutations
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+────────────
+ Nextest run ID 57d8da49-1393-4d8d-90e4-4454d0a61b2e with nextest profile: domain-mutations
+    Starting 60 tests across 5 binaries
+       START [         ] ( 1/60) cyoa-core game::tests::first_turn_cannot_open_a_chapter
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/cyoa_core-9e66be85f8e47345 --exact game::tests::first_turn_cannot_open_a_chapter --nocapture
+       START [         ] ( 1/60) cyoa-core game::tests::new_chapter_marker_starts_a_second_chapter
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/cyoa_core-9e66be85f8e47345 --exact game::tests::new_chapter_marker_starts_a_second_chapter --nocapture
+       START [         ] ( 1/60) cyoa-core game::tests::later_turn_retitles_its_chapter_and_rewind_restores_the_earlier_title
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/cyoa_core-9e66be85f8e47345 --exact game::tests::later_turn_retitles_its_chapter_and_rewind_restores_the_earlier_title --nocapture
+       START [         ] ( 1/60) cyoa-core game::tests::rewind_rejects_undoing_more_turns_than_exist
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/cyoa_core-9e66be85f8e47345 --exact game::tests::rewind_rejects_undoing_more_turns_than_exist --nocapture
+       START [         ] ( 1/60) cyoa-core game::tests::initial_summary_gives_protagonist_and_unmet_npcs
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/cyoa_core-9e66be85f8e47345 --exact game::tests::initial_summary_gives_protagonist_and_unmet_npcs --nocapture
+       START [         ] ( 1/60) cyoa-core game::tests::prose_context_matches_a_naive_transcription_of_the_python_filter
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/cyoa_core-9e66be85f8e47345 --exact game::tests::prose_context_matches_a_naive_transcription_of_the_python_filter --nocapture
+       START [         ] ( 1/60) cyoa-core game::tests::turn_count_rejects_zero
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/cyoa_core-9e66be85f8e47345 --exact game::tests::turn_count_rejects_zero --nocapture
+       START [         ] ( 1/60) cyoa-core game::tests::start_and_restore_keep_the_selected_world_and_protagonist_together
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/cyoa_core-9e66be85f8e47345 --exact game::tests::start_and_restore_keep_the_selected_world_and_protagonist_together --nocapture
+       START [         ] ( 1/60) cyoa-core limits::tests::defaults_match_calibre_constants
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/cyoa_core-9e66be85f8e47345 --exact limits::tests::defaults_match_calibre_constants --nocapture
+       START [         ] ( 1/60) cyoa-core game::tests::world_namesakes_survive_into_summary_and_remain_addressable_by_id
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/cyoa_core-9e66be85f8e47345 --exact game::tests::world_namesakes_survive_into_summary_and_remain_addressable_by_id --nocapture
+       START [         ] ( 1/60) cyoa-core limits::tests::zero_is_rejected_for_nonzero_limits
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/cyoa_core-9e66be85f8e47345 --exact limits::tests::zero_is_rejected_for_nonzero_limits --nocapture
+       START [         ] ( 1/60) cyoa-core limits::tests::zero_is_accepted_for_count_limits
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/cyoa_core-9e66be85f8e47345 --exact limits::tests::zero_is_accepted_for_count_limits --nocapture
+       START [         ] ( 1/60) cyoa-core text::tests::type_names_supply_readable_error_labels
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/cyoa_core-9e66be85f8e47345 --exact text::tests::type_names_supply_readable_error_labels --nocapture
+       START [         ] ( 1/60) cyoa-core turn::tests::casefold_duplicate_actions_are_dropped_preserving_order
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/cyoa_core-9e66be85f8e47345 --exact turn::tests::casefold_duplicate_actions_are_dropped_preserving_order --nocapture
+       START [         ] ( 1/60) cyoa-core text::tests::exchange_text_preserves_every_byte_including_empty_and_whitespace
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/cyoa_core-9e66be85f8e47345 --exact text::tests::exchange_text_preserves_every_byte_including_empty_and_whitespace --nocapture
+       START [         ] ( 1/60) cyoa-core turn::tests::all_blank_or_empty_is_rejected
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/cyoa_core-9e66be85f8e47345 --exact turn::tests::all_blank_or_empty_is_rejected --nocapture
+       START [         ] ( 1/60) cyoa-core turn::tests::fewer_kinds_than_actions_fills_from_the_remainder_in_original_order
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/cyoa_core-9e66be85f8e47345 --exact turn::tests::fewer_kinds_than_actions_fills_from_the_remainder_in_original_order --nocapture
+       START [         ] ( 1/60) cyoa-core turn::tests::cost_amount_rejects_negative_and_nonfinite
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/cyoa_core-9e66be85f8e47345 --exact turn::tests::cost_amount_rejects_negative_and_nonfinite --nocapture
+       START [         ] ( 1/60) cyoa-core world::tests::distinct_playable_namesakes_satisfy_the_minimum
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/cyoa_core-9e66be85f8e47345 --exact world::tests::distinct_playable_namesakes_satisfy_the_minimum --nocapture
+       START [         ] ( 1/60) cyoa-core turn::tests::more_than_three_prefers_one_action_per_kind_in_original_order
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/cyoa_core-9e66be85f8e47345 --exact turn::tests::more_than_three_prefers_one_action_per_kind_in_original_order --nocapture
+       START [         ] ( 1/60) cyoa-core world::tests::npc_limit_applies_to_surviving_entries_including_zero
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/cyoa_core-9e66be85f8e47345 --exact world::tests::npc_limit_applies_to_surviving_entries_including_zero --nocapture
+       START [         ] ( 1/60) cyoa-core world::tests::exact_records_collapse_within_each_role_but_shared_names_survive
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/cyoa_core-9e66be85f8e47345 --exact world::tests::exact_records_collapse_within_each_role_but_shared_names_survive --nocapture
+       START [         ] ( 1/60) cyoa-core world::tests::selection_is_checked_against_the_world_it_owns
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/cyoa_core-9e66be85f8e47345 --exact world::tests::selection_is_checked_against_the_world_it_owns --nocapture
+       START [         ] ( 1/60) cyoa-core world::tests::npcs_are_capped_at_the_configured_limit
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/cyoa_core-9e66be85f8e47345 --exact world::tests::npcs_are_capped_at_the_configured_limit --nocapture
+        PASS [   0.004s] ( 1/60) cyoa-core game::tests::turn_count_rejects_zero
+       START [         ] ( 2/60) cyoa-core world::tests::too_few_playable_characters_is_rejected
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/cyoa_core-9e66be85f8e47345 --exact world::tests::too_few_playable_characters_is_rejected --nocapture
+        PASS [   0.004s] ( 2/60) cyoa-core game::tests::start_and_restore_keep_the_selected_world_and_protagonist_together
+       START [         ] ( 3/60) cyoa-core world::tests::zero_npc_limit_does_not_consume_candidates
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/cyoa_core-9e66be85f8e47345 --exact world::tests::zero_npc_limit_does_not_consume_candidates --nocapture
+        PASS [   0.005s] ( 3/60) cyoa-core game::tests::later_turn_retitles_its_chapter_and_rewind_restores_the_earlier_title
+       START [         ] ( 4/60) cyoa-core::decision_contracts text_002_unicode_lowercase_is_not_python_casefold
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/decision_contracts-872e50f15895be0b --exact text_002_unicode_lowercase_is_not_python_casefold --nocapture
+        PASS [   0.005s] ( 4/60) cyoa-core game::tests::rewind_rejects_undoing_more_turns_than_exist
+       START [         ] ( 5/60) cyoa-core::domain_invariants changing_style_preserves_committed_story_and_other_game_settings
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/domain_invariants-d53ab05e36dadd59 --exact changing_style_preserves_committed_story_and_other_game_settings --nocapture
+        PASS [   0.005s] ( 5/60) cyoa-core game::tests::first_turn_cannot_open_a_chapter
+       START [         ] ( 6/60) cyoa-core::domain_invariants chapters_expose_zero_based_numbers_and_one_based_ordinals
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/domain_invariants-d53ab05e36dadd59 --exact chapters_expose_zero_based_numbers_and_one_based_ordinals --nocapture
+        PASS [   0.005s] ( 6/60) cyoa-core game::tests::new_chapter_marker_starts_a_second_chapter
+       START [         ] ( 7/60) cyoa-core::domain_invariants cost_amount_preserves_valid_values_and_rejects_nonfinite_or_negative_values
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/domain_invariants-d53ab05e36dadd59 --exact cost_amount_preserves_valid_values_and_rejects_nonfinite_or_negative_values --nocapture
+        PASS [   0.005s] ( 7/60) cyoa-core limits::tests::defaults_match_calibre_constants
+       START [         ] ( 8/60) cyoa-core::domain_invariants npc_relationships_survive_initial_summary_construction
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/domain_invariants-d53ab05e36dadd59 --exact npc_relationships_survive_initial_summary_construction --nocapture
+        PASS [   0.005s] ( 8/60) cyoa-core game::tests::initial_summary_gives_protagonist_and_unmet_npcs
+       START [         ] ( 9/60) cyoa-core::domain_invariants optional_turn_fields_and_audit_record_survive_commit
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/domain_invariants-d53ab05e36dadd59 --exact optional_turn_fields_and_audit_record_survive_commit --nocapture
+        PASS [   0.004s] ( 9/60) cyoa-core world::tests::too_few_playable_characters_is_rejected
+       START [         ] (10/60) cyoa-core::restore_limits current_limits_apply_to_every_snapshot_and_survive_commit_and_rewind
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/restore_limits-f97fa726360181d5 --exact current_limits_apply_to_every_snapshot_and_survive_commit_and_rewind --nocapture
+        PASS [   0.004s] (10/60) cyoa-core world::tests::zero_npc_limit_does_not_consume_candidates
+       START [         ] (11/60) cyoa-core::restore_limits empty_restored_games_use_the_selected_limits_for_their_opening_summary
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/restore_limits-f97fa726360181d5 --exact empty_restored_games_use_the_selected_limits_for_their_opening_summary --nocapture
+        PASS [   0.005s] (11/60) cyoa-core::domain_invariants changing_style_preserves_committed_story_and_other_game_settings
+       START [         ] (12/60) cyoa-core::restore_limits original_limits_remain_available_after_restoring_with_current_settings
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/restore_limits-f97fa726360181d5 --exact original_limits_remain_available_after_restoring_with_current_settings --nocapture
+        PASS [   0.005s] (12/60) cyoa-core::domain_invariants chapters_expose_zero_based_numbers_and_one_based_ordinals
+       START [         ] (13/60) cyoa-core::restore_limits raising_the_limit_allows_future_events_without_recovering_discarded_ones
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/restore_limits-f97fa726360181d5 --exact raising_the_limit_allows_future_events_without_recovering_discarded_ones --nocapture
+        PASS [   0.005s] (13/60) cyoa-core::domain_invariants cost_amount_preserves_valid_values_and_rejects_nonfinite_or_negative_values
+        PASS [   0.006s] (14/60) cyoa-core::decision_contracts text_002_unicode_lowercase_is_not_python_casefold
+       START [         ] (15/60) cyoa-core::summary_merge blank_updates_preserve_durable_fields_and_leave_previous_untouched
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/summary_merge-f2d0da3362755be5 --exact blank_updates_preserve_durable_fields_and_leave_previous_untouched --nocapture
+       START [         ] (15/60) cyoa-core::summary_merge cap_keeps_last_thirty_and_supports_a_configured_limit
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/summary_merge-f2d0da3362755be5 --exact cap_keeps_last_thirty_and_supports_a_configured_limit --nocapture
+        PASS [   0.005s] (15/60) cyoa-core::domain_invariants npc_relationships_survive_initial_summary_construction
+       START [         ] (16/60) cyoa-core::summary_merge cast_equality_includes_presentation_order
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/summary_merge-f2d0da3362755be5 --exact cast_equality_includes_presentation_order --nocapture
+        PASS [   0.006s] (16/60) cyoa-core::domain_invariants optional_turn_fields_and_audit_record_survive_commit
+       START [         ] (17/60) cyoa-core::summary_merge cast_suffixes_nonadjacent_duplicate_ids_without_dropping_characters
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/summary_merge-f2d0da3362755be5 --exact cast_suffixes_nonadjacent_duplicate_ids_without_dropping_characters --nocapture
+        PASS [   0.012s] (17/60) cyoa-core turn::tests::cost_amount_rejects_negative_and_nonfinite
+       START [         ] (18/60) cyoa-core::summary_merge cast_supports_id_lookup_without_changing_order_after_rename_or_insertion
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/summary_merge-f2d0da3362755be5 --exact cast_supports_id_lookup_without_changing_order_after_rename_or_insertion --nocapture
+        PASS [   0.012s] (18/60) cyoa-core text::tests::type_names_supply_readable_error_labels
+       START [         ] (19/60) cyoa-core::summary_merge character_ids_follow_calibre_slug_rules_and_character_not_byte_limit
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/summary_merge-f2d0da3362755be5 --exact character_ids_follow_calibre_slug_rules_and_character_not_byte_limit --nocapture
+        PASS [   0.012s] (19/60) cyoa-core limits::tests::zero_is_accepted_for_count_limits
+        PASS [   0.006s] (20/60) cyoa-core turn::tests::fewer_kinds_than_actions_fills_from_the_remainder_in_original_order
+        PASS [   0.012s] (21/60) cyoa-core world::tests::npc_limit_applies_to_surviving_entries_including_zero
+        PASS [   0.012s] (22/60) cyoa-core world::tests::npcs_are_capped_at_the_configured_limit
+        PASS [   0.012s] (23/60) cyoa-core world::tests::exact_records_collapse_within_each_role_but_shared_names_survive
+        PASS [   0.012s] (24/60) cyoa-core world::tests::distinct_playable_namesakes_satisfy_the_minimum
+       START [         ] (25/60) cyoa-core::summary_merge each_nonblank_character_field_changes_independently
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/summary_merge-f2d0da3362755be5 --exact each_nonblank_character_field_changes_independently --nocapture
+       START [         ] (25/60) cyoa-core::summary_merge derived_id_collisions_get_a_unique_suffix
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/summary_merge-f2d0da3362755be5 --exact derived_id_collisions_get_a_unique_suffix --nocapture
+       START [         ] (25/60) cyoa-core::summary_merge domain_constructors_reject_invalid_state
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/summary_merge-f2d0da3362755be5 --exact domain_constructors_reject_invalid_state --nocapture
+       START [         ] (25/60) cyoa-core::summary_merge details_establish_the_invariant_before_infallible_character_construction
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/summary_merge-f2d0da3362755be5 --exact details_establish_the_invariant_before_infallible_character_construction --nocapture
+       START [         ] (25/60) cyoa-core::summary_merge exact_deduplication_includes_identity_and_all_character_details
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/summary_merge-f2d0da3362755be5 --exact exact_deduplication_includes_identity_and_all_character_details --nocapture
+       START [         ] (25/60) cyoa-core::summary_merge events_accumulate_deduplicate_and_consolidate_in_order
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/summary_merge-f2d0da3362755be5 --exact events_accumulate_deduplicate_and_consolidate_in_order --nocapture
+        PASS [   0.013s] (25/60) cyoa-core text::tests::exchange_text_preserves_every_byte_including_empty_and_whitespace
+       START [         ] (26/60) cyoa-core::summary_merge exact_duplicates_collapse_before_suffixes_are_assigned
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/summary_merge-f2d0da3362755be5 --exact exact_duplicates_collapse_before_suffixes_are_assigned --nocapture
+        PASS [   0.014s] (26/60) cyoa-core game::tests::world_namesakes_survive_into_summary_and_remain_addressable_by_id
+       START [         ] (27/60) cyoa-core::summary_merge explicit_ids_are_preserved_and_duplicate_names_match_the_last_entry
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/summary_merge-f2d0da3362755be5 --exact explicit_ids_are_preserved_and_duplicate_names_match_the_last_entry --nocapture
+        PASS [   0.014s] (27/60) cyoa-core turn::tests::all_blank_or_empty_is_rejected
+       START [         ] (28/60) cyoa-core::summary_merge first_update_wins_including_new_and_old_name_aliases
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/summary_merge-f2d0da3362755be5 --exact first_update_wins_including_new_and_old_name_aliases --nocapture
+        PASS [   0.015s] (28/60) cyoa-core limits::tests::zero_is_rejected_for_nonzero_limits
+       START [         ] (29/60) cyoa-core::summary_merge id_match_wins_over_conflicting_name_match
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/summary_merge-f2d0da3362755be5 --exact id_match_wins_over_conflicting_name_match --nocapture
+        PASS [   0.007s] (29/60) cyoa-core turn::tests::casefold_duplicate_actions_are_dropped_preserving_order
+       START [         ] (30/60) cyoa-core::summary_merge merging_deduplicates_before_truncating_and_preserves_configured_limit
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/summary_merge-f2d0da3362755be5 --exact merging_deduplicates_before_truncating_and_preserves_configured_limit --nocapture
+        PASS [   0.007s] (30/60) cyoa-core turn::tests::more_than_three_prefers_one_action_per_kind_in_original_order
+       START [         ] (31/60) cyoa-core::summary_merge name_aliases_only_last_for_the_current_turn
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/summary_merge-f2d0da3362755be5 --exact name_aliases_only_last_for_the_current_turn --nocapture
+        PASS [   0.005s] (31/60) cyoa-core::summary_merge blank_updates_preserve_durable_fields_and_leave_previous_untouched
+       START [         ] (32/60) cyoa-core::summary_merge new_characters_need_name_and_durable_information
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/summary_merge-f2d0da3362755be5 --exact new_characters_need_name_and_durable_information --nocapture
+        PASS [   0.008s] (32/60) cyoa-core world::tests::selection_is_checked_against_the_world_it_owns
+       START [         ] (33/60) cyoa-core::summary_merge present_delta_values_cannot_be_blank
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/summary_merge-f2d0da3362755be5 --exact present_delta_values_cannot_be_blank --nocapture
+        PASS [   0.006s] (33/60) cyoa-core::restore_limits original_limits_remain_available_after_restoring_with_current_settings
+       START [         ] (34/60) cyoa-core::summary_merge rename_keeps_identity_and_name_fallback_ignores_invented_id
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/summary_merge-f2d0da3362755be5 --exact rename_keeps_identity_and_name_fallback_ignores_invented_id --nocapture
+        PASS [   0.006s] (34/60) cyoa-core::summary_merge cast_equality_includes_presentation_order
+       START [         ] (35/60) cyoa-core::summary_merge suffixing_preserves_existing_ids_and_repaired_ids_support_future_updates
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/summary_merge-f2d0da3362755be5 --exact suffixing_preserves_existing_ids_and_repaired_ids_support_future_updates --nocapture
+        PASS [   0.006s] (35/60) cyoa-core::restore_limits raising_the_limit_allows_future_events_without_recovering_discarded_ones
+       START [         ] (36/60) cyoa-core::summary_merge upcoming_events_null_is_not_empty
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/summary_merge-f2d0da3362755be5 --exact upcoming_events_null_is_not_empty --nocapture
+        PASS [   0.008s] (36/60) cyoa-core::restore_limits current_limits_apply_to_every_snapshot_and_survive_commit_and_rewind
+       START [         ] (37/60) cyoa-core::summary_merge world_and_situation_can_change_without_losing_characters
+             command: /tmp/cargo-mutants-cyoa-rs-qrC9SV.tmp/target/debug/deps/summary_merge-f2d0da3362755be5 --exact world_and_situation_can_change_without_losing_characters --nocapture
+        PASS [   0.006s] (37/60) cyoa-core::summary_merge cast_suffixes_nonadjacent_duplicate_ids_without_dropping_characters
+        PASS [   0.009s] (38/60) cyoa-core::restore_limits empty_restored_games_use_the_selected_limits_for_their_opening_summary
+        PASS [   0.008s] (39/60) cyoa-core::summary_merge cap_keeps_last_thirty_and_supports_a_configured_limit
+        PASS [   0.007s] (40/60) cyoa-core::summary_merge cast_supports_id_lookup_without_changing_order_after_rename_or_insertion
+        PASS [   0.006s] (41/60) cyoa-core::summary_merge character_ids_follow_calibre_slug_rules_and_character_not_byte_limit
+        PASS [   0.006s] (42/60) cyoa-core::summary_merge details_establish_the_invariant_before_infallible_character_construction
+        PASS [   0.007s] (43/60) cyoa-core::summary_merge events_accumulate_deduplicate_and_consolidate_in_order
+        PASS [   0.006s] (44/60) cyoa-core::summary_merge explicit_ids_are_preserved_and_duplicate_names_match_the_last_entry
+        PASS [   0.005s] (45/60) cyoa-core::summary_merge first_update_wins_including_new_and_old_name_aliases
+        PASS [   0.005s] (46/60) cyoa-core::summary_merge id_match_wins_over_conflicting_name_match
+        PASS [   0.008s] (47/60) cyoa-core::summary_merge each_nonblank_character_field_changes_independently
+        PASS [   0.005s] (48/60) cyoa-core::summary_merge new_characters_need_name_and_durable_information
+        PASS [   0.008s] (49/60) cyoa-core::summary_merge domain_constructors_reject_invalid_state
+        PASS [   0.005s] (50/60) cyoa-core::summary_merge rename_keeps_identity_and_name_fallback_ignores_invented_id
+        PASS [   0.005s] (51/60) cyoa-core::summary_merge upcoming_events_null_is_not_empty
+        PASS [   0.006s] (52/60) cyoa-core::summary_merge merging_deduplicates_before_truncating_and_preserves_configured_limit
+        PASS [   0.006s] (53/60) cyoa-core::summary_merge world_and_situation_can_change_without_losing_characters
+        PASS [   0.006s] (54/60) cyoa-core::summary_merge present_delta_values_cannot_be_blank
+        PASS [   0.007s] (55/60) cyoa-core::summary_merge name_aliases_only_last_for_the_current_turn
+        PASS [   0.023s] (56/60) cyoa-core game::tests::prose_context_matches_a_naive_transcription_of_the_python_filter
+     TIMEOUT [  10.003s] (57/60) cyoa-core::summary_merge exact_duplicates_collapse_before_suffixes_are_assigned
+  stdout ───
+
+    running 1 test
+
+    (test timed out)
+
+  Cancelling due to test failure: 3 tests still running
+     TIMEOUT [  10.004s] (58/60) cyoa-core::summary_merge exact_deduplication_includes_identity_and_all_character_details
+  stdout ───
+
+    running 1 test
+
+    (test timed out)
+
+     TIMEOUT [  10.004s] (59/60) cyoa-core::summary_merge derived_id_collisions_get_a_unique_suffix
+  stdout ───
+
+    running 1 test
+
+    (test timed out)
+
+     TIMEOUT [  10.003s] (60/60) cyoa-core::summary_merge suffixing_preserves_existing_ids_and_repaired_ids_support_future_updates
+  stdout ───
+
+    running 1 test
+
+    (test timed out)
+
+────────────
+     Summary [  10.019s] 60 tests run: 56 passed, 4 timed out, 0 skipped
+     TIMEOUT [  10.003s] (57/60) cyoa-core::summary_merge exact_duplicates_collapse_before_suffixes_are_assigned
+     TIMEOUT [  10.004s] (58/60) cyoa-core::summary_merge exact_deduplication_includes_identity_and_all_character_details
+     TIMEOUT [  10.004s] (59/60) cyoa-core::summary_merge derived_id_collisions_get_a_unique_suffix
+     TIMEOUT [  10.003s] (60/60) cyoa-core::summary_merge suffixing_preserves_existing_ids_and_repaired_ids_support_future_updates
+error: test run failed
+
+*** result: Failure(100)

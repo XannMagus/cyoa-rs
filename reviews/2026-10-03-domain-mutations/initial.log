@@ -1,0 +1,22 @@
+Found 178 mutants to test
+ok       Unmutated baseline in 2s build + 0s test
+MISSED   cyoa-core/src/character.rs:199:9: replace CharacterCast::is_empty -> bool with false in 0s build + 0s test
+MISSED   cyoa-core/src/game.rs:61:9: replace ChapterNumber::get -> usize with 0 in 0s build + 0s test
+MISSED   cyoa-core/src/game.rs:65:9: replace ChapterNumber::ordinal -> usize with 0 in 0s build + 0s test
+MISSED   cyoa-core/src/game.rs:65:9: replace ChapterNumber::ordinal -> usize with 1 in 0s build + 0s test
+MISSED   cyoa-core/src/game.rs:65:16: replace + with - in ChapterNumber::ordinal in 0s build + 0s test
+MISSED   cyoa-core/src/game.rs:65:16: replace + with * in ChapterNumber::ordinal in 0s build + 0s test
+MISSED   cyoa-core/src/game.rs:182:9: replace GameState::style -> &StoryStyle with Box::leak(Box::new(Default::default())) in 0s build + 0s test
+MISSED   cyoa-core/src/game.rs:188:9: replace GameState::set_style with () in 0s build + 0s test
+MISSED   cyoa-core/src/turn.rs:94:25: replace < with <= in QuickActions::select in 0s build + 0s test
+MISSED   cyoa-core/src/turn.rs:170:9: replace StoryTurn::scene_description -> Option<&SceneDescription> with None in 0s build + 0s test
+MISSED   cyoa-core/src/turn.rs:201:9: replace CostAmount::get -> f64 with 0.0 in 0s build + 0s test
+MISSED   cyoa-core/src/turn.rs:201:9: replace CostAmount::get -> f64 with 1.0 in 0s build + 0s test
+MISSED   cyoa-core/src/turn.rs:201:9: replace CostAmount::get -> f64 with -1.0 in 0s build + 0s test
+MISSED   cyoa-core/src/turn.rs:285:9: replace TurnRecord::input -> Option<&PlayerInput> with None in 0s build + 0s test
+MISSED   cyoa-core/src/turn.rs:301:9: replace TurnRecord::provenance -> &GenerationProvenance with Box::leak(Box::new(Default::default())) in 0s build + 0s test
+MISSED   cyoa-core/src/turn.rs:305:9: replace TurnRecord::prompt_trace -> Option<&PromptTrace> with None in 0s build + 0s test
+MISSED   cyoa-core/src/world.rs:109:9: replace NonPlayerCharacter::relationships -> Option<&Relationships> with None in 0s build + 0s test
+TIMEOUT  cyoa-core/src/game.rs:276:27: replace -= with /= in GameState::prose_context in 0s build + 20s test
+TIMEOUT  cyoa-core/src/ids.rs:34:20: replace += with *= in CharacterId::unique in 0s build + 20s test
+178 mutants tested in 34s: 17 missed, 81 caught, 78 unviable, 2 timeouts
