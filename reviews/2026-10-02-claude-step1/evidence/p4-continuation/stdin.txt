@@ -1,0 +1,45 @@
+The summary of the story so far, as JSON:
+{
+  "world": "A sheltered harbour",
+  "major_events": [
+    "A",
+    "B"
+  ],
+  "characters": [
+    {
+      "name": "Ajax",
+      "description": "A mason",
+      "backstory": "Built the wall",
+      "relationships": "",
+      "current_state": "",
+      "id": "protagonist"
+    },
+    {
+      "name": "Ajax",
+      "description": "A merchant",
+      "backstory": "Sells sails",
+      "relationships": "Knows the sailor",
+      "current_state": "At the shop",
+      "id": "ajax"
+    },
+    {
+      "name": "Ajax",
+      "description": "A guard",
+      "backstory": "Guards the wall",
+      "relationships": "Knows the mason",
+      "current_state": "At the gate",
+      "id": "ajax-2"
+    }
+  ],
+  "current_situation": "The adventure has not yet begun.",
+  "upcoming_events": [
+    "Depart"
+  ]
+}
+
+The prose of the current chapter so far, which the reader has already read:
+
+Opening: the lantern flickered.
+
+The reader directs: I ask the harbourmaster about the missing ship.
+Write the next passage of the novel, continuing seamlessly from where the chapter's prose ends.

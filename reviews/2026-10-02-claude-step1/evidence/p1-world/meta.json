@@ -1,0 +1,9 @@
+{
+  "request": "world",
+  "exit": 0,
+  "elapsed_ms": 24327,
+  "stdout_bytes": 250452,
+  "stderr_bytes": 0,
+  "argv_system_prompt_bytes": 622,
+  "argv_json_schema_bytes": 438
+}

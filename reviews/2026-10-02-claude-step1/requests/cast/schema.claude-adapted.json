@@ -1,0 +1,79 @@
+{
+  "type": "object",
+  "properties": {
+    "characters": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/PlayerCharacter"
+      },
+      "description": "Between 3 and 5 distinct characters or character variants the player can choose to play as, with physical descriptions and brief back stories"
+    },
+    "npcs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/NonPlayerCharacter"
+      },
+      "description": "Between 3 and 8 other characters who live in this world and whom the player will meet as the story unfolds, whoever the player chooses to play as"
+    }
+  },
+  "required": [
+    "characters",
+    "npcs"
+  ],
+  "title": "GeneratedCast",
+  "additionalProperties": false,
+  "$defs": {
+    "PlayerCharacter": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string",
+          "description": "Short third person description of the character"
+        },
+        "backstory": {
+          "type": "string",
+          "description": "The character's backstory and motivations"
+        }
+      },
+      "required": [
+        "name",
+        "description",
+        "backstory"
+      ],
+      "description": "A character the player can choose to play as",
+      "additionalProperties": false
+    },
+    "NonPlayerCharacter": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string",
+          "description": "Short third person description of the character"
+        },
+        "backstory": {
+          "type": "string",
+          "description": "The character's backstory and motivations"
+        },
+        "relationships": {
+          "type": "string",
+          "description": "Their place in the world: their relationships with the other characters and, if they have one already, with the protagonist"
+        }
+      },
+      "required": [
+        "name",
+        "description",
+        "backstory",
+        "relationships"
+      ],
+      "description": "A character who lives in the world and whom the player will meet, but cannot play as",
+      "additionalProperties": false
+    }
+  },
+  "description": "The cast of characters of an adventure set in a world"
+}

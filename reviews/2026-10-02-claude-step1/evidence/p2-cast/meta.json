@@ -1,0 +1,9 @@
+{
+  "request": "cast",
+  "exit": 0,
+  "elapsed_ms": 38677,
+  "stdout_bytes": 297549,
+  "stderr_bytes": 0,
+  "argv_system_prompt_bytes": 1504,
+  "argv_json_schema_bytes": 1686
+}

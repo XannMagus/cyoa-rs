@@ -1,0 +1,3 @@
+Create the world for an adventure game based on this description:
+
+Two Ajaxes, a harbour and a voyage

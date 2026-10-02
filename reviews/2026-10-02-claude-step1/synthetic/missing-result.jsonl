@@ -1,0 +1,12 @@
+{"type":"system","subtype":"init","apiKeySource":"none","model":"claude-sonnet-5-5","tools":["StructuredOutput"],"claude_code_version":"2.1.286","session_id":"00000000-0000-0000-0000-000000000000"}
+{"type":"system","subtype":"status","status":"requesting","session_id":"00000000-0000-0000-0000-000000000000"}
+{"type":"stream_event","event":{"type":"message_start","message":{"model":"claude-sonnet-5-5","id":"msg_1","type":"message","role":"assistant","content":[]}},"session_id":"00000000-0000-0000-0000-000000000000"}
+{"type":"stream_event","event":{"type":"content_block_start","index":0,"content_block":{"type":"tool_use","id":"toolu_0","name":"StructuredOutput","input":{}}},"session_id":"00000000-0000-0000-0000-000000000000"}
+{"type":"stream_event","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":""}},"session_id":"00000000-0000-0000-0000-000000000000"}
+{"type":"stream_event","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"{\"narrative\": \"A \\\"quo"}},"session_id":"00000000-0000-0000-0000-000000000000"}
+{"type":"stream_event","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"ted\\\" é雪\", \"n\": 1}"}},"session_id":"00000000-0000-0000-0000-000000000000"}
+{"type":"stream_event","event":{"type":"content_block_stop","index":0},"session_id":"00000000-0000-0000-0000-000000000000"}
+{"type":"stream_event","event":{"type":"message_delta","delta":{"stop_reason":"tool_use"},"usage":{}},"session_id":"00000000-0000-0000-0000-000000000000"}
+{"type":"stream_event","event":{"type":"message_stop"},"session_id":"00000000-0000-0000-0000-000000000000"}
+{"type":"user","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_1","content":"Structured output provided successfully"}]},"session_id":"00000000-0000-0000-0000-000000000000"}
+{"type":"rate_limit_event","rate_limit_info":{"status":"allowed"},"session_id":"00000000-0000-0000-0000-000000000000"}

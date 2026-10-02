@@ -1,0 +1,36 @@
+The summary of the story so far, as JSON:
+{
+  "world": "A sheltered harbour",
+  "major_events": [],
+  "characters": [
+    {
+      "name": "Ajax",
+      "description": "A mason",
+      "backstory": "Built the wall",
+      "relationships": "",
+      "current_state": "",
+      "id": "protagonist"
+    },
+    {
+      "name": "Ajax",
+      "description": "A merchant",
+      "backstory": "Sells sails",
+      "relationships": "Knows the sailor",
+      "current_state": "Has not yet appeared in the story.",
+      "id": "ajax"
+    },
+    {
+      "name": "Ajax",
+      "description": "A guard",
+      "backstory": "Guards the wall",
+      "relationships": "Knows the mason",
+      "current_state": "Has not yet appeared in the story.",
+      "id": "ajax-2"
+    }
+  ],
+  "current_situation": "The adventure has not yet begun.",
+  "upcoming_events": []
+}
+
+Before writing the opening scene, check the supplied cast for accidental duplicate identities. Compare descriptions, backstories and relationships, not just names. Distinct people may share a name: preserve those namesakes and distinguish them using their stable ids and established details. Do not introduce an existing character again under an alias or a newly invented id. Use the supplied ids consistently and never change, swap or reuse them; send at most one update for each character.
+Begin the novel with an opening scene that introduces the protagonist and their situation.

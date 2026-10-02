@@ -1,0 +1,1 @@
+{"type":"result","subtype":"success","is_error":true,"api_error_status":null,"terminal_reason":"api_error","total_cost_usd":0.0125,"usage":{},"modelUsage":{"claude-sonnet-5-5":{"costBasis":"list","provider":"firstParty"}},"result":"There is an issue with the selected model (x).","session_id":"00000000-0000-0000-0000-000000000000"}

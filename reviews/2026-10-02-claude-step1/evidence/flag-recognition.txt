@@ -1,0 +1,8 @@
+# Run 2026-10-02, claude 2.1.286, env -i HOME PATH, cwd empty tempdir, stdin /dev/null,
+# flags --safe-mode --tools "" plus the flag under test pointing at a nonexistent file.
+# Each fails before any model request; the point is recognized vs unknown option.
+--system-prompt-file: Error: System prompt file not found: /nonexistent/file.txt (exit 1)
+--append-system-prompt-file: Error: Append system prompt file not found: /nonexistent/file.txt (exit 1)
+--definitely-not-a-flag: error: unknown option '--definitely-not-a-flag' (exit 1)
+# Neither file flag appears in `claude --help` (evidence/claude-help.txt); the CLI reference
+# documents them and says --help does not list every flag.

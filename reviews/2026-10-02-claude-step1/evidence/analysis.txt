@@ -1,0 +1,96 @@
+== p1-world
+exit=0 elapsed_ms=24327 stdout_bytes=250452 stderr_bytes=0
+message_start records: 1
+result records: 1; last record is result: yes
+top-level types:       1 assistant;      1 rate_limit_event;      1 result/success;    678 stream_event;      3 system/commands_changed;      1 system/init;      1 system/status;      1 user;
+content block types:       1 tool_use:StructuredOutput;
+per-message blocks: M1:0=tool_use:StructuredOutput
+user record kinds: tool_result;
+advisor content blocks: 0
+init: {"model":"claude-sonnet-5-5","apiKeySource":"none","tools":["StructuredOutput"],"claude_code_version":"2.1.286"}
+StructuredOutput block index: 0 (count: 1)
+bytes: partial_json=6030 result_string=6027 structured_output(compact)=6027
+result string == compact structured_output: byte-equal
+partial_json vs structured_output: semantically equal, bytes differ
+result: {"is_error":false,"subtype":"success","terminal_reason":"completed","stop_reason":"tool_use","num_turns":2,"total_cost_usd":0.031778,"usage":{"input_tokens":2,"cache_creation_input_tokens":2471,"cache_read_input_tokens":0,"output_tokens":2189},"models":[{"model":"claude-sonnet-5-5","costBasis":"list","provider":"firstParty"}]}
+canary mentions: 0
+== p2-cast
+exit=0 elapsed_ms=38677 stdout_bytes=297549 stderr_bytes=0
+message_start records: 1
+result records: 1; last record is result: yes
+top-level types:       2 assistant;      1 rate_limit_event;      1 result/success;    946 stream_event;      1 system/init;      1 system/status;      4 system/thinking_tokens;      1 user;
+content block types:       1 thinking;      1 tool_use:StructuredOutput;
+per-message blocks: M1:0=thinking M1:1=tool_use:StructuredOutput
+user record kinds: tool_result;
+advisor content blocks: 0
+init: {"model":"claude-sonnet-5-5","apiKeySource":"none","tools":["StructuredOutput"],"claude_code_version":"2.1.286"}
+StructuredOutput block index: 1 (count: 1)
+bytes: partial_json=9302 result_string=9299 structured_output(compact)=9299
+result string == compact structured_output: byte-equal
+partial_json vs structured_output: semantically equal, bytes differ
+result: {"is_error":false,"subtype":"success","terminal_reason":"completed","stop_reason":"tool_use","num_turns":2,"total_cost_usd":0.052144,"usage":{"input_tokens":2,"cache_creation_input_tokens":3180,"cache_read_input_tokens":0,"output_tokens":3942},"models":[{"model":"claude-sonnet-5-5","costBasis":"list","provider":"firstParty"}]}
+canary mentions: 0
+== p3-opening
+exit=0 elapsed_ms=29277 stdout_bytes=223829 stderr_bytes=0
+message_start records: 2
+result records: 1; last record is result: yes
+top-level types:       3 assistant;      2 rate_limit_event;      1 result/success;    721 stream_event;      1 system/init;      2 system/status;      3 system/thinking_tokens;      2 user;
+content block types:       1 text;      1 thinking;      1 tool_use:StructuredOutput;
+per-message blocks: M1:0=thinking M1:1=text M2:0=tool_use:StructuredOutput
+user record kinds: text:[structured-output-enforce] You MUST call the St;tool_result;
+advisor content blocks: 0
+init: {"model":"claude-sonnet-5-5","apiKeySource":"none","tools":["StructuredOutput"],"claude_code_version":"2.1.286"}
+StructuredOutput block index: 0 (count: 1)
+bytes: partial_json=5494 result_string=5483 structured_output(compact)=5483
+result string == compact structured_output: byte-equal
+partial_json vs structured_output: semantically equal, bytes differ
+result: {"is_error":false,"subtype":"success","terminal_reason":"completed","stop_reason":"tool_use","num_turns":3,"total_cost_usd":0.0665694,"usage":{"input_tokens":6,"cache_creation_input_tokens":7972,"cache_read_input_tokens":6647,"output_tokens":3334},"models":[{"model":"claude-sonnet-5-5","costBasis":"list","provider":"firstParty"}]}
+canary mentions: 0
+== p4-continuation
+exit=0 elapsed_ms=18102 stdout_bytes=139965 stderr_bytes=0
+message_start records: 1
+result records: 1; last record is result: yes
+top-level types:       1 assistant;      1 rate_limit_event;      1 result/success;    440 stream_event;      1 system/init;      1 system/status;      1 user;
+content block types:       1 tool_use:StructuredOutput;
+per-message blocks: M1:0=tool_use:StructuredOutput
+user record kinds: tool_result;
+advisor content blocks: 0
+init: {"model":"claude-sonnet-5-5","apiKeySource":"none","tools":["StructuredOutput"],"claude_code_version":"2.1.286"}
+StructuredOutput block index: 0 (count: 1)
+bytes: partial_json=4487 result_string=4478 structured_output(compact)=4478
+result string == compact structured_output: byte-equal
+partial_json vs structured_output: semantically equal, bytes differ
+result: {"is_error":false,"subtype":"success","terminal_reason":"completed","stop_reason":"tool_use","num_turns":2,"total_cost_usd":0.0238788,"usage":{"input_tokens":2,"cache_creation_input_tokens":1497,"cache_read_input_tokens":5084,"output_tokens":1687},"models":[{"model":"claude-sonnet-5-5","costBasis":"list","provider":"firstParty"}]}
+canary mentions: 0
+== p5-canary-world
+exit=0 elapsed_ms=19777 stdout_bytes=152022 stderr_bytes=0
+message_start records: 1
+result records: 1; last record is result: yes
+top-level types:       1 assistant;      1 rate_limit_event;      1 result/success;    498 stream_event;      1 system/init;      1 system/status;      1 user;
+content block types:       1 tool_use:StructuredOutput;
+per-message blocks: M1:0=tool_use:StructuredOutput
+user record kinds: tool_result;
+advisor content blocks: 0
+init: {"model":"claude-sonnet-5-5","apiKeySource":"none","tools":["StructuredOutput"],"claude_code_version":"2.1.286"}
+StructuredOutput block index: 0 (count: 1)
+bytes: partial_json=4040 result_string=4037 structured_output(compact)=4037
+result string == compact structured_output: byte-equal
+partial_json vs structured_output: semantically equal, bytes differ
+result: {"is_error":false,"subtype":"success","terminal_reason":"completed","stop_reason":"tool_use","num_turns":2,"total_cost_usd":0.019627,"usage":{"input_tokens":2,"cache_creation_input_tokens":1097,"cache_read_input_tokens":1375,"output_tokens":1496},"models":[{"model":"claude-sonnet-5-5","costBasis":"list","provider":"firstParty"}]}
+canary mentions: 0
+== p5-canary-world-without-safe-mode
+exit=0 elapsed_ms=27419 stdout_bytes=167716 stderr_bytes=0
+message_start records: 1
+result records: 1; last record is result: yes
+top-level types:       2 assistant;      1 rate_limit_event;      1 result/success;    509 stream_event;      1 system/hook_response;      1 system/hook_started;      1 system/init;      1 system/status;      5 system/thinking_tokens;      1 user;
+content block types:       1 thinking;      1 tool_use:StructuredOutput;
+per-message blocks: M1:0=thinking M1:1=tool_use:StructuredOutput
+user record kinds: tool_result;
+advisor content blocks: 0
+init: {"model":"claude-sonnet-5-5","apiKeySource":"none","tools":["StructuredOutput","mcp__claude_ai_Claude_Docs__batch","mcp__claude_ai_Claude_Docs__create","mcp__claude_ai_Claude_Docs__delete","mcp__claude_ai_Claude_Docs__export","mcp__claude_ai_Claude_Docs__guide","mcp__claude_ai_Claude_Docs__query","mcp__claude_ai_Claude_Docs__read","mcp__claude_ai_Claude_Docs__update"],"claude_code_version":"2.1.286"}
+StructuredOutput block index: 1 (count: 1)
+bytes: partial_json=4629 result_string=4626 structured_output(compact)=4626
+result string == compact structured_output: byte-equal
+partial_json vs structured_output: semantically equal, bytes differ
+result: {"is_error":false,"subtype":"success","terminal_reason":"completed","stop_reason":"tool_use","num_turns":2,"total_cost_usd":0.055758,"usage":{"input_tokens":2,"cache_creation_input_tokens":8256,"cache_read_input_tokens":0,"output_tokens":2273},"models":[{"model":"claude-sonnet-5-5","costBasis":"list","provider":"firstParty"}]}
+canary mentions: 4

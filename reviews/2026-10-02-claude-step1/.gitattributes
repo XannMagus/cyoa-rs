@@ -1,0 +1,9 @@
+# Preserve captured bytes and intentional framing fixtures, including CRLF and whitespace.
+evidence/**/stdout.jsonl -text -whitespace
+evidence/**/stderr.txt -text -whitespace
+evidence/**/stdin.txt -text -whitespace
+evidence/**/argv-*.txt -text -whitespace
+evidence/**/argv-*.json -text -whitespace
+requests/** -text -whitespace
+synthetic/*.jsonl -text -whitespace
+expected/* -text -whitespace

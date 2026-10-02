@@ -1,0 +1,16 @@
+{
+  "_provenance": "Typed by hand from evidence/analysis.txt and the 2026-09-25 result lines (jq output of the captures, not of the Rust codec). input_total = input_tokens + cache_creation_input_tokens + cache_read_input_tokens; cached = cache_read_input_tokens. Top-level usage covers the selected model only; advisor tokens live in modelUsage/iterations and are not part of it.",
+  "captures": {
+    "p1-world":        {"file": "evidence/p1-world/stdout.jsonl", "payload_block": "M1:0", "input_total": 2473, "input_cached": 0, "output": 2189, "model": "claude-sonnet-5-5", "list_cost_usd": 0.031778},
+    "p2-cast":         {"file": "evidence/p2-cast/stdout.jsonl", "payload_block": "M1:1", "input_total": 3182, "input_cached": 0, "output": 3942, "model": "claude-sonnet-5-5", "list_cost_usd": 0.052144},
+    "p3-opening":      {"file": "evidence/p3-opening/stdout.jsonl", "payload_block": "M2:0", "input_total": 14625, "input_cached": 6647, "output": 3334, "model": "claude-sonnet-5-5", "list_cost_usd": 0.0665694, "note": "two assistant messages: prose text block in message 1, enforce prompt, StructuredOutput in message 2"},
+    "p4-continuation": {"file": "evidence/p4-continuation/stdout.jsonl", "payload_block": "M1:0", "input_total": 6583, "input_cached": 5084, "output": 1687, "model": "claude-sonnet-5-5", "list_cost_usd": 0.0238788},
+    "p5-canary-world": {"file": "evidence/p5-canary-world/stdout.jsonl", "payload_block": "M1:0", "input_total": 2474, "input_cached": 1375, "output": 1496, "model": "claude-sonnet-5-5", "list_cost_usd": 0.019627},
+    "0925-p3-opening-advisor": {"file": "../2026-09-25-claude-cli-refresh/evidence/p3-opening.jsonl", "payload_block": "M1:5", "input_total": 14858, "input_cached": 6867, "output": 2256, "model": "claude-sonnet-5", "list_cost_usd": 0.1314734, "note": "advisor blocks present (server_tool_use + advisor_tool_result) and a text block before the payload; cost includes the claude-opus-5-5 advisor iteration"},
+    "0925-p3-opening-append": {"file": "../2026-09-25-claude-cli-refresh/evidence/p3-opening-append.jsonl", "payload_block": "M1:1", "input_total": 6847, "input_cached": 0, "output": 2292, "model": "claude-sonnet-5", "list_cost_usd": 0.050304}
+  },
+  "failures": {
+    "0925-p7-bad-model": {"file": "../2026-09-25-claude-cli-refresh/evidence/p7-bad-model.jsonl", "error": "VendorError", "error_record": 1, "note": "one lone result record: is_error true, subtype success, api_error_status 404, process exit 1"},
+    "0925-p8-sigterm":   {"file": "../2026-09-25-claude-cli-refresh/evidence/p8-sigterm.jsonl", "error": "Incomplete", "error_record": 55, "note": "54 records, no result; stream ends mid advisor call after SIGTERM"}
+  }
+}

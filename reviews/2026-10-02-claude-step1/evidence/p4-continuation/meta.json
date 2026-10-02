@@ -1,0 +1,9 @@
+{
+  "request": "continuation_turn",
+  "exit": 0,
+  "elapsed_ms": 18102,
+  "stdout_bytes": 139965,
+  "stderr_bytes": 0,
+  "argv_system_prompt_bytes": 6395,
+  "argv_json_schema_bytes": 6935
+}
