@@ -410,8 +410,9 @@ caps. Persistence and live subprocess adapters remain pending.
 ### STREAM-001 Preview text never authorizes a state commit
 
 **Partial: scanner, scripted generation, vendor-neutral process supervision,
-Codex protocol decoding and Backend reconciliation enforced; Claude event decoding
-and presentation acceptance pending.** `StreamingStringField` extracts only the requested root
+Codex protocol decoding and Backend reconciliation, and offline Claude event
+decoding, enforced; Claude Backend reconciliation and presentation acceptance
+pending.** `StreamingStringField` extracts only the requested root
 string, across valid UTF-8 chunks. It is a preview scanner, not JSON validation.
 Escapes and surrogate pairs are decoded; lone surrogate halves become U+FFFD
 because Rust cannot represent them as scalar values. Truncated escape sequences
@@ -476,6 +477,20 @@ Cancelled/Timeout errors carry an optional candidate separately from diagnostics
 the generation engine uses it before falling back to streamed fragments. Structured
 transport causes preserve nested cleanup/initiating failures and prefix metadata;
 application messages summarize the causes without embedding the diagnostic buffers.
+
+Claude adapter step 4 (2026-10-02) adds a private codec for the frozen 2.1.286
+`stream-json` profile. The payload is `result.structured_output` taken as its exact
+span (a duplicate key makes it invalid, and it is never re-serialized); previews are
+only `input_json_delta` fragments of the first `StructuredOutput` block, correlated
+by (message ordinal, block index) because indices restart per assistant message (a
+live capture has a second message after the CLI's enforce prompt). Text, thinking,
+advisor and other blocks never become preview. Exactly one `result`, last; `is_error`
+wins over `subtype: success`; a non-subscription `apiKeySource` is a backstop
+failure. Usage totals sum the three input counts and are unknown unless all are
+present; cost is a list-price estimate only when every `modelUsage` entry says so.
+Tests replay this profile's live captures, three 2026-09-25 captures and 29 synthetic
+variants against independently written expectations: offline evidence, not live
+acceptance. The codec observes no exit, cleanup or cancellation; the adapter step does.
 
 ### ACCEPTANCE-001 — exercise the complete engine before adding external I/O
 

@@ -5,6 +5,10 @@
 //! explicit HOME/PATH environment, the prompt on stdin and an empty request
 //! workspace as the child's cwd. It never launches anything itself.
 
+// Consumed by the adapter in a later step of the Claude slice.
+#[cfg_attr(not(test), allow(dead_code))]
+mod protocol;
+
 use crate::{
     backends::{
         executable::{self, ExecutableError, ResolvedExecutable},
