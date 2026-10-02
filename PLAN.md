@@ -24,7 +24,8 @@ acceptance through real fixture children, persistent adapter mutations, and the
 2026-10-02 live outline/cast/opening/continuation/cancellation gate on Codex 0.159.3.
 See the [live evidence](reviews/2026-10-02-codex-step7/README.md) and
 [Claude adapter handoff](docs/plans/phase1-claude-adapter-handoff.md).
-Claude's implementation and both backends' headless acceptance remain pending.
+Claude's implementation and both backends' headless acceptance remain pending;
+the Claude slice is planned in [its adapter plan](docs/plans/phase1-claude-adapter.md).
 
 ## Context
 

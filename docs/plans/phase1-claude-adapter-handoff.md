@@ -4,6 +4,9 @@ Scope: Phase 1 item 5, independent of the later presentation/headless gate.
 Claude and Codex remain co-equal. Claude's existing live observations are in
 `reference/01-claude-cli.md`; this handoff adds no Claude live verification.
 
+The sequenced implementation plan for this handoff is
+[phase1-claude-adapter.md](phase1-claude-adapter.md).
+
 ## Starting point
 
 Reuse `backends::process::run`, `RequestWorkspace`, checked `ProcessBounds`,
