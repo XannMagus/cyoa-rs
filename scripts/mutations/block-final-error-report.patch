@@ -1,0 +1,14 @@
+--- a/cyoa-cli/src/main.rs
++++ b/cyoa-cli/src/main.rs
+@@ -35,10 +35,7 @@
+     {
+         // play() has already restored descriptor flags. Reacquire nonblocking
+         // stderr for this best-effort report; a full pipe must never delay exit.
+-        if let Ok(mut stderr) = cyoa_presentation::terminal::Flags::new(io::stderr()) {
+-            let _ = writeln!(stderr.get_mut(), "cyoa: {error}");
+-            let _ = stderr.get_mut().flush();
+-        }
++        let _ = writeln!(io::stderr(), "cyoa: {error}");
+     }
+     #[cfg(not(target_os = "linux"))]
+     {

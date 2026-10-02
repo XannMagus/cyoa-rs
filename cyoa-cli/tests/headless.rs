@@ -672,3 +672,54 @@ fn command_surface_rejects_demo_vendor_settings_and_unimplemented_ui() {
         );
     }
 }
+
+#[test]
+fn full_undrained_stderr_does_not_block_error_exit() {
+    use rustix::{
+        fs::{OFlags, fcntl_getfl, fcntl_setfl},
+        pipe::{PipeFlags, pipe_with},
+    };
+    let (reader, writer) = pipe_with(PipeFlags::NONBLOCK).unwrap();
+    let bytes = [b'x'; 1024];
+    let mut filled = 0;
+    loop {
+        match rustix::io::write(&writer, &bytes) {
+            Ok(n) => filled += n,
+            Err(rustix::io::Errno::AGAIN) => break,
+            result => panic!("could not fill controlled stderr pipe: {result:?}"),
+        }
+    }
+    assert!(filled > 0);
+    // The child inherits a blocking descriptor, just like ordinary piped stderr.
+    // Keep the reader open and never drain it until the process has exited.
+    let flags = fcntl_getfl(&writer).unwrap();
+    fcntl_setfl(&writer, flags & !OFlags::NONBLOCK).unwrap();
+    let mut child = Command::new(env!("CARGO_BIN_EXE_cyoa"))
+        .args(["play", "--headless", "--demo"])
+        .stdin(Stdio::null())
+        .stdout(Stdio::null())
+        .stderr(Stdio::from(writer))
+        .spawn()
+        .unwrap();
+    let deadline = Instant::now() + Duration::from_secs(2);
+    let status = loop {
+        if let Some(status) = child.try_wait().unwrap() {
+            break Some(status);
+        }
+        if Instant::now() >= deadline {
+            break None;
+        }
+        thread::sleep(Duration::from_millis(5));
+    };
+    // A mutant gets a bounded assertion after explicit cleanup, not a watchdog.
+    if status.is_none() {
+        child.kill().unwrap();
+        child.wait().unwrap();
+    }
+    drop(reader);
+    assert!(
+        status.is_some(),
+        "stderr shutdown regression: error reporting blocked on a full pipe"
+    );
+    assert_eq!(status.unwrap().code(), Some(1));
+}

@@ -910,6 +910,20 @@
           "broken_stdout_closes_worker_and_reports_io_failure",
           "sigint_alone_cancels_idle_generation_before_any_fallback_command"
         ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "headless",
+        "tests": [
+          "full_undrained_stderr_does_not_block_error_exit"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "demo_retry",
+        "tests": [
+          "cancellation_after_demo_consumption_retries_each_stage_and_preserves_all_passages"
+        ]
       }
     ]
   },
@@ -1194,6 +1208,20 @@
           "broken_stdout_closes_worker_and_reports_io_failure",
           "invalid_utf8_input_closes_active_worker_without_committing",
           "buffered_multiple_lines_are_read_without_waiting_for_more_kernel_bytes"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "headless",
+        "tests": [
+          "full_undrained_stderr_does_not_block_error_exit"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "demo_retry",
+        "tests": [
+          "cancellation_after_demo_consumption_retries_each_stage_and_preserves_all_passages"
         ]
       }
     ]

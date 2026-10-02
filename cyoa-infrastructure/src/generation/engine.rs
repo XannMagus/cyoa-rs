@@ -26,6 +26,11 @@ impl<B> GenerationEngine<B> {
     pub fn into_backend(self) -> B {
         self.backend
     }
+    /// Internal composition for the demo's stage-selected replay. Templates and
+    /// wire validation remain the same; this is not a public vendor fallback.
+    pub(super) fn replace_backend(&mut self, backend: B) {
+        self.backend = backend;
+    }
 }
 impl<B: Backend> GenerationEngine<B> {
     fn generate(

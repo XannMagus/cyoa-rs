@@ -1,0 +1,30 @@
+--- a/cyoa-infrastructure/src/generation/demo.rs
++++ b/cyoa-infrastructure/src/generation/demo.rs
+@@ -43,7 +43,16 @@
+             .iter()
+             .map(ToString::to_string)
+             .collect(),
+-        engine: GenerationEngine::new(ChunkedBackend::new([], 17), GenerationTemplates::bundled()?),
++        engine: GenerationEngine::new(
++            ChunkedBackend::new(
++                std::iter::once(fixture["outline"].to_string())
++                    .chain(std::iter::once(fixture["cast"].to_string()))
++                    .chain(fixture["turns"].as_array().unwrap().iter().map(ToString::to_string))
++                    .map(Ok),
++                17,
++            ),
++            GenerationTemplates::bundled()?,
++        ),
+     })
+ }
+ impl HarbourDemo {
+@@ -52,8 +61,7 @@
+             message: "script exhausted: unexpected generation call".into(),
+             diagnostics: TransportDiagnostics::empty(),
+         });
+-        self.engine
+-            .replace_backend(ChunkedBackend::new([response], 17));
++        let _ = response;
+     }
+ }
+ impl StoryGenerator for HarbourDemo {

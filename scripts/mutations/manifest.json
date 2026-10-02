@@ -302,5 +302,23 @@
     "test": "sigint_alone_cancels_idle_generation_before_any_fallback_command",
     "file": "cyoa-presentation/src/headless.rs",
     "failure_contains": "idle SIGINT cancellation regression"
+  },
+  {
+    "id": "block-final-error-report",
+    "decision": "STREAM-001",
+    "package": "cyoa-cli",
+    "target": "headless",
+    "test": "full_undrained_stderr_does_not_block_error_exit",
+    "file": "cyoa-cli/src/main.rs",
+    "failure_contains": "stderr shutdown regression"
+  },
+  {
+    "id": "advance-demo-on-cancel",
+    "decision": "PRODUCT-001",
+    "package": "cyoa-cli",
+    "target": "demo_retry",
+    "test": "cancellation_after_demo_consumption_retries_each_stage_and_preserves_all_passages",
+    "file": "cyoa-infrastructure/src/generation/demo.rs",
+    "failure_contains": "demo outline retry regression"
   }
 ]

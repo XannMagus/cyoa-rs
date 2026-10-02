@@ -441,6 +441,14 @@ demo and both actual adapters over synthetic children, not vendor auth. Item 8
 retains every existing mutation and adds bounded idle-SIGINT coverage (35 total).
 Live headless evidence remains separate from these offline checks.
 
+The 2026-10-03 review repairs add a fourteenth binary test for a full, undrained
+stderr pipe and a composed runtime test cancelling after demo generation has
+consumed a response. Demo replay selects by generation stage and committed turn
+count, so cancellation/retry preserves all five passages, including changed player
+input. Both tests are registered under PRODUCT-001 and STREAM-001. Two mutations
+restore the reviewed defects, bringing the gate to 37. Evidence is in
+`reviews/2026-10-03-headless-repairs/README.md`.
+
 Codex's shipped live headless gate passed six turns through two chapter breaks,
 stable same-person rename, real cancellation with unchanged canonical state,
 explicit retry and quit. Observed direct child PIDs and workspaces disappeared.
@@ -521,6 +529,11 @@ preview overflow is explicitly marked incomplete; it does not invalidate an
 otherwise successful generation. Headless input/signal shutdown is implemented
 on Linux and checked at the binary boundary; other hosts remain unsupported by
 this terminal adapter.
+
+Final CLI error reporting on Linux reacquires nonblocking stderr after terminal
+guards restore the original descriptor flags. Reporting is best effort: a full
+pipe must not prevent exit after worker cleanup. The binary regression retains
+an open, undrained pipe reader and requires a bounded error exit.
 
 **Partial: scanner, scripted generation, vendor-neutral process supervision,
 Codex protocol decoding and Backend reconciliation, and offline Claude event

@@ -7,7 +7,7 @@ bash scripts/test_mutation_outcome.sh
 manifest=scripts/mutations/manifest.json
 registry=docs/decisions/required-tests.json
 jq -e --slurpfile registry "$registry" '
-  type == "array" and length >= 35
+  type == "array" and length >= 37
   and ([.[].id] | length == (unique | length))
   and ([.[].id] as $ids | all([
     "name-only-deduplication", "duplicate-opening-request",
@@ -23,10 +23,10 @@ jq -e --slurpfile registry "$registry" '
     "accept-api-key-auth", "discard-claude-candidate-evidence",
     "discard-claude-diagnostic-evidence", "leak-advisor-into-shared-instructions",
     "drop-candidate-on-malformed-metadata", "accept-last-duplicate-field",
-    "accept-stale-worker-result", "accept-cancelled-worker-success", "commit-worker-turn-twice", "ignore-headless-interrupt"
+    "accept-stale-worker-result", "accept-cancelled-worker-success", "commit-worker-turn-twice", "ignore-headless-interrupt", "block-final-error-report", "advance-demo-on-cancel"
   ][]; . as $id | $ids | index($id) != null))
   and all(.[];
-    (if (.id | test("^(accept-stale-worker-result|accept-cancelled-worker-success|commit-worker-turn-twice|ignore-headless-interrupt)$")) then
+    (if (.id | test("^(accept-stale-worker-result|accept-cancelled-worker-success|commit-worker-turn-twice|ignore-headless-interrupt|block-final-error-report|advance-demo-on-cancel)$")) then
       (.failure_contains | type == "string" and length > 0) else true end)
     and (.id | test("^[a-z-]+$"))
     and (if (.id | test("^(accept-ineligible-message|accept-missing-terminal|accept-conflicting-terminal|adapt-shared-schema|adapt-peer-schema|discard-candidate-evidence|discard-diagnostic-evidence|forward-uncorrelated-preview|share-block-indices-across-messages|ignore-is-error-result|accept-stream-without-result|accept-duplicate-result|reserialize-structured-output|result-overrides-process-failure|accept-api-key-auth|discard-claude-candidate-evidence|discard-claude-diagnostic-evidence|leak-advisor-into-shared-instructions|drop-candidate-on-malformed-metadata|accept-last-duplicate-field)$")) then

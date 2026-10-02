@@ -1,4 +1,7 @@
-use cyoa_application::{cancellation::CancellationSource, generation::StoryUseCases};
+use cyoa_application::{
+    cancellation::CancellationSource,
+    generation::{StoryGenerator, StoryUseCases},
+};
 use cyoa_core::{limits::Limits, style::StoryStyle};
 use cyoa_infrastructure::{
     backend::Backend,
@@ -22,8 +25,23 @@ use std::{
 
 fn main() {
     if let Err(error) = execute() {
-        let _ = writeln!(io::stderr(), "cyoa: {error}");
+        report_error(error.as_ref());
         std::process::exit(1);
+    }
+}
+fn report_error(error: &dyn std::fmt::Display) {
+    #[cfg(target_os = "linux")]
+    {
+        // play() has already restored descriptor flags. Reacquire nonblocking
+        // stderr for this best-effort report; a full pipe must never delay exit.
+        if let Ok(mut stderr) = cyoa_presentation::terminal::Flags::new(io::stderr()) {
+            let _ = writeln!(stderr.get_mut(), "cyoa: {error}");
+            let _ = stderr.get_mut().flush();
+        }
+    }
+    #[cfg(not(target_os = "linux"))]
+    {
+        let _ = writeln!(io::stderr(), "cyoa: {error}");
     }
 }
 fn execute() -> Result<(), Box<dyn std::error::Error>> {
@@ -37,7 +55,7 @@ fn execute() -> Result<(), Box<dyn std::error::Error>> {
     {
         // Auth preflight precedes the UI. No background stdin reader is spawned.
         if options.demo {
-            play(demo::harbour_v1(), true)
+            play(demo::harbour_v1()?, true)
         } else {
             let selected_path = std::env::var_os("PATH").unwrap_or_default();
             let home = options
@@ -60,10 +78,9 @@ fn execute() -> Result<(), Box<dyn std::error::Error>> {
                         config_dir(&options, "CODEX_HOME"),
                         options.model.map(CodexModel::new).transpose()?,
                     )?;
-                    play(
-                        connect(move |token| CodexCliBackend::connect(config, token))?,
-                        false,
-                    )
+                    play_backend(connect(move |token| {
+                        CodexCliBackend::connect(config, token)
+                    })?)
                 }
                 BackendChoice::Claude => {
                     let executable = ClaudeExecutable::resolve(
@@ -81,10 +98,9 @@ fn execute() -> Result<(), Box<dyn std::error::Error>> {
                         config_dir(&options, "CLAUDE_CONFIG_DIR"),
                         options.model.map(ClaudeModel::new).transpose()?,
                     )?;
-                    play(
-                        connect(move |token| ClaudeCliBackend::connect(config, token))?,
-                        false,
-                    )
+                    play_backend(connect(move |token| {
+                        ClaudeCliBackend::connect(config, token)
+                    })?)
                 }
             }
         }
@@ -125,12 +141,18 @@ fn config_dir(options: &PlayOptions, variable: &str) -> Option<PathBuf> {
         .or_else(|| std::env::var_os(variable).map(PathBuf::from))
 }
 #[cfg(target_os = "linux")]
-fn play<B: Backend + Send + 'static>(
-    backend: B,
+fn play_backend<B: Backend + Send + 'static>(backend: B) -> Result<(), Box<dyn std::error::Error>> {
+    play(
+        GenerationEngine::new(backend, GenerationTemplates::bundled()?),
+        false,
+    )
+}
+#[cfg(target_os = "linux")]
+fn play<G: StoryGenerator + Send + 'static>(
+    generator: G,
     demo: bool,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let templates = GenerationTemplates::bundled()?;
-    let cases = StoryUseCases::new(GenerationEngine::new(backend, templates));
+    let cases = StoryUseCases::new(generator);
     let mut runtime = SessionRuntime::new(
         SessionController::new(Limits::default(), StoryStyle::default()),
         cases,

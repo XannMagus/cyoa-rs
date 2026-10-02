@@ -19,7 +19,7 @@ cyoa-core.workspace = true
 serde_json.workspace = true
 tempfile = "3"
 escargot = "0.5"
-rustix = { version = "1", features = ["process"] }
+rustix = { version = "1", features = ["process", "pipe", "fs"] }
 
 [lints]
 workspace = true
