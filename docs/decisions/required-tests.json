@@ -32,6 +32,14 @@
         "tests": [
           "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
         ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "controller_story",
+        "tests": [
+          "complete_controller_story_preserves_context_retry_identity_chapters_and_rewind",
+          "controller_zero_npcs_and_both_restore_policies_use_active_limits"
+        ]
       }
     ]
   },
@@ -63,6 +71,14 @@
         "target": "claude_story_acceptance",
         "tests": [
           "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "controller_story",
+        "tests": [
+          "complete_controller_story_preserves_context_retry_identity_chapters_and_rewind",
+          "controller_zero_npcs_and_both_restore_policies_use_active_limits"
         ]
       }
     ]
@@ -301,6 +317,14 @@
           "both_restore_policies_control_actual_requests_snapshots_and_chapter_bridge",
           "zero_npc_limit_survives_cast_selection_opening_and_continuation"
         ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "controller_story",
+        "tests": [
+          "complete_controller_story_preserves_context_retry_identity_chapters_and_rewind",
+          "controller_zero_npcs_and_both_restore_policies_use_active_limits"
+        ]
       }
     ]
   },
@@ -335,6 +359,14 @@
         "target": "claude_story_acceptance",
         "tests": [
           "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "controller_story",
+        "tests": [
+          "complete_controller_story_preserves_context_retry_identity_chapters_and_rewind",
+          "controller_zero_npcs_and_both_restore_policies_use_active_limits"
         ]
       }
     ]
@@ -394,6 +426,14 @@
           "worker::tests::mailbox_budget_is_cumulative_and_does_not_split_unicode",
           "worker::tests::failed_spawn_keeps_use_cases_available_for_explicit_retry",
           "session::tests::exhausted_counters_and_wrong_base_revision_cannot_start_or_commit"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "controller_story",
+        "tests": [
+          "complete_controller_story_preserves_context_retry_identity_chapters_and_rewind",
+          "controller_zero_npcs_and_both_restore_policies_use_active_limits"
         ]
       }
     ]
@@ -569,6 +609,14 @@
         "tests": [
           "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
         ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "controller_story",
+        "tests": [
+          "complete_controller_story_preserves_context_retry_identity_chapters_and_rewind",
+          "controller_zero_npcs_and_both_restore_policies_use_active_limits"
+        ]
       }
     ]
   },
@@ -681,6 +729,14 @@
           "worker::tests::mailbox_budget_is_cumulative_and_does_not_split_unicode",
           "worker::tests::failed_spawn_keeps_use_cases_available_for_explicit_retry",
           "session::tests::exhausted_counters_and_wrong_base_revision_cannot_start_or_commit"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "controller_story",
+        "tests": [
+          "complete_controller_story_preserves_context_retry_identity_chapters_and_rewind",
+          "controller_zero_npcs_and_both_restore_policies_use_active_limits"
         ]
       }
     ]
@@ -1007,6 +1063,14 @@
           "worker::tests::failed_spawn_keeps_use_cases_available_for_explicit_retry",
           "session::tests::exhausted_counters_and_wrong_base_revision_cannot_start_or_commit"
         ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "controller_story",
+        "tests": [
+          "complete_controller_story_preserves_context_retry_identity_chapters_and_rewind",
+          "controller_zero_npcs_and_both_restore_policies_use_active_limits"
+        ]
       }
     ]
   },
@@ -1035,6 +1099,14 @@
         "target": "claude_story_acceptance",
         "tests": [
           "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "controller_story",
+        "tests": [
+          "complete_controller_story_preserves_context_retry_identity_chapters_and_rewind",
+          "controller_zero_npcs_and_both_restore_policies_use_active_limits"
         ]
       }
     ]

@@ -29,3 +29,18 @@ Injected spawn failure retains use-case ownership for explicit retry. Overflow a
 wrong-base-revision checks are separately tested. Presentation tests and warnings-
 denied Clippy pass. The runtime owns the controller and runner; no input/terminal
 thread exists yet.
+
+## Step 3 — composed story
+
+CLI-layer tests compose the real GenerationEngine, ChunkedBackend, application
+use cases, runtime and controller. The existing frozen Phase 0 fixture is reused
+unchanged. Nine requests cover outline/edit/cast, five accepted turns, malformed
+output and a cancelled preview. Canonical equality, independent namesake IDs,
+chapter retitling/bridge memory, null/empty threads, caps and captured next prompts
+are asserted. Separate seeding tests cover both restore policies and zero NPCs.
+These acceptance tests are green-first after integration; initial compiler errors
+(wrong domain accessor/restore argument order) are not red-TDD evidence. The first
+cancellation handshake paused too early (raw JSON before narrative); the fixture
+now waits until a decoded narrative prefix has been supplied. Tests pass after
+that fixture correction. `escargot` is a CLI dev-dependency only, fetched with
+its lockfile for the next real-child composition step.
