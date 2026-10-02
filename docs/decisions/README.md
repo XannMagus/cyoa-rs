@@ -296,9 +296,9 @@ a build/test dependency violates this decision even if the source uses it.
 ### BACKENDS-001 Two co-equal subscription CLI backends
 
 **Partial: Codex adapter, composed real-child fixture acceptance and bounded live
-adapter acceptance implemented; Claude adapter implemented with real-child fixture
-tests; Claude composed acceptance, Claude live acceptance and both live headless
-gates pending.**
+adapter acceptance implemented; Claude adapter and composed real-child fixture
+acceptance implemented; Claude live acceptance and both live headless gates
+pending.**
 Claude and Codex are peers behind inward-owned ports, not primary and
 fallback. Use stateless calls and subscription auth; never silently switch to paid
 API auth. Test the shared contract against scripted and both concrete adapters.
@@ -357,6 +357,22 @@ These tests were written after the adapter, not red-first, and are protected by 
 persistent mutations of a later step. Fixture payloads are synthetic: offline evidence,
 not authenticated behavior. The transport-error mapping is duplicated from the Codex
 adapter, deliberately, so this slice does not edit the peer's file.
+
+Claude adapter step 6 (2026-10-02) adds `claude_story_acceptance`: the actual
+adapter → `GenerationEngine` → `StoryUseCases` over fixture children, reusing the
+Codex acceptance scenario (`fixtures/codex/story.json`, a backend-agnostic synthetic
+story) with Claude-shaped streams. It covers the edited outline, namesake cast and ID
+repair, opening and continuation, chapter break and retitling, rewind, both restore
+policies, zero NPCs, exactly one opening identity instruction and no extra review
+call, and per-request argv/stdin capture. Late failures (nonzero exit after a result,
+`is_error`, truncated and missing results, domain-invalid payload), idle cancellation,
+cancellation from a live preview and from a complete-only emission, an output cap and
+a real workspace-cleanup failure leave the whole game unchanged; an explicit retry
+launches exactly one new child with the same prompt. Claude-specific: previews arrive
+incrementally and may precede a failure (never committed), a disagreeing preview
+yields to the final payload, a text block in an enforce-retry stream is never
+narrative, and provenance carries only what the stream reported. Fixture payloads
+are synthetic: offline enforcement, not live fiction.
 
 ### PRODUCT-001 Standalone TUI, persistence, export, and image boundary
 

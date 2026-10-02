@@ -25,6 +25,13 @@
         "tests": [
           "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "claude_story_acceptance",
+        "tests": [
+          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
+        ]
       }
     ]
   },
@@ -47,6 +54,13 @@
       {
         "package": "cyoa-infrastructure",
         "target": "codex_story_acceptance",
+        "tests": [
+          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "claude_story_acceptance",
         "tests": [
           "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
         ]
@@ -164,6 +178,17 @@
           "successful_response_forwards_previews_then_returns_exact_payload_usage_and_provenance",
           "application_receives_candidate_and_diagnostics_on_adapter_timeout"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "claude_story_acceptance",
+        "tests": [
+          "late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once",
+          "real_workspace_cleanup_failure_preserves_the_game_and_candidate",
+          "cancellation_and_output_cap_preserve_state_context_and_explicit_retry",
+          "a_disagreeing_preview_is_shown_but_only_the_final_payload_is_committed",
+          "an_enforce_retry_stream_commits_only_the_structured_payload"
+        ]
       }
     ]
   },
@@ -246,6 +271,14 @@
           "both_restore_policies_control_actual_requests_snapshots_and_chapter_bridge",
           "zero_npc_limit_survives_cast_selection_opening_and_continuation"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "claude_story_acceptance",
+        "tests": [
+          "both_restore_policies_control_actual_requests_snapshots_and_chapter_bridge",
+          "zero_npc_limit_survives_cast_selection_opening_and_continuation"
+        ]
       }
     ]
   },
@@ -271,6 +304,13 @@
       {
         "package": "cyoa-infrastructure",
         "target": "codex_story_acceptance",
+        "tests": [
+          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "claude_story_acceptance",
         "tests": [
           "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
         ]
@@ -382,6 +422,14 @@
           "late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once",
           "zero_npc_limit_survives_cast_selection_opening_and_continuation"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "claude_story_acceptance",
+        "tests": [
+          "late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once",
+          "zero_npc_limit_survives_cast_selection_opening_and_continuation"
+        ]
       }
     ]
   },
@@ -423,6 +471,13 @@
         "tests": [
           "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "claude_story_acceptance",
+        "tests": [
+          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
+        ]
       }
     ]
   },
@@ -452,6 +507,13 @@
       {
         "package": "cyoa-infrastructure",
         "target": "codex_story_acceptance",
+        "tests": [
+          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "claude_story_acceptance",
         "tests": [
           "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
         ]
@@ -529,6 +591,20 @@
           "preparation_failure_and_removed_executable_never_launch_a_generation",
           "no_stdout_failure_and_invalid_protocol_preserve_bytes_with_distinct_categories",
           "application_receives_candidate_and_diagnostics_on_adapter_timeout"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "claude_story_acceptance",
+        "tests": [
+          "late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once",
+          "real_workspace_cleanup_failure_preserves_the_game_and_candidate",
+          "cancellation_and_output_cap_preserve_state_context_and_explicit_retry",
+          "both_restore_policies_control_actual_requests_snapshots_and_chapter_bridge",
+          "zero_npc_limit_survives_cast_selection_opening_and_continuation",
+          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context",
+          "a_disagreeing_preview_is_shown_but_only_the_final_payload_is_committed",
+          "an_enforce_retry_stream_commits_only_the_structured_payload"
         ]
       }
     ]
@@ -812,6 +888,17 @@
           "capped_output_preserves_prefix_metadata_and_a_structured_cause",
           "successful_response_forwards_previews_then_returns_exact_payload_usage_and_provenance"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "claude_story_acceptance",
+        "tests": [
+          "late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once",
+          "real_workspace_cleanup_failure_preserves_the_game_and_candidate",
+          "cancellation_and_output_cap_preserve_state_context_and_explicit_retry",
+          "a_disagreeing_preview_is_shown_but_only_the_final_payload_is_committed",
+          "an_enforce_retry_stream_commits_only_the_structured_payload"
+        ]
       }
     ]
   },
@@ -831,6 +918,13 @@
       {
         "package": "cyoa-infrastructure",
         "target": "codex_story_acceptance",
+        "tests": [
+          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "claude_story_acceptance",
         "tests": [
           "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
         ]
