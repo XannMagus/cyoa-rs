@@ -4,4 +4,5 @@
 //! must never inspect Claude/Codex event names.
 
 pub mod codex_cli;
+pub mod executable;
 pub mod process;

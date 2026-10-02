@@ -9,8 +9,11 @@ mod protocol;
 pub use adapter::CodexCliBackend;
 
 use crate::{
-    backends::process::{
-        EnvPolicy, MaxStderrBytes, MaxStdoutBytes, ProcessBounds, ProcessSpec, RequestWorkspace,
+    backends::{
+        executable::{self, ExecutableError, ResolvedExecutable},
+        process::{
+            EnvPolicy, MaxStderrBytes, MaxStdoutBytes, ProcessBounds, ProcessSpec, RequestWorkspace,
+        },
     },
     generation::{backend_compat::codex_cli, templates::RenderedGeneration},
 };
@@ -23,7 +26,7 @@ use std::{
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct CodexExecutable(PathBuf);
+pub struct CodexExecutable(ResolvedExecutable);
 
 impl CodexExecutable {
     /// Resolve a configured executable against a selected PATH and base
@@ -34,71 +37,15 @@ impl CodexExecutable {
         selected_path: &OsStr,
         base_directory: &Path,
     ) -> Result<Self, ConfigurationError> {
-        validate_os_value("executable", executable)?;
-        validate_os_value("PATH", selected_path)?;
-        if !base_directory.is_absolute() {
-            return Err(ConfigurationError::InvalidValue {
-                field: "base directory",
-                reason: "must be absolute for executable resolution",
-            });
-        }
-        let input = Path::new(executable);
-        let file_name = input.file_name().ok_or(ConfigurationError::InvalidValue {
-            field: "executable",
-            reason: "must name an executable file",
-        })?;
-        let has_directory_component = input.as_os_str() != file_name;
-        let resolved = if input.is_absolute() {
-            input.to_path_buf()
-        } else if has_directory_component {
-            base_directory.join(input)
-        } else {
-            std::env::split_paths(selected_path)
-                .map(|directory| {
-                    if directory.is_absolute() {
-                        directory.join(input)
-                    } else {
-                        base_directory.join(directory).join(input)
-                    }
-                })
-                .find(|candidate| is_executable_file(candidate))
-                .ok_or_else(|| ConfigurationError::ExecutableNotFound(executable.into()))?
-        };
-        let absolute = fs::canonicalize(&resolved).map_err(|source| {
-            ConfigurationError::ResolveExecutable {
-                path: resolved.clone(),
-                source,
-            }
-        })?;
-        if !is_executable_file(&absolute) {
-            return Err(ConfigurationError::InvalidValue {
-                field: "executable",
-                reason: "must be a regular file executable by the current user",
-            });
-        }
-        Ok(Self(absolute))
+        Ok(Self(ResolvedExecutable::resolve(
+            executable,
+            selected_path,
+            base_directory,
+        )?))
     }
 
     pub fn as_path(&self) -> &Path {
-        &self.0
-    }
-}
-
-// Resolve using the caller's effective credentials. This is a preparation
-// check, not a guarantee against later permission changes or invalid binaries.
-fn is_executable_file(path: &Path) -> bool {
-    if !path.is_file() {
-        return false;
-    }
-    #[cfg(unix)]
-    {
-        use rustix::fs::{Access, AtFlags, CWD, accessat};
-        accessat(CWD, path, Access::EXEC_OK, AtFlags::EACCESS).is_ok()
-    }
-    #[cfg(not(unix))]
-    {
-        // The process supervisor remains unsupported on these platforms.
-        false
+        self.0.as_path()
     }
 }
 
@@ -135,6 +82,16 @@ pub enum ConfigurationError {
         #[source]
         source: std::io::Error,
     },
+}
+
+impl From<ExecutableError> for ConfigurationError {
+    fn from(error: ExecutableError) -> Self {
+        match error {
+            ExecutableError::InvalidValue { field, reason } => Self::InvalidValue { field, reason },
+            ExecutableError::NotFound(name) => Self::ExecutableNotFound(name),
+            ExecutableError::Resolve { path, source } => Self::ResolveExecutable { path, source },
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -307,53 +264,21 @@ fn validate_path(
     value: &Path,
     require_absolute: bool,
 ) -> Result<(), ConfigurationError> {
-    validate_os_value(field, value.as_os_str())?;
-    if require_absolute && !value.is_absolute() {
-        return Err(ConfigurationError::InvalidValue {
-            field,
-            reason: "must be an absolute path",
-        });
-    }
-    Ok(())
+    Ok(executable::validate_path(field, value, require_absolute)?)
 }
 
 fn validate_string_value(field: &'static str, value: &str) -> Result<(), ConfigurationError> {
-    if value.trim().is_empty() {
-        return Err(ConfigurationError::InvalidValue {
-            field,
-            reason: "must not be blank",
-        });
-    }
-    if field == "model" && value.starts_with('-') {
+    if field == "model" && !value.trim().is_empty() && value.starts_with('-') {
         return Err(ConfigurationError::InvalidValue {
             field,
             reason: "must not begin with an option prefix",
         });
     }
-    if value.contains('\0') {
-        return Err(ConfigurationError::InvalidValue {
-            field,
-            reason: "must not contain NUL",
-        });
-    }
-    Ok(())
+    Ok(executable::validate_string_value(field, value)?)
 }
 
 fn validate_os_value(field: &'static str, value: &OsStr) -> Result<(), ConfigurationError> {
-    let display = value.to_string_lossy();
-    if display.trim().is_empty() {
-        return Err(ConfigurationError::InvalidValue {
-            field,
-            reason: "must not be blank",
-        });
-    }
-    if display.contains('\0') {
-        return Err(ConfigurationError::InvalidValue {
-            field,
-            reason: "must not contain NUL",
-        });
-    }
-    Ok(())
+    Ok(executable::validate_os_value(field, value)?)
 }
 
 #[cfg(test)]
