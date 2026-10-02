@@ -1,0 +1,27 @@
+{
+  "outcome": "accepted",
+  "elapsed_ms": 32923,
+  "requested_model": null,
+  "observed_provenance": {
+    "provider": "firstParty",
+    "model": "claude-sonnet-5-5",
+    "list_price_usd": 0.100059
+  },
+  "input_tokens": 27807,
+  "cached_input_tokens": 13065,
+  "output_tokens": 3849,
+  "preview_emissions": 338,
+  "first_preview_ms": 19523,
+  "previews_match_payload_as_json": true,
+  "message_starts_in_stdout": 2,
+  "advisor_blocks_in_stdout": 0,
+  "cleanup": {
+    "pid": 4002803,
+    "workspace": "/tmp/cyoa-request-lddEWE",
+    "pid_absent": true,
+    "workspace_absent": true
+  },
+  "controlled_cancel": false,
+  "cancel_to_return_ms": null,
+  "exit_evidence": "Accepted implies zero exit, one result and reap through the production supervisor; cancellation has no public exit-code field. The raw stream is in stdout.jsonl."
+}

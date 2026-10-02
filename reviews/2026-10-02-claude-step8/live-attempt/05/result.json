@@ -1,0 +1,23 @@
+{
+  "outcome": "generation cancelled",
+  "elapsed_ms": 1024,
+  "requested_model": null,
+  "observed_provenance": null,
+  "input_tokens": null,
+  "cached_input_tokens": null,
+  "output_tokens": null,
+  "preview_emissions": 0,
+  "first_preview_ms": null,
+  "previews_match_payload_as_json": null,
+  "message_starts_in_stdout": 0,
+  "advisor_blocks_in_stdout": 0,
+  "cleanup": {
+    "pid": 4004433,
+    "workspace": "/tmp/cyoa-request-udgb5J",
+    "pid_absent": true,
+    "workspace_absent": true
+  },
+  "controlled_cancel": true,
+  "cancel_to_return_ms": 15,
+  "exit_evidence": "Accepted implies zero exit, one result and reap through the production supervisor; cancellation has no public exit-code field. The raw stream is in stdout.jsonl."
+}

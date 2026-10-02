@@ -1,0 +1,76 @@
+The summary of the story so far, as JSON:
+{
+  "world": "**Merrow Quay** is a small tidal harbour on a grey northern coast, cupped in a horseshoe of black rock and shingle. Fishing skiffs and a few coastal traders crowd its stone quay. Behind it, slate-roofed houses climb the hill in crooked terraces, and a salt marsh, the Wicker Flats, runs inland to a road that few people use. Mist comes in off the water most mornings. It muffles sound and lets the town hear its own small noises: ropes creaking, gulls arguing, the slap of water on the old piles.\n\n*For two hundred years, the harbour has been ruled by a bell.*\n\nThe **Widow's Bell**, a bronze bell the height of a child, hung in an open timber frame at the end of the long breakwater. It was cast from the melted fittings of a ship that broke on the Teeth, the reef at the harbour mouth. It rang the tides, the fog, the dead, and the return of the boats. Its note was low and cracked, and every household knew it the way they knew their own front door. Eleven nights ago, in thick fog, it stopped. The frame still stands. The rope hangs cut clean, and the bell is gone. No one heard it taken, which is the strangest part, because a bell that size cannot be moved quietly.\n\nSince then the harbour has been uneasy in ways that are hard to name. The fishing fleet goes out only half-heartedly, because without the bell the boats have no sound to steer home by when fog closes the Teeth. The old people say the sea has been listening. The younger ones say that is nonsense, and they check the sky more often than they admit.\n\n**The two lights.** Merrow Quay has two lighthouses, built a century apart, and they do not like each other. The **Old Light** stands on the north horn of the harbour. It is a squat, whitewashed tower with a coal-fired lamp that has been converted twice and trusted never. The **Pale Light** stands on the southern rock beyond the Teeth. It is a tall, narrow, iron-ribbed tower, cut off from land at high tide and reached by a slick causeway at low water. Each tower has its own keeper, and by a coincidence the town stopped finding funny years ago, **both keepers are called Ajax**. They are unrelated. They came to the coast from different places, by different roads, for different reasons, and they carry different histories. One arrived with a past he would like to leave unspoken. The other inherited the post and the weight of a family's quiet duty. The town tells them apart by tower and by temperament, and the keepers themselves are polite about it in the way of two people who have never quite managed to be friends. Each saw something odd from the lamp room on the night the bell vanished. Neither has told the other everything.\n\n**The harbour's factions and currents.**\n\nThe **Harbourmaster's Office** is a tidy two-room building on the quay. It is run by officials who value order above answers and would rather the missing bell be a misunderstanding than a crime. They have posted a notice asking for its \"return, no questions asked.\"\n\nThe **Net-Menders' Guild**, a loose brotherhood of fishing families, holds the old customs. Many of them believe the bell was never meant to be owned, only kept, and that its loss is a judgement for something the town has let slide. They hold their meetings in the cold loft above the smokehouse.\n\nThe **Brass & Tallow Company** is a shipping concern from the southern cities that has been buying up the quay's warehouses. It wants a deeper channel, a steam-horn fog signal and a harbour that runs on contracts rather than superstition. A modern horn would make the bell redundant, and everyone has noticed that.\n\nThe **Chapel of St. Orrin** keeps the bell's records in its vestry: the casting, the repairs, and a ledger of the names it has rung for. Its elderly sexton is reluctant to talk about the last page.\n\n**Places worth knowing.** The *Drowned Stair* is a flight of weedy steps on the breakwater that vanishes at high tide, with a door at its foot that no one admits to using. The *Cooperage* is a shuttered workshop where the bell's rope was made. The *Lantern & Eel* is the one tavern, loud with theories. Out on the Wicker Flats stands a ruined salt-works with fresh cart tracks running to its door. Beneath the town, old smuggling tunnels connect the cellars to the shore. These tunnels are not on any map the Harbourmaster owns.\n\n**The central mystery and its stakes.** The bell was not simply stolen. It was cast with something inside its history: the metal of the wrecked ship, and a secret about how that ship was lost and who profited. Someone wants the bell silenced, someone wants it found, and someone wants it sold. A spring storm is building out past the Teeth, and a ship is due that no one at the quay can name. If the bell is not found, or its absence is not answered, the fog-season fleet will be lost, the Company will buy the quay in all but name, and Merrow Quay will become a place that no longer hears itself.\n\nThe tone is quiet, damp and watchful: *a mystery of low voices, shared suspicion and small kindnesses*, in which every person at the quay knows a little and no one knows enough. Strangers who would never otherwise have crossed paths are drawn together by the one sound that is missing, and each of them holds a different piece of what happened on the night the harbour went silent.",
+  "major_events": [],
+  "characters": [
+    {
+      "name": "Ajax",
+      "description": "A **weathered man in his late fifties**, broad-shouldered but stooped, with close-cropped iron-grey hair, a salt-and-pepper beard kept short, and a pale scar running through his left eyebrow. His hands are scarred and knotted from years of rope and iron, and his pale blue eyes watch doorways before faces. He wears a heavy navy oilskin coat, a patched wool jersey, rubber-soled sea boots and a battered peaked cap.\n\nHe keeps the **Pale Light** on the southern rock, and carries himself like a man listening for footsteps.",
+      "backstory": "He came to the coast fifteen years ago under another name, off a southern road he never speaks of. Before the Pale Light he was a **ship's pilot for the Brass & Tallow Company's predecessor**, and he signed his name to a harbour report that he knew was false. Men drowned afterwards. He took the lonely tower as penance and as hiding.\n\nOn the night the bell vanished he saw a **shuttered lantern signalling from the Drowned Stair** and a low boat moving without oars, and he has told no one, because the signal pattern was one he used to know. *If the bell's secret comes out, so does his.* He wants to find the bell before anyone else does, and he is not sure whether he wants to save it or bury it.",
+      "relationships": "",
+      "current_state": "",
+      "id": "protagonist"
+    },
+    {
+      "name": "Odalys Venn",
+      "description": "A **brisk woman in her forties**, small and neat, with silver-streaked auburn hair in a tight bun, round wire spectacles and a perpetually ink-smudged cuff. She wears a dark double-breasted harbour-office coat with a tin badge and carries a leather folder.",
+      "backstory": "Deputy to the Harbourmaster and the real author of the notice reading *no questions asked*. She fears a crime would invite the Company's inspectors and end the Office's authority. She is not corrupt, only frightened of disorder, and she keeps a private list of things she has chosen not to know.",
+      "relationships": "She is wary of both Ajaxes and keeps the two straight with a pencilled chart on her wall. She leans on Brass & Tallow's goodwill for funding and quietly dislikes the Net-Menders' judgement talk.",
+      "current_state": "Has not yet appeared in the story.",
+      "id": "odalys-venn"
+    },
+    {
+      "name": "Brannoch Teale",
+      "description": "A **huge, slow-moving man of sixty-odd**, with a heavy white beard, a nose broken more than once, and hands like shovels. He wears a thick cable-knit jersey, a sealskin waistcoat and a woollen watch cap.",
+      "backstory": "Elder of the Net-Menders' Guild and a fisherman since boyhood. He believes the bell was *kept, never owned*, and that the town's loss is a judgement. He privately knows his own father took coin for silence about the wreck that made the bell.",
+      "relationships": "He respects the Old Light's keeper's family and distrusts the Pale Light's keeper as an outsider. He openly opposes the Company and the Harbourmaster's Office, and he is a regular at the Lantern & Eel despite himself.",
+      "current_state": "Has not yet appeared in the story.",
+      "id": "brannoch-teale"
+    },
+    {
+      "name": "Sexton IlsabetOrrow",
+      "description": "An **elderly, tiny woman in her late seventies**, with thin white hair under a black lace cap, deeply lined face, cloudy but sharp grey eyes and a stoop from years of bending over ledgers. She wears a black wool dress, a long grey shawl and a ring of iron keys at her waist.",
+      "backstory": "She has kept the Chapel of St. Orrin's records for fifty years. The **last page of the bell's ledger** has a name written in a hand that is not the vestry's, added the day before the bell vanished. She has told no one, afraid of what it would do to the town.",
+      "relationships": "She trusts the Old Light's family more than anyone and is shy of the Pale Light's keeper. Brannoch Teale is her oldest friend and her oldest argument.",
+      "current_state": "Has not yet appeared in the story.",
+      "id": "sexton-ilsabetorrow"
+    },
+    {
+      "name": "Cassian Marlowe-Reeve",
+      "description": "A **polished man in his late thirties**, slim, clean-shaven, with slicked dark hair, warm brown eyes and a ready smile that does not quite reach them. He wears a well-cut charcoal city overcoat, a silk cravat, polished boots too good for the quay, and carries a silver-topped cane.",
+      "backstory": "Local agent for the Brass & Tallow Company. He sincerely believes a steam-horn will save lives, and is quietly ashamed of the cruder methods his employers use. Someone in the Company is selling the bell, and he suspects it is his superior.",
+      "relationships": "He courts the Harbourmaster's Office and is cordially loathed by the Net-Menders. He tries to befriend both keepers and is certain at least one is lying to him.",
+      "current_state": "Has not yet appeared in the story.",
+      "id": "cassian-marlowe-reeve"
+    },
+    {
+      "name": "Wren Pellam",
+      "description": "A **wiry girl of about fourteen**, freckled, with a tangle of sandy hair, scabbed knees and quick, watchful green eyes. She wears a too-large fisherman's jumper with rolled sleeves, patched trousers and bare or mud-caked feet.",
+      "backstory": "An orphan who runs errands for the Lantern & Eel and sleeps in a net loft. She knows the smugglers' tunnels better than any adult, and that night she heard **wheels on the cobbles and a horse's feet muffled in sacking**. She tells no adult because she thinks she'll be blamed.",
+      "relationships": "She is fond of the Lantern & Eel's landlady and is wary of officials. She will trust whichever keeper is kind to her first.",
+      "current_state": "Has not yet appeared in the story.",
+      "id": "wren-pellam"
+    },
+    {
+      "name": "Maud Harrowgate",
+      "description": "A **broad, ruddy woman in her fifties**, with curly grey-black hair tied in a red kerchief, strong forearms, a booming laugh and tired dark eyes. She wears a stained canvas apron over a wool dress and rolled sleeves.",
+      "backstory": "Landlady of the Lantern & Eel, who hears every theory and sorts them by who pays. She has noticed a stranger's room paid in advance, and a **ship's name chalked on a slate that was later rubbed out**.",
+      "relationships": "Mother figure to Wren, old friend of Brannoch, and creditor to half the quay. She keeps the peace between the Company's men and the Net-Menders by watering both their drinks.",
+      "current_state": "Has not yet appeared in the story.",
+      "id": "maud-harrowgate"
+    },
+    {
+      "name": "Tobiah Crane",
+      "description": "A **stooped, gaunt man in his seventies**, with a bald freckled head, drooping white moustache, milky left eye and trembling, rope-calloused hands. He wears a ragged brown apron, a faded cloth cap and an old rope-maker's leather wristguard.",
+      "backstory": "The last rope-maker of the shuttered Cooperage. He made the bell's rope and knows the cut was made with a **blade he sharpened himself**, years ago, for a man he will not name.",
+      "relationships": "He was once close to the Old Light's family and is terrified of the Pale Light's keeper's past. He will say nothing to the Harbourmaster's Office.",
+      "current_state": "Has not yet appeared in the story.",
+      "id": "tobiah-crane"
+    }
+  ],
+  "current_situation": "The adventure has not yet begun.",
+  "upcoming_events": []
+}
+
+Before writing the opening scene, check the supplied cast for accidental duplicate identities. Compare descriptions, backstories and relationships, not just names. Distinct people may share a name: preserve those namesakes and distinguish them using their stable ids and established details. Do not introduce an existing character again under an alias or a newly invented id. Use the supplied ids consistently and never change, swap or reuse them; send at most one update for each character.
+Begin the novel with an opening scene that introduces the protagonist and their situation.

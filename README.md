@@ -23,12 +23,16 @@ correctness gaps found after the first implementation and their fixes: bounded
 capture/cleanup, exact request delivery, authoritative cancellation, diagnostics
 propagation and owned request directories.
 
-Claude evidence was refreshed on 2026-09-25; Codex's
-[0.157.1 protocol profile](reviews/2026-09-26-codex-profile/README.md) was frozen on
-2026-09-26 using bounded bundled-request probes, with full account/tool isolation
-still unverified. Codex has an executable adapter and a completed live adapter gate
-on 0.159.3 (outline, cast, opening, continuation and controlled cancellation);
-Claude's executable adapter and headless play remain pending.
+Codex's [0.157.1 protocol profile](reviews/2026-09-26-codex-profile/README.md) was
+frozen on 2026-09-26 using bounded bundled-request probes, with full account/tool
+isolation still unverified. Codex has an executable adapter and a completed live
+adapter gate on 0.159.3 (outline, cast, opening, continuation and controlled
+cancellation). Claude's [2.1.286 protocol profile](reviews/2026-10-02-claude-step1/README.md)
+was frozen on 2026-10-02 from production-invocation probes; `ClaudeCliBackend` has
+real-child fixture tests, composed story acceptance and eleven persistent
+mutations, and **passed its own live adapter gate on 2026-10-02**
+([evidence](reviews/2026-10-02-claude-step8/README.md)): the same four bundled
+requests plus a controlled cancellation. Headless play remains pending for both.
 See the [Phase 1 plan](docs/plans/phase1-headless-backends.md)
 and each backend reference file for the remaining work; offline transport tests
 do not establish live vendor behavior.
@@ -49,9 +53,10 @@ seven persistent adapter mutations protect protocol acceptance, shared/peer sche
 isolation and failure evidence ([record](reviews/2026-09-28-codex-step6/README.md)).
 **Step 7 passed live on 2026-10-02**: four successful generations and controlled
 cancellation with observed PID/workspace cleanup and unchanged game state
-([evidence](reviews/2026-10-02-codex-step7/README.md)). Next is the
-[Claude adapter slice](docs/plans/phase1-claude-adapter-handoff.md), with independent
-live acceptance, followed by presentation/headless work. No playable UI is claimed.
+([evidence](reviews/2026-10-02-codex-step7/README.md)). The
+[Claude adapter slice](docs/plans/phase1-claude-adapter.md) is complete on the same
+terms. Next is the [presentation/headless handoff](docs/plans/phase1-presentation-handoff.md),
+with an independent live headless gate per backend. No playable UI is claimed.
 
 - `cyoa-core`: checked domain types, namesake-preserving casts and stable IDs,
   summary deltas, typed limits, owned protagonist selection, turns, chapters and
@@ -63,11 +68,10 @@ live acceptance, followed by presentation/headless work. No playable UI is claim
 - `cyoa-infrastructure`: validated bundled templates, schema generation, wire
   mapping, generation orchestration, incremental narrative extraction,
   request-recording complete/chunked scripted transports and a process supervisor
-  exercised against an in-repo subprocess fixture. Claude schema adaptation is
-  isolated in `backend_compat::claude_cli`; advisor-suppression instructions exist
-  in evidence and plans only. Codex schema/invocation preparation and private
-  protocol decoding and an executable Codex Backend are implemented;
-  Claude's executable Backend remains pending.
+  exercised against an in-repo subprocess fixture. Claude schema adaptation and the
+  local advisor-suppression instruction live in `backend_compat::claude_cli`. Codex
+  and Claude each have isolated request preparation, a private protocol codec and an
+  executable `Backend` reconciled with the supervisor.
 - `cyoa-presentation`: terminal help/version output; gameplay UI is pending.
 - `cyoa-cli`: executable and composition root.
 - `reference/`: source material and each backend's separate live-verification record.
@@ -117,9 +121,9 @@ See the [acceptance sequence](docs/decisions/phase0-acceptance.md) and
 [TDD/evidence record](reviews/2026-09-25-phase0-acceptance/README.md). Phase 1
 is [real subprocess adapters and a playable headless loop](docs/plans/phase1-headless-backends.md)
 — transport foundations and Codex Backend reconciliation are implemented and
-Linux-tested, including composed Codex story acceptance and persistent adapter mutations;
-Claude implementation and the full authenticated acceptance gates remain separate
-obligations.
+Linux-tested for both backends, including composed story acceptance, persistent
+adapter mutations and a bounded live adapter gate each; presentation lifecycle and
+the full authenticated headless acceptance gates remain separate obligations.
 
 ## Where to start
 

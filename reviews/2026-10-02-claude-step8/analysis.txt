@@ -1,0 +1,52 @@
+== call 01
+message_start: 1; results: 1; stderr bytes: 0
+blocks: M1:0=thinking M1:1=tool_use:StructuredOutput
+real advisor content blocks: 0
+init: {"model":"claude-sonnet-5-5","apiKeySource":"none","tools":["StructuredOutput"]}
+payload.json == result.structured_output (compact span): byte-equal
+result: {"is_error":false,"subtype":"success","terminal_reason":"completed","num_turns":2,"total_cost_usd":0.031136000000000004}
+forbidden flags in argv (bare or model): 0
+== call 02
+message_start: 1; results: 1; stderr bytes: 0
+blocks: M1:0=tool_use:StructuredOutput
+real advisor content blocks: 0
+init: {"model":"claude-sonnet-5-5","apiKeySource":"none","tools":["StructuredOutput"]}
+payload.json == result.structured_output (compact span): byte-equal
+result: {"is_error":false,"subtype":"success","terminal_reason":"completed","num_turns":2,"total_cost_usd":0.048256}
+forbidden flags in argv (bare or model): 0
+== call 03
+message_start: 2; results: 1; stderr bytes: 0
+blocks: M1:0=thinking M1:1=text M2:0=tool_use:StructuredOutput
+real advisor content blocks: 0
+init: {"model":"claude-sonnet-5-5","apiKeySource":"none","tools":["StructuredOutput"]}
+payload.json == result.structured_output (compact span): byte-equal
+result: {"is_error":false,"subtype":"success","terminal_reason":"completed","num_turns":3,"total_cost_usd":0.100059}
+forbidden flags in argv (bare or model): 0
+== call 04
+message_start: 1; results: 1; stderr bytes: 0
+blocks: M1:0=tool_use:StructuredOutput
+real advisor content blocks: 0
+init: {"model":"claude-sonnet-5-5","apiKeySource":"none","tools":["StructuredOutput"]}
+payload.json == result.structured_output (compact span): byte-equal
+result: {"is_error":false,"subtype":"success","terminal_reason":"completed","num_turns":2,"total_cost_usd":0.055165000000000006}
+forbidden flags in argv (bare or model): 0
+== call 05
+message_start: 0; results: 0; stderr bytes: 0
+blocks: 
+real advisor content blocks: 0
+init: {"model":"claude-sonnet-5-5","apiKeySource":"none","tools":["StructuredOutput"]}
+== argv of call 03 (values elided except flags)
+/home/ahmed/.local/share/claude/versions/2.1.286
+-p
+--safe-mode
+--tools
+
+--permission-prompts
+none
+--no-session-persistence
+--system-prompt
+<667 bytes>
+<873 bytes>
+Rules for the fields of your response:
+== auth/identity leakage check: email-like strings in artifacts
+none

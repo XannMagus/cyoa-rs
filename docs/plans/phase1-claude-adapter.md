@@ -1,7 +1,11 @@
 # Next slice: a Claude CLI adapter with independently verified completion
 
-Status: **planned, 2026-10-02.** Nothing below is implemented or live-verified yet.
-Baseline: `efd0a53`. This expands item 5 of [Phase 1](phase1-headless-backends.md)
+Status: **steps 0–8 complete, 2026-10-02**, including the live adapter gate on Claude
+2.1.286 ([evidence](../../reviews/2026-10-02-claude-step8/README.md)); presentation and
+headless acceptance remain pending (see the
+[presentation handoff](phase1-presentation-handoff.md)). The text below is the plan as
+written before implementation, with the delivered commits recorded under "Atomic
+implementation sequence". Baseline: `efd0a53`. This expands item 5 of [Phase 1](phase1-headless-backends.md)
 and consumes the [Claude adapter handoff](phase1-claude-adapter-handoff.md); it
 does not replace that handoff or the [project contracts](../decisions/README.md).
 The Codex slice ([plan](phase1-codex-adapter.md)) is the structural template only:
@@ -108,15 +112,23 @@ constructs success.
 Each item is one commit with implementation, tests, registry updates and evidence
 together; its review record lives under `reviews/2026-10-02-claude-stepN/`.
 
-0. This plan.
-1. Freeze the supported protocol profile with bounded live evidence (evidence only).
-2. Extract vendor-neutral executable resolution (no behavior change).
-3. Isolated invocation preparation, argv-size guard and advisor suppression.
-4. Private codec, offline, replaying frozen captures.
-5. `ClaudeCliBackend`: auth preflight, reconciliation, real-child fixture tests.
-6. Composed story acceptance through the real adapter.
-7. Persistent behavioral mutations for Claude-specific acceptance mistakes.
-8. Live adapter gate, Claude reference update and presentation handoff.
+0. This plan (`f001e0b`).
+1. Freeze the supported protocol profile with bounded live evidence, evidence only
+   (`6df40dd`; [record](../../reviews/2026-10-02-claude-step1/README.md)).
+2. Extract vendor-neutral executable resolution, no behavior change (`87d2e3b`).
+3. Isolated invocation preparation, argv-size guard and advisor suppression
+   (`918c330`). Error-first; one red was the author's test, not the code.
+4. Private codec, offline, replaying frozen captures (`bf59ad1`). Ten red tests
+   against a skeleton, then implemented.
+5. `ClaudeCliBackend`: auth preflight, reconciliation, real-child fixture tests
+   (`0d2656a`). **Written before its tests; no red phase.**
+6. Composed story acceptance through the real adapter (`60bdd15`). **No red phase**,
+   same reason.
+7. Persistent behavioral mutations for Claude-specific acceptance mistakes
+   (`32fce53`): eleven mutants, which also stand as the sensitivity evidence for
+   steps 5–6; one survived its first run and exposed a test gap that was fixed.
+8. Live adapter gate, Claude reference update and presentation handoff (this slice's
+   last commit).
 
 ## Per-commit TDD and completion checklist
 

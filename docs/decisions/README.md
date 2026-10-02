@@ -296,8 +296,8 @@ a build/test dependency violates this decision even if the source uses it.
 ### BACKENDS-001 Two co-equal subscription CLI backends
 
 **Partial: Codex adapter, composed real-child fixture acceptance and bounded live
-adapter acceptance implemented; Claude adapter and composed real-child fixture
-acceptance implemented; Claude live acceptance and both live headless gates
+adapter acceptance implemented; Claude adapter, composed real-child fixture
+acceptance and bounded live adapter acceptance implemented; both live headless gates
 pending.**
 Claude and Codex are peers behind inward-owned ports, not primary and
 fallback. Use stateless calls and subscription auth; never silently switch to paid
@@ -374,6 +374,20 @@ yields to the final payload, a text block in an enforce-retry stream is never
 narrative, and provenance carries only what the stream reported. Fixture payloads
 are synthetic: offline enforcement, not live fiction.
 
+Claude adapter step 8 (2026-10-02) is the bounded live adapter gate on 2.1.286:
+bundled outline, cast, opening and continuation through the real adapter and use
+cases, plus one controlled cancellation, with the shipped invocation (no `--model`).
+All four generations were accepted with one result each, empty stderr, a payload
+byte-equal to the CLI's compact `structured_output` and previews equal to it as JSON;
+the opening took the CLI's enforce-retry route (two messages) and committed only the
+structured payload; no advisor content block appeared; the cancelled call left the
+game unchanged with the direct child PID and workspace absent afterwards. Evidence:
+`reviews/2026-10-02-claude-step8/`. This is not headless acceptance, persistence or
+presentation, covers one account/org and one run, and says nothing about `--model`,
+rate limits, descendants or server-side work after cancellation. The harness's first
+advisor counter over-reported (substring match on slash-command listings); the
+structural recount is in the evidence. Both live headless gates remain pending.
+
 ### PRODUCT-001 Standalone TUI, persistence, export, and image boundary
 
 **Pending.** Rust TUI and headless demo replace the Qt/calibre host. Keep vendor and
@@ -447,8 +461,8 @@ caps. Persistence and live subprocess adapters remain pending.
 
 **Partial: scanner, scripted generation, vendor-neutral process supervision,
 Codex protocol decoding and Backend reconciliation, and offline Claude event
-decoding and Backend reconciliation, enforced; Claude live evidence and
-presentation acceptance pending.** `StreamingStringField` extracts only the requested root
+decoding and Backend reconciliation, enforced, with a bounded live adapter run for
+each backend; presentation acceptance pending.** `StreamingStringField` extracts only the requested root
 string, across valid UTF-8 chunks. It is a preview scanner, not JSON validation.
 Escapes and surrogate pairs are decoded; lone surrogate halves become U+FFFD
 because Rust cannot represent them as scalar values. Truncated escape sequences

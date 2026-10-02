@@ -1,0 +1,8 @@
+# Preserve captured bytes exactly.
+live-attempt/**/stdout.jsonl -text -whitespace
+live-attempt/**/stderr.bin -text -whitespace
+live-attempt/**/argv.bin -text -whitespace
+live-attempt/**/payload.json -text -whitespace
+live-attempt/**/prompt.txt -text -whitespace
+live-attempt/**/instructions.txt -text -whitespace
+live-attempt/**/emissions.json -text -whitespace

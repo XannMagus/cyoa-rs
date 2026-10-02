@@ -1,0 +1,3 @@
+Create the world for an adventure game based on this description:
+
+A quiet harbour where a missing bell draws together a cast of 3–5 distinct playable characters. Exactly two members of the entire cast are named Ajax: two unrelated lighthouse keepers with different histories. Both are playable characters, and each has the name exactly Ajax, without a surname, station label or epithet in the name field. They are distinct people, not alternative versions of one person.

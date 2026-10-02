@@ -1,0 +1,9 @@
+{
+  "accepted": true,
+  "generation_calls": 5,
+  "committed_turns": 2,
+  "cancelled": true,
+  "state_unchanged": true,
+  "cancelled_progress": [],
+  "error": "generation cancelled"
+}

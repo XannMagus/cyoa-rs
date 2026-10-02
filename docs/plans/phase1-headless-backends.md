@@ -1,8 +1,8 @@
 # Phase 1 — real CLI backends and headless play
 
-Status: **transport foundations repaired; Codex adapter and composed fixture
-acceptance and bounded live adapter gate implemented; Claude adapter and headless
-play/acceptance pending.**
+Status: **transport foundations repaired; Codex and Claude adapters, composed
+fixture acceptance and bounded live adapter gates implemented; presentation and
+headless play/acceptance pending.**
 Written 2026-09-25 against `3dfce38`; implementation initially landed in
 `c8c7f8b`..`a28ba66`, then underwent the [process-supervisor review](../../reviews/2026-09-25-process-supervisor/README.md)
 and [documented repairs](../../reviews/2026-09-25-supervisor-repairs/README.md).
@@ -11,9 +11,10 @@ with bounded bundled-request probes; neither is a finished Backend. Transport
 tests exercise Linux, not a
 live vendor protocol. Items 4/5 may proceed in either order; neither is primary.
 The next adapter slice is expanded in [the Codex implementation plan](phase1-codex-adapter.md).
-Its steps 1–7 are complete; continue with the
-[Claude adapter handoff](phase1-claude-adapter-handoff.md). Presentation and both
-backends' live headless gates remain independent obligations.
+Its steps 1–7 are complete, and so is the
+[Claude adapter slice](phase1-claude-adapter.md) (steps 0–8, live gate 2026-10-02).
+Continue with the [presentation/headless handoff](phase1-presentation-handoff.md);
+both backends' live headless gates remain independent obligations.
 This is the next implementation sequence after
 [Phase 0 acceptance](../decisions/phase0-acceptance.md). It refines
 [PLAN.md](../../PLAN.md)'s walking-skeleton phase; project contracts and explicit

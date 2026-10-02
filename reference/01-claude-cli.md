@@ -116,6 +116,25 @@ The two `*-system-prompt-file` flags are documented and recognized by 2.1.286
 (`evidence/flag-recognition.txt`; they fail with "file not found" for a missing path,
 where an unknown flag fails with "unknown option"), but were not run with a model.
 
+**Live adapter acceptance (2026-10-02, `ClaudeCliBackend` on 2.1.286).** The real
+adapter, `GenerationEngine` and `StoryUseCases` ran the bundled outline, cast, opening
+and continuation requests plus one controlled cancellation against the authenticated
+`claude`, with the shipped invocation (no `--model`). Evidence and independent recount:
+[`reviews/2026-10-02-claude-step8/`](../reviews/2026-10-02-claude-step8/README.md).
+Observed: all four accepted (24–33 s each, empty stderr, one `result` last, payload
+byte-equal to the compact `structured_output`, previews equal to it as JSON, 338–759
+preview fragments per call); the opening took the enforce-retry route live (message 1
+`thinking`+`text`, message 2 `StructuredOutput`; first preview only after message 2
+began, 19.5 s in); zero advisor content blocks in all five calls; usage summed across
+both messages of the two-message call (input 27807, cached 13065); observed provenance
+`claude-sonnet-5-5` / `firstParty` with a list-price estimate only; the live cast was
+exactly two playable characters named exactly `Ajax` plus seven distinct NPCs; the
+continuation returned `upcoming_events: null`. The controlled cancel (1 s after the
+child was seen, before any preview) returned in about 15 ms, the direct child PID and
+workspace were absent afterwards, and the whole game state was unchanged. Caveats: one
+run, one account/org; direct-child cleanup only; the harness's first advisor counter
+over-reported (substring match on slash-command listings; structural count is 0).
+
 **Not established by this profile.** Exit codes on signal or budget ceiling; the shape
 of rate-limit/overload failures; behavior of 2.1.286 under a bad `--model` (not
 re-run); `--model` itself (never passed); streams with a rejected-then-retried

@@ -1,11 +1,15 @@
 # Claude adapter handoff after Codex step 7
 
 Scope: Phase 1 item 5, independent of the later presentation/headless gate.
-Claude and Codex remain co-equal. Claude's existing live observations are in
-`reference/01-claude-cli.md`; this handoff adds no Claude live verification.
+Claude and Codex remain co-equal. Claude's live observations are in
+`reference/01-claude-cli.md`.
 
-The sequenced implementation plan for this handoff is
-[phase1-claude-adapter.md](phase1-claude-adapter.md).
+**Status (2026-10-02): this handoff is fulfilled.** The sequenced implementation plan
+is [phase1-claude-adapter.md](phase1-claude-adapter.md); its steps 0–8 are complete,
+including the live adapter gate ([evidence](../../reviews/2026-10-02-claude-step8/README.md)).
+The text below is the original brief and is kept as written; where it says no live
+verification was added, that was true when it was written. Next:
+[presentation/headless handoff](phase1-presentation-handoff.md).
 
 ## Starting point
 

@@ -24,8 +24,13 @@ acceptance through real fixture children, persistent adapter mutations, and the
 2026-10-02 live outline/cast/opening/continuation/cancellation gate on Codex 0.159.3.
 See the [live evidence](reviews/2026-10-02-codex-step7/README.md) and
 [Claude adapter handoff](docs/plans/phase1-claude-adapter-handoff.md).
-Claude's implementation and both backends' headless acceptance remain pending;
-the Claude slice is planned in [its adapter plan](docs/plans/phase1-claude-adapter.md).
+The Claude slice ([its adapter plan](docs/plans/phase1-claude-adapter.md)) is
+complete on the same terms: a frozen 2.1.286 profile, isolated preparation, a private
+codec, Backend reconciliation, composed story acceptance through real fixture
+children, eleven persistent mutations, and the 2026-10-02 live outline/cast/opening/
+continuation/cancellation gate ([evidence](reviews/2026-10-02-claude-step8/README.md)).
+Both backends' headless acceptance remains pending; see the
+[presentation/headless handoff](docs/plans/phase1-presentation-handoff.md).
 
 ## Context
 
