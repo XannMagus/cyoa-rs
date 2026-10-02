@@ -836,8 +836,25 @@
   },
   {
     "id": "PRODUCT-001",
-    "coverage": "pending",
-    "checks": []
+    "coverage": "partial",
+    "checks": [
+      {
+        "package": "cyoa-cli",
+        "target": "controller_story",
+        "tests": [
+          "complete_controller_story_preserves_context_retry_identity_chapters_and_rewind",
+          "controller_zero_npcs_and_both_restore_policies_use_active_limits"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "controller_backends",
+        "tests": [
+          "both_adapters_preserve_controller_state_through_failure_cancel_retry_and_quit",
+          "both_joined_adapter_successes_are_rejected_if_cancel_wins_acceptance"
+        ]
+      }
+    ]
   },
   {
     "id": "PROMPTS-003",

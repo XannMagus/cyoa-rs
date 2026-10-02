@@ -56,7 +56,13 @@ cancellation with observed PID/workspace cleanup and unchanged game state
 ([evidence](reviews/2026-10-02-codex-step7/README.md)). The
 [Claude adapter slice](docs/plans/phase1-claude-adapter.md) is complete on the same
 terms. Next is the [presentation/headless handoff](docs/plans/phase1-presentation-handoff.md),
-with an independent live headless gate per backend. No playable UI is claimed.
+with an independent live headless gate per backend. The
+[controller/worker slice](docs/plans/phase1-controller-and-worker.md) is now
+implemented offline: canonical session ownership, typed request IDs/revisions,
+stale/cancelled-result rejection, bounded progress, thread join and explicit retry.
+The complete story and both actual adapters are exercised through controlled child
+fixtures; all 34 behavioral mutations are retained. Headless I/O and demo are next.
+No playable UI is claimed.
 
 - `cyoa-core`: checked domain types, namesake-preserving casts and stable IDs,
   summary deltas, typed limits, owned protagonist selection, turns, chapters and
@@ -72,7 +78,8 @@ with an independent live headless gate per backend. No playable UI is claimed.
   local advisor-suppression instruction live in `backend_compat::claude_cli`. Codex
   and Claude each have isolated request preparation, a private protocol codec and an
   executable `Backend` reconciled with the supervisor.
-- `cyoa-presentation`: terminal help/version output; gameplay UI is pending.
+- `cyoa-presentation`: session controller, owned worker/runtime and terminal
+  help/version output; gameplay UI and headless input/output are pending.
 - `cyoa-cli`: executable and composition root.
 - `reference/`: source material and each backend's separate live-verification record.
 
@@ -82,8 +89,8 @@ lowercase rather than full Python casefold. [Project contracts](docs/decisions/R
 override conflicting Python behavior. Nonblank business-text types normalize input;
 audit text preserves every byte. Raw JSON and narrative previews cannot authorize a
 turn commit. Errors and observed cancellation leave the complete game unchanged;
-retry is explicit. Canonical UI ownership and stale-worker rejection remain future
-presentation work.
+retry is explicit. The terminal-independent controller enforces canonical ownership
+and stale-worker rejection; terminal input/rendering remain future presentation work.
 
 `GenerationTemplates::bundled()` validates configuration structure and owns fallible
 rendering. World, cast and turn requests use the same instance. The opening identity

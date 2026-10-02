@@ -410,7 +410,8 @@ protects it at the real-child boundary.
 
 ### PRODUCT-001 Standalone TUI, persistence, export, and image boundary
 
-**Pending.** Rust TUI and headless demo replace the Qt/calibre host. Keep vendor and
+**Partial: terminal-independent controller/worker enforced; headless/demo, TUI,
+persistence and export pending.** Rust TUI and headless demo replace the Qt/calibre host. Keep vendor and
 filesystem work in adapters, one generation in flight, UI-owned canonical state,
 worker progress messages, cancellable children, cached narrative wrapping. Do not
 hold a state mutex during a model call. Save atomically with backup and versioned
@@ -418,6 +419,14 @@ migrations; Markdown/EPUB export are in v1, images are behind a disabled port in
 Acceptance: scripted lifecycle/cancellation/state-unchanged-on-error tests, frozen
 save migrations, original-limit round trips, synthetic UI-event/cache tests, and
 export fixtures. PLAN retains the full build order and acceptance scenarios.
+
+Controller/worker item 6 is implemented (2026-10-02) through presentation session
+and real-thread tests, the unchanged Phase 0 fixture through the full runtime,
+and actual Claude/Codex adapters using synthetic real-child streams in CLI tests.
+Three presentation mutations protect stale acceptance, cancelled success and a
+second commit of a returned turn (34 total). This establishes no playable command,
+stdin/signal shutdown, saves, rendering cache or exports. Evidence:
+`reviews/2026-10-02-controller-worker/README.md`.
 
 ## Review discipline
 
@@ -495,7 +504,7 @@ otherwise successful generation. Headless input/signal shutdown remains pending.
 **Partial: scanner, scripted generation, vendor-neutral process supervision,
 Codex protocol decoding and Backend reconciliation, and offline Claude event
 decoding and Backend reconciliation, enforced, with a bounded live adapter run for
-each backend; presentation acceptance pending.** `StreamingStringField` extracts only the requested root
+each backend; controller/worker acceptance enforced, headless I/O pending.** `StreamingStringField` extracts only the requested root
 string, across valid UTF-8 chunks. It is a preview scanner, not JSON validation.
 Escapes and surrogate pairs are decoded; lone surrogate halves become U+FFFD
 because Rust cannot represent them as scalar values. Truncated escape sequences

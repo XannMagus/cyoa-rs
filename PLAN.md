@@ -33,7 +33,9 @@ Both backends' headless acceptance remains pending; see the
 [presentation/headless handoff](docs/plans/phase1-presentation-handoff.md).
 The next slice is expanded in the
 [controller and worker implementation plan](docs/plans/phase1-controller-and-worker.md).
-It is planned, not implemented; headless input/output follows that slice.
+The controller/worker slice is implemented and tested offline through both adapter
+fixtures; headless input/output follows it. See the
+[implementation record](reviews/2026-10-02-controller-worker/README.md).
 
 ## Context
 

@@ -4,14 +4,16 @@ Written 2026-10-02 after the Claude adapter slice (steps 0–8) landed on
 `phase1-claude-adapter`. Scope: Phase 1 items 6–9 of
 [the Phase 1 plan](phase1-headless-backends.md) — presentation lifecycle and worker
 ownership, headless/demo commands, the extended contract gate and the live headless
-gate. **None of that is started.** Both backends are co-equal; neither adapter's live
+gate. **Controller/worker item 6 is implemented offline; headless items 7–9 remain
+pending.** Both backends are co-equal; neither adapter's live
 adapter gate is the headless gate. Read PLAN.md, the project contracts and the
 required-test registry first, as always.
 
 The next slice now has a detailed
 [controller and worker plan](phase1-controller-and-worker.md), written after the
 Claude review repairs (`9801577`, `d22db81`). Those repairs raise the retained
-mutation baseline from 29 to 31; the controller remains unimplemented.
+mutation baseline from 29 to 31. The controller/worker adds three more (34 total);
+see its [implementation record](../../reviews/2026-10-02-controller-worker/README.md).
 
 ## What exists to build on
 
@@ -50,9 +52,10 @@ mutation baseline from 29 to 31; the controller remains unimplemented.
 
 ## Obligations that remain
 
-1. Items 6–8: controller and worker ownership with typed request IDs and base
-   revisions; memory-only headless and demo commands; extend the gate (keep all 29
-   original mutations plus both review-repair mutations (31 total), add presentation ones).
+1. Items 7–8: memory-only headless and demo commands, input/output/signal shutdown
+   and binary acceptance; extend the gate while retaining all 34 current mutations.
+   Item 6's typed IDs/revisions, canonical ownership, joining and cancellation are
+   implemented; they do not establish stoppable terminal input.
 2. Item 9, **once per backend**: roughly six turns through a chapter break with real
    player input, a real cancel then explicit retry, and honest reporting of what was
    not observed. A fixture or an adapter-gate run does not substitute.

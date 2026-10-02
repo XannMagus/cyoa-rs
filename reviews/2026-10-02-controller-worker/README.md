@@ -4,6 +4,10 @@ Implementation follows `docs/plans/phase1-controller-and-worker.md` from `d22db8
 Offline evidence only; headless commands, input shutdown and both live headless
 gates remain pending.
 
+Affected contracts: ARCH-001/002, STATE-001, STREAM-001, TEXT-001, BACKENDS-001,
+ACCEPTANCE-001, IDENTITY-001/002, PROMPTS-001, LIMITS-001, CHAPTER-001 and
+PRODUCT-001. ARCH-003 and PROMPTS-003 boundaries remain unchanged.
+
 ## Step 1 — canonical lifecycle
 
 New session tests ran against an incomplete controller whose completion method
@@ -61,3 +65,20 @@ green-first; sensitivity is independently checked by persistent mutations.
 Three new mutants target stale worker acceptance, cancellation disposition, and
 committing an already-committed snapshot again. The original 31 are retained.
 Compiler failures, absent tests and stale patches remain harness failures.
+
+## Step 5 — completed offline gate and headless handoff
+
+Final commands passed: `cargo fmt --all -- --check`, warnings-denied workspace
+Clippy, and `bash scripts/check_contracts.sh` (registry, architecture, workspace
+tests/doc tests, all 34 isolated behavioral mutations). The summary extracted from
+the actual final gate output is in `validation.txt`. An earlier gate attempt caught
+a jq conjunction typo in the expanded mutation manifest validator; that harness
+failure was fixed and the complete shared command rerun successfully.
+
+Additional green-first edge regressions check obsolete cast completion after an
+outline edit and quick-action text reaching the same Player intent/log as typed
+input. No existing regression expectation was weakened or removed. PRODUCT-001
+is partial for this terminal-independent controller/worker only. Remaining work:
+item 7's headless/demo syntax and composition, stoppable stdin/signal handling,
+preview/final output reconciliation and binary acceptance; then one live headless
+gate per vendor. No new authenticated generation, TUI, persistence or exports.

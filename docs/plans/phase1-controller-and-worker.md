@@ -1,6 +1,7 @@
 # Phase 1 — controller and worker implementation plan
 
-Status: planned, no controller or worker implemented. Written 2026-10-02 against
+Status: implemented offline through steps 1–5, with the completion handoff below.
+Written 2026-10-02 against
 `d22db81` on `phase-1/controller-and-worker`, after both adapters and Claude's
 review repairs passed their gates. This expands item 6 of
 [the Phase 1 sequence](phase1-headless-backends.md). Item 7 (headless/demo I/O) follows
@@ -9,8 +10,18 @@ it; item 9 remains a separate authenticated gate for each backend.
 Read PLAN.md, the decision catalog and required-test registry first. Relevant
 contracts: ARCH-001/002/003, STATE-001, STREAM-001, TEXT-001, BACKENDS-001,
 ACCEPTANCE-001, IDENTITY-001/002, PROMPTS-001/003, LIMITS-001 and CHAPTER-001.
-This plan refines existing decisions; it does not change game behavior or coverage
-claims. Tests named/described here are proposals, registered only when implemented.
+This plan refines existing decisions; it does not change game behavior.
+The implemented tests are registered in the decision catalog. See the
+[implementation evidence](../../reviews/2026-10-02-controller-worker/README.md).
+
+Implementation commits: `a5cfd72` (controller), `641f9ba` (worker/runtime),
+`6e2bec0` (composed story), `0619a38` (both adapter fixtures and mutations).
+Public runtime intent lives in `runtime.rs` alongside `session.rs` and `worker.rs`.
+Five originally planned worker TDD cases were added green-first; the evidence
+record distinguishes those from observed red/green controller/mailbox tests.
+The retained mutation baseline is now 34, including three presentation regressions.
+Headless parsing, stoppable stdin/signal handling, demo and both live headless gates
+remain pending. No new authenticated inference was run for this slice.
 
 ## Deliverable and boundary
 

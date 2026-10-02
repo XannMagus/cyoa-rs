@@ -1,8 +1,8 @@
 # Phase 1 — real CLI backends and headless play
 
 Status: **transport foundations repaired; Codex and Claude adapters, composed
-fixture acceptance and bounded live adapter gates implemented; presentation and
-headless play/acceptance pending.**
+fixture acceptance and bounded live adapter gates implemented; controller/worker
+implemented offline; headless play/acceptance pending.**
 Written 2026-09-25 against `3dfce38`; implementation initially landed in
 `c8c7f8b`..`a28ba66`, then underwent the [process-supervisor review](../../reviews/2026-09-25-process-supervisor/README.md)
 and [documented repairs](../../reviews/2026-09-25-supervisor-repairs/README.md).
@@ -402,7 +402,9 @@ with a fake executable is never labelled an authenticated vendor result.
 
 Detailed next-slice design and commit/test sequence:
 [controller and worker implementation plan](phase1-controller-and-worker.md).
-This design is still planned; the requirements below remain authoritative.
+Implemented offline through the controller, thread and both-adapter fixture tests;
+see its implementation record. Headless input and signal shutdown remain item 7.
+The requirements below remain authoritative.
 
 Expose parsed command intent from presentation so `main.rs` can wire concrete
 adapters without presentation importing infrastructure. Inject typed use cases or
