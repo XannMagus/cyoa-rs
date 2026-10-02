@@ -1,0 +1,22 @@
+   Compiling cyoa-cli v0.1.0 (/home/xann/cyoa-rs/cyoa-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.53s
+     Running tests/demo_retry.rs (target/debug/deps/demo_retry-5fe7ff80eca52ee3)
+
+running 1 test
+test cancellation_after_demo_consumption_retries_each_stage_and_preserves_all_passages ... FAILED
+
+failures:
+
+---- cancellation_after_demo_consumption_retries_each_stage_and_preserves_all_passages stdout ----
+
+thread 'cancellation_after_demo_consumption_retries_each_stage_and_preserves_all_passages' (373) panicked at cyoa-cli/tests/demo_retry.rs:58:5:
+demo outline retry regression: consumed outline advanced the replay
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    cancellation_after_demo_consumption_retries_each_stage_and_preserves_all_passages
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.02s
+
+error: test failed, to rerun pass `-p cyoa-cli --test demo_retry`

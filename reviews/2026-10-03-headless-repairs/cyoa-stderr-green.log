@@ -1,0 +1,10 @@
+   Compiling cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+   Compiling cyoa-cli v0.1.0 (/home/xann/cyoa-rs/cyoa-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.19s
+     Running tests/headless.rs (target/debug/deps/headless-bfa1369b010ec315)
+
+running 1 test
+test full_undrained_stderr_does_not_block_error_exit ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 13 filtered out; finished in 0.02s
+

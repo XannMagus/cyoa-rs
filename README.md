@@ -66,7 +66,8 @@ implemented offline: canonical session ownership, typed request IDs/revisions,
 stale/cancelled-result rejection, bounded progress, thread join and explicit retry.
 The complete story and both actual adapters are exercised through controlled child
 fixtures. Linux headless play and the credential-free demo are implemented;
-the gate retains all 34 mutations and adds an idle-SIGINT check (35 total).
+the gate now runs 37 mutations, including final error-report backpressure and
+demo cancellation/retry regressions ([repair evidence](reviews/2026-10-03-headless-repairs/README.md)).
 TUI, saves/autosave and export remain pending.
 
 - `cyoa-core`: checked domain types, namesake-preserving casts and stable IDs,

@@ -1,0 +1,9 @@
+   Compiling cyoa-cli v0.1.0 (/home/xann/cyoa-rs/cyoa-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.41s
+     Running tests/demo_retry.rs (target/debug/deps/demo_retry-5fe7ff80eca52ee3)
+
+running 1 test
+test cancellation_after_demo_consumption_retries_each_stage_and_preserves_all_passages ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
