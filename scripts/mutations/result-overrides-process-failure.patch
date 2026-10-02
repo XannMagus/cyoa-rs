@@ -1,0 +1,20 @@
+--- a/cyoa-infrastructure/src/backends/claude_cli/adapter.rs
++++ b/cyoa-infrastructure/src/backends/claude_cli/adapter.rs
+@@ -121,7 +121,16 @@ fn reconcile(
+         ),
+         Err(failure) => (failure.candidate.map(|c| c.payload), Err(failure.error)),
+     };
+-    let outcome = transport.map_err(|error| transport_error(error, candidate.clone()))?;
++    let outcome = match transport {
++        Err(SupervisorError::NonzeroExit {
++            exit_code,
++            diagnostics,
++        }) if candidate.is_some() => ProcessOutcome {
++            exit_code: 0 * exit_code,
++            diagnostics,
++        },
++        other => other.map_err(|error| transport_error(error, candidate.clone()))?,
++    };
+     if cancel.is_cancelled() {
+         return Err(cancelled(candidate, outcome.diagnostics));
+     }

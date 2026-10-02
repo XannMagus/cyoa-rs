@@ -180,7 +180,7 @@ fn result_cannot_override_nonzero_exit_and_previews_are_tentative_evidence() {
             &CancellationSource::default().token(),
             &mut |s| seen.push(s.to_owned()),
         )
-        .unwrap_err();
+        .expect_err("process failure override regression");
     assert!(matches!(error, BackendError::Generation { .. }), "{error}");
     assert!(error.to_string().contains('7'));
     assert_eq!(evidence(&error).0, payload(), "the candidate is retained");
@@ -298,7 +298,7 @@ fn preflight_rejects_non_subscription_unknown_and_conflicting_auth_without_gener
             fixture.config.clone(),
             &CancellationSource::default().token(),
         )
-        .unwrap_err();
+        .expect_err(&format!("auth acceptance regression: {status}"));
         assert!(
             matches!(error, BackendError::Unavailable { .. }),
             "{status}"

@@ -1,0 +1,12 @@
+--- a/cyoa-infrastructure/src/backends/claude_cli/protocol.rs
++++ b/cyoa-infrastructure/src/backends/claude_cli/protocol.rs
+@@ -311,7 +311,8 @@ impl Protocol {
+                     message: stream.message,
+                     index,
+                 };
+-                let correlated = kind == BlockKind::Payload && stream.preview == Preview::Open(key);
++                let _ = (kind, key);
++                let correlated = true;
+                 Ok((correlated && !fragment.is_empty()).then(|| fragment.to_owned()))
+             }
+             "content_block_stop" => {

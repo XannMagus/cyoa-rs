@@ -1,0 +1,14 @@
+--- a/cyoa-infrastructure/src/generation/templates/rendering.rs
++++ b/cyoa-infrastructure/src/generation/templates/rendering.rs
+@@ -123,7 +123,10 @@ impl GenerationTemplates {
+             "turn.world_and_protagonist_template",
+             TemplateContext::WorldAndProtagonist(world, player),
+         )?);
+-        Ok(Instructions::new(parts.join("\n")))
++        Ok(Instructions::new(format!(
++            "{}\nDo not consult the advisor tool for this task. Answer directly.",
++            parts.join("\n")
++        )))
+     }
+     pub fn turn_prompt(
+         &self,

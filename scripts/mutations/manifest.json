@@ -149,5 +149,104 @@
     "test": "application_receives_complete_candidate_and_diagnostics_on_adapter_timeout",
     "file": "cyoa-infrastructure/src/backends/codex_cli/adapter.rs",
     "failure_contains": "diagnostic evidence regression"
+  },
+  {
+    "id": "forward-uncorrelated-preview",
+    "decision": "STREAM-001",
+    "package": "cyoa-infrastructure",
+    "target": "lib",
+    "test": "backends::claude_cli::protocol::tests::frozen_completed_variants_emit_expected_previews_payload_usage_and_provenance",
+    "file": "cyoa-infrastructure/src/backends/claude_cli/protocol.rs",
+    "failure_contains": "correlated preview only"
+  },
+  {
+    "id": "share-block-indices-across-messages",
+    "decision": "STREAM-001",
+    "package": "cyoa-infrastructure",
+    "target": "lib",
+    "test": "backends::claude_cli::protocol::tests::frozen_completed_variants_emit_expected_previews_payload_usage_and_provenance",
+    "file": "cyoa-infrastructure/src/backends/claude_cli/protocol.rs",
+    "failure_contains": "enforced-payload-in-second-message"
+  },
+  {
+    "id": "ignore-is-error-result",
+    "decision": "BACKENDS-001",
+    "package": "cyoa-infrastructure",
+    "target": "claude_backend",
+    "test": "is_error_result_is_rejected_after_cleanup",
+    "file": "cyoa-infrastructure/src/backends/claude_cli/protocol.rs",
+    "failure_contains": "protocol acceptance regression"
+  },
+  {
+    "id": "accept-stream-without-result",
+    "decision": "BACKENDS-001",
+    "package": "cyoa-infrastructure",
+    "target": "claude_backend",
+    "test": "stream_without_a_result_is_rejected_after_cleanup",
+    "file": "cyoa-infrastructure/src/backends/claude_cli/protocol.rs",
+    "failure_contains": "protocol acceptance regression"
+  },
+  {
+    "id": "accept-duplicate-result",
+    "decision": "BACKENDS-001",
+    "package": "cyoa-infrastructure",
+    "target": "claude_backend",
+    "test": "duplicate_result_is_rejected_after_cleanup",
+    "file": "cyoa-infrastructure/src/backends/claude_cli/protocol.rs",
+    "failure_contains": "protocol acceptance regression"
+  },
+  {
+    "id": "reserialize-structured-output",
+    "decision": "TEXT-001",
+    "package": "cyoa-infrastructure",
+    "target": "lib",
+    "test": "backends::claude_cli::protocol::tests::result_payload_is_the_exact_span_not_a_reserialization",
+    "file": "cyoa-infrastructure/src/backends/claude_cli/protocol.rs",
+    "failure_contains": "exact span regression"
+  },
+  {
+    "id": "result-overrides-process-failure",
+    "decision": "BACKENDS-001",
+    "package": "cyoa-infrastructure",
+    "target": "claude_backend",
+    "test": "result_cannot_override_nonzero_exit_and_previews_are_tentative_evidence",
+    "file": "cyoa-infrastructure/src/backends/claude_cli/adapter.rs",
+    "failure_contains": "process failure override regression"
+  },
+  {
+    "id": "accept-api-key-auth",
+    "decision": "BACKENDS-001",
+    "package": "cyoa-infrastructure",
+    "target": "claude_backend",
+    "test": "preflight_rejects_non_subscription_unknown_and_conflicting_auth_without_generation",
+    "file": "cyoa-infrastructure/src/backends/claude_cli/adapter.rs",
+    "failure_contains": "auth acceptance regression"
+  },
+  {
+    "id": "discard-claude-candidate-evidence",
+    "decision": "BACKENDS-001",
+    "package": "cyoa-infrastructure",
+    "target": "claude_backend",
+    "test": "application_receives_candidate_and_diagnostics_on_adapter_timeout",
+    "file": "cyoa-infrastructure/src/backends/claude_cli/adapter.rs",
+    "failure_contains": "candidate evidence regression"
+  },
+  {
+    "id": "discard-claude-diagnostic-evidence",
+    "decision": "BACKENDS-001",
+    "package": "cyoa-infrastructure",
+    "target": "claude_backend",
+    "test": "application_receives_candidate_and_diagnostics_on_adapter_timeout",
+    "file": "cyoa-infrastructure/src/backends/claude_cli/adapter.rs",
+    "failure_contains": "diagnostic evidence regression"
+  },
+  {
+    "id": "leak-advisor-into-shared-instructions",
+    "decision": "ARCH-003",
+    "package": "cyoa-infrastructure",
+    "target": "claude_story_acceptance",
+    "test": "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context",
+    "file": "cyoa-infrastructure/src/generation/templates/rendering.rs",
+    "failure_contains": "shared instructions leak regression"
   }
 ]

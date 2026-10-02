@@ -1,0 +1,11 @@
+--- a/cyoa-infrastructure/src/backends/claude_cli/protocol.rs
++++ b/cyoa-infrastructure/src/backends/claude_cli/protocol.rs
+@@ -364,7 +364,7 @@ impl Protocol {
+         };
+         // Neither a payload nor subtype "success" overrides is_error (the live
+         // bad-model result carried subtype "success" with is_error true).
+-        if is_error {
++        if false && is_error {
+             return Err(fail("$.is_error", ErrorKind::VendorError));
+         }
+         if subtype != "success" {

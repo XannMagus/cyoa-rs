@@ -568,6 +568,20 @@ fixture/setup panic cannot count. Protocol tests check cleanup before rejection.
 Optional `CYOA_MUTATION_EVIDENCE_DIR` retains baseline/mutant/restored logs.
 These are offline adapter protections, not additional live-backend evidence.
 
+Claude adapter step 7 (2026-10-02) adds eleven mutations, for twenty-nine total,
+each bound to an exact registered test and a specific assertion message:
+preview forwarding from an uncorrelated block, block indices shared across
+messages (STREAM-001); ignoring `is_error`, accepting a stream with no result,
+accepting a duplicate result, a result overriding a nonzero exit, accepting
+non-subscription auth, and discarding candidate or diagnostic evidence on an
+application-visible timeout (BACKENDS-001); re-serializing `structured_output`
+(TEXT-001); and leaking the advisor suppression into shared instructions
+(ARCH-003). The first run of the last mutant **survived**: its test inspected only
+the world request while the patched line builds turn instructions, so the unit test
+now also covers the cast request and the composed acceptance test checks every
+request the child receives. All existing mutations remain; the patch for the Claude
+schema adapter still applies. Offline protections, not live-backend evidence.
+
 Review repair R4 (2026-09-25): transport diagnostics belong to
 `cyoa-application::diagnostics`, not domain text. Invalid outline/cast/turn responses
 and cancellation after a typed generation retain those bytes through the application

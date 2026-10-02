@@ -1,0 +1,16 @@
+--- a/cyoa-infrastructure/src/backends/claude_cli/protocol.rs
++++ b/cyoa-infrastructure/src/backends/claude_cli/protocol.rs
+@@ -167,6 +167,13 @@ impl Protocol {
+         match self.state {
+             State::Finished(done) => Ok(done),
+             State::Failed(failure) => Err(failure),
++            State::Streaming(_) => Ok(Completion {
++                candidate: Candidate {
++                    payload: "{}".to_owned(),
++                },
++                usage: TokenUsage::default(),
++                provenance: GenerationProvenance::default(),
++            }),
+             _ => Err(Failure {
+                 error: error(self.records + 1, "$", ErrorKind::Incomplete),
+                 candidate: None,

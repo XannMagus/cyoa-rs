@@ -233,7 +233,7 @@ fn result_payload_is_the_exact_span_not_a_reserialization() {
     let span = r#"{"b" : 1,  "a":"é",  "c":[1 , 2]}"#;
     let result = result_with(&format!(r#""structured_output":{span}"#));
     let done = run(&[INIT, &result]).outcome.unwrap();
-    assert_eq!(done.candidate.payload, span);
+    assert_eq!(done.candidate.payload, span, "exact span regression");
 }
 
 #[test]

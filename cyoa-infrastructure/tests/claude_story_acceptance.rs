@@ -960,8 +960,16 @@ fn composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context(
             .as_array()
             .unwrap();
         assert!(!required.contains(&json!("character_updates")));
-        assert!(!request.instructions.to_lowercase().contains("advisor"));
-        assert!(!request.prompt.to_lowercase().contains("advisor"));
+    }
+    // The advisor suppression belongs to the Claude invocation alone; no request
+    // kind's shared instructions or prompt may carry it.
+    for (index, request) in fixture.captures.iter().enumerate() {
+        for text in [&request.instructions, &request.prompt] {
+            assert!(
+                !text.to_lowercase().contains("advisor"),
+                "shared instructions leak regression: advisor text in request {index}"
+            );
+        }
     }
     assert!(fixture.captures[3].prompt.contains("Ajax the sailmaker"));
     assert!(fixture.captures[4].prompt.contains("Still guarding"));

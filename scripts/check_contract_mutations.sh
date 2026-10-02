@@ -7,7 +7,7 @@ bash scripts/test_mutation_outcome.sh
 manifest=scripts/mutations/manifest.json
 registry=docs/decisions/required-tests.json
 jq -e --slurpfile registry "$registry" '
-  type == "array" and length >= 18
+  type == "array" and length >= 29
   and ([.[].id] | length == (unique | length))
   and ([.[].id] as $ids | all([
     "name-only-deduplication", "duplicate-opening-request",
@@ -16,11 +16,16 @@ jq -e --slurpfile registry "$registry" '
     "accept-failed-process", "swallow-reader-error", "disable-cancellation-wake",
     "discard-cleanup-cause", "accept-ineligible-message", "accept-missing-terminal",
     "accept-conflicting-terminal", "adapt-shared-schema", "adapt-peer-schema",
-    "discard-candidate-evidence", "discard-diagnostic-evidence"
+    "discard-candidate-evidence", "discard-diagnostic-evidence",
+    "forward-uncorrelated-preview", "share-block-indices-across-messages",
+    "ignore-is-error-result", "accept-stream-without-result", "accept-duplicate-result",
+    "reserialize-structured-output", "result-overrides-process-failure",
+    "accept-api-key-auth", "discard-claude-candidate-evidence",
+    "discard-claude-diagnostic-evidence", "leak-advisor-into-shared-instructions"
   ][]; . as $id | $ids | index($id) != null))
   and all(.[];
     (.id | test("^[a-z-]+$"))
-    and (if (.id | test("^(accept-ineligible-message|accept-missing-terminal|accept-conflicting-terminal|adapt-shared-schema|adapt-peer-schema|discard-candidate-evidence|discard-diagnostic-evidence)$")) then
+    and (if (.id | test("^(accept-ineligible-message|accept-missing-terminal|accept-conflicting-terminal|adapt-shared-schema|adapt-peer-schema|discard-candidate-evidence|discard-diagnostic-evidence|forward-uncorrelated-preview|share-block-indices-across-messages|ignore-is-error-result|accept-stream-without-result|accept-duplicate-result|reserialize-structured-output|result-overrides-process-failure|accept-api-key-auth|discard-claude-candidate-evidence|discard-claude-diagnostic-evidence|leak-advisor-into-shared-instructions)$")) then
       (.failure_contains | type == "string" and length > 0) else true end)
     and (.file | test("^cyoa-[a-z]+/src/[a-z_/]+\\.rs$"))
     and (. as $mutation | any($registry[0][];

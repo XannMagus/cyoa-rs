@@ -550,6 +550,19 @@ mod tests {
                 "shared text mentions the advisor"
             );
         }
+        let world = cyoa_core::world::WorldOutline::new(
+            cyoa_core::text::WorldTitle::new("Glass").unwrap(),
+            cyoa_core::text::WorldDescription::new("A desert of glass").unwrap(),
+        );
+        let cast = templates
+            .cast_request(&brief, &world, &Limits::default())
+            .unwrap();
+        for text in [cast.instructions().as_str(), cast.prompt().as_str()] {
+            assert!(
+                !text.to_lowercase().contains("advisor"),
+                "shared text mentions the advisor"
+            );
+        }
         let schema =
             serde_json::to_string(&templates.turn_schema(&Limits::default()).unwrap()).unwrap();
         assert!(!schema.to_lowercase().contains("advisor"));

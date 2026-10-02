@@ -1,0 +1,12 @@
+--- a/cyoa-infrastructure/src/backends/claude_cli/protocol.rs
++++ b/cyoa-infrastructure/src/backends/claude_cli/protocol.rs
+@@ -185,6 +185,9 @@ impl Protocol {
+         }
+         let kind = str_field(&value, "type", n, "$.type")?;
+         if let State::Finished(done) = &self.state {
++            if kind == "result" {
++                return Ok(None);
++            }
+             let kind = if kind == "result" {
+                 ErrorKind::DuplicateResult
+             } else {

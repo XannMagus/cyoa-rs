@@ -1,0 +1,11 @@
+--- a/cyoa-infrastructure/src/backends/claude_cli/protocol.rs
++++ b/cyoa-infrastructure/src/backends/claude_cli/protocol.rs
+@@ -246,7 +246,7 @@ impl Protocol {
+         match str_field(event, "type", n, "$.event.type")? {
+             "message_start" => {
+                 stream.message = MessageOrdinal(stream.message.0 + 1);
+-                stream.blocks.clear();
++                // mutated: block indices shared across messages
+                 if matches!(stream.preview, Preview::Open(key) if key.message != stream.message) {
+                     stream.preview = Preview::Closed;
+                 }

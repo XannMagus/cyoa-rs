@@ -1,0 +1,13 @@
+--- a/cyoa-infrastructure/src/backends/claude_cli/protocol.rs
++++ b/cyoa-infrastructure/src/backends/claude_cli/protocol.rs
+@@ -356,7 +356,9 @@ impl Protocol {
+             .map(RawValue::get)
+             .filter(|span| span.starts_with('{'))
+             .map(|span| Candidate {
+-                payload: span.to_owned(),
++                payload: serde_json::from_str::<Value>(span)
++                    .map(|v| v.to_string())
++                    .unwrap_or_default(),
+             });
+         let fail = |location: &str, kind: ErrorKind| Rejection {
+             error: error(n, location, kind),
