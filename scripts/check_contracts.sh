@@ -2,6 +2,7 @@
 # Project contracts override Python parity. Keep this gate shared by CI and local work.
 set -euo pipefail
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.."
+bash scripts/check_test_tools.sh
 registry=docs/decisions/required-tests.json
 contract=docs/decisions/README.md
 
@@ -70,7 +71,8 @@ while IFS=$'\t' read -r package target; do
 done < <(jq -r '[.[].checks[] | [.package, .target]] | unique[] | @tsv' "$registry")
 
 bash scripts/check_architecture.sh
-cargo test --workspace --locked --offline
+cargo nextest run --workspace --lib --bins --tests --profile workspace --locked --offline
+cargo test --workspace --doc --locked --offline
 bash scripts/check_contract_mutations.sh
 bash scripts/check_domain_mutations.sh
 printf '%s\n' 'Project contracts verified. Pending feature obligations remain listed in docs/decisions.'

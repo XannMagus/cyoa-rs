@@ -74,6 +74,11 @@ the gate; see `docs/testing/domain-mutations.md`. Never allowlist a behavior-cha
 survivor. Review and justify behavior-equivalent exclusions; keep compile-invalid
 mutations and per-test nontermination failures distinct from assertion failures.
 
+Workspace runtime tests use pinned cargo-nextest with the `workspace` profile
+(no retries, no fail-fast); Cargo still runs all doctests/compile-fail examples.
+Keep both mutation gates and the separate `domain-mutations` profile intact.
+Use `bash scripts/check_contracts.sh` for the shared local/CI completion gate.
+
 Avoid Python for project tooling. Prefer shell scripts for small checks or Rust
 utilities for larger tools. The copied Python under `reference/calibre/` is source
 reference for the port, not a tooling dependency.

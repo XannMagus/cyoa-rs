@@ -10,7 +10,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
-      - name: Install pinned domain mutation tools
+      - name: Install pinned test and mutation tools
         uses: taiki-e/install-action@v2
         with:
           tool: cargo-mutants@27.1.0,cargo-nextest@0.9.132

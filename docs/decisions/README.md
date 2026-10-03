@@ -21,7 +21,8 @@ every contributor follows the same contract.
 
 `required-tests.json` maps decision IDs to actual Rust test names. Run
 `bash scripts/check_contracts.sh`: it rejects missing/ignored registered tests,
-runs all workspace tests (including compile-fail examples), and checks dependency
+runs all workspace runtime tests with Nextest and all doctests (including
+compile-fail examples) with Cargo, and checks dependency
 boundaries. CI runs the same command. Tests use project expectations, never a
 Python implementation as the oracle for a deliberate deviation.
 
@@ -303,6 +304,15 @@ mutations; equivalent scrutiny of infrastructure/integration is not required.
 New domain regressions cover chapter ordinals, style changes without history
 changes, NPC relationships, optional turn/audit fields and cost values. Existing
 contract expectations and registrations remain intact.
+
+User-authorized workspace runner change (2026-10-03): the shared local/CI gate
+uses pinned Nextest for every workspace library, binary and integration runtime
+test, with retries disabled and fail-fast disabled in the `workspace` profile.
+Cargo separately executes all workspace doctests, including compile-fail examples.
+Registered-test discovery and exact targeted mutation checks retain their Cargo
+commands and strict outcome policy. Both existing mutation gates remain mandatory;
+the domain-only sweep keeps its distinct `domain-mutations` profile and package
+scope. Shared tool-version checks run before the full gate and standalone sweep.
 
 Every generated compilable mutation must be detected; no surviving-mutation
 baseline is allowed. Only reviewed behavior-equivalent mutations may be excluded,

@@ -157,13 +157,29 @@ bash scripts/check_contracts.sh
 
 The shared local/CI gate requires Bash, jq, Git, tar and the Rust toolchain; no
 Python is involved. It checks registered test presence, ignored tests, coverage
-claims, inward dependencies, workspace tests and compile-fail examples. It also
+claims and inward dependencies, then runs workspace runtime tests with Nextest
+and doctests (including compile-fail examples) with Cargo. The `workspace`
+Nextest profile disables retries and runs the complete suite even after a failure.
+Pinned tool versions are checked before starting the gate. It also
 copies the current source to a temporary directory and verifies that 37 deliberate
 regressions fail their exact registered behavioral tests. Compiler failures and
 missing tests do not count as detected regressions. The isolated build uses cached
 Cargo dependencies after Clippy; the first mutation build costs additional time.
 Run `bash scripts/check_contract_mutations.sh` for only that check.
 Set `CYOA_MUTATION_EVIDENCE_DIR` to retain each baseline, mutant and restored log.
+
+For ordinary tests without the mutation sweeps:
+
+```sh
+cargo nextest run --workspace --lib --bins --tests --profile workspace --locked --offline
+cargo test --workspace --doc --locked --offline
+```
+
+Cargo remains responsible for registered-test discovery and the isolated targeted
+mutation checks, whose strict runtime-failure parser is unchanged. The benchmark
+and backpressure repair evidence are in
+[the benchmark](reviews/2026-10-03-nextest-benchmark/README.md) and
+[the headless repair](reviews/2026-10-03-headless-backpressure/README.md).
 
 The gate also runs **automatically generated mutations across `cyoa-core`**, using
 only the domain's own tests. Install the pinned tools once as above. Run

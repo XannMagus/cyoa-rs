@@ -1,0 +1,9 @@
+{
+  "cargo_mutants_version": "27.1.0",
+  "success": 0,
+  "total_mutants": 176,
+  "caught": 98,
+  "missed": 0,
+  "unviable": 78,
+  "timeout": 0
+}

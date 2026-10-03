@@ -3,11 +3,7 @@
 set -euo pipefail
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.."
 
-if [[ $(cargo mutants --version) != 'cargo-mutants 27.1.0' ]] ||
-   [[ $(cargo nextest --version | head -1) != cargo-nextest\ 0.9.132\ * ]]; then
-  printf '%s\n' 'Install cargo-mutants 27.1.0 and cargo-nextest 0.9.132; see docs/testing/domain-mutations.md.' >&2
-  exit 1
-fi
+bash scripts/check_test_tools.sh
 
 # Always do a full domain sweep and a baseline. No diff filter or survivor allowance.
 cargo mutants --package cyoa-core --test-package cyoa-core --test-workspace=false \

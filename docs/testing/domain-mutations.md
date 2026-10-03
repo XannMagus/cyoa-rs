@@ -17,6 +17,10 @@ bash scripts/check_domain_mutations.sh
 ```
 
 The domain sweep also runs in `bash scripts/check_contracts.sh`, locally and in CI.
+That gate now uses Nextest's separate `workspace` profile for runtime tests and
+Cargo for doctests. Both the full gate and this standalone sweep use
+`scripts/check_test_tools.sh` to check the same pinned versions. The workspace
+profile does not change the domain-only scope or timeout policy below.
 CI installs the same tool versions and uploads `mutants.out` even after failure.
 The suite needs no vendor credentials, live model calls or Python. Once Cargo's
 cache is populated, builds/tests are locked and offline. The tools themselves

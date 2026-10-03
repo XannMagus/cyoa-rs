@@ -1112,6 +1112,12 @@ stdout" — async buys nothing and forces the TUI into a runtime bridge.
 
 ## Testing
 
+2026-10-03 user decision: Nextest is the workspace runtime runner in the shared
+local/CI gate, using its `workspace` profile with no retries and no fail-fast.
+Cargo still runs every doctest/compile-fail example and checks registered-test
+presence. Both existing mutation gates remain mandatory, with domain mutation
+testing limited to `cyoa-core` and its separate timeout profile (TESTING-001).
+
 2026-10-03 user-authorized headless backpressure repair (PRODUCT-001/STREAM-001):
 temporary full stdout/stderr pipes now retain output while the event loop observes
 input, SIGINT and worker completion. Raw descriptor writes avoid hidden buffering.
