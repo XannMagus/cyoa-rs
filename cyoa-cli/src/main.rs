@@ -161,12 +161,6 @@ fn play<G: StoryGenerator + Send + 'static>(
     let mut input = cyoa_presentation::terminal::TerminalInput::new()?;
     let mut story = cyoa_presentation::terminal::Flags::new(io::stdout())?;
     let mut control = cyoa_presentation::terminal::Flags::new(io::stderr())?;
-    cyoa_presentation::headless::run(
-        &mut runtime,
-        &mut input,
-        story.get_mut(),
-        control.get_mut(),
-        demo,
-    )?;
+    cyoa_presentation::headless::run(&mut runtime, &mut input, &mut story, &mut control, demo)?;
     Ok(())
 }

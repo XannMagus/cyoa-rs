@@ -1112,6 +1112,17 @@ stdout" — async buys nothing and forces the TUI into a runtime bridge.
 
 ## Testing
 
+2026-10-03 user-authorized headless backpressure repair (PRODUCT-001/STREAM-001):
+temporary full stdout/stderr pipes now retain output while the event loop observes
+input, SIGINT and worker completion. Raw descriptor writes avoid hidden buffering.
+Per-stream queues cap pending output (including a render burst) at 1 MiB, use a
+one-second no-progress timeout, and preserve exact per-stream ordering. Successful
+close requires a final drain within one absolute second after worker join;
+overflow/broken pipes/stalls remain errors. Oversized individual narrative or
+diagnostic displays may exceed the render-burst cap even with a healthy reader;
+vendor capture limits stay unchanged. See the decision catalog and regression
+registry for the precise policy and evidence.
+
 Explicit user decision (2026-10-03): automated Rust mutation testing is required
 for the domain's own tests. `scripts/check_domain_mutations.sh` runs pinned
 cargo-mutants/nextest on `cyoa-core` within the contract gate. Keep the existing

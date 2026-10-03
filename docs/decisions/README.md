@@ -456,8 +456,8 @@ Headless item 7 adds shipped `play --headless --backend claude|codex` and
 opening call, explicit retry, action numbering, literal slash input and read-only
 canonical inspection. Memory-only status is explicit. Linux readiness polling
 and SIGINT flags avoid a blocked input thread; EOF, quit, invalid input and output
-errors close/join workers. Nonblocking output treats pipe backpressure as an I/O
-failure. Previews have tentative/discarded/final boundaries; divergent final text
+errors close/join workers. Nonblocking output retains temporary pipe backpressure
+in bounded queues, as specified by the 2026-10-03 decision below. Previews have tentative/discarded/final boundaries; divergent final text
 replaces them and matching text is not duplicated. Thirteen binary tests exercise
 demo and both actual adapters over synthetic children, not vendor auth. Item 8
 retains every existing mutation and adds bounded idle-SIGINT coverage (35 total).
@@ -556,6 +556,29 @@ Final CLI error reporting on Linux reacquires nonblocking stderr after terminal
 guards restore the original descriptor flags. Reporting is best effort: a full
 pipe must not prevent exit after worker cleanup. The binary regression retains
 an open, undrained pipe reader and requires a bounded error exit.
+
+User-authorized backpressure repair (2026-10-03), reviewed by Astra: temporary
+`WouldBlock` preserves every unwritten byte and never waits inside rendering.
+Linux terminal writes bypass std's hidden line buffer. The headless loop pumps
+at most 64 KiB / 32 write attempts per stream per pump, retaining per-stream order;
+there is no cross-stream ordering guarantee when stdout and stderr are merged.
+Input/SIGINT and worker polling remain active during backpressure. Each stream has
+a 1 MiB queue cap and a one-second no-progress limit; only successfully written
+bytes reset that clock. The cap also applies to a single rendering burst before
+the loop pumps: an oversized narrative/diagnostic display explicitly errors even
+with a healthy reader. Backend capture limits are independent and are unchanged.
+No output is silently truncated to fit. Broken pipes, zero-byte writes, overflow
+and expired bounds return errors after worker cleanup. Once the runtime closes
+and joins its worker, final output must drain within one absolute second (even
+under trickling progress) before success; SIGINT can interrupt this drain.
+Final error reporting remains immediate, best effort and nonblocking.
+
+The buffered-input regression now submits a >2 KiB whitespace-padded `/help`,
+`/inspect`, `/quit` batch with stdin kept open, asserting each command's output.
+Separate tests retain the 400-help stress, full real stdout/stderr pipes with
+resumed readers, exact Unicode/partial-write delivery, finite pumping, overflow,
+permanent stalls, cancellation independent of quit, and bounded final drain.
+The existing full-undrained-stderr regression and its behavioral mutation remain.
 
 **Partial: scanner, scripted generation, vendor-neutral process supervision,
 Codex protocol decoding and Backend reconciliation, and offline Claude event

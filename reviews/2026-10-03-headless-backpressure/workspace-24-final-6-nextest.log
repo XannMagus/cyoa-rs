@@ -1,0 +1,343 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+────────────
+ Nextest run ID 07f3dfd3-a3b4-4d2b-a58b-cd1254323f4c with nextest profile: default
+    Starting 337 tests across 30 binaries
+        PASS [   0.006s] (  1/337) cyoa-application::cancellation notifier_registered_after_cancel_already_fired_still_runs_immediately
+        PASS [   0.006s] (  2/337) cyoa-application::cancellation a_panicking_notifier_does_not_skip_later_notifiers_or_poison_state
+        PASS [   0.006s] (  3/337) cyoa-application::cancellation cancellation_is_shared_across_threads_and_isolated_between_requests
+        PASS [   0.007s] (  4/337) cyoa-application::cancellation notifier_registered_before_cancel_runs_once_when_cancel_fires
+        PASS [   0.008s] (  5/337) cyoa-application::cancellation scoped_notifications_handle_reuse_late_registration_and_reentrant_callbacks
+        PASS [   0.008s] (  6/337) cyoa-application diagnostics::tests::transport_diagnostics_preserve_non_utf8_bytes_exactly_and_lossy_display_never_panics
+        PASS [   0.009s] (  7/337) cyoa-application::cancellation dropping_a_subscription_releases_resources_without_waiting_for_cancellation
+        PASS [   0.011s] (  8/337) cyoa-cli::headless missing_chosen_executable_does_not_probe_other_backend
+        PASS [   0.019s] (  9/337) cyoa-cli::headless command_surface_rejects_demo_vendor_settings_and_unimplemented_ui
+        PASS [   0.007s] ( 10/337) cyoa-core game::tests::first_turn_cannot_open_a_chapter
+        PASS [   0.005s] ( 11/337) cyoa-core game::tests::initial_summary_gives_protagonist_and_unmet_npcs
+        PASS [   0.034s] ( 12/337) cyoa-cli::headless chosen_backend_is_required_and_demo_never_resolves_a_vendor
+        PASS [   0.035s] ( 13/337) cyoa-cli::headless buffered_multiple_lines_are_read_without_waiting_for_more_kernel_bytes
+        PASS [   0.006s] ( 14/337) cyoa-core game::tests::later_turn_retitles_its_chapter_and_rewind_restores_the_earlier_title
+        PASS [   0.009s] ( 15/337) cyoa-core game::tests::new_chapter_marker_starts_a_second_chapter
+        PASS [   0.007s] ( 16/337) cyoa-core game::tests::rewind_rejects_undoing_more_turns_than_exist
+        PASS [   0.006s] ( 17/337) cyoa-core game::tests::start_and_restore_keep_the_selected_world_and_protagonist_together
+        PASS [   0.005s] ( 18/337) cyoa-core game::tests::turn_count_rejects_zero
+        PASS [   0.005s] ( 19/337) cyoa-core game::tests::world_namesakes_survive_into_summary_and_remain_addressable_by_id
+        PASS [   0.004s] ( 20/337) cyoa-core limits::tests::defaults_match_calibre_constants
+        PASS [   0.058s] ( 21/337) cyoa-cli::controller_story complete_controller_story_preserves_context_retry_identity_chapters_and_rewind
+        PASS [   0.023s] ( 22/337) cyoa-core game::tests::prose_context_matches_a_naive_transcription_of_the_python_filter
+        PASS [   0.005s] ( 23/337) cyoa-core limits::tests::zero_is_accepted_for_count_limits
+        PASS [   0.006s] ( 24/337) cyoa-core limits::tests::zero_is_rejected_for_nonzero_limits
+        PASS [   0.004s] ( 25/337) cyoa-core text::tests::exchange_text_preserves_every_byte_including_empty_and_whitespace
+        PASS [   0.004s] ( 26/337) cyoa-core text::tests::type_names_supply_readable_error_labels
+        PASS [   0.004s] ( 27/337) cyoa-core turn::tests::all_blank_or_empty_is_rejected
+        PASS [   0.004s] ( 28/337) cyoa-core turn::tests::casefold_duplicate_actions_are_dropped_preserving_order
+        PASS [   0.058s] ( 29/337) cyoa-cli::headless_output cancellation_and_quit_join_active_worker_while_control_output_is_blocked
+        PASS [   0.004s] ( 30/337) cyoa-core turn::tests::cost_amount_rejects_negative_and_nonfinite
+        PASS [   0.004s] ( 31/337) cyoa-core turn::tests::fewer_kinds_than_actions_fills_from_the_remainder_in_original_order
+        PASS [   0.004s] ( 32/337) cyoa-core turn::tests::more_than_three_prefers_one_action_per_kind_in_original_order
+        PASS [   0.004s] ( 33/337) cyoa-core world::tests::distinct_playable_namesakes_satisfy_the_minimum
+        PASS [   0.004s] ( 34/337) cyoa-core world::tests::exact_records_collapse_within_each_role_but_shared_names_survive
+        PASS [   0.069s] ( 35/337) cyoa-cli::controller_story controller_zero_npcs_and_both_restore_policies_use_active_limits
+        PASS [   0.004s] ( 36/337) cyoa-core world::tests::npc_limit_applies_to_surviving_entries_including_zero
+        PASS [   0.004s] ( 37/337) cyoa-core world::tests::npcs_are_capped_at_the_configured_limit
+        PASS [   0.005s] ( 38/337) cyoa-core world::tests::selection_is_checked_against_the_world_it_owns
+        PASS [   0.004s] ( 39/337) cyoa-core world::tests::zero_npc_limit_does_not_consume_candidates
+        PASS [   0.005s] ( 40/337) cyoa-core::decision_contracts text_002_unicode_lowercase_is_not_python_casefold
+        PASS [   0.005s] ( 41/337) cyoa-core world::tests::too_few_playable_characters_is_rejected
+        PASS [   0.005s] ( 42/337) cyoa-core::domain_invariants changing_style_preserves_committed_story_and_other_game_settings
+        PASS [   0.005s] ( 43/337) cyoa-core::domain_invariants chapters_expose_zero_based_numbers_and_one_based_ordinals
+        PASS [   0.004s] ( 44/337) cyoa-core::domain_invariants cost_amount_preserves_valid_values_and_rejects_nonfinite_or_negative_values
+        PASS [   0.004s] ( 45/337) cyoa-core::domain_invariants npc_relationships_survive_initial_summary_construction
+        PASS [   0.004s] ( 46/337) cyoa-core::domain_invariants optional_turn_fields_and_audit_record_survive_commit
+        PASS [   0.004s] ( 47/337) cyoa-core::restore_limits current_limits_apply_to_every_snapshot_and_survive_commit_and_rewind
+        PASS [   0.078s] ( 48/337) cyoa-cli::demo_retry cancellation_after_demo_consumption_retries_each_stage_and_preserves_all_passages
+        PASS [   0.004s] ( 49/337) cyoa-core::restore_limits empty_restored_games_use_the_selected_limits_for_their_opening_summary
+        PASS [   0.004s] ( 50/337) cyoa-core::restore_limits original_limits_remain_available_after_restoring_with_current_settings
+        PASS [   0.004s] ( 51/337) cyoa-core::restore_limits raising_the_limit_allows_future_events_without_recovering_discarded_ones
+        PASS [   0.004s] ( 52/337) cyoa-core::summary_merge blank_updates_preserve_durable_fields_and_leave_previous_untouched
+        PASS [   0.004s] ( 53/337) cyoa-core::summary_merge cap_keeps_last_thirty_and_supports_a_configured_limit
+        PASS [   0.004s] ( 54/337) cyoa-core::summary_merge cast_equality_includes_presentation_order
+        PASS [   0.004s] ( 55/337) cyoa-core::summary_merge cast_suffixes_nonadjacent_duplicate_ids_without_dropping_characters
+        PASS [   0.004s] ( 56/337) cyoa-core::summary_merge cast_supports_id_lookup_without_changing_order_after_rename_or_insertion
+        PASS [   0.004s] ( 57/337) cyoa-core::summary_merge character_ids_follow_calibre_slug_rules_and_character_not_byte_limit
+        PASS [   0.004s] ( 58/337) cyoa-core::summary_merge details_establish_the_invariant_before_infallible_character_construction
+        PASS [   0.004s] ( 59/337) cyoa-core::summary_merge derived_id_collisions_get_a_unique_suffix
+        PASS [   0.004s] ( 60/337) cyoa-core::summary_merge each_nonblank_character_field_changes_independently
+        PASS [   0.004s] ( 61/337) cyoa-core::summary_merge domain_constructors_reject_invalid_state
+        PASS [   0.004s] ( 62/337) cyoa-core::summary_merge events_accumulate_deduplicate_and_consolidate_in_order
+        PASS [   0.004s] ( 63/337) cyoa-core::summary_merge exact_deduplication_includes_identity_and_all_character_details
+        PASS [   0.004s] ( 64/337) cyoa-core::summary_merge first_update_wins_including_new_and_old_name_aliases
+        PASS [   0.004s] ( 65/337) cyoa-core::summary_merge explicit_ids_are_preserved_and_duplicate_names_match_the_last_entry
+        PASS [   0.005s] ( 66/337) cyoa-core::summary_merge exact_duplicates_collapse_before_suffixes_are_assigned
+        PASS [   0.005s] ( 67/337) cyoa-core::summary_merge merging_deduplicates_before_truncating_and_preserves_configured_limit
+        PASS [   0.006s] ( 68/337) cyoa-core::summary_merge id_match_wins_over_conflicting_name_match
+        PASS [   0.006s] ( 69/337) cyoa-core::summary_merge name_aliases_only_last_for_the_current_turn
+        PASS [   0.005s] ( 70/337) cyoa-core::summary_merge rename_keeps_identity_and_name_fallback_ignores_invented_id
+        PASS [   0.006s] ( 71/337) cyoa-core::summary_merge present_delta_values_cannot_be_blank
+        PASS [   0.007s] ( 72/337) cyoa-core::summary_merge new_characters_need_name_and_durable_information
+        PASS [   0.005s] ( 73/337) cyoa-core::summary_merge suffixing_preserves_existing_ids_and_repaired_ids_support_future_updates
+        PASS [   0.005s] ( 74/337) cyoa-core::summary_merge world_and_situation_can_change_without_losing_characters
+        PASS [   0.005s] ( 75/337) cyoa-core::summary_merge upcoming_events_null_is_not_empty
+        PASS [   0.006s] ( 76/337) cyoa-infrastructure backends::claude_cli::protocol::tests::duplicate_control_fields_make_a_record_ambiguous_and_are_rejected
+        PASS [   0.005s] ( 77/337) cyoa-infrastructure backends::claude_cli::protocol::tests::first_failure_is_sticky_and_later_records_cannot_repair_it
+        PASS [   0.005s] ( 78/337) cyoa-infrastructure backends::claude_cli::protocol::tests::malformed_required_fields_and_unsupported_records_are_rejected_not_ignored
+        PASS [   0.004s] ( 79/337) cyoa-infrastructure backends::claude_cli::protocol::tests::malformed_terminal_metadata_keeps_the_exact_candidate_span
+        PASS [   0.007s] ( 80/337) cyoa-infrastructure backends::claude_cli::protocol::tests::live_failure_captures_are_rejected_at_the_expected_record
+        PASS [   0.004s] ( 81/337) cyoa-infrastructure backends::claude_cli::protocol::tests::ping_is_tolerated_and_a_stream_error_event_is_a_vendor_error
+        PASS [   0.010s] ( 82/337) cyoa-infrastructure backends::claude_cli::protocol::tests::frozen_error_variants_reject_with_located_reasons_and_candidate_evidence
+        PASS [   0.011s] ( 83/337) cyoa-infrastructure backends::claude_cli::protocol::tests::frozen_completed_variants_emit_expected_previews_payload_usage_and_provenance
+        PASS [   0.005s] ( 84/337) cyoa-infrastructure backends::claude_cli::protocol::tests::preview_is_forwarded_at_the_delta_record_and_never_waits_for_the_result
+        PASS [   0.005s] ( 85/337) cyoa-infrastructure backends::claude_cli::protocol::tests::result_payload_is_the_exact_span_not_a_reserialization
+        PASS [   0.005s] ( 86/337) cyoa-infrastructure backends::claude_cli::protocol::tests::usage_and_provenance_distinguish_unknown_from_zero_and_never_invent_cost
+        PASS [   0.005s] ( 87/337) cyoa-infrastructure backends::claude_cli::tests::a_configured_model_is_inserted_before_the_prompt_arguments
+        PASS [   0.004s] ( 88/337) cyoa-infrastructure backends::claude_cli::tests::invalid_model_home_config_dir_and_search_path_values_are_rejected
+        PASS [   0.004s] ( 89/337) cyoa-infrastructure backends::claude_cli::tests::prepared_request_has_exact_argv_environment_stdin_and_empty_workspace
+        PASS [   0.006s] ( 90/337) cyoa-infrastructure backends::claude_cli::tests::preparation_never_launches_the_selected_executable
+        PASS [   0.009s] ( 91/337) cyoa-infrastructure backends::claude_cli::tests::nul_and_oversize_arguments_fail_preparation_before_any_launch
+        PASS [   0.004s] ( 92/337) cyoa-infrastructure backends::codex_cli::adapter::tests::cancellation_at_acceptance_overrides_protocol_completion_without_emitting
+        PASS [   0.005s] ( 93/337) cyoa-infrastructure backends::codex_cli::adapter::tests::every_transport_failure_category_remains_distinct_and_never_emits
+        PASS [   0.018s] ( 94/337) cyoa-infrastructure backends::claude_cli::tests::advisor_suppression_is_local_to_the_claude_invocation
+        PASS [   0.006s] ( 95/337) cyoa-infrastructure backends::codex_cli::adapter::tests::nested_cleanup_retains_initiating_failure_payload_and_prefix_without_displaying_buffers
+        PASS [   0.018s] ( 96/337) cyoa-infrastructure backends::claude_cli::tests::narrative_stays_the_first_property_in_the_schema_argument
+        PASS [   0.005s] ( 97/337) cyoa-infrastructure backends::codex_cli::protocol::tests::first_failure_is_sticky_and_keeps_candidate_after_later_records
+        PASS [   0.018s] ( 98/337) cyoa-infrastructure backends::claude_cli::tests::public_generation_preparation_uses_one_rendered_request_for_prompt_and_schema
+        PASS [   0.005s] ( 99/337) cyoa-infrastructure backends::codex_cli::protocol::tests::framing_metadata_and_escaped_text_preserve_exact_candidate_bytes
+        PASS [   0.017s] (100/337) cyoa-infrastructure backends::claude_cli::tests::schema_argument_is_the_claude_adaptation_of_the_shared_schema_and_nothing_else
+        PASS [   0.006s] (101/337) cyoa-infrastructure backends::codex_cli::protocol::tests::frozen_live_story_captures_match_independent_payload_and_usage_expectations
+        PASS [   0.006s] (102/337) cyoa-infrastructure backends::codex_cli::protocol::tests::frozen_error_transcripts_reject_with_located_reasons_and_candidate_evidence
+        PASS [   0.005s] (103/337) cyoa-infrastructure backends::codex_cli::protocol::tests::invalid_payload_is_retained_and_never_repaired_or_accepted
+        PASS [   0.004s] (104/337) cyoa-infrastructure backends::codex_cli::protocol::tests::live_tool_canary_is_unsupported_even_though_the_cli_exited_successfully
+        PASS [   0.005s] (105/337) cyoa-infrastructure backends::codex_cli::protocol::tests::malformed_required_fields_and_unsupported_items_are_not_candidates
+        PASS [   0.004s] (106/337) cyoa-infrastructure backends::codex_cli::tests::executable_resolution_handles_absolute_relative_and_selected_path_names
+        PASS [   0.005s] (107/337) cyoa-infrastructure backends::codex_cli::protocol::tests::optional_telemetry_preserves_unknown_zero_and_normalizes_invalid_cache
+        PASS [   0.005s] (108/337) cyoa-infrastructure backends::codex_cli::protocol::tests::order_failures_and_end_of_stream_never_authorize_completion
+        PASS [   0.004s] (109/337) cyoa-infrastructure backends::codex_cli::tests::executable_search_skips_nonexecutables_and_resolves_empty_path_entries
+        PASS [   0.005s] (110/337) cyoa-infrastructure backends::codex_cli::tests::failed_schema_write_is_located_and_workspace_drop_cleans_up
+        PASS [   0.005s] (111/337) cyoa-infrastructure backends::codex_cli::tests::invalid_model_home_and_search_path_values_are_rejected
+        PASS [   0.006s] (112/337) cyoa-infrastructure backends::executable::tests::blank_nul_missing_and_non_file_executables_are_typed_errors
+        PASS [   0.006s] (113/337) cyoa-infrastructure backends::executable::tests::names_resolve_through_the_selected_path_to_a_canonical_file
+        PASS [   0.007s] (114/337) cyoa-infrastructure backends::codex_cli::tests::preparation_never_launches_the_selected_executable
+        PASS [   0.005s] (115/337) cyoa-infrastructure backends::executable::tests::string_and_path_validators_reject_blank_nul_and_relative_values
+        PASS [   0.138s] (116/337) cyoa-cli::headless_output initially_full_real_story_pipe_drains_exact_committed_narrative_on_exit
+        PASS [   0.004s] (117/337) cyoa-infrastructure backends::process::split_record_tests::a_single_complete_record_is_extracted_and_removed
+        PASS [   0.004s] (118/337) cyoa-infrastructure backends::process::split_record_tests::a_trailing_partial_record_without_newline_remains_buffered
+        PASS [   0.005s] (119/337) cyoa-infrastructure backends::process::split_record_tests::an_empty_record_between_two_newlines_is_preserved_as_empty
+        PASS [   0.004s] (120/337) cyoa-infrastructure backends::process::split_record_tests::crlf_records_keep_the_carriage_return_attached_to_the_record
+        PASS [   0.004s] (121/337) cyoa-infrastructure backends::process::split_record_tests::empty_buffer_yields_no_records_and_stays_empty
+        PASS [   0.004s] (122/337) cyoa-infrastructure backends::process::split_record_tests::feeding_bytes_across_multiple_calls_reassembles_a_split_record
+        PASS [   0.144s] (123/337) cyoa-cli::headless_output initially_full_real_control_pipe_recovers_without_losing_help_or_close
+        PASS [   0.004s] (124/337) cyoa-infrastructure backends::process::unix_impl::fault_tests::fatal_read_error_is_not_treated_as_would_block
+        PASS [   0.152s] (125/337) cyoa-cli::controller_backends both_joined_adapter_successes_are_rejected_if_cancel_wins_acceptance
+        PASS [   0.018s] (126/337) cyoa-infrastructure backends::codex_cli::tests::public_generation_preparation_uses_one_rendered_request_for_prompt_and_schema
+        PASS [   0.005s] (127/337) cyoa-infrastructure generation::backend_compat::codex_cli::tests::a_ref_with_a_union_sibling_is_rejected_at_its_location
+        PASS [   0.023s] (128/337) cyoa-infrastructure backends::codex_cli::tests::prepared_request_owns_schema_stdin_environment_and_workspace_until_transfer_drop
+        PASS [   0.007s] (129/337) cyoa-infrastructure generation::backend_compat::codex_cli::tests::adapted_turn_keeps_order_nullability_defaults_and_empty_strings
+        PASS [   0.010s] (130/337) cyoa-infrastructure backends::process::unix_impl::fault_tests::self_pipe_wakes_a_long_poll_without_removing_token_checks
+        PASS [   0.004s] (131/337) cyoa-infrastructure generation::backend_compat::codex_cli::tests::framing_matches_the_committed_discovery_capture_byte_for_byte
+        PASS [   0.008s] (132/337) cyoa-infrastructure generation::backend_compat::codex_cli::tests::bundled_schemas_match_independent_discovery_expectations
+        PASS [   0.004s] (133/337) cyoa-infrastructure generation::backend_compat::codex_cli::tests::malformed_property_map_is_a_located_preparation_error
+        PASS [   0.004s] (134/337) cyoa-infrastructure generation::backend_compat::codex_cli::tests::malformed_required_keyword_is_rejected_even_without_properties
+        PASS [   0.004s] (135/337) cyoa-infrastructure generation::backend_compat::codex_cli::tests::required_names_outside_properties_are_rejected_without_losing_constraints
+        PASS [   0.004s] (136/337) cyoa-infrastructure generation::backend_compat::codex_cli::tests::transformation_is_idempotent_and_leaves_schema_looking_annotations_opaque
+        PASS [   0.004s] (137/337) cyoa-infrastructure generation::backend_compat::codex_cli::tests::unsupported_dialects_and_structural_keywords_are_located_errors
+        PASS [   0.004s] (138/337) cyoa-infrastructure generation::backend_compat::codex_cli::tests::unsupported_schema_children_report_their_location_and_boolean_constraints_survive
+        PASS [   0.017s] (139/337) cyoa-infrastructure generation::backend_compat::claude_cli::tests::adapt_schema_strips_the_root_schema_key_and_nothing_else
+        PASS [   0.165s] (140/337) cyoa-cli::headless_output paused_control_reader_resumes_and_final_drain_delivers_every_help_once
+        PASS [   0.032s] (141/337) cyoa-infrastructure backends::process::unix_impl::fault_tests::setup_write_read_poll_and_exit_observation_failures_are_errors
+        PASS [   0.016s] (142/337) cyoa-infrastructure generation::schema::tests::schema_docs_placeholders_render_against_supplied_limits
+        PASS [   0.017s] (143/337) cyoa-infrastructure generation::schema::tests::shared_turn_schema_keeps_optional_character_updates
+        PASS [   0.016s] (144/337) cyoa-infrastructure generation::schema::tests::story_turn_schema_lists_narrative_first
+        PASS [   0.020s] (145/337) cyoa-infrastructure generation::templates::tests::configured_opening_continuation_and_bridge_match_complete_snapshots
+        PASS [   0.009s] (146/337) cyoa-infrastructure generation::templates::tests::malformed_sources_report_the_source_file
+        PASS [   0.036s] (147/337) cyoa-infrastructure generation::schema::tests::every_generated_object_schema_forbids_additional_properties
+        PASS [   0.018s] (148/337) cyoa-infrastructure generation::templates::tests::data_dependent_render_errors_are_values_with_template_locations
+        PASS [   0.019s] (149/337) cyoa-infrastructure generation::templates::tests::configured_turn_fragments_render_once_and_player_text_is_not_a_template
+        PASS [   0.037s] (150/337) cyoa-infrastructure generation::schema::tests::generic_schemas_declare_a_root_schema_key
+        PASS [   0.037s] (151/337) cyoa-infrastructure generation::schema::tests::schema_docs_cover_every_field_and_no_others
+        PASS [   0.019s] (152/337) cyoa-infrastructure generation::templates::tests::empty_schema_descriptions_remove_defaults_and_nested_overrides_apply
+        PASS [   0.019s] (153/337) cyoa-infrastructure generation::templates::tests::merged_configuration_drives_all_three_generation_requests
+        PASS [   0.020s] (154/337) cyoa-infrastructure generation::templates::tests::prompt_shape_rejects_missing_wrong_type_and_unknown_keys
+        PASS [   0.006s] (155/337) cyoa-infrastructure generation::templates::tests::toml_override_merges_per_key_not_per_file
+        PASS [   0.022s] (156/337) cyoa-infrastructure generation::templates::tests::startup_checks_the_zero_npc_branch_in_prompts_and_schema_docs
+        PASS [   0.021s] (157/337) cyoa-infrastructure generation::templates::tests::styles_reject_empty_tables_duplicate_keys_and_wrong_shapes
+        PASS [   0.025s] (158/337) cyoa-infrastructure generation::templates::tests::quick_actions_reject_dangling_references_and_empty_groups
+        PASS [   0.004s] (159/337) cyoa-infrastructure::backend_contract a_response_with_no_attached_diagnostics_reports_empty
+        PASS [   0.028s] (160/337) cyoa-infrastructure generation::templates::tests::quick_action_instructions_change_when_kinds_table_is_overridden
+        PASS [   0.004s] (161/337) cyoa-infrastructure::backend_contract cached_tokens_cannot_exceed_total_but_unknown_is_not_zero
+        PASS [   0.005s] (162/337) cyoa-infrastructure::backend_contract adapter_reported_invalid_cache_accounting_normalizes_to_unknown_over_a_real_process_boundary
+        PASS [   0.005s] (163/337) cyoa-infrastructure::backend_contract cancelling_from_inside_the_streamed_callback_returns_cancelled_with_diagnostics_seen_so_far
+        PASS [   0.005s] (164/337) cyoa-infrastructure::backend_contract empty_stdout_with_exit_zero_does_not_construct_a_false_success
+        PASS [   0.005s] (165/337) cyoa-infrastructure::backend_contract crlf_in_diagnostics_is_preserved_without_normalization
+        PASS [   0.017s] (166/337) cyoa-infrastructure generation::templates::tests::unknown_styles_use_configured_first_entry_and_blank_tone_is_omitted
+        PASS [   0.236s] (167/337) cyoa-cli::headless invalid_utf8_input_closes_active_worker_without_committing
+        PASS [   0.037s] (168/337) cyoa-infrastructure generation::templates::tests::schema_documentation_rejects_unknown_missing_and_invalid_entries
+        PASS [   0.035s] (169/337) cyoa-infrastructure generation::templates::tests::templates_reject_syntax_wrong_context_and_nested_typos
+        PASS [   0.026s] (170/337) cyoa-infrastructure generation::templates::tests::undefined_template_variable_is_a_render_error
+        PASS [   0.005s] (171/337) cyoa-infrastructure::backend_contract malformed_response_is_an_error_with_original_diagnostics
+        PASS [   0.007s] (172/337) cyoa-infrastructure::backend_contract fixture_reports_the_exact_argv_and_stdin_prompt_bytes_it_received
+        PASS [   0.007s] (173/337) cyoa-infrastructure::backend_contract fixture_round_trips_quotes_newlines_and_unicode_through_a_real_process_boundary
+        PASS [   0.007s] (174/337) cyoa-infrastructure::backend_contract non_utf8_stderr_diagnostics_survive_the_process_boundary_and_lossy_display_does_not_panic
+        PASS [   0.007s] (175/337) cyoa-infrastructure::backend_contract nonzero_exit_after_emitting_stdout_maps_to_generation_not_unavailable
+        PASS [   0.006s] (176/337) cyoa-infrastructure::backend_contract normalize_input_tokens_distinguishes_unknown_from_zero_and_repairs_only_invalid_cache
+        PASS [   0.005s] (177/337) cyoa-infrastructure::backend_contract with_diagnostics_attaches_transport_bytes_to_an_otherwise_successful_response
+        PASS [   0.005s] (178/337) cyoa-infrastructure::backend_contract successful_response_retains_the_exact_json_it_parsed
+        PASS [   0.006s] (179/337) cyoa-infrastructure::backend_contract successful_fixture_transport_attaches_both_captured_streams
+        PASS [   0.008s] (180/337) cyoa-infrastructure::backend_contract nonzero_exit_with_no_stdout_maps_to_unavailable_with_exact_stderr_bytes
+        PASS [   0.014s] (181/337) cyoa-infrastructure::claude_backend cancellation_from_a_preview_stops_the_live_child_and_keeps_the_evidence
+        PASS [   0.167s] (182/337) cyoa-infrastructure backends::claude_cli::protocol::tests::frozen_live_captures_match_independent_payload_preview_usage_and_provenance
+        PASS [   0.019s] (183/337) cyoa-infrastructure::claude_backend capped_output_preserves_prefix_metadata_and_a_structured_cause
+        PASS [   0.045s] (184/337) cyoa-infrastructure::backend_contract complete_only_cancellation_and_timeout_keep_explicit_candidate_without_preview
+        PASS [   0.031s] (185/337) cyoa-infrastructure::claude_backend complete_only_stream_emits_the_payload_once_after_cleanup
+        PASS [   0.032s] (186/337) cyoa-infrastructure::claude_backend cancellation_from_the_complete_callback_cannot_return_success
+        PASS [   0.034s] (187/337) cyoa-infrastructure::claude_backend ambiguous_payload_blocks_are_rejected_after_cleanup
+        PASS [   0.281s] (188/337) cyoa-cli::headless demo_full_story_exhaustion_and_idle_interrupt_are_credential_free
+        PASS [   0.054s] (189/337) cyoa-infrastructure::backend_contract every_backend_error_variant_maps_to_its_failure_kind_with_exact_diagnostics
+        PASS [   0.030s] (190/337) cyoa-infrastructure::claude_backend failed_auth_exit_is_unavailable_even_with_a_success_looking_status_on_stdout
+        PASS [   0.034s] (191/337) cyoa-infrastructure::claude_backend duplicate_result_is_rejected_after_cleanup
+        PASS [   0.032s] (192/337) cyoa-infrastructure::claude_backend final_payload_wins_when_it_disagrees_with_the_preview
+        PASS [   0.010s] (193/337) cyoa-infrastructure::claude_backend result_cannot_override_nonzero_exit_and_previews_are_tentative_evidence
+        PASS [   0.034s] (194/337) cyoa-infrastructure::claude_backend is_error_result_is_rejected_after_cleanup
+        PASS [   0.064s] (195/337) cyoa-infrastructure::claude_backend ambiguous_control_fields_cannot_authorize_success_at_the_real_boundary
+        PASS [   0.031s] (196/337) cyoa-infrastructure::claude_backend malformed_result_metadata_keeps_the_candidate_visible_to_the_application
+        PASS [   0.016s] (197/337) cyoa-infrastructure::claude_backend silent_cancellation_uses_a_child_handshake_and_pre_cancel_launches_nothing
+        PASS [   0.010s] (198/337) cyoa-infrastructure::claude_backend successful_response_forwards_previews_then_returns_exact_payload_usage_and_provenance
+        PASS [   0.037s] (199/337) cyoa-infrastructure::claude_backend preparation_failure_and_removed_executable_never_launch_a_generation
+        PASS [   0.033s] (200/337) cyoa-infrastructure::claude_backend stream_without_a_result_is_rejected_after_cleanup
+        PASS [   0.058s] (201/337) cyoa-infrastructure::claude_story_acceptance a_disagreeing_preview_is_shown_but_only_the_final_payload_is_committed
+        PASS [   0.061s] (202/337) cyoa-infrastructure::claude_story_acceptance an_enforce_retry_stream_commits_only_the_structured_payload
+        PASS [   0.414s] (203/337) cyoa-cli::headless broken_stdout_closes_worker_and_reports_io_failure
+        PASS [   0.096s] (204/337) cyoa-infrastructure::claude_story_acceptance composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context
+        PASS [   0.140s] (205/337) cyoa-infrastructure::claude_backend no_stdout_failure_and_invalid_protocol_preserve_bytes_with_distinct_categories
+        PASS [   0.067s] (206/337) cyoa-infrastructure::claude_story_acceptance zero_npc_limit_survives_cast_selection_opening_and_continuation
+        PASS [   0.072s] (207/337) cyoa-infrastructure::claude_story_acceptance real_workspace_cleanup_failure_preserves_the_game_and_candidate
+        PASS [   0.132s] (208/337) cyoa-infrastructure::claude_story_acceptance both_restore_policies_control_actual_requests_snapshots_and_chapter_bridge
+        PASS [   0.448s] (209/337) cyoa-cli::controller_backends both_adapters_preserve_controller_state_through_failure_cancel_retry_and_quit
+        PASS [   0.121s] (210/337) cyoa-infrastructure::claude_story_acceptance late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once
+        PASS [   0.033s] (211/337) cyoa-infrastructure::codex_backend candidate_and_success_terminal_cannot_override_nonzero_process_exit
+        PASS [   0.148s] (212/337) cyoa-infrastructure::claude_story_acceptance cancellation_and_output_cap_preserve_state_context_and_explicit_retry
+        PASS [   0.032s] (213/337) cyoa-infrastructure::codex_backend candidate_without_terminal_is_rejected_after_cleanup
+        PASS [   0.057s] (214/337) cyoa-infrastructure::codex_backend cancellation_from_the_complete_callback_cannot_return_success
+        PASS [   0.030s] (215/337) cyoa-infrastructure::codex_backend failed_auth_exit_is_unavailable_even_with_a_success_looking_status_on_stdout
+        PASS [   0.037s] (216/337) cyoa-infrastructure::codex_backend conflicting_terminal_is_rejected_after_cleanup
+        PASS [   0.043s] (217/337) cyoa-infrastructure::codex_backend capped_output_preserves_prefix_metadata_and_a_structured_cause
+        PASS [   0.478s] (218/337) cyoa-cli::headless sigint_alone_cancels_idle_generation_before_any_fallback_command
+        PASS [   0.038s] (219/337) cyoa-infrastructure::codex_backend ineligible_message_is_rejected_after_cleanup
+        PASS [   0.206s] (220/337) cyoa-infrastructure::claude_backend protocol_rejections_keep_candidate_evidence_and_clean_up
+        PASS [   0.038s] (221/337) cyoa-infrastructure::codex_backend preparation_failure_and_removed_executable_never_launch_a_generation
+        PASS [   0.234s] (222/337) cyoa-infrastructure::claude_backend preflight_rejects_non_subscription_unknown_and_conflicting_auth_without_generation
+        PASS [   0.512s] (223/337) cyoa-cli::headless quotes_unicode_multiline_narrative_and_numeric_player_intent_survive_binary_io
+        PASS [   0.041s] (224/337) cyoa-infrastructure::codex_backend silent_cancellation_uses_a_child_handshake_and_pre_cancel_launches_nothing
+        PASS [   0.016s] (225/337) cyoa-infrastructure::generation_lifecycle outline_to_selected_world_requires_no_placeholder_cast
+        PASS [   0.057s] (226/337) cyoa-infrastructure::codex_backend successful_response_emits_once_after_cleanup_and_retains_usage_and_exact_request
+        PASS [   0.017s] (227/337) cyoa-infrastructure::generation_use_cases cancelled_commands_make_no_backend_calls_and_preserve_state
+        PASS [   0.557s] (228/337) cyoa-cli::headless malformed_turn_keeps_state_and_raw_candidate_until_explicit_retry
+        PASS [   0.116s] (229/337) cyoa-infrastructure::codex_backend no_stdout_failure_and_invalid_protocol_preserve_bytes_with_distinct_categories
+        PASS [   0.016s] (230/337) cyoa-infrastructure::generation_use_cases cancelling_after_a_streamed_preview_preserves_state_and_partial_diagnostics
+        PASS [   0.110s] (231/337) cyoa-infrastructure::codex_backend preflight_rejects_non_subscription_unknown_and_conflicting_auth_without_generation
+        PASS [   0.036s] (232/337) cyoa-infrastructure::generation_use_cases application_cancellation_after_generation_preserves_evidence
+        PASS [   0.017s] (233/337) cyoa-infrastructure::generation_use_cases invalid_outline_and_insufficient_cast_are_returned_with_raw_output
+        PASS [   0.017s] (234/337) cyoa-infrastructure::generation_use_cases preview_then_transport_failure_leaves_state_untouched
+        PASS [   0.126s] (235/337) cyoa-infrastructure::codex_backend protocol_rejection_and_missing_completion_keep_candidate_without_emission
+        PASS [   0.027s] (236/337) cyoa-infrastructure::generation_use_cases restored_limits_reach_captured_prompt_schema_and_committed_memory
+        PASS [   0.016s] (237/337) cyoa-infrastructure::generation_use_cases success_diagnostics_reach_generation_failure_when_outline_cancels_right_after_transport
+        PASS [   0.018s] (238/337) cyoa-infrastructure::generation_use_cases scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls
+        PASS [   0.017s] (239/337) cyoa-infrastructure::generation_use_cases success_diagnostics_reach_generation_failure_when_turns_own_post_decode_check_cancels
+        PASS [   0.058s] (240/337) cyoa-infrastructure::generation_use_cases failed_turns_preserve_diagnostics_state_and_single_attempt
+        PASS [   0.028s] (241/337) cyoa-infrastructure::generation_use_cases successful_generation_preserves_observed_provenance_and_diagnostics
+        PASS [   0.023s] (242/337) cyoa-infrastructure::phase_zero_acceptance full_story_preserves_contracts_through_failure_retry_cancellation_and_rewind
+        PASS [   0.017s] (243/337) cyoa-infrastructure::phase_zero_acceptance invalid_rewind_is_an_error_without_state_changes_or_generation
+        PASS [   0.010s] (244/337) cyoa-infrastructure::process_supervisor a_panicking_consumer_still_gets_the_child_cleaned_up
+        PASS [   0.019s] (245/337) cyoa-infrastructure::phase_zero_acceptance rewinding_the_only_turn_restores_opening_context_without_an_extra_call
+        PASS [   0.005s] (246/337) cyoa-infrastructure::process_supervisor broken_stdin_delivery_is_reported_without_hanging
+        PASS [   0.004s] (247/337) cyoa-infrastructure::process_supervisor cancellation_before_spawn_launches_no_process
+        PASS [   0.030s] (248/337) cyoa-infrastructure::process_supervisor a_child_that_never_reads_stdin_still_completes
+        PASS [   0.035s] (249/337) cyoa-infrastructure::process_supervisor a_descendant_retaining_the_inherited_pipe_does_not_hang_the_supervisor
+        PASS [   0.014s] (250/337) cyoa-infrastructure::process_supervisor cancellation_while_the_child_is_silent_still_wakes_the_poll_loop_and_returns_promptly
+        PASS [   0.064s] (251/337) cyoa-infrastructure::generation_use_cases validation_failures_retain_transport_diagnostics_for_every_request_kind
+        PASS [   0.004s] (252/337) cyoa-infrastructure::process_supervisor capture_at_the_exact_bound_is_complete_and_preserves_arbitrary_bytes
+        PASS [   0.010s] (253/337) cyoa-infrastructure::process_supervisor cancelling_from_inside_the_record_consumer_wins_over_a_same_tick_exit
+        PASS [   0.010s] (254/337) cyoa-infrastructure::process_supervisor consumer_rejection_triggers_cleanup_and_reports_the_reason
+        PASS [   0.034s] (255/337) cyoa-infrastructure::process_supervisor cancelled_token_wins_even_before_its_notifier_runs
+        PASS [   0.030s] (256/337) cyoa-infrastructure::process_supervisor cancelling_from_inside_the_final_no_newline_record_still_wins_over_exit
+        PASS [   0.023s] (257/337) cyoa-infrastructure::process_supervisor captured_output_never_exceeds_either_configured_bound
+        PASS [   0.004s] (258/337) cyoa-infrastructure::process_supervisor env_policy_is_an_explicit_allowlist_not_ambient_inheritance
+        PASS [   0.183s] (259/337) cyoa-infrastructure::codex_story_acceptance zero_npc_limit_survives_cast_selection_opening_and_continuation
+        PASS [   0.193s] (260/337) cyoa-infrastructure::codex_story_acceptance real_workspace_cleanup_failure_preserves_the_game_and_candidate
+        PASS [   0.005s] (261/337) cyoa-infrastructure::process_supervisor incomplete_request_delivery_cannot_report_success
+        PASS [   0.030s] (262/337) cyoa-infrastructure::process_supervisor crlf_records_are_delivered_with_the_carriage_return_intact
+        PASS [   0.004s] (263/337) cyoa-infrastructure::process_supervisor missing_executable_is_a_spawn_error_not_a_panic
+        PASS [   0.226s] (264/337) cyoa-infrastructure::codex_story_acceptance composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context
+        PASS [   0.030s] (265/337) cyoa-infrastructure::process_supervisor exact_argv_and_stdin_reach_the_child_and_both_pipes_are_drained
+        PASS [   0.029s] (266/337) cyoa-infrastructure::process_supervisor failure_after_a_candidate_record_still_reports_nonzero_exit_not_success
+        PASS [   0.013s] (267/337) cyoa-infrastructure::process_supervisor output_bound_exceeded_stops_the_child_instead_of_buffering_forever
+        PASS [   0.029s] (268/337) cyoa-infrastructure::process_supervisor final_record_without_a_trailing_newline_is_still_delivered
+        PASS [   0.004s] (269/337) cyoa-infrastructure::process_supervisor request_workspace_is_private_and_unique
+        PASS [   0.005s] (270/337) cyoa-infrastructure::process_supervisor requests_do_not_inherit_the_repository_working_directory
+        PASS [   0.017s] (271/337) cyoa-infrastructure::process_supervisor records_written_right_before_exit_are_not_silently_dropped
+        PASS [   0.008s] (272/337) cyoa-infrastructure::process_supervisor stdout_larger_than_pipe_capacity_is_fully_delivered_and_diagnostics_agree
+        PASS [   0.029s] (273/337) cyoa-infrastructure::process_supervisor multiple_records_are_delivered_in_order_and_success_requires_zero_exit
+        PASS [   0.030s] (274/337) cyoa-infrastructure::process_supervisor nonzero_exit_is_reported_with_diagnostics
+        PASS [   0.006s] (275/337) cyoa-infrastructure::prompt_rendering loaded_instructions_contain_no_json_formatting_directive
+        PASS [   0.016s] (276/337) cyoa-infrastructure::prompt_rendering interesting_event_includes_threads_only_when_present
+        PASS [   0.016s] (277/337) cyoa-infrastructure::prompt_rendering loaded_turn_instructions_ask_for_schema_field_order
+        PASS [   0.016s] (278/337) cyoa-infrastructure::prompt_rendering opening_turn_prompt_includes_the_identity_review_addition_exactly_once
+        PASS [   0.026s] (279/337) cyoa-infrastructure::prompt_rendering cast_requests_and_schemas_obey_small_caps_and_large_minimums
+        PASS [   0.017s] (280/337) cyoa-infrastructure::prompt_rendering player_input_versus_no_direction
+        PASS [   0.016s] (281/337) cyoa-infrastructure::prompt_rendering prose_contract_omits_tone_clause_when_tone_is_default
+        PASS [   0.017s] (282/337) cyoa-infrastructure::prompt_rendering rendered_limits_reflect_the_supplied_value_not_a_constant
+        PASS [   0.017s] (283/337) cyoa-infrastructure::prompt_rendering retitling_instructions_reach_wire_commit_and_rewind
+        PASS [   0.004s] (284/337) cyoa-infrastructure::streaming only_the_requested_top_level_string_is_streamed
+        PASS [   0.005s] (285/337) cyoa-infrastructure::streaming surrogate_pairs_lone_halves_and_escapes_survive_single_character_chunks
+        PASS [   0.017s] (286/337) cyoa-infrastructure::prompt_rendering turn_prompt_bridge_and_transcript_appear_only_when_nonempty
+        PASS [   0.018s] (287/337) cyoa-infrastructure::prompt_rendering world_and_cast_prompts_interpolate_the_brief_and_world
+        PASS [   0.549s] (288/337) cyoa-infrastructure::claude_backend application_receives_candidate_and_diagnostics_on_adapter_timeout
+        PASS [   0.005s] (289/337) cyoa-infrastructure::streaming truncated_and_invalid_json_only_yield_available_preview_text
+        PASS [   0.006s] (290/337) cyoa-infrastructure::wire_mapping blank_narrative_is_rejected_but_blank_scene_description_is_not
+        PASS [   0.004s] (291/337) cyoa-infrastructure::wire_mapping blank_wire_fields_map_to_none_across_every_optional_field
+        PASS [   0.004s] (292/337) cyoa-infrastructure::wire_mapping blank_quick_action_text_is_filtered_before_selection_not_a_hard_error
+        PASS [   0.004s] (293/337) cyoa-infrastructure::wire_mapping incomplete_generated_characters_are_dropped_not_erroring_the_whole_cast
+        PASS [   0.004s] (294/337) cyoa-infrastructure::wire_mapping new_chapter_marker_carries_a_blank_filtered_title_and_so_does_continue
+        PASS [   0.004s] (295/337) cyoa-infrastructure::wire_mapping unknown_quick_action_kind_deserializes_to_other_not_an_error
+        PASS [   0.004s] (296/337) cyoa-infrastructure::wire_mapping upcoming_events_null_is_keep_empty_list_is_replace_with_no_threads
+        PASS [   0.005s] (297/337) cyoa-infrastructure::wire_mapping wire_defaults_and_nullable_updates_keep_their_distinct_meanings
+        PASS [   0.005s] (298/337) cyoa-infrastructure::wire_mapping world_outline_rejects_blank_title_or_description
+        PASS [   0.006s] (299/337) cyoa-presentation headless::output::tests::continuously_writable_output_and_interrupted_calls_have_finite_pump_budgets
+        PASS [   0.003s] (300/337) cyoa-presentation headless::output::tests::partial_writes_and_backpressure_retain_exact_unicode_bytes_once
+        PASS [   0.003s] (301/337) cyoa-presentation headless::output::tests::permanent_stall_and_trickling_progress_have_distinct_clock_behavior
+        PASS [   0.004s] (302/337) cyoa-presentation session::tests::exhausted_counters_and_wrong_base_revision_cannot_start_or_commit
+        PASS [   0.016s] (303/337) cyoa-infrastructure::wire_mapping required_response_text_distinguishes_missing_null_and_empty
+        PASS [   0.005s] (304/337) cyoa-presentation headless::output::tests::queue_overflow_write_zero_and_broken_pipe_are_explicit_errors
+        PASS [   0.006s] (305/337) cyoa-presentation worker::tests::failed_spawn_keeps_use_cases_available_for_explicit_retry
+        PASS [   0.004s] (306/337) cyoa-presentation worker::tests::mailbox_budget_is_cumulative_and_does_not_split_unicode
+        PASS [   0.004s] (307/337) cyoa-presentation::session failed_and_cancelled_results_preserve_state_and_exact_evidence
+        PASS [   0.004s] (308/337) cyoa-presentation::session lifecycle_keeps_edited_outline_selection_and_one_opening
+        PASS [   0.004s] (309/337) cyoa-presentation::session obsolete_cast_cannot_replace_an_edited_outline_and_actions_are_checked
+        PASS [   0.004s] (310/337) cyoa-presentation::session stale_and_duplicate_completions_never_replace_current_state
+        PASS [   0.005s] (311/337) cyoa-presentation::session wrong_kind_faults_and_quit_waits_for_active_completion
+        PASS [   0.005s] (312/337) cyoa-presentation::worker dropping_runner_cancels_and_joins_silent_request
+        PASS [   0.006s] (313/337) cyoa-presentation::worker joined_success_queued_before_cancel_is_discarded
+        PASS [   0.006s] (314/337) cyoa-presentation::worker panic_faults_without_committing_and_quit_remains_available
+        PASS [   0.340s] (315/337) cyoa-infrastructure::codex_story_acceptance cancellation_and_output_cap_preserve_state_context_and_explicit_retry
+        PASS [   0.005s] (316/337) cyoa-presentation::worker paused_progress_consumer_cannot_block_completion_or_exceed_budget
+        PASS [   0.006s] (317/337) cyoa-presentation::worker quick_action_and_player_text_share_the_same_generation_intent
+        PASS [   0.008s] (318/337) cyoa-presentation::worker silent_cancel_joins_before_retry_and_preserves_generator_and_evidence
+        PASS [   0.537s] (319/337) cyoa-infrastructure::claude_backend timeout_after_result_retains_unemitted_candidate_and_reaps_child
+        PASS [   0.201s] (320/337) cyoa-infrastructure::process_supervisor cancellation_and_deadline_stop_continuous_writers_with_bounded_diagnostics
+        PASS [   0.159s] (321/337) cyoa-infrastructure::process_supervisor deadline_exceeded_kills_the_child_and_reports_timeout
+        PASS [   0.111s] (322/337) cyoa-infrastructure::streaming arbitrary_scalar_splits_match_the_independent_narrative
+        PASS [   0.337s] (323/337) cyoa-infrastructure::generation_use_cases chunked_and_complete_transports_commit_the_same_turn_without_duplicate_preview
+        PASS [   0.902s] (324/337) cyoa-cli::headless both_shipped_backend_commands_play_retry_and_inspect_canonical_story
+        PASS [   0.231s] (325/337) cyoa-infrastructure::process_supervisor request_files_live_through_execution_and_are_removed_on_every_outcome
+        PASS [   0.550s] (326/337) cyoa-infrastructure::codex_backend application_receives_complete_candidate_and_diagnostics_on_adapter_timeout
+        PASS [   0.471s] (327/337) cyoa-infrastructure::codex_story_acceptance late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once
+        PASS [   0.536s] (328/337) cyoa-infrastructure::codex_backend timeout_after_candidate_retains_unemitted_payload_and_reaps_child
+        PASS [   1.018s] (329/337) cyoa-cli::headless preview_failure_and_disagreement_never_masquerade_as_committed_prose
+        PASS [   0.550s] (330/337) cyoa-infrastructure::codex_story_acceptance both_restore_policies_control_actual_requests_snapshots_and_chapter_bridge
+        PASS [   1.036s] (331/337) cyoa-cli::headless full_undrained_stderr_does_not_block_error_exit
+        PASS [   1.034s] (332/337) cyoa-cli::headless_output trickling_reader_cannot_extend_final_drain_indefinitely
+        PASS [   1.132s] (333/337) cyoa-cli::headless_output reader_resuming_after_final_deadline_cannot_turn_expiry_into_success
+        PASS [   0.516s] (334/337) cyoa-infrastructure::process_supervisor stdin_larger_than_pipe_capacity_is_delivered_in_full_when_the_child_reads_it
+        PASS [   1.358s] (335/337) cyoa-cli::headless idle_output_cancellation_eof_and_quit_join_real_children
+        PASS [   2.007s] (336/337) cyoa-infrastructure backends::process::unix_impl::fault_tests::interrupted_reaping_still_has_a_finite_deadline
+        PASS [   2.021s] (337/337) cyoa-infrastructure backends::process::unix_impl::fault_tests::cleanup_failures_preserve_the_initiating_error
+────────────
+     Summary [   2.168s] 337 tests run: 337 passed, 0 skipped

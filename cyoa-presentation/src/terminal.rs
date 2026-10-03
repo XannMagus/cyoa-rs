@@ -18,7 +18,7 @@ mod linux {
     };
 
     /// Restore descriptor flags even when setup or output fails. Nonblocking
-    /// output reports backpressure as an I/O error rather than freezing cancel.
+    /// output exposes backpressure to the headless queue without freezing cancel.
     pub struct Flags<F: AsFd> {
         fd: F,
         original: OFlags,
@@ -36,6 +36,16 @@ mod linux {
     impl<F: AsFd> Drop for Flags<F> {
         fn drop(&mut self) {
             let _ = fcntl_setfl(&self.fd, self.original);
+        }
+    }
+    // Bypass std's hidden stdout line buffer: the headless queue owns every
+    // undelivered byte, and dropping a terminal guard must never flush/block.
+    impl<F: AsFd> io::Write for Flags<F> {
+        fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
+            rustix::io::write(&self.fd, bytes).map_err(Into::into)
+        }
+        fn flush(&mut self) -> io::Result<()> {
+            Ok(())
         }
     }
     pub struct InterruptFlag {

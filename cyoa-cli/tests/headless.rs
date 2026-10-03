@@ -645,7 +645,7 @@ fn buffered_multiple_lines_are_read_without_waiting_for_more_kernel_bytes() {
     app.wait(0, "Brief:");
     let mark = app.mark();
     // Larger than one read chunk: exercises buffered lines with no later write.
-    let commands = "/help\n".repeat(400) + "/quit\n";
+    let commands = " ".repeat(2048) + "/help\n/inspect\n/quit\n";
     app.stdin
         .as_mut()
         .unwrap()
@@ -653,6 +653,9 @@ fn buffered_multiple_lines_are_read_without_waiting_for_more_kernel_bytes() {
         .unwrap();
     app.wait(mark, "Session closed");
     assert!(app.finish().success());
+    let control = String::from_utf8_lossy(&app.err[mark..]);
+    assert_eq!(control.matches("Commands: /help").count(), 1);
+    assert!(control.contains("Inspection: phase=Ready revision=0"));
 }
 #[test]
 fn command_surface_rejects_demo_vendor_settings_and_unimplemented_ui() {

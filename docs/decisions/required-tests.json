@@ -924,6 +924,28 @@
         "tests": [
           "cancellation_after_demo_consumption_retries_each_stage_and_preserves_all_passages"
         ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "lib",
+        "tests": [
+          "headless::output::tests::partial_writes_and_backpressure_retain_exact_unicode_bytes_once",
+          "headless::output::tests::permanent_stall_and_trickling_progress_have_distinct_clock_behavior",
+          "headless::output::tests::queue_overflow_write_zero_and_broken_pipe_are_explicit_errors",
+          "headless::output::tests::continuously_writable_output_and_interrupted_calls_have_finite_pump_budgets"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "headless_output",
+        "tests": [
+          "paused_control_reader_resumes_and_final_drain_delivers_every_help_once",
+          "trickling_reader_cannot_extend_final_drain_indefinitely",
+          "cancellation_and_quit_join_active_worker_while_control_output_is_blocked",
+          "initially_full_real_control_pipe_recovers_without_losing_help_or_close",
+          "initially_full_real_story_pipe_drains_exact_committed_narrative_on_exit",
+          "reader_resuming_after_final_deadline_cannot_turn_expiry_into_success"
+        ]
       }
     ]
   },
@@ -1222,6 +1244,28 @@
         "target": "demo_retry",
         "tests": [
           "cancellation_after_demo_consumption_retries_each_stage_and_preserves_all_passages"
+        ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "lib",
+        "tests": [
+          "headless::output::tests::partial_writes_and_backpressure_retain_exact_unicode_bytes_once",
+          "headless::output::tests::permanent_stall_and_trickling_progress_have_distinct_clock_behavior",
+          "headless::output::tests::queue_overflow_write_zero_and_broken_pipe_are_explicit_errors",
+          "headless::output::tests::continuously_writable_output_and_interrupted_calls_have_finite_pump_budgets"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "headless_output",
+        "tests": [
+          "paused_control_reader_resumes_and_final_drain_delivers_every_help_once",
+          "trickling_reader_cannot_extend_final_drain_indefinitely",
+          "cancellation_and_quit_join_active_worker_while_control_output_is_blocked",
+          "initially_full_real_control_pipe_recovers_without_losing_help_or_close",
+          "initially_full_real_story_pipe_drains_exact_committed_narrative_on_exit",
+          "reader_resuming_after_final_deadline_cannot_turn_expiry_into_success"
         ]
       }
     ]

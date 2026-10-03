@@ -10,8 +10,10 @@ use cyoa_core::{
 };
 use std::{
     io::{self, Write},
-    time::Duration,
+    time::{Duration, Instant},
 };
+mod output;
+use output::QueuedOutput;
 
 pub enum InputEvent {
     Pending,
@@ -43,6 +45,8 @@ impl Default for View {
 const HELP: &str = "Commands: /help /quit /cancel /retry /inspect /diagnostics\nOutline: empty line accepts; /edit replaces title and description.\nPlay: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.\nCtrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.\n";
 
 /// Always close and join workers, including on input/output errors.
+/// Sinks must be nonblocking and unbuffered (the Linux terminal guards provide
+/// this). Order is preserved within each stream, not between stdout and stderr.
 pub fn run<G: StoryGenerator + Send + 'static>(
     runtime: &mut SessionRuntime<G>,
     input: &mut dyn Input,
@@ -50,7 +54,9 @@ pub fn run<G: StoryGenerator + Send + 'static>(
     control: &mut dyn Write,
     demo: bool,
 ) -> io::Result<()> {
-    let result = drive(runtime, input, story, control, demo);
+    let mut story = QueuedOutput::new(story);
+    let mut control = QueuedOutput::new(control);
+    let result = drive(runtime, input, &mut story, &mut control, demo);
     let _ = runtime.dispatch(Intent::Quit);
     while runtime.controller().phase() != Phase::Closed {
         runtime.poll();
@@ -61,8 +67,8 @@ pub fn run<G: StoryGenerator + Send + 'static>(
 fn drive<G: StoryGenerator + Send + 'static>(
     runtime: &mut SessionRuntime<G>,
     input: &mut dyn Input,
-    story: &mut dyn Write,
-    control: &mut dyn Write,
+    story: &mut QueuedOutput<'_>,
+    control: &mut QueuedOutput<'_>,
     demo: bool,
 ) -> io::Result<()> {
     writeln!(
@@ -82,6 +88,8 @@ fn drive<G: StoryGenerator + Send + 'static>(
     control.flush()?;
     let mut view = View::default();
     loop {
+        story.pump(Instant::now())?;
+        control.pump(Instant::now())?;
         // Input first: a cancellation observed before acceptance wins the race.
         match input.poll(Duration::from_millis(25))? {
             InputEvent::Pending => (),
@@ -142,9 +150,42 @@ fn drive<G: StoryGenerator + Send + 'static>(
             }
             writeln!(control, "Session closed; in-memory state discarded.")?;
             control.flush()?;
-            return Ok(());
+            // The worker is already joined. Drain queued bytes before reporting
+            // success, with an absolute bound even if a reader keeps trickling.
+            let deadline = Instant::now() + output::STALL_LIMIT;
+            let check_deadline = || {
+                if Instant::now() >= deadline {
+                    Err(io::Error::new(
+                        io::ErrorKind::TimedOut,
+                        "terminal output did not drain on exit",
+                    ))
+                } else {
+                    Ok(())
+                }
+            };
+            loop {
+                check_deadline()?;
+                story.pump(Instant::now())?;
+                control.pump(Instant::now())?;
+                check_deadline()?;
+                if story.is_empty() && control.is_empty() {
+                    return Ok(());
+                }
+                if matches!(
+                    input.poll(Duration::from_millis(25))?,
+                    InputEvent::Interrupt
+                ) {
+                    return Err(io::Error::new(
+                        io::ErrorKind::Interrupted,
+                        "terminal output drain interrupted",
+                    ));
+                }
+                std::thread::sleep(Duration::from_millis(1));
+            }
         }
         control.flush()?;
+        story.pump(Instant::now())?;
+        control.pump(Instant::now())?;
         if runtime.controller().phase() == Phase::Closing {
             std::thread::sleep(Duration::from_millis(10));
         }
