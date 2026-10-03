@@ -1,0 +1,802 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running unittests src/lib.rs (target/debug/deps/cyoa_application-45a39aa4abf2eb2b)
+
+running 1 test
+test diagnostics::tests::transport_diagnostics_preserve_non_utf8_bytes_exactly_and_lossy_display_never_panics ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/cancellation.rs (target/debug/deps/cancellation-ea50fdf50fdb8af1)
+
+running 6 tests
+test a_panicking_notifier_does_not_skip_later_notifiers_or_poison_state ... ok
+test cancellation_is_shared_across_threads_and_isolated_between_requests ... ok
+test notifier_registered_before_cancel_runs_once_when_cancel_fires ... ok
+test dropping_a_subscription_releases_resources_without_waiting_for_cancellation ... ok
+test scoped_notifications_handle_reuse_late_registration_and_reentrant_callbacks ... ok
+test notifier_registered_after_cancel_already_fired_still_runs_immediately ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/debug/deps/cyoa-a1aaa4b4cb8f0db9)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/controller_backends.rs (target/debug/deps/controller_backends-19f38155a8afb210)
+
+running 2 tests
+test both_joined_adapter_successes_are_rejected_if_cancel_wins_acceptance ... ok
+test both_adapters_preserve_controller_state_through_failure_cancel_retry_and_quit ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.45s
+
+     Running tests/controller_story.rs (target/debug/deps/controller_story-55a23d67e7e8293a)
+
+running 2 tests
+test complete_controller_story_preserves_context_retry_identity_chapters_and_rewind ... ok
+test controller_zero_npcs_and_both_restore_policies_use_active_limits ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/demo_retry.rs (target/debug/deps/demo_retry-5fe7ff80eca52ee3)
+
+running 1 test
+test cancellation_after_demo_consumption_retries_each_stage_and_preserves_all_passages ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests/headless.rs (target/debug/deps/headless-bfa1369b010ec315)
+
+running 14 tests
+test command_surface_rejects_demo_vendor_settings_and_unimplemented_ui ... ok
+test full_undrained_stderr_does_not_block_error_exit ... ok
+test chosen_backend_is_required_and_demo_never_resolves_a_vendor ... ok
+test missing_chosen_executable_does_not_probe_other_backend ... ok
+test invalid_utf8_input_closes_active_worker_without_committing ... ok
+test demo_full_story_exhaustion_and_idle_interrupt_are_credential_free ... ok
+test broken_stdout_closes_worker_and_reports_io_failure ... ok
+test malformed_turn_keeps_state_and_raw_candidate_until_explicit_retry ... ok
+test sigint_alone_cancels_idle_generation_before_any_fallback_command ... ok
+test quotes_unicode_multiline_narrative_and_numeric_player_intent_survive_binary_io ... ok
+test both_shipped_backend_commands_play_retry_and_inspect_canonical_story ... ok
+test preview_failure_and_disagreement_never_masquerade_as_committed_prose ... ok
+test idle_output_cancellation_eof_and_quit_join_real_children ... ok
+test buffered_multiple_lines_are_read_without_waiting_for_more_kernel_bytes ... FAILED
+
+failures:
+
+---- buffered_multiple_lines_are_read_without_waiting_for_more_kernel_bytes stdout ----
+
+thread 'buffered_multiple_lines_are_read_without_waiting_for_more_kernel_bytes' (29891) panicked at cyoa-cli/tests/headless.rs:244:13:
+waiting for "Session closed": This session is memory only: no saves or autosave.
+Demo harbour-v1: five prerecorded turns; your choices do not alter the recorded fiction. Exhaustion never switches to a live backend.
+Brief: enter a nonblank adventure idea. /help lists commands.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+Commands: /help /quit /cancel /retry /inspect /diagnostics
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.
+cyoa: Resource temporarily unavailable (os error 11)
+
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    buffered_multiple_lines_are_read_without_waiting_for_more_kernel_bytes
+
+test result: FAILED. 13 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.02s
+
+error: test failed, to rerun pass `-p cyoa-cli --test headless`

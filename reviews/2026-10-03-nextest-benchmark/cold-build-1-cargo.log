@@ -1,0 +1,92 @@
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.24
+   Compiling hashbrown v0.17.1
+   Compiling equivalent v1.0.2
+   Compiling thiserror v2.0.19
+   Compiling libc v0.2.189
+   Compiling serde_core v1.0.229
+   Compiling rustix v1.1.5
+   Compiling bitflags v2.13.2
+   Compiling linux-raw-sys v0.12.1
+   Compiling zmij v1.0.23
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling ref-cast v1.0.27
+   Compiling getrandom v0.4.3
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling cfg-if v1.0.5
+   Compiling winnow v1.0.4
+   Compiling memo-map v0.3.4
+   Compiling dyn-clone v1.0.20
+   Compiling once_cell v1.21.4
+   Compiling fastrand v2.5.0
+   Compiling toml_writer v1.1.2+spec-1.1.0
+   Compiling utf8parse v0.2.2
+   Compiling anstyle v1.0.14
+   Compiling anstyle-parse v1.0.0
+   Compiling anstyle-query v1.1.5
+   Compiling colorchoice v1.0.5
+   Compiling is_terminal_polyfill v1.70.2
+   Compiling clap_lex v1.1.0
+   Compiling heck v0.5.0
+   Compiling signal-hook v0.3.18
+   Compiling strsim v0.11.1
+   Compiling escargot v0.5.15
+   Compiling log v0.4.34
+   Compiling anstream v1.0.0
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling clap_builder v4.6.2
+   Compiling indexmap v2.14.0
+   Compiling syn v3.0.3
+   Compiling errno v0.3.14
+   Compiling signal-hook-registry v1.4.8
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling serde_spanned v1.1.1
+   Compiling toml v1.1.6+spec-1.1.0
+   Compiling tempfile v3.27.0
+   Compiling serde_derive_internals v0.30.0
+   Compiling thiserror-impl v2.0.19
+   Compiling serde_derive v1.0.229
+   Compiling ref-cast-impl v1.0.27
+   Compiling clap_derive v4.6.4
+   Compiling schemars_derive v1.2.2
+   Compiling cyoa-core v0.1.0 (/home/xann/cyoa-rs/cyoa-core)
+   Compiling clap v4.6.4
+   Compiling cyoa-application v0.1.0 (/home/xann/cyoa-rs/cyoa-application)
+   Compiling cyoa-presentation v0.1.0 (/home/xann/cyoa-rs/cyoa-presentation)
+   Compiling schemars v1.2.2
+   Compiling minijinja v2.24.0
+   Compiling cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+   Compiling cyoa-cli v0.1.0 (/home/xann/cyoa-rs/cyoa-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.18s
+  Executable unittests src/lib.rs (/tmp/cyoa-benchmark-cold-cargo/debug/deps/cyoa_application-45a39aa4abf2eb2b)
+  Executable tests/cancellation.rs (/tmp/cyoa-benchmark-cold-cargo/debug/deps/cancellation-ea50fdf50fdb8af1)
+  Executable unittests src/main.rs (/tmp/cyoa-benchmark-cold-cargo/debug/deps/cyoa-a1aaa4b4cb8f0db9)
+  Executable tests/controller_backends.rs (/tmp/cyoa-benchmark-cold-cargo/debug/deps/controller_backends-19f38155a8afb210)
+  Executable tests/controller_story.rs (/tmp/cyoa-benchmark-cold-cargo/debug/deps/controller_story-55a23d67e7e8293a)
+  Executable tests/demo_retry.rs (/tmp/cyoa-benchmark-cold-cargo/debug/deps/demo_retry-5fe7ff80eca52ee3)
+  Executable tests/headless.rs (/tmp/cyoa-benchmark-cold-cargo/debug/deps/headless-bfa1369b010ec315)
+  Executable unittests src/lib.rs (/tmp/cyoa-benchmark-cold-cargo/debug/deps/cyoa_core-1bf669f6ea7436fb)
+  Executable tests/decision_contracts.rs (/tmp/cyoa-benchmark-cold-cargo/debug/deps/decision_contracts-98ec39038cfed1a4)
+  Executable tests/domain_invariants.rs (/tmp/cyoa-benchmark-cold-cargo/debug/deps/domain_invariants-58b2199852e07306)
+  Executable tests/restore_limits.rs (/tmp/cyoa-benchmark-cold-cargo/debug/deps/restore_limits-4363fe19855b7163)
+  Executable tests/summary_merge.rs (/tmp/cyoa-benchmark-cold-cargo/debug/deps/summary_merge-572723525b489c18)
+  Executable unittests src/lib.rs (/tmp/cyoa-benchmark-cold-cargo/debug/deps/cyoa_infrastructure-6e512632af7575d2)
+  Executable unittests src/bin/subprocess_fixture.rs (/tmp/cyoa-benchmark-cold-cargo/debug/deps/subprocess_fixture-752c31a7cd80f2f3)
+  Executable tests/backend_contract.rs (/tmp/cyoa-benchmark-cold-cargo/debug/deps/backend_contract-f249ad4e01722ac3)
+  Executable tests/claude_backend.rs (/tmp/cyoa-benchmark-cold-cargo/debug/deps/claude_backend-203d86e735cc3b5b)
+  Executable tests/claude_story_acceptance.rs (/tmp/cyoa-benchmark-cold-cargo/debug/deps/claude_story_acceptance-6146e2be6322c794)
+  Executable tests/codex_backend.rs (/tmp/cyoa-benchmark-cold-cargo/debug/deps/codex_backend-543b41c434b0ff53)
+  Executable tests/codex_story_acceptance.rs (/tmp/cyoa-benchmark-cold-cargo/debug/deps/codex_story_acceptance-eb1da2d913248625)
+  Executable tests/generation_lifecycle.rs (/tmp/cyoa-benchmark-cold-cargo/debug/deps/generation_lifecycle-dda19a46ecf01dd3)
+  Executable tests/generation_use_cases.rs (/tmp/cyoa-benchmark-cold-cargo/debug/deps/generation_use_cases-237ee41d8957dbdc)
+  Executable tests/phase_zero_acceptance.rs (/tmp/cyoa-benchmark-cold-cargo/debug/deps/phase_zero_acceptance-2738c30be4ab25ff)
+  Executable tests/process_supervisor.rs (/tmp/cyoa-benchmark-cold-cargo/debug/deps/process_supervisor-722bf7840ad83e29)
+  Executable tests/prompt_rendering.rs (/tmp/cyoa-benchmark-cold-cargo/debug/deps/prompt_rendering-2cca6f18724df456)
+  Executable tests/streaming.rs (/tmp/cyoa-benchmark-cold-cargo/debug/deps/streaming-40f292959e1e38c3)
+  Executable tests/wire_mapping.rs (/tmp/cyoa-benchmark-cold-cargo/debug/deps/wire_mapping-00f8445ef1a2a1b6)
+  Executable unittests src/lib.rs (/tmp/cyoa-benchmark-cold-cargo/debug/deps/cyoa_presentation-952ff5eefd38ad18)
+  Executable tests/session.rs (/tmp/cyoa-benchmark-cold-cargo/debug/deps/session-0753a230bda196e8)
+  Executable tests/worker.rs (/tmp/cyoa-benchmark-cold-cargo/debug/deps/worker-781f54cb3272dbf6)

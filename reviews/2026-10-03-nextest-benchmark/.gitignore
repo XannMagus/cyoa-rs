@@ -1,0 +1,2 @@
+# Retain raw benchmark failures and timing evidence.
+!*.log

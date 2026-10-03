@@ -1,0 +1,91 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running unittests src/lib.rs (target/debug/deps/cyoa_core-9e66be85f8e47345)
+
+running 26 tests
+test game::tests::first_turn_cannot_open_a_chapter ... ok
+test game::tests::initial_summary_gives_protagonist_and_unmet_npcs ... ok
+test game::tests::rewind_rejects_undoing_more_turns_than_exist ... ok
+test game::tests::start_and_restore_keep_the_selected_world_and_protagonist_together ... ok
+test game::tests::later_turn_retitles_its_chapter_and_rewind_restores_the_earlier_title ... ok
+test game::tests::turn_count_rejects_zero ... ok
+test game::tests::new_chapter_marker_starts_a_second_chapter ... ok
+test limits::tests::defaults_match_calibre_constants ... ok
+test limits::tests::zero_is_accepted_for_count_limits ... ok
+test limits::tests::zero_is_rejected_for_nonzero_limits ... ok
+test game::tests::world_namesakes_survive_into_summary_and_remain_addressable_by_id ... ok
+test text::tests::exchange_text_preserves_every_byte_including_empty_and_whitespace ... ok
+test text::tests::type_names_supply_readable_error_labels ... ok
+test turn::tests::all_blank_or_empty_is_rejected ... ok
+test turn::tests::casefold_duplicate_actions_are_dropped_preserving_order ... ok
+test turn::tests::cost_amount_rejects_negative_and_nonfinite ... ok
+test turn::tests::fewer_kinds_than_actions_fills_from_the_remainder_in_original_order ... ok
+test turn::tests::more_than_three_prefers_one_action_per_kind_in_original_order ... ok
+test world::tests::distinct_playable_namesakes_satisfy_the_minimum ... ok
+test world::tests::exact_records_collapse_within_each_role_but_shared_names_survive ... ok
+test world::tests::npcs_are_capped_at_the_configured_limit ... ok
+test world::tests::npc_limit_applies_to_surviving_entries_including_zero ... ok
+test world::tests::too_few_playable_characters_is_rejected ... ok
+test world::tests::selection_is_checked_against_the_world_it_owns ... ok
+test world::tests::zero_npc_limit_does_not_consume_candidates ... ok
+test game::tests::prose_context_matches_a_naive_transcription_of_the_python_filter ... ok
+
+test result: ok. 26 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/decision_contracts.rs (target/debug/deps/decision_contracts-872e50f15895be0b)
+
+running 1 test
+test text_002_unicode_lowercase_is_not_python_casefold ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/domain_invariants.rs (target/debug/deps/domain_invariants-d53ab05e36dadd59)
+
+running 5 tests
+test cost_amount_preserves_valid_values_and_rejects_nonfinite_or_negative_values ... ok
+test changing_style_preserves_committed_story_and_other_game_settings ... ok
+test npc_relationships_survive_initial_summary_construction ... ok
+test optional_turn_fields_and_audit_record_survive_commit ... ok
+test chapters_expose_zero_based_numbers_and_one_based_ordinals ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/restore_limits.rs (target/debug/deps/restore_limits-f97fa726360181d5)
+
+running 4 tests
+test empty_restored_games_use_the_selected_limits_for_their_opening_summary ... ok
+test current_limits_apply_to_every_snapshot_and_survive_commit_and_rewind ... ok
+test raising_the_limit_allows_future_events_without_recovering_discarded_ones ... ok
+test original_limits_remain_available_after_restoring_with_current_settings ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/summary_merge.rs (target/debug/deps/summary_merge-f2d0da3362755be5)
+
+running 24 tests
+test blank_updates_preserve_durable_fields_and_leave_previous_untouched ... ok
+test cast_equality_includes_presentation_order ... ok
+test cap_keeps_last_thirty_and_supports_a_configured_limit ... ok
+test cast_supports_id_lookup_without_changing_order_after_rename_or_insertion ... ok
+test cast_suffixes_nonadjacent_duplicate_ids_without_dropping_characters ... ok
+test character_ids_follow_calibre_slug_rules_and_character_not_byte_limit ... ok
+test derived_id_collisions_get_a_unique_suffix ... ok
+test details_establish_the_invariant_before_infallible_character_construction ... ok
+test domain_constructors_reject_invalid_state ... ok
+test each_nonblank_character_field_changes_independently ... ok
+test events_accumulate_deduplicate_and_consolidate_in_order ... ok
+test exact_deduplication_includes_identity_and_all_character_details ... ok
+test exact_duplicates_collapse_before_suffixes_are_assigned ... ok
+test explicit_ids_are_preserved_and_duplicate_names_match_the_last_entry ... ok
+test id_match_wins_over_conflicting_name_match ... ok
+test first_update_wins_including_new_and_old_name_aliases ... ok
+test merging_deduplicates_before_truncating_and_preserves_configured_limit ... ok
+test name_aliases_only_last_for_the_current_turn ... ok
+test present_delta_values_cannot_be_blank ... ok
+test new_characters_need_name_and_durable_information ... ok
+test rename_keeps_identity_and_name_fallback_ignores_invented_id ... ok
+test suffixing_preserves_existing_ids_and_repaired_ids_support_future_updates ... ok
+test upcoming_events_null_is_not_empty ... ok
+test world_and_situation_can_change_without_losing_characters ... ok
+
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

@@ -1,0 +1,32 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+   Doc-tests cyoa_application
+
+running 1 test
+test cyoa-application/src/cancellation.rs - cancellation::CancellationToken (line 64) - compile fail ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+   Doc-tests cyoa_core
+
+running 5 tests
+test cyoa-core/src/world.rs - world::SelectedWorld (line 233) - compile fail ... ok
+test cyoa-core/src/character.rs - character::Character (line 98) - compile fail ... ok
+test cyoa-core/src/game.rs - game::GameState (line 107) - compile fail ... ok
+test cyoa-core/src/character.rs - character::CharacterDetails (line 31) - compile fail ... ok
+test cyoa-core/src/summary.rs - summary::StorySummary (line 113) - compile fail ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+   Doc-tests cyoa_infrastructure
+
+running 1 test
+test cyoa-infrastructure/src/backend.rs - backend::GenerationResponse (line 26) - compile fail ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+   Doc-tests cyoa_presentation
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

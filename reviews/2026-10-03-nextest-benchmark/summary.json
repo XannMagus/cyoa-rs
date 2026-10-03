@@ -1,0 +1,83 @@
+[
+  {
+    "phase": "cold-build",
+    "runner": "cargo",
+    "passed": 1,
+    "failed": 0,
+    "median_success_seconds": 10.204145,
+    "min_success_seconds": 10.204145,
+    "max_success_seconds": 10.204145
+  },
+  {
+    "phase": "cold-build",
+    "runner": "nextest",
+    "passed": 1,
+    "failed": 0,
+    "median_success_seconds": 10.091736,
+    "min_success_seconds": 10.091736,
+    "max_success_seconds": 10.091736
+  },
+  {
+    "phase": "doctests",
+    "runner": "cargo",
+    "passed": 1,
+    "failed": 0,
+    "median_success_seconds": 0.559601,
+    "min_success_seconds": 0.559601,
+    "max_success_seconds": 0.559601
+  },
+  {
+    "phase": "domain",
+    "runner": "cargo",
+    "passed": 7,
+    "failed": 0,
+    "median_success_seconds": 0.051921,
+    "min_success_seconds": 0.050156,
+    "max_success_seconds": 0.077316
+  },
+  {
+    "phase": "domain",
+    "runner": "nextest",
+    "passed": 7,
+    "failed": 0,
+    "median_success_seconds": 0.146851,
+    "min_success_seconds": 0.143933,
+    "max_success_seconds": 0.148545
+  },
+  {
+    "phase": "workspace-24",
+    "runner": "cargo",
+    "passed": 5,
+    "failed": 2,
+    "median_success_seconds": 6.797539,
+    "min_success_seconds": 6.711515,
+    "max_success_seconds": 6.874660
+  },
+  {
+    "phase": "workspace-24",
+    "runner": "nextest",
+    "passed": 1,
+    "failed": 6,
+    "median_success_seconds": 2.301999,
+    "min_success_seconds": 2.301999,
+    "max_success_seconds": 2.301999
+  },
+  {
+    "phase": "workspace-8",
+    "runner": "cargo",
+    "passed": 5,
+    "failed": 2,
+    "median_success_seconds": 6.917050,
+    "min_success_seconds": 6.807581,
+    "max_success_seconds": 6.975397
+  },
+  {
+    "phase": "workspace-8",
+    "runner": "nextest",
+    "passed": 7,
+    "failed": 0,
+    "median_success_seconds": 3.146119,
+    "min_success_seconds": 3.124901,
+    "max_success_seconds": 3.175214
+  }
+]
