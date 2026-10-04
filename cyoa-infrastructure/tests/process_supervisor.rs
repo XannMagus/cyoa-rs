@@ -355,18 +355,36 @@ fn broken_stdin_delivery_is_reported_without_hanging() {
 
 #[test]
 fn a_child_that_never_reads_stdin_still_completes() {
-    let scenario = fixture_backend::scenario(&[b"ok\n"], &[], 0);
+    // Delivery to the pipe (not consumption by the child) is required. An
+    // immediately exiting fixture races the write and can correctly produce
+    // IncompleteInput instead. Wait for writer closure without reading bytes.
+    let input = b"unread request payload";
+    let path = report_path("unread-stdin");
+    let scenario = serde_json::json!({
+        "stdout": [{"bytes": b"ok\n"}],
+        "unread_stdin_bytes_after_close": input.len(),
+        "report_path": path,
+        "exit_code": 0,
+    })
+    .to_string();
     let spec = ProcessSpec {
         workspace: cyoa_infrastructure::backends::process::RequestWorkspace::new().unwrap(),
         program: FIXTURE_EXE.into(),
         args: vec![OsString::from(scenario)],
         env: EnvPolicy::new(),
-        stdin: b"unread request payload".to_vec(),
+        stdin: input.to_vec(),
         bounds: short_bounds(),
     };
     let source = CancellationSource::default();
     let outcome = run(spec, &source.token(), &mut noop).unwrap();
     assert_eq!(outcome.exit_code, 0);
+    assert_eq!(outcome.diagnostics.stdout(), b"ok\n");
+    let report = read_report(&path);
+    assert!(
+        report.stdin.is_empty(),
+        "fixture must not consume the request"
+    );
+    assert_process_gone(report.pid, "non-reading child after complete delivery");
 }
 
 // --- Nominal tests --------------------------------------------------------

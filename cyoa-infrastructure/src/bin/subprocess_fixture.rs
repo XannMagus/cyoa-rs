@@ -32,6 +32,11 @@ struct Scenario {
     /// (simulates a well-behaved child that drains its request payload).
     #[serde(default)]
     drain_stdin: bool,
+    /// Wait for the parent's writer to close, then check that this many bytes
+    /// remain unread in the pipe. Makes non-reading-child success independent
+    /// of whether the child or supervisor gets scheduled first.
+    #[serde(default)]
+    unread_stdin_bytes_after_close: Option<u64>,
     /// If set, spawn a detached descendant that sleeps this many milliseconds
     /// before exiting, inheriting this process's stdout/stderr handles. Used
     /// by later inherited-pipe tests (item 3); not exercised by item 2's own
@@ -206,6 +211,13 @@ fn main() {
     if scenario.drain_stdin {
         let _ = std::io::stdin().read_to_end(&mut received_stdin);
     }
+    if let Some(expected) = scenario.unread_stdin_bytes_after_close {
+        assert!(
+            !scenario.drain_stdin,
+            "unread-input handshake cannot drain stdin"
+        );
+        wait_for_unread_stdin(expected);
+    }
 
     if let Some(report_path) = &scenario.report_path {
         let report = Report {
@@ -262,6 +274,47 @@ fn main() {
     }
 
     std::process::exit(scenario.exit_code);
+}
+
+#[cfg(unix)]
+fn wait_for_unread_stdin(expected: u64) {
+    use rustix::event::{PollFd, PollFlags, Timespec, poll};
+    use std::time::{Duration, Instant};
+
+    let stdin = std::io::stdin();
+    // Do not request IN: unread bytes would otherwise keep waking poll before
+    // the writer closes. HUP is reported even when no events are requested.
+    let mut fds = [PollFd::new(&stdin, PollFlags::empty())];
+    let deadline = Instant::now() + Duration::from_secs(3);
+    loop {
+        let remaining = deadline
+            .checked_duration_since(Instant::now())
+            .expect("parent did not close stdin within fixture deadline");
+        let timeout = Timespec {
+            tv_sec: remaining.as_secs() as i64,
+            tv_nsec: remaining.subsec_nanos() as i64,
+        };
+        match poll(&mut fds, Some(&timeout)) {
+            Err(rustix::io::Errno::INTR) => continue,
+            result => {
+                result.expect("poll fixture stdin");
+            }
+        }
+        if fds[0].revents().contains(PollFlags::HUP) {
+            assert_eq!(
+                rustix::io::ioctl_fionread(&stdin).expect("count unread stdin bytes"),
+                expected,
+                "all request bytes must remain unread after the writer closes"
+            );
+            return;
+        }
+        assert!(fds[0].revents().is_empty(), "unexpected stdin poll event");
+    }
+}
+
+#[cfg(not(unix))]
+fn wait_for_unread_stdin(_: u64) {
+    panic!("unread-input handshake requires Unix pipes");
 }
 
 fn write_chunks(chunks: &[Chunk], mut out: impl Write) {
