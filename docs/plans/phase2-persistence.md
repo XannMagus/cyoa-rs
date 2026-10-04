@@ -8,6 +8,12 @@ Existing contracts retain their authority and coverage. No runtime/dependency/te
 changes accompany this plan. The numbered sections and acceptance IDs are stable
 handoff references, not required-test registrations.
 
+Implementation update (2026-10-04): **S1 is complete**. The checked established
+cast constructor and its four registered domain regressions passed the full
+gate, including domain mutation scrutiny. See
+[S1 evidence](../../reviews/2026-10-04-persistence-s1/README.md).
+S2–S7 remain planned; the proposals and audit below retain their planning context.
+
 ## 1. Outcome, scope and authority
 
 Implement save/load/list, version-1 JSON saves with a migration dispatcher, atomic

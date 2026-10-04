@@ -139,6 +139,18 @@ pub struct TooFewPlayableCharacters {
     found: usize,
 }
 
+/// Invalid established-world data. Restoration rejects loss rather than
+/// silently deduplicating records or changing the saved playable position.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Error)]
+pub enum InvalidRestoredWorldCast {
+    #[error("an established world must contain a playable character")]
+    EmptyPlayable,
+    #[error("an established world contains an exact duplicate playable record")]
+    DuplicatePlayable,
+    #[error("an established world contains an exact duplicate NPC record")]
+    DuplicateNpc,
+}
+
 /// The generated cast of a world: playable characters and NPCs, deduplicated
 /// and capped. Constructing one requires no LLM call.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -148,6 +160,27 @@ pub struct WorldCast {
 }
 
 impl WorldCast {
+    /// Reconstructs an established cast without generation-time filtering.
+    /// All records and their order survive, including distinct namesakes and
+    /// names shared across roles. Generation caps/minimums do not apply.
+    pub fn restore(
+        playable: Vec<PlayerCharacter>,
+        npcs: Vec<NonPlayerCharacter>,
+    ) -> Result<Self, InvalidRestoredWorldCast> {
+        if playable.is_empty() {
+            return Err(InvalidRestoredWorldCast::EmptyPlayable);
+        }
+        let mut seen = HashSet::new();
+        if playable.iter().any(|character| !seen.insert(character)) {
+            return Err(InvalidRestoredWorldCast::DuplicatePlayable);
+        }
+        let mut seen = HashSet::new();
+        if npcs.iter().any(|character| !seen.insert(character)) {
+            return Err(InvalidRestoredWorldCast::DuplicateNpc);
+        }
+        Ok(Self { playable, npcs })
+    }
+
     /// Deduplicates complete records within each role, preserving order, then
     /// caps NPCs. Deliberately differs from calibre's name-based deduplication:
     /// a shared name does not establish identity, including across roles.

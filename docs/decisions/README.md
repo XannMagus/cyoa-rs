@@ -780,3 +780,14 @@ Phase 0 mutations. The wake mutation disables registration while holding the pip
 writer open, so neither a byte nor EOF can wake the poll; an isolated long-poll
 test distinguishes the wake from periodic token checks. Production correctness
 checks must never be removed simply to make a redundant mechanism testable.
+
+### Phase 2 step 1 reconstruction evidence (2026-10-04)
+
+`WorldCast::restore` now checks an established cast without applying generation
+NPC caps or playable minimums. It rejects an empty playable role and exact duplicate
+records within each role instead of silently changing saved positions. Distinct
+namesakes and role order remain intact, and selection still uses `World::select`.
+Registered core regressions cover these ARCH-002/STATE-001/LIMITS-001/IDENTITY-001
+obligations. `WorldCast::new` retains its generation behavior. Save DTO mapping,
+disk round trips and user-facing persistence remain pending; this constructor
+alone does not establish them.

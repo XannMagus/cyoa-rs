@@ -47,6 +47,16 @@
         "tests": [
           "both_shipped_backend_commands_play_retry_and_inspect_canonical_story"
         ]
+      },
+      {
+        "package": "cyoa-core",
+        "target": "restored_world",
+        "tests": [
+          "restored_cast_rejects_empty_playables_and_exact_duplicates_in_each_role",
+          "restored_cast_preserves_namesakes_role_order_and_checked_selection",
+          "established_cast_is_not_pruned_or_rejected_by_restore_generation_limits",
+          "restored_single_playable_and_no_npcs_is_a_valid_zero_turn_game"
+        ]
       }
     ]
   },
@@ -298,6 +308,16 @@
         "tests": [
           "obsolete_cast_cannot_replace_an_edited_outline_and_actions_are_checked"
         ]
+      },
+      {
+        "package": "cyoa-core",
+        "target": "restored_world",
+        "tests": [
+          "restored_cast_rejects_empty_playables_and_exact_duplicates_in_each_role",
+          "restored_cast_preserves_namesakes_role_order_and_checked_selection",
+          "established_cast_is_not_pruned_or_rejected_by_restore_generation_limits",
+          "restored_single_playable_and_no_npcs_is_a_valid_zero_turn_game"
+        ]
       }
     ]
   },
@@ -361,6 +381,16 @@
         "tests": [
           "complete_controller_story_preserves_context_retry_identity_chapters_and_rewind",
           "controller_zero_npcs_and_both_restore_policies_use_active_limits"
+        ]
+      },
+      {
+        "package": "cyoa-core",
+        "target": "restored_world",
+        "tests": [
+          "restored_cast_rejects_empty_playables_and_exact_duplicates_in_each_role",
+          "restored_cast_preserves_namesakes_role_order_and_checked_selection",
+          "established_cast_is_not_pruned_or_rejected_by_restore_generation_limits",
+          "restored_single_playable_and_no_npcs_is_a_valid_zero_turn_game"
         ]
       }
     ]
@@ -572,6 +602,16 @@
         "tests": [
           "late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once",
           "zero_npc_limit_survives_cast_selection_opening_and_continuation"
+        ]
+      },
+      {
+        "package": "cyoa-core",
+        "target": "restored_world",
+        "tests": [
+          "restored_cast_rejects_empty_playables_and_exact_duplicates_in_each_role",
+          "restored_cast_preserves_namesakes_role_order_and_checked_selection",
+          "established_cast_is_not_pruned_or_rejected_by_restore_generation_limits",
+          "restored_single_playable_and_no_npcs_is_a_valid_zero_turn_game"
         ]
       }
     ]
