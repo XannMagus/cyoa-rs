@@ -5,6 +5,11 @@ Working branch: `phase-2/persistence`, created directly from that main baseline.
 This handoff commissions architecture and implementation planning. Persistence
 is not implemented; this document does not establish new enforced contracts.
 
+The resulting [Phase 2 implementation plan](phase2-persistence.md) maps every
+requirement below to proposed implementation steps and acceptance tests. Its
+2026-10-04 baseline also incorporates the subsequently recorded Claude live
+headless gate; the dated evidence summary below retains its original scope.
+
 ## Task and completion condition
 
 Produce `docs/plans/phase2-persistence.md`: an implementation-ready plan for

@@ -73,6 +73,11 @@ the gate now runs 37 mutations, including final error-report backpressure and
 demo cancellation/retry regressions ([repair evidence](reviews/2026-10-03-headless-repairs/README.md)).
 TUI, saves/autosave and export remain pending.
 
+Phase 2 has an [implementation plan](docs/plans/phase2-persistence.md) for
+persistence, autosave and headless save/load/rewind. It specifies the proposed
+format, failure policies, implementation sequence and handoff audit; it does not
+claim persistence is implemented.
+
 - `cyoa-core`: checked domain types, namesake-preserving casts and stable IDs,
   summary deltas, typed limits, owned protagonist selection, turns, chapters and
   rewind. Current/original restore policies preserve original settings and reapply
