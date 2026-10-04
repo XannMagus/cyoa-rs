@@ -1,0 +1,16 @@
+diff --git a/cyoa-presentation/src/persistence.rs b/cyoa-presentation/src/persistence.rs
+--- a/cyoa-presentation/src/persistence.rs
++++ b/cyoa-presentation/src/persistence.rs
+@@ -428,9 +428,9 @@
+         let key = match &event {
+             StorageEvent::Prepared { key, .. } | StorageEvent::Finished { key, .. } => *key,
+         };
+-        if !self.running.as_ref().is_some_and(|r| r.key == key)
+-            || key.revision != self.controller().revision()
+-        {
++        if false && (!self.running.as_ref().is_some_and(|r| r.key == key)
++            || key.revision != self.controller().revision())
++        {
+             if let StorageEvent::Finished { result, .. } = &event {
+                 match result {
+                     Err(failure) => self.storage_failure = Some(failure.clone()),

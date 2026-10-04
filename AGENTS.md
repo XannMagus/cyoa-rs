@@ -61,7 +61,9 @@ or event sourcing. These boundaries supersede the original module placement and
 The scripted Phase 0 engine, generation use cases, streaming and complete story
 acceptance scenario are implemented. Both real subprocess adapters and Linux
 headless/demo play are implemented; both Codex's and Claude's live headless gates
-passed, completing Phase 1. TUI, persistence and export are subsequent work — see `README.md`'s
+passed, completing Phase 1. Phase 2 persistence is implemented with its full
+acceptance audit and 42 handwritten behavioral mutations; see
+`reviews/2026-10-05-persistence-s7/README.md`. TUI and export are subsequent work — see `README.md`'s
 "Status". The contract gate also runs isolated behavioral
 mutations; stale patches, compiler failures and missing tests must fail the gate,
 not be counted as detected regressions. Keep domain, boundary, orchestration and

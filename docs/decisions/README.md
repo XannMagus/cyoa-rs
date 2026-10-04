@@ -109,8 +109,8 @@ protect this stronger Rust construction guarantee. Evidence: `652f0b2`.
 
 ### LIMITS-001 Typed bounds and explicit restoration policy
 
-**Partial: domain, prompts, orchestration, save-codec, local disk and headless
-restoration enforced; complete Phase 2 acceptance pending.** Different
+**Enforced: domain, prompts, orchestration, save-codec, local disk and headless
+restoration, including repeated disk-policy continuation and Phase 2 acceptance.** Different
 bounds have distinct types. Event cap and playable minimum must be positive;
 NPC cap and prose bridge allow zero. Zero NPC cap consumes no candidates.
 
@@ -447,7 +447,7 @@ protects it at the real-child boundary.
 
 **Partial: terminal-independent controller/worker, Linux headless/demo and
 persistence use cases/version-one codec, supervised local atomic storage and
-autosave/headless persistence enforced; full phase acceptance, TUI and export
+autosave/headless persistence and Phase 2 acceptance enforced; TUI and export
 pending.** Rust TUI and headless demo replace the Qt/calibre host. Keep vendor and
 filesystem work in adapters, one generation in flight, UI-owned canonical state,
 worker progress messages, cancellable children, cached narrative wrapping. Do not
@@ -920,3 +920,36 @@ The S6 evidence audit is `reviews/2026-10-04-persistence-s6/README.md`. S7's ful
 composed fault acceptance and focused persistence mutations remain pending;
 Phase 2 completion, TUI, exports and prompt overrides are not claimed. Backend
 schema/prompt/protocol code and live verification records are unchanged.
+
+### Phase 2 step 7 acceptance and mutation evidence (2026-10-05)
+
+The A1–A12 audit now records executable domain, codec, application, local-file,
+helper, coordinator and public binary evidence separately. The full generated
+story is saved to actual atomic files, reloaded, rewound, saved/reloaded and
+continued with exact request/state/audit and previous-byte backup assertions.
+Both restore policies additionally reach captured generation prompts/schema,
+accepted snapshots and subsequent disk inspection. Original settings and every
+snapshot remain authoritative (LIMITS-001/STATE-001/TEXT-001/IDENTITY-001/002/
+CHAPTER-001/ACCEPTANCE-001).
+
+Explicit binary backup recovery covers corrupt, future-version and missing
+primaries without rewriting the originals. Accepted-turn shutdown combines
+blocked mutating helpers with broken/full stdout and stderr, retaining canonical
+state, exact previous primary bytes, current+final write bounds and actual reaping
+of every preparation/write child. Real backend-fixture quit/EOF/cancellation/input
+and broken-output regressions now also inspect the final save (PRODUCT-001/
+STREAM-001/BACKENDS-001).
+
+Five additional isolated mutations protect stale storage acceptance, autosaving
+unaccepted results, rotating corrupt primary bytes, marking post-replacement
+failure clean and retrying inference after save failure. All 42 handwritten
+mutations require their exact registered tests; the five new entries additionally
+require specific assertion messages. Compiler/setup errors and stale patches
+remain gate failures. The existing domain-only automated scope is unchanged.
+
+Phase 2 is complete on the exercised Linux platform. Physical power-loss behavior
+on arbitrary filesystems is not inferred from process-kill tests. Only save v1 is
+supported; imports and future migrations, TUI, exports, images and arbitrary
+prompt overrides remain later work. LIMITS-001 is now enforced by its actual
+complete restore coverage; PRODUCT-001 remains partial for TUI/export. See
+`reviews/2026-10-05-persistence-s7/README.md` for the requirement audit and checks.

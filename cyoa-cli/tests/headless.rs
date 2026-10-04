@@ -48,6 +48,27 @@ use std::{
 mod support;
 use support::*;
 
+fn saved_canonical(app: &App) -> cyoa_application::persistence::StoredGame {
+    use cyoa_application::{cancellation::CancellationSource, persistence::*};
+    let mut repo =
+        cyoa_infrastructure::persistence::repository::LocalRepository::new(app._data.path().into())
+            .unwrap();
+    let token = CancellationSource::default().token();
+    let page = repo
+        .list(SavePage::new(None, 100).unwrap(), &token)
+        .unwrap();
+    assert_eq!(
+        page.entries.len(),
+        1,
+        "shutdown must preserve one canonical story slot"
+    );
+    let stored = repo
+        .load(&page.entries[0].id, SaveCopy::Primary, &token)
+        .unwrap();
+    assert_eq!(stored.snapshot.source, StorySource::Live);
+    stored
+}
+
 #[test]
 fn both_shipped_backend_commands_play_retry_and_inspect_canonical_story() {
     for claude in [false, true] {
@@ -216,6 +237,18 @@ fn idle_output_cancellation_eof_and_quit_join_real_children() {
             }
             assert!(app.finish().success(), "idle input cancellation regression");
             assert_gone(&report);
+            let saved = saved_canonical(&app);
+            assert_eq!(
+                saved.snapshot.game.turns().len(),
+                usize::from(ending == "cancel"),
+                "cancelled candidate must never reach the final save"
+            );
+            if ending == "cancel" {
+                assert_eq!(
+                    saved.snapshot.game.turns()[0].raw_response().as_str(),
+                    data["turns"][0].to_string()
+                );
+            }
         }
     }
 }
@@ -285,6 +318,15 @@ fn broken_stdout_closes_worker_and_reports_io_failure() {
         assert!(!app.finish().success());
         assert!(app.stderr().contains("Broken pipe"));
         assert_gone(&report);
+        let saved = saved_canonical(&app);
+        assert!(saved.snapshot.game.turns().len() <= 1);
+        if let Some(turn) = saved.snapshot.game.turns().first() {
+            assert_eq!(
+                turn.raw_response().as_str(),
+                data["turns"][0].to_string(),
+                "output failure must save only the authoritative accepted payload"
+            );
+        }
     }
 }
 #[test]
@@ -376,6 +418,10 @@ fn invalid_utf8_input_closes_active_worker_without_committing() {
     assert!(app.stderr().contains("invalid utf-8"));
     assert_gone(&report);
     assert!(!app.stderr().contains("[committed turn"));
+    assert!(
+        saved_canonical(&app).snapshot.game.turns().is_empty(),
+        "input failure must retain the selected zero-turn save after joining generation"
+    );
 }
 #[test]
 fn quotes_unicode_multiline_narrative_and_numeric_player_intent_survive_binary_io() {

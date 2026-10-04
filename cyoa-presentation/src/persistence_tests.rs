@@ -121,14 +121,17 @@ fn stale_duplicate_or_wrong_revision_storage_receipts_never_clean_or_rebind() {
         id: StorageRequestId::new(1).unwrap(),
         ..key
     };
-    assert!(matches!(
-        s.accept_storage(StorageEvent::Finished {
-            key: stale,
-            result: Ok(StorageOutcome::Saved(receipt()))
-        })
-        .as_slice(),
-        [PersistenceEvent::Ignored]
-    ));
+    assert!(
+        matches!(
+            s.accept_storage(StorageEvent::Finished {
+                key: stale,
+                result: Ok(StorageOutcome::Saved(receipt()))
+            })
+            .as_slice(),
+            [PersistenceEvent::Ignored]
+        ),
+        "stale storage receipt must never clean or rebind canonical state"
+    );
     assert_eq!(s.durability, Durability::Dirty);
     assert_eq!(s.binding, SaveBinding::Unbound);
     assert!(s.running.is_some());

@@ -297,7 +297,11 @@ fn failed_autosave_keeps_accepted_turn_and_storage_retry_never_regenerates() {
     disk.lock().unwrap().modes.push_back(Mode::Fail);
     s.dispatch(Intent::Turn(TurnDirection::Continue)).unwrap();
     settle(&mut s);
-    assert_eq!(s.controller().game().unwrap().turns().len(), 1);
+    assert_eq!(
+        s.controller().game().unwrap().turns().len(),
+        1,
+        "save failure must never retry inference"
+    );
     assert_eq!(s.durability(), Durability::Dirty);
     assert!(s.storage_failure().is_some());
     assert!(s.controller().failure().is_none());
@@ -335,7 +339,11 @@ fn uncertain_write_and_worker_panic_reconcile_same_attempt_without_a_new_slot() 
         disk.lock().unwrap().modes.push_back(mode);
         s.dispatch(Intent::Turn(TurnDirection::Continue)).unwrap();
         settle(&mut s);
-        assert_eq!(s.durability(), Durability::Uncertain);
+        assert_eq!(
+            s.durability(),
+            Durability::Uncertain,
+            "post-replacement failure must never be marked clean"
+        );
         assert!(s.storage_failure().unwrap().pending.is_some());
         let intended = disk.lock().unwrap().saved.clone().unwrap();
         s.save(false).unwrap();
@@ -616,7 +624,11 @@ fn cancelled_generation_never_autosaves_a_rejected_turn() {
     assert_eq!(s.controller().game(), Some(&before));
     assert_eq!(s.controller().revision(), revision);
     assert_eq!(s.durability(), Durability::Clean);
-    assert_eq!(disk.lock().unwrap().writes, [("create", 0)]);
+    assert_eq!(
+        disk.lock().unwrap().writes,
+        [("create", 0)],
+        "unaccepted generation must never autosave"
+    );
     s.dispatch(Intent::Retry).unwrap();
     settle(&mut s);
     assert_eq!(s.controller().game().unwrap().turns().len(), 1);

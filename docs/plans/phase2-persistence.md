@@ -3,7 +3,7 @@
 Planning baseline: `9d7b3a9` on `phase-2/persistence`, 2026-10-04; runtime
 baseline `1663f62`, with Phase 1 live evidence updated by `4fb6775`. This is the deliverable commissioned by the
 [planning handoff](phase2-persistence-handoff.md). **All new interfaces, policies,
-tests and steps below are proposals, not implemented or enforced contracts.**
+tests and steps below were proposals at that planning baseline.**
 Existing contracts retain their authority and coverage. No runtime/dependency/test
 changes accompany this plan. The numbered sections and acceptance IDs are stable
 handoff references, not required-test registrations.
@@ -23,7 +23,11 @@ presentation storage runner; see [S4 evidence](../../reviews/2026-10-04-persiste
 [S5 evidence](../../reviews/2026-10-04-persistence-s5/README.md).
 **S6 implements public headless commands and resume**; see
 [S6 evidence](../../reviews/2026-10-04-persistence-s6/README.md).
-S7's composed fault acceptance and focused persistence mutations remain planned.
+**S7 completes composed fault acceptance and the focused persistence mutations**;
+see the [A1–A12 acceptance audit](../../reviews/2026-10-05-persistence-s7/README.md).
+Phase 2 is complete on the exercised Linux platform; TUI, export and overrides
+remain subsequent work. Historical proposals below retain their original context;
+the evidence records identify actual files and registered tests.
 The proposals and audit below retain their planning context.
 
 ## 1. Outcome, scope and authority
@@ -43,7 +47,7 @@ Both vendor adapters remain peers. Both live headless gates are now complete
 (the older planning handoff predates Claude's recorded gate). This work requires
 no real model calls.
 
-### Contract and evidence matrix
+### Planning-baseline contract and evidence matrix
 
 | Contract | Existing authoritative evidence inspected | Phase 2 obligation / acceptance |
 |---|---|---|
@@ -678,7 +682,7 @@ plan as authorization. Physical crash durability on untested filesystems, future
 schema migrations remain named evidence limits,
 not questions for the user to settle before vendor-independent work.
 
-## 8. Acceptance matrix (planning targets; S1–S6 evidence above)
+## 8. Acceptance matrix (original targets; S1–S7 evidence above)
 
 IDs below denote test groups with concrete targets and expected observations.
 Assertions use independent fixture expectations, not encoder output as the sole
@@ -742,7 +746,7 @@ failures. No behavior-changing survivor allowance or weakened historical tests.
 
 This maps every requirement/decision in the handoff to concrete work and evidence.
 “Covered” here means specified and testable in this historical planning audit.
-Actual S1–S6 enforcement and remaining S7 work are recorded above and in their
+Actual S1–S7 enforcement is recorded above and in their
 evidence files; this table alone does not establish feature enforcement.
 
 | Handoff item | Plan location | Acceptance / implementation |

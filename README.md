@@ -69,7 +69,7 @@ implemented offline: canonical session ownership, typed request IDs/revisions,
 stale/cancelled-result rejection, bounded progress, thread join and explicit retry.
 The complete story and both actual adapters are exercised through controlled child
 fixtures. Linux headless play and the credential-free demo are implemented;
-the gate now runs 37 mutations, including final error-report backpressure and
+the gate now runs 42 mutations, including persistence, final error-report backpressure and
 demo cancellation/retry regressions ([repair evidence](reviews/2026-10-03-headless-repairs/README.md)).
 TUI and export remain pending. Phase 2 persistence is described below.
 
@@ -85,9 +85,13 @@ helpers and the presentation storage worker are also implemented
 rewind/shutdown coordination is implemented and tested through shipped helpers
 ([S5 evidence](reviews/2026-10-04-persistence-s5/README.md)). Public headless
 save/load/list/inspect/rewind and restart flows are implemented
-([S6 evidence](reviews/2026-10-04-persistence-s6/README.md)). S7's complete fault
-acceptance and focused persistence mutations remain pending; Phase 2 is not yet
-claimed complete.
+([S6 evidence](reviews/2026-10-04-persistence-s6/README.md)). S7 completes the
+composed fault acceptance and five focused persistence mutations
+([Phase 2 acceptance audit](reviews/2026-10-05-persistence-s7/README.md)).
+**Phase 2 persistence is complete on the exercised Linux platform.** Next is
+Phase 3, the TUI play screen over an existing save. Filesystem sync ordering and
+process-kill recovery are tested; physical power-loss durability on arbitrary
+filesystems is not established.
 
 - `cyoa-core`: checked domain types, namesake-preserving casts and stable IDs,
   summary deltas, typed limits, owned protagonist selection, turns, chapters and
@@ -205,7 +209,7 @@ claims and inward dependencies, then runs workspace runtime tests with Nextest
 and doctests (including compile-fail examples) with Cargo. The `workspace`
 Nextest profile disables retries and runs the complete suite even after a failure.
 Pinned tool versions are checked before starting the gate. It also
-copies the current source to a temporary directory and verifies that 37 deliberate
+copies the current source to a temporary directory and verifies that 42 deliberate
 regressions fail their exact registered behavioral tests. Compiler failures and
 missing tests do not count as detected regressions. The isolated build uses cached
 Cargo dependencies after Clippy; the first mutation build costs additional time.
@@ -243,17 +247,16 @@ Linux-tested for both backends, including composed story acceptance, persistent
 adapter mutations and a bounded live adapter gate each. Controller/worker and Linux
 headless/demo acceptance are implemented. Both backends passed the live headless
 gate (Codex 2026-10-02, Claude 2026-10-03), so Phase 1 is complete; persistence
-(Phase 2) has S1–S6 implemented and S7 acceptance remaining. v1 completion still
-requires the remaining phases.
+(Phase 2) is complete through S7's acceptance gate. v1 completion still requires
+the remaining phases, beginning with the Phase 3 TUI play screen.
 
 ## Where to start
 
 1. Read `PLAN.md` in full. It has the architecture, the reasoning behind
    every non-obvious decision, the build order, and a ranked list of the
-   risky parts. Follow the phased build order in there — Phase 0 (engine, no
-   I/O) through Phase 1 (a real, playable headless loop against the actual
-   model) is the fastest way to find out if anything about the design is
-   wrong, before any TUI code exists.
+   risky parts. Phases 0–2 are complete. Continue with Phase 3's TUI play screen
+   over an existing save, using the Phase 2 acceptance audit and credential-free
+   demo for iteration.
 2. `reference/00-engine-notes.md` — the game logic (schemas, the delta-merge
    rules, validation, chapter/rewind logic) in dense reference form.
 3. `reference/01-claude-cli.md` and `reference/02-codex-cli.md` — the exact

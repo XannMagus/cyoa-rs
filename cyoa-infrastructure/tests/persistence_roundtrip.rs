@@ -13,7 +13,10 @@ use cyoa_infrastructure::{
         scripted::{ChunkedBackend, ScriptedBackend},
         templates::GenerationTemplates,
     },
-    persistence::codec::{decode, encode, stamp},
+    persistence::{
+        codec::{decode, encode, stamp},
+        repository::LocalRepository,
+    },
 };
 use serde_json::Value;
 fn id() -> SaveId {
@@ -233,10 +236,52 @@ fn frozen_full_story_roundtrip_preserves_complete_state_exact_audit_and_next_rew
             .get(),
         0.0
     );
-    let mut restored = loaded.snapshot.game;
+    // Compose the complete generated story with actual atomic disk storage.
+    // The frozen fixture remains the independent oracle for every game field.
+    let root = tempfile::tempdir().unwrap();
+    let mut repository = LocalRepository::new(root.path().into()).unwrap();
+    let receipt = repository.create(loaded.snapshot.clone(), &token).unwrap();
+    let primary = root
+        .path()
+        .join("saves")
+        .join(format!("{}.json", receipt.metadata.id.as_str()));
+    let backup = primary.with_extension("json.bak");
+    let before_rewind = std::fs::read(&primary).unwrap();
+    let disk_game = repository
+        .load(&receipt.metadata.id, SaveCopy::Primary, &token)
+        .unwrap();
+    assert_eq!(
+        disk_game.snapshot, frozen.snapshot,
+        "complete story disk reconstruction must retain all fields"
+    );
+    let mut restored = disk_game.snapshot.game;
     cases
         .rewind(&mut restored, TurnCount::new(3).unwrap())
         .unwrap();
+    let rewound = SaveSnapshot {
+        game: restored.clone(),
+        source: StorySource::Live,
+    };
+    let receipt = repository
+        .replace(
+            SaveTarget {
+                id: receipt.metadata.id,
+                expected_stamp: receipt.stamp,
+            },
+            rewound.clone(),
+            &token,
+        )
+        .unwrap();
+    assert_eq!(
+        std::fs::read(&backup).unwrap(),
+        before_rewind,
+        "rewind backup must retain the exact complete story document"
+    );
+    let reloaded = repository
+        .load(&receipt.metadata.id, SaveCopy::Primary, &token)
+        .unwrap();
+    assert_eq!(reloaded.snapshot, rewound);
+    restored = reloaded.snapshot.game;
     assert_eq!(events(&restored), ["A", "B", "C"]);
     assert_eq!(
         restored
@@ -285,6 +330,31 @@ fn frozen_full_story_roundtrip_preserves_complete_state_exact_audit_and_next_rew
         )
         .unwrap();
     assert_eq!(events(&restored), ["A", "B", "C", "F"]);
+    let before_continuation = std::fs::read(&primary).unwrap();
+    let continued = SaveSnapshot {
+        game: restored.clone(),
+        source: StorySource::Live,
+    };
+    let receipt = repository
+        .replace(
+            SaveTarget {
+                id: receipt.metadata.id,
+                expected_stamp: receipt.stamp,
+            },
+            continued.clone(),
+            &token,
+        )
+        .unwrap();
+    assert_eq!(receipt.metadata.revision.get(), 3);
+    assert_eq!(std::fs::read(&backup).unwrap(), before_continuation);
+    assert_eq!(
+        repository
+            .load(&receipt.metadata.id, SaveCopy::Primary, &token)
+            .unwrap()
+            .snapshot,
+        continued,
+        "post-restart continuation must persist exact accepted canonical state"
+    );
     let backend = cases.into_generator().into_backend();
     assert_eq!(backend.requests().len(), 10);
     assert_eq!(

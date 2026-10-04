@@ -320,5 +320,50 @@
     "test": "cancellation_after_demo_consumption_retries_each_stage_and_preserves_all_passages",
     "file": "cyoa-infrastructure/src/generation/demo.rs",
     "failure_contains": "demo outline retry regression"
+  },
+  {
+    "id": "accept-stale-storage-receipt",
+    "decision": "STREAM-001",
+    "package": "cyoa-presentation",
+    "target": "lib",
+    "test": "persistence::tests::stale_duplicate_or_wrong_revision_storage_receipts_never_clean_or_rebind",
+    "file": "cyoa-presentation/src/persistence.rs",
+    "failure_contains": "stale storage receipt must never clean or rebind canonical state"
+  },
+  {
+    "id": "autosave-unaccepted-generation",
+    "decision": "PRODUCT-001",
+    "package": "cyoa-presentation",
+    "target": "persistence",
+    "test": "cancelled_generation_never_autosaves_a_rejected_turn",
+    "file": "cyoa-presentation/src/persistence.rs",
+    "failure_contains": "unaccepted generation must never autosave"
+  },
+  {
+    "id": "rotate-corrupt-primary",
+    "decision": "PRODUCT-001",
+    "package": "cyoa-infrastructure",
+    "target": "filesystem_repository",
+    "test": "corrupt_primary_never_rotates_over_a_good_backup_and_recovery_creates_a_new_slot",
+    "file": "cyoa-infrastructure/src/persistence/repository.rs",
+    "failure_contains": "corrupt primary must never rotate over the good backup"
+  },
+  {
+    "id": "mark-post-rename-failure-clean",
+    "decision": "PRODUCT-001",
+    "package": "cyoa-presentation",
+    "target": "persistence",
+    "test": "uncertain_write_and_worker_panic_reconcile_same_attempt_without_a_new_slot",
+    "file": "cyoa-presentation/src/persistence.rs",
+    "failure_contains": "post-replacement failure must never be marked clean"
+  },
+  {
+    "id": "retry-generation-on-save-failure",
+    "decision": "PRODUCT-001",
+    "package": "cyoa-presentation",
+    "target": "persistence",
+    "test": "failed_autosave_keeps_accepted_turn_and_storage_retry_never_regenerates",
+    "file": "cyoa-presentation/src/persistence.rs",
+    "failure_contains": "save failure must never retry inference"
   }
 ]

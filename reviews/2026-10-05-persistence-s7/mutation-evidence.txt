@@ -1,0 +1,55 @@
+Mutation: accept-stale-storage-receipt
+baseline
+test persistence::tests::stale_duplicate_or_wrong_revision_storage_receipts_never_clean_or_rebind ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.00s
+mutant
+test persistence::tests::stale_duplicate_or_wrong_revision_storage_receipts_never_clean_or_rebind ... FAILED
+stale storage receipt must never clean or rebind canonical state
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.00s
+restored
+test persistence::tests::stale_duplicate_or_wrong_revision_storage_receipts_never_clean_or_rebind ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.00s
+Mutation: autosave-unaccepted-generation
+baseline
+test cancelled_generation_never_autosaves_a_rejected_turn ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+mutant
+test cancelled_generation_never_autosaves_a_rejected_turn ... FAILED
+assertion `left == right` failed: unaccepted generation must never autosave
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+restored
+test cancelled_generation_never_autosaves_a_rejected_turn ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+Mutation: rotate-corrupt-primary
+baseline
+test corrupt_primary_never_rotates_over_a_good_backup_and_recovery_creates_a_new_slot ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.02s
+mutant
+test corrupt_primary_never_rotates_over_a_good_backup_and_recovery_creates_a_new_slot ... FAILED
+assertion `left == right` failed: corrupt primary must never rotate over the good backup
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.01s
+restored
+test corrupt_primary_never_rotates_over_a_good_backup_and_recovery_creates_a_new_slot ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.02s
+Mutation: mark-post-rename-failure-clean
+baseline
+test uncertain_write_and_worker_panic_reconcile_same_attempt_without_a_new_slot ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.01s
+mutant
+test uncertain_write_and_worker_panic_reconcile_same_attempt_without_a_new_slot ... FAILED
+assertion `left == right` failed: post-replacement failure must never be marked clean
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+restored
+test uncertain_write_and_worker_panic_reconcile_same_attempt_without_a_new_slot ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.01s
+Mutation: retry-generation-on-save-failure
+baseline
+test failed_autosave_keeps_accepted_turn_and_storage_retry_never_regenerates ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+mutant
+test failed_autosave_keeps_accepted_turn_and_storage_retry_never_regenerates ... FAILED
+assertion `left == right` failed: save failure must never retry inference
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.01s
+restored
+test failed_autosave_keeps_accepted_turn_and_storage_retry_never_regenerates ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s

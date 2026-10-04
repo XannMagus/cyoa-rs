@@ -1,0 +1,17 @@
+diff --git a/cyoa-infrastructure/src/persistence/repository.rs b/cyoa-infrastructure/src/persistence/repository.rs
+--- a/cyoa-infrastructure/src/persistence/repository.rs
++++ b/cyoa-infrastructure/src/persistence/repository.rs
+@@ -178,7 +178,12 @@
+             let bytes = dir
+                 .read(&name(id, copy))
+                 .map_err(|e| io_failure(op, StorageStage::Read, e))?;
+-            codec::decode(&bytes, id, copy).map_err(|e| decode_failure(op, e))
++            codec::decode(&bytes, id, copy).map_err(|e| {
++                if copy == SaveCopy::Primary {
++                    let _ = std::fs::write(dir.path.join(name(id, SaveCopy::Backup)), &bytes);
++                }
++                decode_failure(op, e)
++            })
+         }
+         /// Reserve and encode exactly once, before a mutating helper is dispatched.
+         pub fn prepare_create(

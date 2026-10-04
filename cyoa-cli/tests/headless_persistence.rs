@@ -158,50 +158,69 @@ fn zero_turn_resume_waits_for_explicit_opening_and_rewind_persists_before_next_r
 }
 #[test]
 fn explicit_backup_recovery_creates_a_fresh_slot_and_preserves_damaged_originals() {
-    let root = tempfile::tempdir().unwrap();
-    let receipt = create(
-        root.path(),
-        snapshot(StorySource::Demo {
-            scenario: DemoScenarioId::HarbourV1,
-        }),
-    );
-    let primary = path(root.path(), &receipt.metadata.id);
-    let backup = primary.with_extension("json.bak");
-    let bytes = fs::read(&primary).unwrap();
-    fs::write(&backup, &bytes).unwrap();
-    fs::write(&primary, b"damaged primary").unwrap();
-    let failed = query(
-        root.path(),
-        &[
-            "play",
-            "--headless",
-            "--demo",
-            "--load",
-            receipt.metadata.id.as_str(),
-            "--limits",
-            "original",
-        ],
-    );
-    assert!(!failed.status.success());
-    assert_eq!(fs::read(&backup).unwrap(), bytes);
-    let mut app = demo(root.path(), Some(&receipt.metadata.id), true);
-    app.wait(0, "Recovered backup from");
-    app.wait(0, "Saved:");
-    app.command("/inspect", "Turns: 0");
-    app.command("/quit", "Session closed");
-    assert!(app.finish().success());
-    assert_eq!(fs::read(primary).unwrap(), b"damaged primary");
-    assert_eq!(fs::read(backup).unwrap(), bytes);
-    let mut repo = LocalRepository::new(root.path().into()).unwrap();
-    let page = repo
-        .list(
-            SavePage::new(None, 100).unwrap(),
-            &CancellationSource::default().token(),
-        )
-        .unwrap();
-    assert_eq!(page.entries.len(), 2);
-    assert!(page.entries.iter().any(|e| e.id != receipt.metadata.id
-        && matches!(e.status, SaveListingStatus::Valid { turn_count: 0, .. })));
+    for damage in ["corrupt", "future", "missing"] {
+        let root = tempfile::tempdir().unwrap();
+        let receipt = create(
+            root.path(),
+            snapshot(StorySource::Demo {
+                scenario: DemoScenarioId::HarbourV1,
+            }),
+        );
+        let primary = path(root.path(), &receipt.metadata.id);
+        let backup = primary.with_extension("json.bak");
+        let bytes = fs::read(&primary).unwrap();
+        fs::write(&backup, &bytes).unwrap();
+        let damaged = match damage {
+            "corrupt" => Some(b"damaged primary".to_vec()),
+            "future" => {
+                let mut document: serde_json::Value = serde_json::from_slice(&bytes).unwrap();
+                document["version"] = serde_json::json!(99);
+                Some(serde_json::to_vec(&document).unwrap())
+            }
+            _ => None,
+        };
+        if let Some(bytes) = &damaged {
+            fs::write(&primary, bytes).unwrap();
+        } else {
+            fs::remove_file(&primary).unwrap();
+        }
+        let failed = query(
+            root.path(),
+            &[
+                "play",
+                "--headless",
+                "--demo",
+                "--load",
+                receipt.metadata.id.as_str(),
+                "--limits",
+                "original",
+            ],
+        );
+        assert!(!failed.status.success());
+        assert_eq!(fs::read(&backup).unwrap(), bytes);
+        let mut app = demo(root.path(), Some(&receipt.metadata.id), true);
+        app.wait(0, "Recovered backup from");
+        app.wait(0, "Saved:");
+        app.command("/inspect", "Turns: 0");
+        app.command("/quit", "Session closed");
+        assert!(app.finish().success());
+        assert_eq!(
+            fs::read(&primary).ok(),
+            damaged,
+            "backup recovery must preserve {damage} primary state"
+        );
+        assert_eq!(fs::read(backup).unwrap(), bytes);
+        let mut repo = LocalRepository::new(root.path().into()).unwrap();
+        let page = repo
+            .list(
+                SavePage::new(None, 100).unwrap(),
+                &CancellationSource::default().token(),
+            )
+            .unwrap();
+        assert_eq!(page.entries.len(), 2);
+        assert!(page.entries.iter().any(|e| e.id != receipt.metadata.id
+            && matches!(e.status, SaveListingStatus::Valid { turn_count: 0, .. })));
+    }
 }
 #[test]
 fn both_fixture_backends_restart_from_disk_and_live_saves_are_vendor_neutral() {

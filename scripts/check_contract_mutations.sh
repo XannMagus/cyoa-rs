@@ -7,7 +7,7 @@ bash scripts/test_mutation_outcome.sh
 manifest=scripts/mutations/manifest.json
 registry=docs/decisions/required-tests.json
 jq -e --slurpfile registry "$registry" '
-  type == "array" and length >= 37
+  type == "array" and length >= 42
   and ([.[].id] | length == (unique | length))
   and ([.[].id] as $ids | all([
     "name-only-deduplication", "duplicate-opening-request",
@@ -23,9 +23,15 @@ jq -e --slurpfile registry "$registry" '
     "accept-api-key-auth", "discard-claude-candidate-evidence",
     "discard-claude-diagnostic-evidence", "leak-advisor-into-shared-instructions",
     "drop-candidate-on-malformed-metadata", "accept-last-duplicate-field",
-    "accept-stale-worker-result", "accept-cancelled-worker-success", "commit-worker-turn-twice", "ignore-headless-interrupt", "block-final-error-report", "advance-demo-on-cancel"
+    "accept-stale-worker-result", "accept-cancelled-worker-success", "commit-worker-turn-twice", "ignore-headless-interrupt", "block-final-error-report", "advance-demo-on-cancel",
+    "accept-stale-storage-receipt", "autosave-unaccepted-generation",
+    "rotate-corrupt-primary", "mark-post-rename-failure-clean",
+    "retry-generation-on-save-failure"
   ][]; . as $id | $ids | index($id) != null))
   and all(.[];
+    (if (.id | test("^(accept-stale-storage-receipt|autosave-unaccepted-generation|rotate-corrupt-primary|mark-post-rename-failure-clean|retry-generation-on-save-failure)$")) then
+      (.failure_contains | type == "string" and length > 0) else true end)
+    and
     (if (.id | test("^(accept-stale-worker-result|accept-cancelled-worker-success|commit-worker-turn-twice|ignore-headless-interrupt|block-final-error-report|advance-demo-on-cancel)$")) then
       (.failure_contains | type == "string" and length > 0) else true end)
     and (.id | test("^[a-z-]+$"))

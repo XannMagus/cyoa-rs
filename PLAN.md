@@ -40,7 +40,11 @@ remain separate obligations: Codex passed six turns, chapter breaks, cancellatio
 and explicit retry ([evidence](reviews/2026-10-02-headless/README.md)); Claude
 passed twelve turns, a chapter break, cancellation and explicit retry
 ([evidence](reviews/2026-10-03-claude-headless/README.md)). Both-backend Phase 1
-acceptance is complete; Phase 2 (persistence) is next. See the
+acceptance is complete. Phase 2 persistence is also complete through S7's
+[acceptance audit](reviews/2026-10-05-persistence-s7/README.md), including canonical
+autosave, explicit restore, atomic backup/recovery, bounded storage helpers and
+the focused persistence mutation suite. The next build step is Phase 3's TUI
+play screen over an existing save. See the
 [implementation record](reviews/2026-10-02-controller-worker/README.md).
 
 ## Context

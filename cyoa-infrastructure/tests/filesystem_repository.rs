@@ -139,7 +139,11 @@ fn corrupt_primary_never_rotates_over_a_good_backup_and_recovery_creates_a_new_s
         )
         .unwrap_err();
     assert!(matches!(error.kind, StorageFailureKind::Corrupt { .. }));
-    assert_eq!(fs::read(&backup).unwrap(), good);
+    assert_eq!(
+        fs::read(&backup).unwrap(),
+        good,
+        "corrupt primary must never rotate over the good backup"
+    );
     let recovered = repo
         .load(&first.metadata.id, SaveCopy::Backup, &token)
         .unwrap();
@@ -376,13 +380,125 @@ fn disk_restore_cycles_preserve_original_limits_and_every_narrowed_snapshot() {
     let inspected = cases
         .inspect_save(
             InspectSave {
-                id: final_receipt.metadata.id,
+                id: final_receipt.metadata.id.clone(),
                 copy: SaveCopy::Primary,
             },
             &token,
         )
         .unwrap();
     assert_eq!(inspected.snapshot, original);
+    // Each policy must also reach an actual generation after disk restoration,
+    // then persist its accepted snapshot before the next policy is applied.
+    use cyoa_application::generation::{StoryUseCases, TurnDirection};
+    use cyoa_infrastructure::generation::{
+        engine::GenerationEngine, scripted::ScriptedBackend, templates::GenerationTemplates,
+    };
+    let fixture: serde_json::Value =
+        serde_json::from_str(include_str!("fixtures/phase0_story.json")).unwrap();
+    let mut responses = vec![];
+    for event in ["New current", "New original"] {
+        let mut turn = fixture["turns"][4].clone();
+        turn["summary_update"]["new_major_events"] = serde_json::json!([event]);
+        responses.push(Ok(turn.to_string()));
+    }
+    let mut generation = StoryUseCases::new(GenerationEngine::new(
+        ScriptedBackend::new(responses),
+        GenerationTemplates::bundled().unwrap(),
+    ));
+    let mut receipt = final_receipt;
+    for (policy, cap, expected_events) in [
+        (RestoreLimits::Current(current), 1, vec!["New current"]),
+        (
+            RestoreLimits::Original,
+            4,
+            vec!["New current", "New original"],
+        ),
+    ] {
+        let mut restored = cases
+            .load_game(
+                LoadGame {
+                    id: receipt.metadata.id.clone(),
+                    copy: SaveCopy::Primary,
+                    limits: policy,
+                },
+                &token,
+            )
+            .unwrap()
+            .stored
+            .snapshot;
+        assert_eq!(restored.game.world().cast(), snapshot().game.world().cast());
+        assert_eq!(
+            restored.game.original_limits(),
+            snapshot().game.original_limits()
+        );
+        let request = GenerationTemplates::bundled()
+            .unwrap()
+            .turn_request(&restored.game, None, false)
+            .unwrap();
+        assert!(
+            request
+                .instructions()
+                .as_str()
+                .contains(&format!("at most {cap} major events"))
+        );
+        generation
+            .take_turn(
+                &mut restored.game,
+                TurnDirection::Continue,
+                &token,
+                &mut |_| {},
+            )
+            .unwrap();
+        assert_eq!(
+            restored
+                .game
+                .current_summary()
+                .major_events()
+                .events()
+                .iter()
+                .map(|event| event.as_str())
+                .collect::<Vec<_>>(),
+            expected_events
+        );
+        for record in restored.game.turns() {
+            assert_eq!(record.summary().major_events().limit().get(), cap);
+        }
+        receipt = cases
+            .save_game(
+                SaveGame::Replace {
+                    target: SaveTarget {
+                        id: receipt.metadata.id.clone(),
+                        expected_stamp: receipt.stamp,
+                    },
+                    snapshot: restored.clone(),
+                },
+                &token,
+            )
+            .unwrap();
+        let stored = cases
+            .inspect_save(
+                InspectSave {
+                    id: receipt.metadata.id.clone(),
+                    copy: SaveCopy::Primary,
+                },
+                &token,
+            )
+            .unwrap();
+        assert_eq!(
+            stored.snapshot, restored,
+            "each disk policy continuation retains all canonical fields"
+        );
+    }
+    let backend = generation.into_generator().into_backend();
+    assert_eq!(backend.requests().len(), 2);
+    for (request, cap) in backend.requests().iter().zip([1, 4]) {
+        assert!(
+            request
+                .instructions()
+                .contains(&format!("at most {cap} major events"))
+        );
+        assert!(request.schema()["$defs"]["SummaryUpdate"]["properties"]["consolidated_major_events"]["description"].as_str().unwrap().contains(&format!("{cap} major events")));
+    }
 }
 
 #[test]

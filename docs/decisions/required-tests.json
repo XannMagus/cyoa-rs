@@ -434,7 +434,7 @@
   },
   {
     "id": "LIMITS-001",
-    "coverage": "partial",
+    "coverage": "enforced",
     "checks": [
       {
         "package": "cyoa-core",
@@ -1150,7 +1150,8 @@
         "target": "persistence_shutdown",
         "tests": [
           "bounded_silent_storage_keeps_input_responsive_and_reaps_current_and_final_helpers",
-          "input_and_output_errors_still_save_last_canonical_story_and_remain_errors"
+          "input_and_output_errors_still_save_last_canonical_story_and_remain_errors",
+          "blocked_storage_and_faulted_output_sinks_preserve_canonical_state_and_reap_helpers"
         ]
       }
     ]
@@ -1535,7 +1536,8 @@
         "target": "persistence_shutdown",
         "tests": [
           "bounded_silent_storage_keeps_input_responsive_and_reaps_current_and_final_helpers",
-          "input_and_output_errors_still_save_last_canonical_story_and_remain_errors"
+          "input_and_output_errors_still_save_last_canonical_story_and_remain_errors",
+          "blocked_storage_and_faulted_output_sinks_preserve_canonical_state_and_reap_helpers"
         ]
       }
     ]
@@ -1992,7 +1994,8 @@
         "target": "persistence_shutdown",
         "tests": [
           "bounded_silent_storage_keeps_input_responsive_and_reaps_current_and_final_helpers",
-          "input_and_output_errors_still_save_last_canonical_story_and_remain_errors"
+          "input_and_output_errors_still_save_last_canonical_story_and_remain_errors",
+          "blocked_storage_and_faulted_output_sinks_preserve_canonical_state_and_reap_helpers"
         ]
       }
     ]
@@ -2088,7 +2091,8 @@
         "target": "persistence_shutdown",
         "tests": [
           "bounded_silent_storage_keeps_input_responsive_and_reaps_current_and_final_helpers",
-          "input_and_output_errors_still_save_last_canonical_story_and_remain_errors"
+          "input_and_output_errors_still_save_last_canonical_story_and_remain_errors",
+          "blocked_storage_and_faulted_output_sinks_preserve_canonical_state_and_reap_helpers"
         ]
       }
     ]

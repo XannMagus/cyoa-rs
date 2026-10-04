@@ -19,6 +19,12 @@ fn main() {
         .open(root.join(".fixture-requests"))
         .unwrap();
     writeln!(log, "{intent}").unwrap();
+    let mut pids = std::fs::OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(root.join(".fixture-pids"))
+        .unwrap();
+    writeln!(pids, "{}", std::process::id()).unwrap();
     std::fs::write(
         root.join(".fixture-cwd"),
         std::env::current_dir().unwrap().to_str().unwrap(),
@@ -35,7 +41,10 @@ fn main() {
     let mode = std::fs::read_to_string(root.join(".fixture-mode")).unwrap();
     std::fs::write(root.join(".fixture-pid"), std::process::id().to_string()).unwrap();
     std::fs::write(root.join(".fixture-ready"), b"ready").unwrap();
-    if mode == "silent" {
+    if intent == "Apply" {
+        std::fs::write(root.join(".fixture-apply-ready"), b"ready").unwrap();
+    }
+    if mode == "silent" || (mode == "silent-apply" && intent == "Apply") {
         loop {
             std::thread::sleep(Duration::from_secs(60));
         }

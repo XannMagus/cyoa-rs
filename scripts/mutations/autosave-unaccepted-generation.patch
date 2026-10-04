@@ -1,0 +1,12 @@
+diff --git a/cyoa-presentation/src/persistence.rs b/cyoa-presentation/src/persistence.rs
+--- a/cyoa-presentation/src/persistence.rs
++++ b/cyoa-presentation/src/persistence.rs
+@@ -403,7 +403,7 @@
+             if event.worker_fault || self.controller().phase() == Phase::Faulted {
+                 self.worker_fault = true;
+             }
+-            let save = event.change == Some(CanonicalChange::Turn);
++            let save = event.change == Some(CanonicalChange::Turn) || event.acceptance == Acceptance::Failed;
+             events.push(PersistenceEvent::Generation {
+                 acceptance: event.acceptance,
+                 change: event.change,

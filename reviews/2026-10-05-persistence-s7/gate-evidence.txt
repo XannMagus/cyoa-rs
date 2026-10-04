@@ -1,0 +1,17 @@
+     Summary [   3.325s] 428 tests run: 428 passed, 0 skipped
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+test cyoa-core/src/summary.rs - summary::StorySummary (line 113) - compile fail ... ok
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Detected mutation: accept-stale-storage-receipt (lib/persistence::tests::stale_duplicate_or_wrong_revision_storage_receipts_never_clean_or_rebind)
+Detected mutation: autosave-unaccepted-generation (persistence/cancelled_generation_never_autosaves_a_rejected_turn)
+Detected mutation: rotate-corrupt-primary (filesystem_repository/corrupt_primary_never_rotates_over_a_good_backup_and_recovery_creates_a_new_slot)
+Detected mutation: mark-post-rename-failure-clean (persistence/uncertain_write_and_worker_panic_reconcile_same_attempt_without_a_new_slot)
+Detected mutation: retry-generation-on-save-failure (persistence/failed_autosave_keeps_accepted_turn_and_storage_retry_never_regenerates)
+All required behavioral mutations detected.
+Found 179 mutants to test
+179 mutants tested in 57s: 100 caught, 79 unviable
+Caught mutations with per-test nontermination failures: 2 (included in cargo-mutants caught count).
+Domain mutation gate passed. Unviable mutants are not test detections; review limits remain documented.
+Project contracts verified. Pending feature obligations remain listed in docs/decisions.
