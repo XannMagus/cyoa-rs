@@ -273,3 +273,98 @@ fn closing_or_dropping_storage_runner_reaps_a_real_silent_helper() {
         assert!(!root.path().join("saves").exists());
     }
 }
+
+#[test]
+fn coordinator_rewind_load_and_quit_persist_through_shipped_helpers() {
+    use cyoa_application::generation::StoryUseCases;
+    use cyoa_core::{game::TurnCount, limits::RestoreLimits};
+    use cyoa_presentation::{
+        persistence::*,
+        runtime::{Intent, SessionRuntime},
+        session::SessionController,
+        storage::StorageRunner,
+        worker::PreviewLimit,
+    };
+    use std::time::{Duration, Instant};
+    let root = tempfile::tempdir().unwrap();
+    let config = HelperConfig::new(
+        PathBuf::from(env!("CARGO_BIN_EXE_cyoa")),
+        root.path().into(),
+    )
+    .unwrap();
+    let initial = snapshot();
+    let runtime = SessionRuntime::new(
+        SessionController::from_game(initial.game.clone()),
+        StoryUseCases::new(cyoa_infrastructure::generation::demo::harbour_v1().unwrap()),
+        PreviewLimit::default(),
+    );
+    let mut s = PersistedSession::new(
+        runtime,
+        StorageRunner::new(move |evidence| SupervisedRepository::new(config.clone(), evidence)),
+        initial.source,
+    );
+    macro_rules! settle {
+        () => {{
+            let deadline = Instant::now() + Duration::from_secs(5);
+            while s.storage_busy()
+                || s.shutdown() == Shutdown::StoppingGeneration
+                || s.shutdown() == Shutdown::SavingFinal
+            {
+                s.poll();
+                assert!(Instant::now() < deadline);
+                std::thread::sleep(Duration::from_millis(2));
+            }
+        }};
+    }
+    s.save(false).unwrap();
+    settle!();
+    assert_eq!(s.durability(), Durability::Clean);
+    let SaveBinding::Bound { id, .. } = s.binding().clone() else {
+        panic!("missing binding")
+    };
+    let path = root
+        .path()
+        .join("saves")
+        .join(format!("{}.json", id.as_str()));
+    let first = fs::read(&path).unwrap();
+    assert_eq!(
+        codec::decode(&first, &id, SaveCopy::Primary)
+            .unwrap()
+            .snapshot,
+        initial
+    );
+    s.dispatch(Intent::Rewind(TurnCount::new(1).unwrap()))
+        .unwrap();
+    settle!();
+    let rewound = s.controller().game().unwrap().clone();
+    assert_eq!(rewound.turns().len(), initial.game.turns().len() - 1);
+    assert_eq!(
+        codec::decode(&fs::read(&path).unwrap(), &id, SaveCopy::Primary)
+            .unwrap()
+            .snapshot
+            .game,
+        rewound
+    );
+    assert_eq!(fs::read(path.with_extension("json.bak")).unwrap(), first);
+    s.load(LoadGame {
+        id: id.clone(),
+        copy: SaveCopy::Primary,
+        limits: RestoreLimits::Original,
+    })
+    .unwrap();
+    settle!();
+    assert_eq!(s.controller().game(), Some(&rewound));
+    s.quit();
+    s.quit();
+    s.poll();
+    settle!();
+    assert_eq!(s.shutdown(), Shutdown::DrainingOutput);
+    assert!(!s.exit_failed());
+    assert_eq!(
+        codec::decode(&fs::read(path).unwrap(), &id, SaveCopy::Primary)
+            .unwrap()
+            .snapshot
+            .game,
+        rewound
+    );
+}

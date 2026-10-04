@@ -81,8 +81,10 @@ limits, selection, identities, chapters and rewind context. The
 Linux atomic repository with exact backups, conflict checks and reconciliation
 ([S3 evidence](reviews/2026-10-04-persistence-s3/README.md)). Supervised storage
 helpers and the presentation storage worker are also implemented
-([S4 evidence](reviews/2026-10-04-persistence-s4/README.md)). Steps 5–7 remain pending:
-autosave coordination, headless commands and complete Phase 2 acceptance.
+([S4 evidence](reviews/2026-10-04-persistence-s4/README.md)). Canonical autosave/load/
+rewind/shutdown coordination is implemented and tested through shipped helpers
+([S5 evidence](reviews/2026-10-04-persistence-s5/README.md)). Steps 6–7 remain pending:
+headless commands and complete Phase 2 acceptance.
 User-facing save/load is not yet implemented.
 
 - `cyoa-core`: checked domain types, namesake-preserving casts and stable IDs,

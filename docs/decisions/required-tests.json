@@ -518,6 +518,47 @@
         "tests": [
           "explicit_restore_policy_and_read_only_queries_do_not_write_or_rebind_the_disk_stamp"
         ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "persistence",
+        "tests": [
+          "failed_autosave_keeps_accepted_turn_and_storage_retry_never_regenerates",
+          "uncertain_write_and_worker_panic_reconcile_same_attempt_without_a_new_slot",
+          "load_failure_preserves_stage_revision_binding_and_generation_retry",
+          "selection_saves_zero_turn_before_one_deferred_opening_and_quit_clears_it",
+          "rewind_and_changed_policy_load_save_canonical_snapshots_before_generation",
+          "source_mismatch_preserves_session_and_backup_recovery_creates_instead_of_replacing",
+          "quit_during_write_finishes_current_revision_once_without_duplicate_backup_rotation",
+          "quit_cancels_load_joins_and_saves_old_canonical_game_once",
+          "generation_and_storage_failure_views_remain_independent_and_copy_failure_keeps_binding",
+          "cancelled_generation_never_autosaves_a_rejected_turn",
+          "failed_copy_retains_previous_uncertain_attempt_for_reconciliation",
+          "queued_generation_panic_remains_an_exit_failure_after_quit_and_successful_save"
+        ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "lib",
+        "tests": [
+          "persistence::tests::stale_duplicate_or_wrong_revision_storage_receipts_never_clean_or_rebind",
+          "persistence::tests::storage_counter_exhaustion_rejects_admission_but_reserves_final_quit_save",
+          "persistence::tests::deferred_opening_and_load_reserve_their_followup_write_before_admission"
+        ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "session",
+        "tests": [
+          "in_session_load_advances_revision_preserves_request_ids_and_rejects_old_generation"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "storage_helper",
+        "tests": [
+          "coordinator_rewind_load_and_quit_persist_through_shipped_helpers"
+        ]
       }
     ]
   },
@@ -1367,6 +1408,47 @@
         "tests": [
           "persistence::repository::linux::tests::default_data_location_honors_absolute_xdg_and_rejects_relative_locations"
         ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "persistence",
+        "tests": [
+          "failed_autosave_keeps_accepted_turn_and_storage_retry_never_regenerates",
+          "uncertain_write_and_worker_panic_reconcile_same_attempt_without_a_new_slot",
+          "load_failure_preserves_stage_revision_binding_and_generation_retry",
+          "selection_saves_zero_turn_before_one_deferred_opening_and_quit_clears_it",
+          "rewind_and_changed_policy_load_save_canonical_snapshots_before_generation",
+          "source_mismatch_preserves_session_and_backup_recovery_creates_instead_of_replacing",
+          "quit_during_write_finishes_current_revision_once_without_duplicate_backup_rotation",
+          "quit_cancels_load_joins_and_saves_old_canonical_game_once",
+          "generation_and_storage_failure_views_remain_independent_and_copy_failure_keeps_binding",
+          "cancelled_generation_never_autosaves_a_rejected_turn",
+          "failed_copy_retains_previous_uncertain_attempt_for_reconciliation",
+          "queued_generation_panic_remains_an_exit_failure_after_quit_and_successful_save"
+        ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "lib",
+        "tests": [
+          "persistence::tests::stale_duplicate_or_wrong_revision_storage_receipts_never_clean_or_rebind",
+          "persistence::tests::storage_counter_exhaustion_rejects_admission_but_reserves_final_quit_save",
+          "persistence::tests::deferred_opening_and_load_reserve_their_followup_write_before_admission"
+        ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "session",
+        "tests": [
+          "in_session_load_advances_revision_preserves_request_ids_and_rejects_old_generation"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "storage_helper",
+        "tests": [
+          "coordinator_rewind_load_and_quit_persist_through_shipped_helpers"
+        ]
       }
     ]
   },
@@ -1738,6 +1820,47 @@
         "target": "lib",
         "tests": [
           "persistence::helper::tests::preparation_clock_or_entropy_failure_launches_no_helper_and_keeps_visibility_unchanged"
+        ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "persistence",
+        "tests": [
+          "failed_autosave_keeps_accepted_turn_and_storage_retry_never_regenerates",
+          "uncertain_write_and_worker_panic_reconcile_same_attempt_without_a_new_slot",
+          "load_failure_preserves_stage_revision_binding_and_generation_retry",
+          "selection_saves_zero_turn_before_one_deferred_opening_and_quit_clears_it",
+          "rewind_and_changed_policy_load_save_canonical_snapshots_before_generation",
+          "source_mismatch_preserves_session_and_backup_recovery_creates_instead_of_replacing",
+          "quit_during_write_finishes_current_revision_once_without_duplicate_backup_rotation",
+          "quit_cancels_load_joins_and_saves_old_canonical_game_once",
+          "generation_and_storage_failure_views_remain_independent_and_copy_failure_keeps_binding",
+          "cancelled_generation_never_autosaves_a_rejected_turn",
+          "failed_copy_retains_previous_uncertain_attempt_for_reconciliation",
+          "queued_generation_panic_remains_an_exit_failure_after_quit_and_successful_save"
+        ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "lib",
+        "tests": [
+          "persistence::tests::stale_duplicate_or_wrong_revision_storage_receipts_never_clean_or_rebind",
+          "persistence::tests::storage_counter_exhaustion_rejects_admission_but_reserves_final_quit_save",
+          "persistence::tests::deferred_opening_and_load_reserve_their_followup_write_before_admission"
+        ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "session",
+        "tests": [
+          "in_session_load_advances_revision_preserves_request_ids_and_rejects_old_generation"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "storage_helper",
+        "tests": [
+          "coordinator_rewind_load_and_quit_persist_through_shipped_helpers"
         ]
       }
     ]

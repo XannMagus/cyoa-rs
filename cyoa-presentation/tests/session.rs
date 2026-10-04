@@ -219,3 +219,34 @@ fn obsolete_cast_cannot_replace_an_edited_outline_and_actions_are_checked() {
     assert_eq!(s.action(2).unwrap_err(), SessionError::Selection);
     assert!(!s.action(1).unwrap().token().is_cancelled());
 }
+
+#[test]
+fn in_session_load_advances_revision_preserves_request_ids_and_rejects_old_generation() {
+    let mut s = SessionController::from_game(game());
+    let old = s.take_turn(TurnDirection::Continue).unwrap();
+    let before = s.stage().clone();
+    assert_eq!(s.replace_game(committed(game())), Err(SessionError::Busy));
+    assert_eq!(s.stage(), &before);
+    s.cancel();
+    s.complete(Completion {
+        key: old.key(),
+        outcome: Err(failure()),
+    });
+    let revision = s.revision();
+    let restored = committed(game());
+    s.replace_game(restored.clone()).unwrap();
+    assert!(s.revision().get() > revision.get());
+    assert_eq!(s.phase(), Phase::Ready);
+    assert!(s.failure().is_none());
+    assert!(s.preview().is_empty());
+    assert_eq!(
+        s.complete(Completion {
+            key: old.key(),
+            outcome: Ok(WorkSuccess::Turn(Box::new(committed(restored.clone()))))
+        }),
+        Acceptance::Ignored
+    );
+    assert_eq!(s.game(), Some(&restored));
+    let fresh = s.take_turn(TurnDirection::Continue).unwrap();
+    assert!(fresh.key().id().get() > old.key().id().get());
+}

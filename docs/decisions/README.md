@@ -867,3 +867,25 @@ reply loss and kernel PID disappearance, process-kill crash-window file observat
 lock release, reconciliation, worker spawn/panic/close and strict protocol admission.
 No headless/autosave coordination or Phase 2 completion is claimed (S5–S7).
 See `reviews/2026-10-04-persistence-s4/README.md` for the scope audit and gate.
+
+### Phase 2 step 5 canonical coordination evidence (2026-10-04)
+
+PersistedSession now coordinates the generation runtime with the storage runner
+through inward ports (PRODUCT-001/STREAM-001/LIMITS-001). Typed accepted turn
+changes trigger autosaves; previews, outlines, casts, failed/cancelled/stale results
+never save a turn. Initial selection saves zero-turn state before one deferred
+opening. Dirty/Uncertain failure preserves canonical state and blocks generation;
+storage retry reconciles exact prepared identity without recommitting/regenerating.
+Save-copy binds only on success and a failed copy retains an earlier uncertain
+attempt. Load advances existing revision/request counters, preserves the old
+session on failure, checks source compatibility, and persists policy changes or
+backup recovery into a fresh slot. Shutdown joins generation before final storage,
+lets an active durable write satisfy quit, cancels read-only work, reserves counter
+capacity and bounds the final attempt. Worker panic remains an exit failure even
+when quit precedes polling its completion. Both error views remain independent.
+
+Port-based tests, private stale/counter tests, session restore admission and actual
+shipped-helper primary/backup observations are registered. The full shared gate
+passed; see `reviews/2026-10-04-persistence-s5/README.md`. Public headless commands
+and output/shutdown composition remain S6; complete Phase 2 fault/mutation
+acceptance remains S7. No new live backend claim or schema/prompt change.

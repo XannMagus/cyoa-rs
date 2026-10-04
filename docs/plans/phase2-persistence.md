@@ -19,8 +19,10 @@ See [S2 evidence](../../reviews/2026-10-04-persistence-s2/README.md).
 [S3 evidence](../../reviews/2026-10-04-persistence-s3/README.md).
 **S4 implements supervised storage execution** through the internal helper and
 presentation storage runner; see [S4 evidence](../../reviews/2026-10-04-persistence-s4/README.md).
-S5–S7 remain planned; autosave coordination and public headless save/load commands
-are not implemented. The proposals and audit below retain their planning context.
+**S5 implements canonical persistence coordination**; see
+[S5 evidence](../../reviews/2026-10-04-persistence-s5/README.md).
+S6–S7 remain planned; public headless save/load commands are not implemented.
+The proposals and audit below retain their planning context.
 
 ## 1. Outcome, scope and authority
 

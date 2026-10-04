@@ -19,7 +19,7 @@ pub enum StorageIntent {
     List(ListSaves),
 }
 impl StorageIntent {
-    fn operation(&self) -> StorageOperation {
+    pub(crate) fn operation(&self) -> StorageOperation {
         match self {
             Self::Save(command) => match command.as_ref() {
                 SaveGame::Create(_) => StorageOperation::Create,
@@ -89,6 +89,12 @@ where
     }
     pub fn is_closed(&self) -> bool {
         matches!(self.state, State::Closed)
+    }
+    /// A joined panic lost only this request's repository, not the factory.
+    pub fn recover_fault(&mut self) {
+        if !self.closing && matches!(self.state, State::Faulted) {
+            self.state = State::Ready;
+        }
     }
     pub fn start(&mut self, key: StorageKey, intent: StorageIntent) -> io::Result<()> {
         self.start_with(key, intent, |job| {

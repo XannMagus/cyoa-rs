@@ -252,6 +252,26 @@ impl SessionController {
             .map(SessionRevision)
             .ok_or(SessionError::Exhausted)
     }
+    /// Admission check for an in-session restore; counters are never reset.
+    pub fn can_replace_game(&self) -> Result<(), SessionError> {
+        self.ready()?;
+        self.next_revision()?;
+        Ok(())
+    }
+    pub fn replace_game(&mut self, game: GameState) -> Result<(), SessionError> {
+        self.can_replace_game()?;
+        let revision = self.next_revision()?;
+        self.limits = game.limits();
+        self.style = game.style().clone();
+        self.stage = Stage::Playing {
+            game: Box::new(game),
+        };
+        self.revision = revision;
+        self.operation = Operation::Ready;
+        self.preview.clear();
+        self.incomplete = false;
+        Ok(())
+    }
     fn start(&mut self, work: Work) -> Result<WorkRequest, SessionError> {
         self.ready()?;
         self.next_revision()?;
@@ -537,6 +557,9 @@ mod tests {
         assert_eq!(session.phase(), Phase::Ready);
         session.last_id = 0;
         session.revision = SessionRevision(u64::MAX);
+        let stage = session.stage().clone();
+        assert_eq!(session.can_replace_game(), Err(SessionError::Exhausted));
+        assert_eq!(session.stage(), &stage);
         assert_eq!(
             session
                 .submit_brief(Brief::new("brief").unwrap())
