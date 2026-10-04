@@ -142,6 +142,28 @@ re-run); `--model` itself (never passed); streams with a rejected-then-retried
 the enforce retry above; concurrent calls; whether org policy elsewhere changes the
 advisor behavior; long-narrative streaming at scale.
 
+## Confirmed: shipped live headless gate, 2.1.286, 2026-10-03
+
+`target/debug/cyoa play --headless --backend claude` in a real PTY, bundled templates,
+subscription auth (`claude.ai` / `firstParty` / team), no `--model`. Evidence:
+[`reviews/2026-10-03-claude-headless/`](../reviews/2026-10-03-claude-headless/README.md).
+Observed: outline, cast of four playables, twelve accepted turns (opening, `/action N`,
+player prose, empty-line continuation, explicit retry); chapter 0 retitled once
+("The Silent Tower" → "The Empty Yoke", seen by turn 3), a
+chapter break opened chapter 1 on turn 11 after the scenario was extended; a same-person
+rename kept its ID through the break. A real `/action` was cancelled about 1 s after its
+child appeared; canonical inspection was byte-equal before and after, and `/retry`
+committed the turn. **Incremental previews arrived on every accepted turn** (first
+fragment mid-sentence). On two turns the committed final narrative differed in wording
+from the streamed preview and the presentation replaced it with the authoritative final;
+the wire stream was not retained, so whether this was a second `StructuredOutput`
+payload in one result remains unobserved. All sixteen direct children observed (one at
+startup, consistent with the auth check; outline, cast, twelve turns, the cancelled
+request) and their workspaces were
+absent after exit; exit code 0. The model never sent `consolidated_major_events`, so the
+faithful 30-event cap truncated the earliest major events from turn 9 on. One run, one
+account/org; direct-child cleanup only.
+
 ## Confirmed (CLI 2.1.282, 2026-09-25)
 
 Checked against the real, installed `claude` binary, subscription auth

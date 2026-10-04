@@ -35,8 +35,11 @@ mutations, and **passed its own live adapter gate on 2026-10-02**
 requests plus a controlled cancellation. Headless play is implemented and tested
 offline for both. Codex also passed the shipped six-turn live headless gate with
 chapter breaks, stable rename, cancellation and explicit retry
-([evidence](reviews/2026-10-02-headless/README.md)); Claude's live headless gate
-remains pending.
+([evidence](reviews/2026-10-02-headless/README.md)). Claude passed the same
+shipped live headless gate on 2026-10-03 with twelve turns, a chapter break,
+stable rename, cancellation and explicit retry, with genuinely incremental previews
+([evidence](reviews/2026-10-03-claude-headless/README.md)). **Both-backend Phase 1
+acceptance is complete.**
 See the [Phase 1 plan](docs/plans/phase1-headless-backends.md)
 and each backend reference file for the remaining work; offline transport tests
 do not establish live vendor behavior.
@@ -197,9 +200,9 @@ is [real subprocess adapters and a playable headless loop](docs/plans/phase1-hea
 — transport foundations and Codex Backend reconciliation are implemented and
 Linux-tested for both backends, including composed story acceptance, persistent
 adapter mutations and a bounded live adapter gate each. Controller/worker and Linux
-headless/demo acceptance are implemented. Codex's live headless gate is complete;
-Claude's requires its own authenticated session. Persistence can proceed independently,
-but neither Phase 1 parity nor v1 completion is claimed before the peer gate.
+headless/demo acceptance are implemented. Both backends passed the live headless
+gate (Codex 2026-10-02, Claude 2026-10-03), so Phase 1 is complete; persistence
+(Phase 2) is next. v1 completion still requires the remaining phases.
 
 ## Where to start
 

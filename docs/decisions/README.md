@@ -329,8 +329,8 @@ for the observed initial gaps and strengthened sweep.
 
 **Partial: Codex adapter, composed real-child fixture acceptance and bounded live
 adapter acceptance implemented; Claude adapter, composed real-child fixture
-acceptance and bounded live adapter acceptance implemented; Codex shipped live
-headless gate complete, Claude live headless gate pending.**
+acceptance and bounded live adapter acceptance implemented; Codex and Claude
+shipped live headless gates complete.**
 Claude and Codex are peers behind inward-owned ports, not primary and
 fallback. Use stateless calls and subscription auth; never silently switch to paid
 API auth. Test the shared contract against scripted and both concrete adapters.
@@ -419,7 +419,7 @@ presentation, covers one account/org and one run, and says nothing about `--mode
 rate limits, descendants or server-side work after cancellation. The harness's first
 advisor counter over-reported (substring match on slash-command listings); the
 structural recount is in the evidence. Both live headless gates were pending at
-that adapter checkpoint; the later Codex gate is recorded below.
+that adapter checkpoint; both later headless gates are recorded below.
 
 Claude review repair 1 (2026-10-02): the codec extracts the exact `structured_output`
 span before validating the result's terminal metadata, so a result whose `is_error`
@@ -484,8 +484,15 @@ restore the reviewed defects, bringing the gate to 37. Evidence is in
 Codex's shipped live headless gate passed six turns through two chapter breaks,
 stable same-person rename, real cancellation with unchanged canonical state,
 explicit retry and quit. Observed direct child PIDs and workspaces disappeared.
-Claude's independent live headless gate remains pending. See
-`reviews/2026-10-02-headless/README.md` for the transcript and exact limitations.
+See `reviews/2026-10-02-headless/README.md` for the transcript and exact limitations.
+
+Claude's shipped live headless gate (CLI 2.1.286, 2026-10-03) passed twelve accepted
+turns through a chapter break opened on turn 11, a stable same-person rename, real
+cancellation with byte-equal canonical state, explicit retry and quit. Previews were
+genuinely incremental on every turn; on two turns the committed final differed in
+wording from the preview and replaced it through the designed correction path. All
+sixteen observed direct children and workspaces disappeared. See
+`reviews/2026-10-03-claude-headless/README.md` for the transcript and limitations.
 
 ## Review discipline
 

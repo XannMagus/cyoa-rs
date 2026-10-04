@@ -1,0 +1,1193 @@
+Script started on 2026-10-03 19:56:35+02:00 [COMMAND="sh reviews/2026-10-03-claude-headless/claude-live/run.sh" TERM="tmux-256color" TTY="/dev/pts/18" COLUMNS="100" LINES="40"]
+This session is memory only: no saves or autosave.
+Brief: enter a nonblank adventure idea. /help lists commands.
+A quiet harbour mystery about a missing tide bell. Create a cast of 3–5 playable characters with exactly two distinct people named Ajax, a sailor and a mason; every other playable and NPC has a different name. Keep their identities distinct. The story should make a short journey from harbour to island, with a chapter break during that journey. Atmospheric but brisk.
+Generating; /cancel or Ctrl-C cancels, /quit exits.
+Outline: The Bell That Kept the Tide
+**Grayhallow** is a small harbour town built into a cleft of dark cliffs, where slate roofs climb in steps above a horseshoe quay and the smell of tar, kelp and woodsmoke never quite leaves the air. For three hundred years its life has been set by one sound: the **tide bell**. It hung in the squat stone tower at the end of the Long Mole, rung not by any hand but by the sea itself, through a float-and-chain mechanism that swung the clapper as the flood tide rose. When the bell spoke, the fishing boats turned for home, the cockle-pickers left the sands, and anyone crossing the old causeway to the island knew they had less than an hour.
+
+*Last night, the bell did not ring.* At dawn the harbourmaster found the tower open to the wind, the iron yoke empty, and the great bronze bell, taller than a man and heavy as a cart, **simply gone**. There are no drag marks on the mole and no wheel ruts on the quay. Only a smear of green weed on the tower steps, and wet footprints that walk *out* to the water's edge and stop.
+
+Grayhallow is a quiet town, and it handles trouble quietly. The **Pilots' Guild** runs the harbour from a whitewashed hall above the fish market. Its members are careful, proud men and women who sell their knowledge of the shoals and have every reason to keep the boats safe and in work. The **Masons' Lodge** built the bell tower and has kept it in repair for generations. Its members are tight-lipped about the old construction marks cut into the tower's foundation stones, and some of those marks match carvings found nowhere else but out on the island. The town's lesser folk all keep their own counsel: cockle-wives, net-menders and a lamplighter who walks the mole at dusk.
+
+Out across the grey water of **the Sound** lies **Holm Ure**, a low green island with a ruined chapel, a dozen sheep, and a lighthouse that has been dark for forty years. It is reached on foot by the **Drowning Causeway**, a cobbled road visible only at low water, or by boat in a crossing of about two hours. The island's last keepers, the **Wardens of the Holm**, were said to have given the bell to Grayhallow in the first place, on the condition that it would "**answer the sea for as long as the sea asks**." Lately, fishermen swear they have seen lantern-light moving in the dead lighthouse at night. Last night, two of them claim, they heard a bell ringing faintly from the island, *out of time with any tide*.
+
+The stakes are simple and close. In three days comes the **spring tide**, the highest of the year, when the flood runs over the causeway faster than a man can run. Without the bell, the cockle-pickers on the far sands will have no warning, and neither will anyone caught on the causeway. The Pilots want the bell found before panic empties the harbour. The Lodge wants it found before anyone asks too many questions about what lies under the tower. And something on Holm Ure seems to want it **exactly where it is**.
+
+The journey is short but changes everything. **The first chapter** stays in Grayhallow. It is a mystery of salt-stained ledgers, an empty bell tower, a guild hall full of half-truths, and the hiring or borrowing of a boat. **The chapter break comes mid-crossing**, at the **Skerry of Teeth**, a black reef halfway across the Sound, where a sea-fog rolls in without warning and the harbour vanishes behind. Something there will make plain that the bell did not leave by any ordinary means. **The second chapter** lands on Holm Ure, with its ruined chapel, its dark lighthouse and a tidal cave beneath the cliffs where the old Wardens' secret has waited for someone to come and ask.
+
+A local custom matters to the cast. Forty years ago, the trading brig *Ajax* was lost on the Skerry of Teeth on the same night the lighthouse went dark. Grayhallow families named children born that winter after her, so the name **Ajax** still turns up in more than one household. To avoid mix-ups, townsfolk tell them apart by trade: one Ajax is known on the quay as a **sailor**, and the other in the Lodge yard as a **mason**. They are separate people with separate lives. No one else in the story shares that name. Every other islander, guild member and townsperson has a name of their own.
+
+*The atmosphere is hushed and briny: gulls, fog, cold stone, lamplight on wet cobbles. The pace is brisk. This is a mystery to be solved within a single turning of the tide.*
+Outline review: empty line accepts; /edit replaces title and description.
+
+Generating; /cancel or Ctrl-C cancels, /quit exits.
+Character 1: Ajax (the sailor) — A **weathered man of forty** with a lean, rope-hardened build. His face is wind-burned and creased at the eyes from squinting into glare off the water. He has a short, salt-grizzled dark beard, shaggy black hair going grey at the temples, and pale grey-green eyes. An old **white scar runs through his left eyebrow**. His hands are broad and calloused, and a faded tattoo of a brig under full sail covers his right forearm. He usually wears heavy oiled wool, patched canvas and sea boots, with a knitted cap pushed back on his head. *He smells of tar and cold air.*
+Born the winter the *Ajax* went down on the Skerry of Teeth, he has spent his whole life on the water: first as a ship's boy, then as a deckhand on coasting brigs, and now as owner-skipper of a battered little lugger called the *Kittiwake*. Everyone on the quay calls him **Ajax the sailor**, and he has stopped minding it.
+
+He was out on the Sound last night, running late with his nets. He is one of the two men who swear they **heard a bell ringing from Holm Ure**, out of time with any tide. The Pilots' Guild laughed at him. *He knows what he heard.*
+
+He has his own reasons to care. His father was a deckhand on the lost brig and never came home, and the lighthouse that should have warned them went dark that same night. **He wants the bell back, and he wants to know why the light failed.** He also has the one thing the mystery needs: a boat, and the nerve to take it across.
+Character 2: Ajax (the mason) — A **broad, heavy-shouldered man of forty** who stands very still and seems carved from the stone he works. His fair hair is cropped close and his beard is neatly trimmed and reddish-blond. He has deep-set **amber-brown eyes** and a nose broken years ago and badly set. Fine grey stone dust always sits in the creases of his knuckles, and the tip of his left little finger is missing. He usually wears a leather work apron over plain linen shirts with rolled sleeves, sturdy moleskin trousers and hobnailed boots, and keeps a **mason's square** tucked through his belt.
+Born the same hard winter as his namesake, he was apprenticed to the **Masons' Lodge** at twelve and rose to journeyman, and lately to the Lodge's inner circle. In the Lodge yard he is simply **Ajax the mason**. He is patient, exact and quietly devout about his craft.
+
+Ten years ago he repointed the bell tower's foundations. Down there, under the waterline at low tide, he saw **construction marks**: spirals and a broken circle. He was told never to speak of them. Later he found the same marks cut into the chapel stones on Holm Ure, and the Lodge masters ordered him to forget them.
+
+Now the bell is gone, and the Lodge wants the matter closed before anyone looks too closely at the foundations. *He has kept their secrets all his life.* **This time he is not sure he should.** He reads stone the way a sailor reads water, and he suspects the tower was never meant only to hang a bell.
+Character 3: Wren Calloway — A **sharp-featured young woman of nineteen**, small and quick, with a mass of curly copper hair she ties back with whatever string is to hand. Her face is pale and freckled and her eyes are watchful and **dark blue**. One front tooth is chipped. Ink always stains her fingers. She usually wears hand-me-down pilot's jackets too big in the shoulders, a long wool skirt kilted up for scrambling on the quay, and stout laced boots, with a **brass pocket compass** on a cord around her neck.
+Wren is the Pilots' Guild's youngest apprentice and its only one not born into a pilot family. Her mother was a cockle-picker drowned on the far sands when Wren was eight, on a night of storm when *no one heard the bell over the wind*. The Guild took Wren in out of guilt, put her to copying tide tables and charts, and never quite let her forget whose charity she lives on.
+
+That clerking has given her something the masters don't suspect. She knows the **salt-stained ledgers** better than anyone. This morning she noticed that **three pages of the bell-tower maintenance log have been razored out**, and the Guild Master told her to keep her mouth shut.
+
+*She has never been good at that.* Wren wants the bell found before the spring tide takes someone else's mother. **She also wants to know who in her own Guild is lying.**
+Character 4: Nessa Pryor — A **sturdy, sun-and-wind-browned woman of fifty-five** with a round, deeply lined face and a laugh like a gull's. Her iron-grey hair is braided in a thick rope under a faded headscarf. She has bright black eyes and strong forearms, and her hands are scarred from years of shellfish and cold. She **limps slightly on her right leg**. She usually wears layered woollen skirts hitched up over bare shins or rubber boots, a heavy shawl crossed and knotted at the back, and a **cockle rake and basket** that are rarely far from her.
+Nessa is the senior **cockle-wife** of Grayhallow. She leads the women and children who work the far sands below the Drowning Causeway, and for thirty-five years she has timed every one of their lives by the tide bell. She knows the sands, the quicksand runnels and the speed of the flood better than any pilot. *She also knows the old songs her grandmother sang*, songs about the **Wardens of the Holm** and what the bell was promised to.
+
+Without the bell, the spring tide in three days will catch her pickers on the flats, and the Guild has already hinted the women should just stay home and go hungry. Nessa won't have it.
+
+She crossed the causeway as a girl and saw the chapel when there were still Wardens' marks fresh on its walls. **She remembers a promise, a rhyme, and a cave the old folk would not name.** She means to remind Holm Ure of all three.
+Character selection: enter a one-based number.
+1
+Generating; /cancel or Ctrl-C cancels, /quit exits.
+The fog has[tentative preview; final validation pending]
+ not lifted by eight bells, and Grayhallow is quieter than you have ever heard it.
+
+You stand on the quay with a coil of wet net over one shoulder. The *Kittiwake* knocks against the stones behind you, her tan lugsail furled and dark with dew. Your hands are still cold from the night's work. Your ears still hold the sound you heard out on the Sound at two in the morning: **a bell, thin and far off, ringing from Holm Ure**. It came in slow, uneven strokes, the way no tide has ever rung it. You told the Pilots' Guild at first light. Young Pellow, the duty pilot, laughed so hard he had to sit down. *Rum and moonshine, Ajax. Go home and sleep it off.*
+
+You didn't go home. Nobody did, once the news came down from the mole.
+
+The whole town seems to be gathered along the curve of the harbour, cockle-wives in their shawls, net-menders, boys from the smokehouse, all of them keeping to the cobbles at the landward end of the **Long Mole**. Nobody walks out along it. Out at the far end the squat bell tower crouches in the fog, its door hanging open, and through the arch where the bell should be you can see **grey sky and nothing else**. The iron yoke hangs empty. The town has lost its pulse.
+
+"Three hundred years," someone says behind you. "Three hundred years, and not a night missed."
+
+A gull lands on a bollard, cocks its head at you and flies off again without a sound. The air smells as it always does, of tar and kelp and chimney smoke, but there is something else in it this morning, something like the cold green stink of a rock pool at low water.
+
+Halfway down the mole, a thin figure in a navy frock coat is pacing back and forth in front of a rope someone has strung across the stones. **Tobias Fenwick**, the harbourmaster. His peaked cap is crooked, and even from here you can see his hands, which won't stay still. They go from his spectacles to his buttons to a ledger clutched against his chest and back again. Every so often he glances up the hill toward the whitewashed bulk of the Guild hall above the fish market, as if he's expecting someone to come down it and tell him what to do.
+
+"They're saying there's footprints," says a voice at your elbow.
+
+You look down. A girl of thirteen or fourteen has crept up beside you. She's all chin and enormous grey eyes, with a shawl far too big for her drawn tight around her shoulders. Her hands are red-raw from net-work, and her clogs scrape nervously on the stones. You know her by sight: **Hester**, the Quayle girl, who mends nets for her uncle and lives in the loft over his store at the head of the mole.
+
+"Wet ones," she goes on, very fast and very low, as though she's been holding the words in her mouth all morning. "Walking *out*. To the water. And then they just stop." She swallows. "You're the one who heard it, aren't you? The bell on the island. Everybody's laughing about it."
+
+"Everybody's welcome to," you say.
+
+She studies your face for a long moment, as if she's weighing up whether you're the sort of grown man who boxes ears. Then she opens her mouth to say something more—
+
+"**Ajax!**" Tobias Fenwick has seen you over the heads of the crowd. He waves the ledger in a wild, beckoning arc, then seems to think better of drawing so much attention and tucks it hurriedly back under his arm. Still, his watery eyes are fixed on you, pleading. "Ajax, a word, if you would. Please."
+
+Hester shrinks back half a step, and her eyes flick toward the harbourmaster and then up toward the Guild hall. Up there on the hall's steps, small with distance, a tall woman in dark wool has appeared. She leans on an ebony cane she has no need of and looks down at the harbour the way a gull looks at a cockle bed.
+
+*Morwenna Slade.* The Master of the Pilots' Guild has come to see what her town is saying.
+
+The tide is on the ebb, and the crowd is muttering. Somewhere under the noise you can almost hear it again, that faint uneven ringing across the water, though you know it's only in your head.
+[committed turn 1]
+Action 1: Draw Hester quietly aside, out of the Guild's sight, and let her finish (Cautious)
+Action 2: Duck under the rope and walk straight out to the empty tower (Bold)
+Action 3: Go to Tobias Fenwick and find out what he wants with you (Social)
+Play: enter text, empty line to continue, or /action N.
+/inspect
+Inspection: phase=Ready revision=4
+Turns: 1
+Chapter: 0 title=Some("The Silent Tower")
+World: "**Grayhallow** is a small harbour town built into a cleft of dark cliffs, where slate roofs climb in steps above a horseshoe quay and the smell of tar, kelp and woodsmoke never quite leaves the air. For three hundred years its life has been set by one sound: the **tide bell**. It hung in the squat stone tower at the end of the Long Mole, rung not by any hand but by the sea itself, through a float-and-chain mechanism that swung the clapper as the flood tide rose. When the bell spoke, the fishing boats turned for home, the cockle-pickers left the sands, and anyone crossing the old causeway to the island knew they had less than an hour.\n\n*Last night, the bell did not ring.* At dawn the harbourmaster found the tower open to the wind, the iron yoke empty, and the great bronze bell, taller than a man and heavy as a cart, **simply gone**. There are no drag marks on the mole and no wheel ruts on the quay. Only a smear of green weed on the tower steps, and wet footprints that walk *out* to the water's edge and stop.\n\nGrayhallow is a quiet town, and it handles trouble quietly. The **Pilots' Guild** runs the harbour from a whitewashed hall above the fish market. Its members are careful, proud men and women who sell their knowledge of the shoals and have every reason to keep the boats safe and in work. The **Masons' Lodge** built the bell tower and has kept it in repair for generations. Its members are tight-lipped about the old construction marks cut into the tower's foundation stones, and some of those marks match carvings found nowhere else but out on the island. The town's lesser folk all keep their own counsel: cockle-wives, net-menders and a lamplighter who walks the mole at dusk.\n\nOut across the grey water of **the Sound** lies **Holm Ure**, a low green island with a ruined chapel, a dozen sheep, and a lighthouse that has been dark for forty years. It is reached on foot by the **Drowning Causeway**, a cobbled road visible only at low water, or by boat in a crossing of about two hours. The island's last keepers, the **Wardens of the Holm**, were said to have given the bell to Grayhallow in the first place, on the condition that it would \"**answer the sea for as long as the sea asks**.\" Lately, fishermen swear they have seen lantern-light moving in the dead lighthouse at night. Last night, two of them claim, they heard a bell ringing faintly from the island, *out of time with any tide*.\n\nThe stakes are simple and close. In three days comes the **spring tide**, the highest of the year, when the flood runs over the causeway faster than a man can run. Without the bell, the cockle-pickers on the far sands will have no warning, and neither will anyone caught on the causeway. The Pilots want the bell found before panic empties the harbour. The Lodge wants it found before anyone asks too many questions about what lies under the tower. And something on Holm Ure seems to want it **exactly where it is**.\n\nThe journey is short but changes everything. **The first chapter** stays in Grayhallow. It is a mystery of salt-stained ledgers, an empty bell tower, a guild hall full of half-truths, and the hiring or borrowing of a boat. **The chapter break comes mid-crossing**, at the **Skerry of Teeth**, a black reef halfway across the Sound, where a sea-fog rolls in without warning and the harbour vanishes behind. Something there will make plain that the bell did not leave by any ordinary means. **The second chapter** lands on Holm Ure, with its ruined chapel, its dark lighthouse and a tidal cave beneath the cliffs where the old Wardens' secret has waited for someone to come and ask.\n\nA local custom matters to the cast. Forty years ago, the trading brig *Ajax* was lost on the Skerry of Teeth on the same night the lighthouse went dark. Grayhallow families named children born that winter after her, so the name **Ajax** still turns up in more than one household. To avoid mix-ups, townsfolk tell them apart by trade: one Ajax is known on the quay as a **sailor**, and the other in the Lodge yard as a **mason**. They are separate people with separate lives. No one else in the story shares that name. Every other islander, guild member and townsperson has a name of their own.\n\n*The atmosphere is hushed and briny: gulls, fog, cold stone, lamplight on wet cobbles. The pace is brisk. This is a mystery to be solved within a single turning of the tide.*"
+Situation: "On the foggy morning after the tide bell vanished, Ajax the sailor stands on Grayhallow quay by his lugger, the Kittiwake. A crowd is gathered at the landward end of the Long Mole, which is roped off, and the empty tower stands at its far end. Hester Quayle has just told him about the wet footprints and seems to have more to say. Harbourmaster Tobias Fenwick is beckoning him urgently, and Morwenna Slade is watching from the Guild hall steps. The tide is ebbing."
+Identity: protagonist name="Ajax (the sailor)" state=Some("On the quay beside the moored Kittiwake on the foggy morning after the bell vanished, tired from a night's fishing and holding a coil of wet net. Was laughed at by the duty pilot Pellow when he reported hearing the bell ringing from Holm Ure. Hester Quayle is at his elbow, Tobias Fenwick is beckoning to him from the mole, and Morwenna Slade is watching from the Guild hall steps. Determined to find out what happened.")
+Identity: tobias-fenwick name="Tobias Fenwick" state=Some("Pacing behind a rope strung across the Long Mole, clutching the harbour log ledger, anxious and fidgeting. He keeps glancing up at the Guild hall, and he has urgently beckoned Ajax the sailor over for a word.")
+Identity: morwenna-slade name="Morwenna Slade" state=Some("Has appeared on the steps of the Pilots' Guild hall, leaning on her ebony cane and watching the crowd on the harbour below.")
+Identity: elias-rook name="Elias Rook" state=Some("Has not yet appeared in the story.")
+Identity: gideon-penhallow name="Gideon Penhallow" state=Some("Has not yet appeared in the story.")
+Identity: dougal-strand name="Dougal Strand" state=Some("Has not yet appeared in the story.")
+Identity: corra-vane name="Corra Vane" state=Some("Has not yet appeared in the story.")
+Identity: hester-quayle name="Hester Quayle" state=Some("On the quay beside Ajax the sailor, nervous and eager to tell him more about the footprints and what she saw. She shrank back when Tobias called out and when Morwenna Slade appeared on the Guild hall steps.")
+Major event: "Ajax the sailor reported hearing the bell ringing from Holm Ure at 2 a.m., and was laughed off by the duty pilot Pellow."
+Major event: "On the morning after the bell vanished, the town gathered at the roped-off Long Mole; Hester Quayle approached Ajax, and Tobias Fenwick asked him for a word."
+Upcoming event: "Hester Quayle has more she wants to tell Ajax about what she saw last night."
+Upcoming event: "Tobias Fenwick wants to speak privately with Ajax, possibly about the harbour log."
+Upcoming event: "Morwenna Slade is watching events and may move to control the story."
+Upcoming event: "The spring tide arrives in three days."
+/action 3
+Generating; /cancel or Ctrl-C cancels, /quit exits.
+/cancel
+Cancellation requested (only active generation is affected).
+Generation cancelled after cleanup. State unchanged.
+Use /retry to repeat the failed intent, or /quit. /diagnostics shows retained evidence.
+/inspect
+Inspection: phase=Failed revision=4
+Turns: 1
+Chapter: 0 title=Some("The Silent Tower")
+World: "**Grayhallow** is a small harbour town built into a cleft of dark cliffs, where slate roofs climb in steps above a horseshoe quay and the smell of tar, kelp and woodsmoke never quite leaves the air. For three hundred years its life has been set by one sound: the **tide bell**. It hung in the squat stone tower at the end of the Long Mole, rung not by any hand but by the sea itself, through a float-and-chain mechanism that swung the clapper as the flood tide rose. When the bell spoke, the fishing boats turned for home, the cockle-pickers left the sands, and anyone crossing the old causeway to the island knew they had less than an hour.\n\n*Last night, the bell did not ring.* At dawn the harbourmaster found the tower open to the wind, the iron yoke empty, and the great bronze bell, taller than a man and heavy as a cart, **simply gone**. There are no drag marks on the mole and no wheel ruts on the quay. Only a smear of green weed on the tower steps, and wet footprints that walk *out* to the water's edge and stop.\n\nGrayhallow is a quiet town, and it handles trouble quietly. The **Pilots' Guild** runs the harbour from a whitewashed hall above the fish market. Its members are careful, proud men and women who sell their knowledge of the shoals and have every reason to keep the boats safe and in work. The **Masons' Lodge** built the bell tower and has kept it in repair for generations. Its members are tight-lipped about the old construction marks cut into the tower's foundation stones, and some of those marks match carvings found nowhere else but out on the island. The town's lesser folk all keep their own counsel: cockle-wives, net-menders and a lamplighter who walks the mole at dusk.\n\nOut across the grey water of **the Sound** lies **Holm Ure**, a low green island with a ruined chapel, a dozen sheep, and a lighthouse that has been dark for forty years. It is reached on foot by the **Drowning Causeway**, a cobbled road visible only at low water, or by boat in a crossing of about two hours. The island's last keepers, the **Wardens of the Holm**, were said to have given the bell to Grayhallow in the first place, on the condition that it would \"**answer the sea for as long as the sea asks**.\" Lately, fishermen swear they have seen lantern-light moving in the dead lighthouse at night. Last night, two of them claim, they heard a bell ringing faintly from the island, *out of time with any tide*.\n\nThe stakes are simple and close. In three days comes the **spring tide**, the highest of the year, when the flood runs over the causeway faster than a man can run. Without the bell, the cockle-pickers on the far sands will have no warning, and neither will anyone caught on the causeway. The Pilots want the bell found before panic empties the harbour. The Lodge wants it found before anyone asks too many questions about what lies under the tower. And something on Holm Ure seems to want it **exactly where it is**.\n\nThe journey is short but changes everything. **The first chapter** stays in Grayhallow. It is a mystery of salt-stained ledgers, an empty bell tower, a guild hall full of half-truths, and the hiring or borrowing of a boat. **The chapter break comes mid-crossing**, at the **Skerry of Teeth**, a black reef halfway across the Sound, where a sea-fog rolls in without warning and the harbour vanishes behind. Something there will make plain that the bell did not leave by any ordinary means. **The second chapter** lands on Holm Ure, with its ruined chapel, its dark lighthouse and a tidal cave beneath the cliffs where the old Wardens' secret has waited for someone to come and ask.\n\nA local custom matters to the cast. Forty years ago, the trading brig *Ajax* was lost on the Skerry of Teeth on the same night the lighthouse went dark. Grayhallow families named children born that winter after her, so the name **Ajax** still turns up in more than one household. To avoid mix-ups, townsfolk tell them apart by trade: one Ajax is known on the quay as a **sailor**, and the other in the Lodge yard as a **mason**. They are separate people with separate lives. No one else in the story shares that name. Every other islander, guild member and townsperson has a name of their own.\n\n*The atmosphere is hushed and briny: gulls, fog, cold stone, lamplight on wet cobbles. The pace is brisk. This is a mystery to be solved within a single turning of the tide.*"
+Situation: "On the foggy morning after the tide bell vanished, Ajax the sailor stands on Grayhallow quay by his lugger, the Kittiwake. A crowd is gathered at the landward end of the Long Mole, which is roped off, and the empty tower stands at its far end. Hester Quayle has just told him about the wet footprints and seems to have more to say. Harbourmaster Tobias Fenwick is beckoning him urgently, and Morwenna Slade is watching from the Guild hall steps. The tide is ebbing."
+Identity: protagonist name="Ajax (the sailor)" state=Some("On the quay beside the moored Kittiwake on the foggy morning after the bell vanished, tired from a night's fishing and holding a coil of wet net. Was laughed at by the duty pilot Pellow when he reported hearing the bell ringing from Holm Ure. Hester Quayle is at his elbow, Tobias Fenwick is beckoning to him from the mole, and Morwenna Slade is watching from the Guild hall steps. Determined to find out what happened.")
+Identity: tobias-fenwick name="Tobias Fenwick" state=Some("Pacing behind a rope strung across the Long Mole, clutching the harbour log ledger, anxious and fidgeting. He keeps glancing up at the Guild hall, and he has urgently beckoned Ajax the sailor over for a word.")
+Identity: morwenna-slade name="Morwenna Slade" state=Some("Has appeared on the steps of the Pilots' Guild hall, leaning on her ebony cane and watching the crowd on the harbour below.")
+Identity: elias-rook name="Elias Rook" state=Some("Has not yet appeared in the story.")
+Identity: gideon-penhallow name="Gideon Penhallow" state=Some("Has not yet appeared in the story.")
+Identity: dougal-strand name="Dougal Strand" state=Some("Has not yet appeared in the story.")
+Identity: corra-vane name="Corra Vane" state=Some("Has not yet appeared in the story.")
+Identity: hester-quayle name="Hester Quayle" state=Some("On the quay beside Ajax the sailor, nervous and eager to tell him more about the footprints and what she saw. She shrank back when Tobias called out and when Morwenna Slade appeared on the Guild hall steps.")
+Major event: "Ajax the sailor reported hearing the bell ringing from Holm Ure at 2 a.m., and was laughed off by the duty pilot Pellow."
+Major event: "On the morning after the bell vanished, the town gathered at the roped-off Long Mole; Hester Quayle approached Ajax, and Tobias Fenwick asked him for a word."
+Upcoming event: "Hester Quayle has more she wants to tell Ajax about what she saw last night."
+Upcoming event: "Tobias Fenwick wants to speak privately with Ajax, possibly about the harbour log."
+Upcoming event: "Morwenna Slade is watching events and may move to control the story."
+Upcoming event: "The spring tide arrives in three days."
+/retry
+Generating; /cancel or Ctrl-C cancels, /quit exits.
+You sho[tentative preview; final validation pending]
+ulder through the crowd. The cockle-wives part for you with sidelong looks. *That's him, the one who heard it.* One of the smokehouse boys sniggers and mimes tipping a bottle. You ignore him. Behind you, Hester's clogs clatter a few steps after you and then stop, as if she has lost her nerve at the edge of the open stones.
+
+Tobias lifts the rope for you with a shaking hand. Up close he looks worse than you thought. His face is the colour of tallow, there is a fleck of dried shaving soap under one ear, and his spectacles have misted so badly in the fog that he has to peer over the top of them.
+
+"Thank you," he says. "Thank you, Ajax. Walk with me, would you? Away from— just walk with me."
+
+He leads you a dozen paces down the mole, out of earshot of the crowd, and the town shrinks behind you into a murmur. The fog closes in. Out here there's only the slap of the ebb against the granite, the drip of moisture from the iron mooring rings and, ahead of you, the squat grey shape of the tower with its door hanging open like a slack jaw.
+
+"Pellow told me what you said this morning." Tobias won't quite meet your eyes. "About the bell. On the island. He thought it a great joke." He wets his lips. "**I don't.**"
+
+"No?"
+
+"No." He hugs the ledger tighter. "Because you weren't the only one, were you? Old Treloar's boy said the same, and nobody laughed at him because nobody listens to him at all. Two men, two boats, the same hour." His fingers go to his buttons, then back to the ledger. "And there's this."
+
+He opens the harbour log against his forearm, turning his back on the town as he does it, and flips through damp pages until he finds one near the end. His ink-stained finger trembles over a line in his own neat copperplate. Someone has scored it through with three hard black strokes, but the pen pressed so lightly in places that you can still read most of it:
+
+*11th inst., 1 a.m. or thereabout — vessel unknown, standing in past the Mole without lights. Low, black, no sail seen. No name. Did not answer hail. Stood out again toward the Skerry before the turn.*
+
+"Two nights ago," Tobias whispers. "I saw it with my own eyes, Ajax. I hailed it. I wrote it down, as I'm meant to. And the next morning a Guild clerk came to my office with a note in the Master's hand saying I was **mistaken**, that it was fog and lamplight and I was to strike the entry so as not to alarm the insurers." His voice cracks. "So I struck it. I've struck nothing in thirty-one years. And now the bell's gone, and I keep thinking, *what if I'd rung the alarm that night? What if I hadn't been such a coward?*"
+
+He takes his spectacles off and wipes them, badly, on his coat.
+
+"You've a boat," he says to the lenses. "And you're not frightened of the Guild. Everyone knows it. I thought, if anyone would believe me, if anyone would actually *go and look*—"
+
+He doesn't finish. Past his shoulder, the footprints Hester spoke of trail down the wet steps of the tower: long, narrow, bare-soled marks, darker than the stone around them, crossing the mole's end and stopping dead at the lip where the granite drops into the Sound. A smear of green weed lies across the top step like a dropped scarf. From here you can smell it: cold, rank, deep-water.
+
+Then Tobias stiffens. His eyes have gone past you, up the hill.
+
+You turn. Morwenna Slade is coming down the steps from the Guild hall, unhurried, her cane tapping each stair. Young Pellow trots at her heels like a whipped dog. The crowd is already drawing back to let her through.
+
+"Oh God," Tobias breathes. He snaps the ledger shut and holds it out to you, then pulls it back, then holds it out again. "She mustn't see I've shown you. **Please.** I can't— if she asks me, I'll tell her. I know I will. I always do."
+
+The tapping of the cane draws nearer. At the rope, Hester Quayle is watching you with her huge grey eyes, and you can see she is still bursting with whatever she hasn't said yet.
+[committed turn 2]
+Action 1: Take the ledger, tuck it inside your oilskins and walk Tobias calmly back toward the crowd (Cautious)
+Action 2: Stride out to the tower end to examine the footprints before Morwenna can stop you (Bold)
+Action 3: Steady Tobias: tell him he did right to speak, and ask what the black boat looked like up close (Social)
+Play: enter text, empty line to continue, or /action N.
+I take the ledger, tuck it inside my oilskins and walk Tobias back to the rope. There I beckon Hester close. She whispers that Quayle is only her uncle's name: she was born Hester Marrow, and from now on she wants everyone, including the story, to call her Hester Marrow. Same girl, new name. Then she tells me what she saw.
+Generating; /cancel or Ctrl-C cancels, /quit exits.
+You take the ledger. It is damp and heavier than it[tentative preview; final validation pending]
+ looks, its board covers swollen with thirty-one years of harbour fog. You slip it inside your oilskins, against the wool of your jersey, and button the coat over it. Tobias watches it disappear with an expression close to grief, as though you've taken away the one thing that made him worth anything, and at the same moment lifted a stone off his chest.
+
+"You never had it," you tell him quietly. "You showed me the footprints. That's all."
+
+"The footprints," he repeats. "Yes. Yes, the footprints."
+
+You take his elbow, because he looks as if his knees might give, and walk him back along the mole at a pace that looks like nothing in particular. The granite is slick underfoot. Behind you the open tower door creaks once in a breath of wind and goes still. Ahead, the crowd has turned like a shoal toward the Guild hall steps, toward the tap of that ebony cane, and nobody is looking at a harbourmaster and a fisherman coming back from the end of the mole.
+
+Nobody except Hester.
+
+She is still at the rope, her shawl clutched under her sharp chin, clogs planted as if she has had to argue with them to stay. When you lift the rope for Tobias, you catch her eye and crook one finger. She glances up the hill, at Morwenna, now halfway down and unhurried as weather, then ducks under the rope and comes close enough that you can smell the tar on her raw red hands.
+
+"Before I tell you," she whispers, very fiercely, "I want to say something."
+
+"Go on."
+
+"Quayle's my uncle's name. Not mine." Her chin comes up. "I was born **Hester Marrow**. My mam was a Marrow, and my da. Uncle just put his name on me when he took me in, same as he puts it on his nets." She swallows. "I don't want it any more. Not after he boxed my ears for telling true. From now on I'm Hester Marrow, and I'd like you to call me that. Everybody should."
+
+There is a seriousness in her that it would be a cruelty to smile at. You nod once, the way you'd nod to a skipper.
+
+"Hester Marrow," you say. "Now tell me what you saw."
+
+Her shoulders loosen a fraction. The words come out in a low, rapid stream, as if they've been crowding at her teeth all morning.
+
+"I sleep up in the loft. The window looks straight down the mole. I couldn't sleep, I never can when the fog's in, so I was watching the tower lamp. Only it was out. It's never out." She takes a breath. "And then the door opened. The tower door. It swung right open, slow, and **there was nobody there**. Nobody went in. I'd have seen. The lamp at the head of the mole was still lit and I'd have seen them go past."
+
+"What time?"
+
+"After the church struck two. Not long after." Her grey eyes fix on yours. "Same as you heard it, isn't it?"
+
+*Same as I heard it.* You say nothing, and she takes that for yes.
+
+"Then there was a noise." She shivers inside the oversized shawl. "Long. Dragging. Like a chain being pulled over stone, only it went on and on, longer than any chain I ever heard. It made the glass in my window buzz. And then—" She hesitates, and her voice drops so low you have to bend to catch it. "The water at the end of the mole went *smooth*. All of it. Flat and black like oil, in a big round patch, and the fog sat on it and didn't move. And all round it the sea was chopping the way it does on the ebb, but not there. It stayed smooth for as long as it takes to say the Lord's Prayer twice. I know, because I said it." Her lip trembles and she firms it. "Then it all went ordinary again, and the bell wasn't in the tower any more. I could see the sky through the arch."
+
+"Did you see anything come up out of the water? Or go down into it?"
+
+She shakes her head slowly. "Not *see*. But there was a smell after. Like when they pull up the deep pots. And there was a light, way out, toward the Skerry, a little green one. Just for a blink." She looks at you, half defiant, half terrified. "You believe me. Don't you?"
+
+Before you can answer, the tapping stops.
+
+The crowd has parted at the head of the mole, and **Morwenna Slade** stands at the rope, close enough to touch. Fog beads on her dark wool and on the gold links of her Guild chain. Pellow hovers at her shoulder, pink with importance. Her cool hazel eyes move from Tobias, who has gone the colour of whey, to Hester, who has gone very still, and settle at last on you. They rest for a moment, and you'd swear it, on the buttoned front of your oilskins.
+
+"Ajax," she says pleasantly. "The man who hears bells. Pellow tells me you've been entertaining the Guild. I think perhaps you and I should talk, somewhere warmer than this."
+
+Beside you, you feel Hester Marrow's fingers catch, very lightly, at the edge of your sleeve.
+[committed turn 3]
+Action 1: Agree to talk with Morwenna, but send Hester home first and give nothing away (Cautious)
+Action 2: Tell Morwenna to her face that you know about the struck-out log entry (Bold)
+Action 3: Ask Morwenna, in front of the crowd, what the Guild thinks took the bell (Social)
+Play: enter text, empty line to continue, or /action N.
+/inspect
+Inspection: phase=Ready revision=6
+Turns: 3
+Chapter: 0 title=Some("The Empty Yoke")
+World: "**Grayhallow** is a small harbour town built into a cleft of dark cliffs, where slate roofs climb in steps above a horseshoe quay and the smell of tar, kelp and woodsmoke never quite leaves the air. For three hundred years its life has been set by one sound: the **tide bell**. It hung in the squat stone tower at the end of the Long Mole, rung not by any hand but by the sea itself, through a float-and-chain mechanism that swung the clapper as the flood tide rose. When the bell spoke, the fishing boats turned for home, the cockle-pickers left the sands, and anyone crossing the old causeway to the island knew they had less than an hour.\n\n*Last night, the bell did not ring.* At dawn the harbourmaster found the tower open to the wind, the iron yoke empty, and the great bronze bell, taller than a man and heavy as a cart, **simply gone**. There are no drag marks on the mole and no wheel ruts on the quay. Only a smear of green weed on the tower steps, and wet footprints that walk *out* to the water's edge and stop.\n\nGrayhallow is a quiet town, and it handles trouble quietly. The **Pilots' Guild** runs the harbour from a whitewashed hall above the fish market. Its members are careful, proud men and women who sell their knowledge of the shoals and have every reason to keep the boats safe and in work. The **Masons' Lodge** built the bell tower and has kept it in repair for generations. Its members are tight-lipped about the old construction marks cut into the tower's foundation stones, and some of those marks match carvings found nowhere else but out on the island. The town's lesser folk all keep their own counsel: cockle-wives, net-menders and a lamplighter who walks the mole at dusk.\n\nOut across the grey water of **the Sound** lies **Holm Ure**, a low green island with a ruined chapel, a dozen sheep, and a lighthouse that has been dark for forty years. It is reached on foot by the **Drowning Causeway**, a cobbled road visible only at low water, or by boat in a crossing of about two hours. The island's last keepers, the **Wardens of the Holm**, were said to have given the bell to Grayhallow in the first place, on the condition that it would \"**answer the sea for as long as the sea asks**.\" Lately, fishermen swear they have seen lantern-light moving in the dead lighthouse at night. Last night, two of them claim, they heard a bell ringing faintly from the island, *out of time with any tide*.\n\nThe stakes are simple and close. In three days comes the **spring tide**, the highest of the year, when the flood runs over the causeway faster than a man can run. Without the bell, the cockle-pickers on the far sands will have no warning, and neither will anyone caught on the causeway. The Pilots want the bell found before panic empties the harbour. The Lodge wants it found before anyone asks too many questions about what lies under the tower. And something on Holm Ure seems to want it **exactly where it is**.\n\nThe journey is short but changes everything. **The first chapter** stays in Grayhallow. It is a mystery of salt-stained ledgers, an empty bell tower, a guild hall full of half-truths, and the hiring or borrowing of a boat. **The chapter break comes mid-crossing**, at the **Skerry of Teeth**, a black reef halfway across the Sound, where a sea-fog rolls in without warning and the harbour vanishes behind. Something there will make plain that the bell did not leave by any ordinary means. **The second chapter** lands on Holm Ure, with its ruined chapel, its dark lighthouse and a tidal cave beneath the cliffs where the old Wardens' secret has waited for someone to come and ask.\n\nA local custom matters to the cast. Forty years ago, the trading brig *Ajax* was lost on the Skerry of Teeth on the same night the lighthouse went dark. Grayhallow families named children born that winter after her, so the name **Ajax** still turns up in more than one household. To avoid mix-ups, townsfolk tell them apart by trade: one Ajax is known on the quay as a **sailor**, and the other in the Lodge yard as a **mason**. They are separate people with separate lives. No one else in the story shares that name. Every other islander, guild member and townsperson has a name of their own.\n\n*The atmosphere is hushed and briny: gulls, fog, cold stone, lamplight on wet cobbles. The pace is brisk. This is a mystery to be solved within a single turning of the tide.*"
+Situation: "At the rope at the landward end of the Long Mole, Ajax has the harbour log hidden inside his oilskins. He has just heard Hester Marrow's account when Morwenna Slade arrives at the rope with Pellow, eyes the front of his coat, and invites him to talk 'somewhere warmer'. Tobias is terrified beside them; Hester clings to Ajax's sleeve. The crowd watches. The tide is ebbing."
+Identity: protagonist name="Ajax (the sailor)" state=Some("At the rope at the head of the Long Mole with the harbour log buttoned inside his oilskins. Has heard Hester's account. Facing Morwenna Slade, who has invited him to talk privately. Tired from the night's fishing, guarded and resolved.")
+Identity: tobias-fenwick name="Tobias Fenwick" state=Some("At the rope beside Ajax, pale as whey before Morwenna. Has given his log to Ajax; the agreed story is that he only showed Ajax the footprints. Likely to crack if pressed.")
+Identity: morwenna-slade name="Morwenna Slade" state=Some("At the rope on the Long Mole with Pellow, pleasant and cool. Has invited Ajax to talk 'somewhere warmer' and glanced at the front of his oilskins, possibly suspecting he has the log.")
+Identity: elias-rook name="Elias Rook" state=Some("Has not yet appeared in the story.")
+Identity: gideon-penhallow name="Gideon Penhallow" state=Some("Has not yet appeared in the story.")
+Identity: dougal-strand name="Dougal Strand" state=Some("Has not yet appeared in the story.")
+Identity: corra-vane name="Corra Vane" state=Some("Has not yet appeared in the story.")
+Identity: hester-quayle name="Hester Marrow" state=Some("Inside the rope beside Ajax, holding his sleeve, having just told him everything she saw. Frozen with fear now that Morwenna Slade is standing in front of them.")
+Major event: "Ajax the sailor reported hearing the bell ringing from Holm Ure at 2 a.m., and was laughed off by the duty pilot Pellow."
+Major event: "On the morning after the bell vanished, the town gathered at the roped-off Long Mole; Hester Quayle approached Ajax, and Tobias Fenwick asked him for a word."
+Major event: "Tobias Fenwick showed Ajax the harbour log: two nights ago (the 11th, about 1 a.m.) he logged an unlit, low black vessel with no name or sail that entered past the Mole, ignored his hail and left toward the Skerry of Teeth; Morwenna Slade's note ordered him to strike it as 'mistaken'."
+Major event: "Tobias said Old Treloar's boy also heard the bell from Holm Ure at the same hour, and asked Ajax to go and look."
+Major event: "Ajax saw the footprints: long, narrow, bare-soled, ending at the mole's edge, with a smear of green weed on the tower's top step."
+Major event: "Ajax hid Tobias's harbour log inside his oilskins and agreed to say Tobias only showed him the footprints."
+Major event: "The girl known as Hester Quayle revealed she was born Hester Marrow and asked to be called that from now on."
+Major event: "Hester told Ajax that just after 2 a.m. she saw the tower door open with no one there, heard a long dragging chain-on-stone groan, saw a round patch of water at the mole's end go smooth and black for a while, smelled deep water, and saw a brief green light out toward the Skerry; then the bell was gone."
+Major event: "Morwenna Slade arrived at the rope and asked Ajax to talk privately, seeming to notice something under his coat."
+Upcoming event: "Morwenna Slade wants to talk with Ajax privately and may suspect he has the harbour log."
+Upcoming event: "The unlit black vessel seen two nights ago, and the green light Hester saw last night, both point toward the Skerry of Teeth."
+Upcoming event: "Old Treloar's boy is a second witness to the bell ringing on Holm Ure."
+Upcoming event: "The spring tide arrives in three days."
+/action 1
+Generating; /cancel or Ctrl-C cancels, /quit exits.
+You don't look down at Hester. You put your hand over[tentative preview; final validation pending]
+ hers on your sleeve, briefly, the way you'd check a knot, and then you take it off.
+
+"Hester Marrow," you say, loud enough for Pellow to hear the name and wonder at it. "Your nets won't mend themselves. Go home."
+
+Her grey eyes fly to yours, hurt and disbelieving. Then something changes in them. You watch her work it out: *home* is the loft, and the loft has a window that looks straight down the mole. She ducks her chin. "Yes, Ajax," she mumbles, and slips back under the rope. Her clogs clatter away across the cobbles. Halfway to her uncle's store she looks back once, and then she's gone among the shawls.
+
+Morwenna's gaze follows her a moment longer than it needs to. "Marrow," she says thoughtfully. "I'd thought the Marrows were all drowned out." Then she smiles at you, and it's a good smile, the kind she has practised on shipowners. "Pellow, see that Mr Fenwick gets a cup of something hot. He looks unwell."
+
+Tobias makes a sound that might be thanks. You don't look at him. If you look at him, she'll see it.
+
+The Guild hall smells of beeswax and coal smoke and money. She takes you up past the long chart room, where three pilots in shirtsleeves stop talking as you go by, and into a small panelled study at the top of the house. A fire is going hard in the grate. The window looks out over the whole horseshoe of the harbour, and through the thinning fog you can just make out the stump of the bell tower at the end of the Long Mole, with grey light where the bell should be.
+
+"Sit," she says. "Take off your coat. You're steaming."
+
+**You are.** The heat has hit your wet oilskins, and the wool underneath is starting to give off its own fog. Against your ribs, the log's swollen boards press like a second breastbone.
+
+"I'll keep it on," you say. "I don't stop long anywhere warm. Bad habit."
+
+"Mm." She lowers herself into the chair behind the desk and lays the ebony cane across her knees. On the shelf behind her, among the bound volumes of tide tables and pilotage fees, sits a fat ledger in green cloth, with *TOWER: REPAIRS & MAINTENANCE* gilt-stamped on its spine. It is shelved a little crooked, as if somebody put it back in a hurry. "Tell me what you heard last night. Not Pellow's version. Yours."
+
+So you tell her, plainly: two in the morning, the ebb just begun, the *Kittiwake* lying off the north shoals with the nets half in. A bell from Holm Ure, slow and uneven, eleven or twelve strokes, then nothing. You leave out the harbour log, the black vessel, and the green light a fourteen-year-old girl saw from her window. Every time you leave something out, you can feel the space where it ought to be.
+
+Morwenna listens with her fingertips together and her eyes unblinking.
+
+"And what did Fenwick want with you, out on the mole?"
+
+"Wanted someone to look at the footprints who wouldn't faint." You shrug. "Bare feet, walking out. Weed on the step. You'll have seen."
+
+"I have." She lets the silence stretch to see if you'll fill it. You don't. At last she sighs, as if you've disappointed her a little, and opens a drawer. A small leather purse lands on the desk between you with a dull, heavy chink. **Gold, not silver.**
+
+"Here is my difficulty, Ajax. In three days we have the spring tide. If the cockle-wives believe the island has *taken* their bell, they won't go out on the sands, and half this town goes hungry. If the insurers believe it, every coasting brig from here to the Point will charge us double or stop calling. Stories of ghost bells and bare feet on the mole cost this harbour money." She nudges the purse an inch toward you. "That's a season's catch. Tell the quay you'd had a drop too much, laugh along with Pellow, and the Guild will find its bell by its own means. Somebody stole it. Bronze is worth a great deal melted down."
+
+"And if I'd rather go and look?"
+
+Her expression doesn't change. "Then you'll want a pilot's warrant to cross the Skerry, and I won't be signing one. Your mooring is Guild water, as I'm sure you remember." She lets the cane roll a little on her knees. "**Or** you take the money, and I give you a Guild boat and two of my men, and you look where *I* tell you to look. Between those three, I'm sure we can find something that suits us both."
+
+The fire snaps. Water from your oilskins has made a small dark puddle on her good carpet. Behind her head the green maintenance ledger leans on its shelf, and you notice that its pages don't sit flat. A few of them near the back stick out ragged at the edges, like a mouth with teeth missing.
+
+Morwenna Slade waits with her hands folded, and you can't tell whether she has looked at your coat again.
+[committed turn 4]
+Action 1: Pocket the gold, agree to keep quiet, and leave before she asks about the coat (Cautious)
+Action 2: Refuse the purse and tell her you're crossing to Holm Ure, warrant or no warrant (Bold)
+Action 3: Ask her outright about the torn pages in the tower maintenance ledger behind her (Investigate)
+Play: enter text, empty line to continue, or /action N.
+/action 2
+Generating; /cancel or Ctrl-C cancels, /quit exits.
+You[tentative preview; final validation pending]
+ don't look at the purse. You look at her.
+
+"Keep your gold," you say. "I'm going across to Holm Ure. Warrant or no warrant."
+
+For a moment nothing in the room moves except the fire. Morwenna's face stays exactly as it was, the faint pleasant smile, the unblinking hazel eyes. Only her fingers tighten a little on the ebony cane across her knees, the way a helmsman's hands tighten when a gust they expected comes all the same.
+
+"Across," she says. "In the *Kittiwake*."
+
+"She's carried me through worse than the Sound."
+
+"She's carried you round it." She leans back, and the chair creaks under her. "You've fished the north shoals for twenty years, Ajax, and you've never once taken that boat inside the Skerry. Nobody does without a pilot aboard. The tides are wrong there, and the set runs straight onto the Teeth on the flood. The Guild doesn't keep those charts locked up out of spite." She lets that sit, and then, more softly: "Your father went onto that reef. I'd have thought you'd want to stay off it."
+
+*So she knows.* Of course she does. Everybody on this quay knows, and she's the only one who'd use it.
+
+"My father went onto that reef," you say, "because the light on Holm Ure went out and nobody ever asked why. I'd like to ask."
+
+That gets through to her. It isn't much, just a flicker at the corner of her eye, quickly put away, but you've spent your life reading weather in faces as well as skies, and you see it. She glances, just barely, toward the shelf behind her. Toward the crooked green ledger with its ragged pages. Then her gaze comes back to you, as cool as before.
+
+"Forty years ago I was ten years old," she says. "Whatever happened to that light, it was nothing to do with me." She picks up the purse, weighs it in her palm, and drops it back into the drawer. The drawer shuts with a hard little click. "Very well. You're a free man and it's a free sea, for whatever that's worth. But understand me. If you take that boat out past the Mole without a warrant, you do it as a man the Guild no longer knows. Your mooring is forfeit. No Guild boat goes out for you if you founder, and no pilot will speak your name on this quay again." She rises and takes up the cane, and at her full height she is very nearly level with you. "And Ajax: **whatever Tobias Fenwick gave you belongs to the harbour.** I would like it back on this desk by sundown. If it isn't, I will start asking him, and you know how Tobias answers questions."
+
+Against your ribs, the log's swollen boards press harder, or you imagine it.
+
+"Fenwick showed me footprints," you say. "If you want them, they're on the mole."
+
+She smiles then, a real one, and that's worse. "Pellow will see you out."
+
+Pellow is waiting on the landing, and his face says he has been listening at the door. He walks you down past the chart room, where the three pilots have found reasons to stand by the windows. At the street door he hesitates, as if he'd like to say something clever, and thinks better of it.
+
+The cold hits you like a bucket of harbour water. The fog is thinning to a dirty pearl, and the sun is a pale coin somewhere above the cliffs. Down on the quay the crowd has broken up into knots of gossip. The tide is still ebbing, and the weed-dark stones of the harbour floor are showing at its edges.
+
+Then you see the *Kittiwake*.
+
+Two men in Guild blue are standing on the quay beside your mooring. One is crouched at the iron ring where your bow line is made fast, turning the knot over in his hands as though he's thinking about it. The other leans against a bollard with his arms folded, watching the street that comes down from the hall. Watching for **you**.
+
+Above them, at the head of the Long Mole, the shutter of a loft window over Quayle's net store stands open a hand's width. Out on the mole, Tobias Fenwick sits on an upturned fish crate with a steaming mug he isn't drinking, staring at the empty tower.
+
+And at the back of your mind the arithmetic is already running: three days to the spring tide, low water this evening, two hours' crossing in fair weather, and the Skerry halfway.
+[committed turn 5]
+Action 1: Keep clear of the Guild men and wait for dusk to slip the Kittiwake's lines unseen (Cautious)
+Action 2: Walk straight down to the Kittiwake and order the Guild men off your mooring (Bold)
+Action 3: Go out on the mole to warn Tobias that Morwenna will come asking about the log (Social)
+Play: enter text, empty line to continue, or /action N.
+/inspect
+Inspection: phase=Ready revision=8
+Turns: 5
+Chapter: 0 title=Some("The Empty Yoke")
+World: "**Grayhallow** is a small harbour town built into a cleft of dark cliffs, where slate roofs climb in steps above a horseshoe quay and the smell of tar, kelp and woodsmoke never quite leaves the air. For three hundred years its life has been set by one sound: the **tide bell**. It hung in the squat stone tower at the end of the Long Mole, rung not by any hand but by the sea itself, through a float-and-chain mechanism that swung the clapper as the flood tide rose. When the bell spoke, the fishing boats turned for home, the cockle-pickers left the sands, and anyone crossing the old causeway to the island knew they had less than an hour.\n\n*Last night, the bell did not ring.* At dawn the harbourmaster found the tower open to the wind, the iron yoke empty, and the great bronze bell, taller than a man and heavy as a cart, **simply gone**. There are no drag marks on the mole and no wheel ruts on the quay. Only a smear of green weed on the tower steps, and wet footprints that walk *out* to the water's edge and stop.\n\nGrayhallow is a quiet town, and it handles trouble quietly. The **Pilots' Guild** runs the harbour from a whitewashed hall above the fish market. Its members are careful, proud men and women who sell their knowledge of the shoals and have every reason to keep the boats safe and in work. The **Masons' Lodge** built the bell tower and has kept it in repair for generations. Its members are tight-lipped about the old construction marks cut into the tower's foundation stones, and some of those marks match carvings found nowhere else but out on the island. The town's lesser folk all keep their own counsel: cockle-wives, net-menders and a lamplighter who walks the mole at dusk.\n\nOut across the grey water of **the Sound** lies **Holm Ure**, a low green island with a ruined chapel, a dozen sheep, and a lighthouse that has been dark for forty years. It is reached on foot by the **Drowning Causeway**, a cobbled road visible only at low water, or by boat in a crossing of about two hours. The island's last keepers, the **Wardens of the Holm**, were said to have given the bell to Grayhallow in the first place, on the condition that it would \"**answer the sea for as long as the sea asks**.\" Lately, fishermen swear they have seen lantern-light moving in the dead lighthouse at night. Last night, two of them claim, they heard a bell ringing faintly from the island, *out of time with any tide*.\n\nThe stakes are simple and close. In three days comes the **spring tide**, the highest of the year, when the flood runs over the causeway faster than a man can run. Without the bell, the cockle-pickers on the far sands will have no warning, and neither will anyone caught on the causeway. The Pilots want the bell found before panic empties the harbour. The Lodge wants it found before anyone asks too many questions about what lies under the tower. And something on Holm Ure seems to want it **exactly where it is**.\n\nThe journey is short but changes everything. **The first chapter** stays in Grayhallow. It is a mystery of salt-stained ledgers, an empty bell tower, a guild hall full of half-truths, and the hiring or borrowing of a boat. **The chapter break comes mid-crossing**, at the **Skerry of Teeth**, a black reef halfway across the Sound, where a sea-fog rolls in without warning and the harbour vanishes behind. Something there will make plain that the bell did not leave by any ordinary means. **The second chapter** lands on Holm Ure, with its ruined chapel, its dark lighthouse and a tidal cave beneath the cliffs where the old Wardens' secret has waited for someone to come and ask.\n\nA local custom matters to the cast. Forty years ago, the trading brig *Ajax* was lost on the Skerry of Teeth on the same night the lighthouse went dark. Grayhallow families named children born that winter after her, so the name **Ajax** still turns up in more than one household. To avoid mix-ups, townsfolk tell them apart by trade: one Ajax is known on the quay as a **sailor**, and the other in the Lodge yard as a **mason**. They are separate people with separate lives. No one else in the story shares that name. Every other islander, guild member and townsperson has a name of their own.\n\n*The atmosphere is hushed and briny: gulls, fog, cold stone, lamplight on wet cobbles. The pace is brisk. This is a mystery to be solved within a single turning of the tide.*"
+Situation: "Ajax has stepped out of the Guild hall into the thinning fog above the quay. The tide is ebbing. Two Guild men stand at the Kittiwake's mooring, one fiddling with the bow line, the other watching for him. Tobias sits alone on the mole; Hester's loft shutter is open. Morwenna wants the log back by sundown."
+Identity: protagonist name="Ajax (the sailor)" state=Some("Just left the Guild hall onto the street above the quay, cold air on his steaming oilskins, harbour log still hidden under his coat. Refused Morwenna's gold and declared he will cross to Holm Ure without a warrant. Now cut off by the Guild: mooring forfeit, no rescue. Sees two Guild men guarding the Kittiwake's mooring. Calculating the crossing: low water this evening, spring tide in three days.")
+Identity: tobias-fenwick name="Tobias Fenwick" state=Some("Sitting on an upturned fish crate on the Long Mole with an untouched hot mug, staring at the empty tower. Unaware Morwenna means to question him by sundown.")
+Identity: morwenna-slade name="Morwenna Slade" state=Some("In her study. Rebuffed by Ajax; put the purse away. Declared him outside the Guild if he sails without a warrant, mooring forfeit. Demanded whatever Tobias gave him be on her desk by sundown, or she will question Tobias. Has posted two Guild men at the Kittiwake. Flinched and glanced at the torn ledger when Ajax raised the dark lighthouse; claims she was ten years old then.")
+Identity: elias-rook name="Elias Rook" state=Some("Has not yet appeared in the story.")
+Identity: gideon-penhallow name="Gideon Penhallow" state=Some("Has not yet appeared in the story.")
+Identity: dougal-strand name="Dougal Strand" state=Some("Has not yet appeared in the story.")
+Identity: corra-vane name="Corra Vane" state=Some("Has not yet appeared in the story.")
+Identity: hester-quayle name="Hester Marrow" state=Some("In her uncle's loft over Quayle's net store; the shutter stands open a hand's width, watching the mole.")
+Major event: "Ajax the sailor reported hearing the bell ringing from Holm Ure at 2 a.m., and was laughed off by the duty pilot Pellow."
+Major event: "On the morning after the bell vanished, the town gathered at the roped-off Long Mole; Hester Quayle approached Ajax, and Tobias Fenwick asked him for a word."
+Major event: "Tobias Fenwick showed Ajax the harbour log: two nights ago (the 11th, about 1 a.m.) he logged an unlit, low black vessel with no name or sail that entered past the Mole, ignored his hail and left toward the Skerry of Teeth; Morwenna Slade's note ordered him to strike it as 'mistaken'."
+Major event: "Tobias said Old Treloar's boy also heard the bell from Holm Ure at the same hour, and asked Ajax to go and look."
+Major event: "Ajax saw the footprints: long, narrow, bare-soled, ending at the mole's edge, with a smear of green weed on the tower's top step."
+Major event: "Ajax hid Tobias's harbour log inside his oilskins and agreed to say Tobias only showed him the footprints."
+Major event: "The girl known as Hester Quayle revealed she was born Hester Marrow and asked to be called that from now on."
+Major event: "Hester told Ajax that just after 2 a.m. she saw the tower door open with no one there, heard a long dragging chain-on-stone groan, saw a round patch of water at the mole's end go smooth and black for a while, smelled deep water, and saw a brief green light out toward the Skerry; then the bell was gone."
+Major event: "Morwenna Slade arrived at the rope and asked Ajax to talk privately, seeming to notice something under his coat."
+Major event: "Ajax sent Hester Marrow home and went with Morwenna Slade to her study in the Guild hall, revealing nothing about the log, the black vessel or Hester's account."
+Major event: "Morwenna offered Ajax a purse of gold to dismiss his bell story, or gold plus a Guild boat and two men to search where she directs, and threatened to withhold a pilot's warrant and hinted at his Guild mooring."
+Major event: "Ajax noticed the Guild's tower maintenance ledger on Morwenna's shelf with pages torn out near the back."
+Major event: "Ajax refused Morwenna's gold and told her he will cross to Holm Ure without a warrant."
+Major event: "Morwenna declared Ajax outside the Guild: mooring forfeit, no rescue if he founders; she used his father's death on the Skerry to deter him."
+Major event: "When Ajax raised the dark lighthouse, Morwenna flinched and glanced at the torn maintenance ledger, then claimed she was only ten years old then."
+Major event: "Morwenna demanded whatever Tobias gave Ajax be returned to her desk by sundown, or she will interrogate Tobias."
+Major event: "Two Guild men were posted at the Kittiwake's mooring."
+Upcoming event: "Morwenna demands the harbour log by sundown, or she will interrogate Tobias, who will crack."
+Upcoming event: "Two Guild men are guarding the Kittiwake's mooring; Ajax's Guild mooring is forfeit if he sails unwarranted."
+Upcoming event: "The Guild's tower maintenance ledger in Morwenna's study has pages torn out; she reacted when the dark lighthouse was mentioned."
+Upcoming event: "The unlit black vessel seen two nights ago, and the green light Hester saw last night, both point toward the Skerry of Teeth."
+Upcoming event: "Old Treloar's boy is a second witness to the bell ringing on Holm Ure."
+Upcoming event: "Hester Marrow is watching the mole from her loft window."
+Upcoming event: "Low water this evening offers a crossing window; the spring tide arrives in three days."
+
+Generating; /cancel or Ctrl-C cancels, /quit exits.
+You don't go straight down to the quay. A man who walks straight at trouble has usually decided what to do about it, and you haven't yet. Instead you turn left along Ropewalk Street, the long way round. It runs behind the fish[tentative preview; final validation pending]
+ market and comes out above the harbour by the slipway steps. From there you can see your boat without your boat's new friends seeing you.
+
+The street is narrow and steep, and the fog lies trapped in it like milk in a jug. Shutters are opening. A woman shakes out a rag rug from an upper window and stops halfway to watch you go by. *The bell-hearer.* By noon there'll be two versions of you in Grayhallow: the drunk who saw ghosts, and the fool who's off to the Holm to find them. Neither of them will have a mooring.
+
+You put a hand flat against your coat as you walk. The log is still there, warm now from your body, and it's dangerous. Morwenna wants it by sundown. Low water is a little after sundown. *She's timed that, or the tide has, and you're not sure which is worse.*
+
+Halfway down, the door of the **Drowned Man** bangs open, letting out a gust of pipe smoke and stale beer. A man ducks out under the lintel, and he has to duck a long way. **Dougal Strand** is barefoot on the wet cobbles as always, his smock stained to the elbows. His straw-coloured beard is full of crumbs and the gold ring in his ear catches the weak light. He is laughing at something over his shoulder, and when he turns and sees you the laugh stops dead. Then it comes back too loud, the way a man shouts in the dark to show he isn't afraid of it.
+
+"**Ajax!** The man himself! Hearing bells, they tell me." He claps you on the shoulder hard enough to rattle your teeth. "I always said you'd go soft in the head, out on them shoals alone. Should get yourself a wife. Or a dog. A dog's cheaper."
+
+"Dougal."
+
+"Come in and have one. On me." He jerks a thumb at the tavern door. "I'm flush this week."
+
+Behind him, in the dim taproom, the landlord is holding a coin up to the window, turning it in his fingers and frowning. It isn't silver or copper. It's a dull, scaly **green**, crusted like something brought up in a dredge net. He scratches at it with a thumbnail, shrugs, and drops it into the till.
+
+Dougal sees you looking. Something passes over his broad red face, too quick to name, and he steps sideways into the doorway, blocking it.
+
+"Bit early for you anyhow, I s'pose," he says. His big freckled hands open and close. "You'll be wanting to get back to your boat. Saw Hollis and young Tregear down there just now, minding her for you." He tries a grin, and it doesn't hold. "Guild's a kind master, eh? Looks after its own."
+
+"I'm not its own any more."
+
+The grin falls off altogether. Dougal owes the Guild for every plank of the *Patience* and every inch of water she sits in. You watch him work out what it means to be seen talking to you on a public street. He glances up the hill toward the whitewashed hall and then down at his bare feet.
+
+"Ah," he says quietly. "Ah, Ajax. You've gone and done it, then."
+
+Down the slope, through a gap between the roofs, you can see the quay. Hollis has straightened up from your bow line and is talking to Tregear, and both of them are looking at the street that comes down from the hall, waiting for you to walk out of it. Out on the Long Mole Tobias sits on his crate like a heron. In the loft over Quayle's store, the shutter opens a little wider and shuts again. *Hester Marrow, watching.*
+
+Dougal shifts his weight, and the coins in his smock pocket chink softly together. The sound is wrong: dull and gritty, like stones that have lain a long time on the bottom.
+
+"I'll stand you that drink another day," he mumbles, and makes to push past you down the hill.
+[committed turn 6]
+Action 1: Let Dougal go and slip down to Quayle's loft to hide the harbour log with Hester (Cautious)
+Action 2: Walk straight down to the Kittiwake and tell Hollis and Tregear to get off your mooring (Bold)
+Action 3: Block Dougal's way and ask him who paid him in green sea-rusted coin (Investigate)
+Play: enter text, empty line to continue, or /action N.
+/inspect
+Inspection: phase=Ready revision=9
+Turns: 6
+Chapter: 0 title=Some("The Empty Yoke")
+World: "**Grayhallow** is a small harbour town built into a cleft of dark cliffs, where slate roofs climb in steps above a horseshoe quay and the smell of tar, kelp and woodsmoke never quite leaves the air. For three hundred years its life has been set by one sound: the **tide bell**. It hung in the squat stone tower at the end of the Long Mole, rung not by any hand but by the sea itself, through a float-and-chain mechanism that swung the clapper as the flood tide rose. When the bell spoke, the fishing boats turned for home, the cockle-pickers left the sands, and anyone crossing the old causeway to the island knew they had less than an hour.\n\n*Last night, the bell did not ring.* At dawn the harbourmaster found the tower open to the wind, the iron yoke empty, and the great bronze bell, taller than a man and heavy as a cart, **simply gone**. There are no drag marks on the mole and no wheel ruts on the quay. Only a smear of green weed on the tower steps, and wet footprints that walk *out* to the water's edge and stop.\n\nGrayhallow is a quiet town, and it handles trouble quietly. The **Pilots' Guild** runs the harbour from a whitewashed hall above the fish market. Its members are careful, proud men and women who sell their knowledge of the shoals and have every reason to keep the boats safe and in work. The **Masons' Lodge** built the bell tower and has kept it in repair for generations. Its members are tight-lipped about the old construction marks cut into the tower's foundation stones, and some of those marks match carvings found nowhere else but out on the island. The town's lesser folk all keep their own counsel: cockle-wives, net-menders and a lamplighter who walks the mole at dusk.\n\nOut across the grey water of **the Sound** lies **Holm Ure**, a low green island with a ruined chapel, a dozen sheep, and a lighthouse that has been dark for forty years. It is reached on foot by the **Drowning Causeway**, a cobbled road visible only at low water, or by boat in a crossing of about two hours. The island's last keepers, the **Wardens of the Holm**, were said to have given the bell to Grayhallow in the first place, on the condition that it would \"**answer the sea for as long as the sea asks**.\" Lately, fishermen swear they have seen lantern-light moving in the dead lighthouse at night. Last night, two of them claim, they heard a bell ringing faintly from the island, *out of time with any tide*.\n\nThe stakes are simple and close. In three days comes the **spring tide**, the highest of the year, when the flood runs over the causeway faster than a man can run. Without the bell, the cockle-pickers on the far sands will have no warning, and neither will anyone caught on the causeway. The Pilots want the bell found before panic empties the harbour. The Lodge wants it found before anyone asks too many questions about what lies under the tower. And something on Holm Ure seems to want it **exactly where it is**.\n\nThe journey is short but changes everything. **The first chapter** stays in Grayhallow. It is a mystery of salt-stained ledgers, an empty bell tower, a guild hall full of half-truths, and the hiring or borrowing of a boat. **The chapter break comes mid-crossing**, at the **Skerry of Teeth**, a black reef halfway across the Sound, where a sea-fog rolls in without warning and the harbour vanishes behind. Something there will make plain that the bell did not leave by any ordinary means. **The second chapter** lands on Holm Ure, with its ruined chapel, its dark lighthouse and a tidal cave beneath the cliffs where the old Wardens' secret has waited for someone to come and ask.\n\nA local custom matters to the cast. Forty years ago, the trading brig *Ajax* was lost on the Skerry of Teeth on the same night the lighthouse went dark. Grayhallow families named children born that winter after her, so the name **Ajax** still turns up in more than one household. To avoid mix-ups, townsfolk tell them apart by trade: one Ajax is known on the quay as a **sailor**, and the other in the Lodge yard as a **mason**. They are separate people with separate lives. No one else in the story shares that name. Every other islander, guild member and townsperson has a name of their own.\n\n*The atmosphere is hushed and briny: gulls, fog, cold stone, lamplight on wet cobbles. The pace is brisk. This is a mystery to be solved within a single turning of the tide.*"
+Situation: "Ajax took the back way down Ropewalk Street to avoid the Guild men, Hollis and Tregear, who are watching the Kittiwake. Outside the Drowned Man tavern he met Dougal Strand, who is flush with green, sea-rusted coins; the landlord was puzzling over one. Dougal is uneasy and trying to push past Ajax down the hill. Tobias is still on the mole and Hester is watching from her loft."
+Identity: protagonist name="Ajax (the sailor)" state=Some("On Ropewalk Street, halfway down the hill above the harbour, outside the Drowned Man tavern, talking to Dougal Strand. Still carrying Tobias's harbour log under his oilskins. Avoiding the Guild men at his mooring for now; knows Morwenna wants the log by sundown, which is close to low water.")
+Identity: tobias-fenwick name="Tobias Fenwick" state=Some("Sitting on an upturned fish crate on the Long Mole with an untouched hot mug, staring at the empty tower. Unaware Morwenna means to question him by sundown.")
+Identity: morwenna-slade name="Morwenna Slade" state=Some("In her study. Rebuffed by Ajax; put the purse away. Declared him outside the Guild if he sails without a warrant, mooring forfeit. Demanded whatever Tobias gave him be on her desk by sundown, or she will question Tobias. Has posted two Guild men at the Kittiwake. Flinched and glanced at the torn ledger when Ajax raised the dark lighthouse; claims she was ten years old then.")
+Identity: elias-rook name="Elias Rook" state=Some("Has not yet appeared in the story.")
+Identity: gideon-penhallow name="Gideon Penhallow" state=Some("Has not yet appeared in the story.")
+Identity: dougal-strand name="Dougal Strand" state=Some("Just came out of the Drowned Man, where he has been paying with green, sea-rusted coins; more of them chink in his smock pocket. Nervous at being seen with Ajax now that the Guild has cast him out, and at Ajax noticing the coin. Trying to brush past him down the hill.")
+Identity: corra-vane name="Corra Vane" state=Some("Has not yet appeared in the story.")
+Identity: hester-quayle name="Hester Marrow" state=Some("In her loft over Quayle's net store, opening and shutting the shutter as she watches the mole and the quay.")
+Major event: "Ajax the sailor reported hearing the bell ringing from Holm Ure at 2 a.m., and was laughed off by the duty pilot Pellow."
+Major event: "On the morning after the bell vanished, the town gathered at the roped-off Long Mole; Hester Quayle approached Ajax, and Tobias Fenwick asked him for a word."
+Major event: "Tobias Fenwick showed Ajax the harbour log: two nights ago (the 11th, about 1 a.m.) he logged an unlit, low black vessel with no name or sail that entered past the Mole, ignored his hail and left toward the Skerry of Teeth; Morwenna Slade's note ordered him to strike it as 'mistaken'."
+Major event: "Tobias said Old Treloar's boy also heard the bell from Holm Ure at the same hour, and asked Ajax to go and look."
+Major event: "Ajax saw the footprints: long, narrow, bare-soled, ending at the mole's edge, with a smear of green weed on the tower's top step."
+Major event: "Ajax hid Tobias's harbour log inside his oilskins and agreed to say Tobias only showed him the footprints."
+Major event: "The girl known as Hester Quayle revealed she was born Hester Marrow and asked to be called that from now on."
+Major event: "Hester told Ajax that just after 2 a.m. she saw the tower door open with no one there, heard a long dragging chain-on-stone groan, saw a round patch of water at the mole's end go smooth and black for a while, smelled deep water, and saw a brief green light out toward the Skerry; then the bell was gone."
+Major event: "Morwenna Slade arrived at the rope and asked Ajax to talk privately, seeming to notice something under his coat."
+Major event: "Ajax sent Hester Marrow home and went with Morwenna Slade to her study in the Guild hall, revealing nothing about the log, the black vessel or Hester's account."
+Major event: "Morwenna offered Ajax a purse of gold to dismiss his bell story, or gold plus a Guild boat and two men to search where she directs, and threatened to withhold a pilot's warrant and hinted at his Guild mooring."
+Major event: "Ajax noticed the Guild's tower maintenance ledger on Morwenna's shelf with pages torn out near the back."
+Major event: "Ajax refused Morwenna's gold and told her he will cross to Holm Ure without a warrant."
+Major event: "Morwenna declared Ajax outside the Guild: mooring forfeit, no rescue if he founders; she used his father's death on the Skerry to deter him."
+Major event: "When Ajax raised the dark lighthouse, Morwenna flinched and glanced at the torn maintenance ledger, then claimed she was only ten years old then."
+Major event: "Morwenna demanded whatever Tobias gave Ajax be returned to her desk by sundown, or she will interrogate Tobias."
+Major event: "Two Guild men were posted at the Kittiwake's mooring."
+Major event: "The Guild men guarding the Kittiwake are named Hollis and Tregear."
+Major event: "Ajax saw that Dougal Strand is paying at the Drowned Man with strange green, sea-rusted coins, and Dougal grew nervous when Ajax noticed."
+Upcoming event: "Morwenna demands the harbour log by sundown, or she will interrogate Tobias, who will crack."
+Upcoming event: "Two Guild men are guarding the Kittiwake's mooring; Ajax's Guild mooring is forfeit if he sails unwarranted."
+Upcoming event: "The Guild's tower maintenance ledger in Morwenna's study has pages torn out; she reacted when the dark lighthouse was mentioned."
+Upcoming event: "The unlit black vessel seen two nights ago, and the green light Hester saw last night, both point toward the Skerry of Teeth."
+Upcoming event: "Old Treloar's boy is a second witness to the bell ringing on Holm Ure."
+Upcoming event: "Hester Marrow is watching the mole from her loft window."
+Upcoming event: "Low water this evening offers a crossing window; the spring tide arrives in three days."
+I let Dougal go. At dusk I slip down to the Kittiwake, order the Guild men off my mooring, and with Hester Marrow aboard I cast off on the low water and steer out past the Long Mole into the fog, bound across the Sound for Holm Ure by way of the Skerry of Teeth.
+Generating; /cancel or Ctrl-C cancels, /quit exits.
+You let him go. Dougal shoulders past you down the hill with the coins grinding in his pocket, and he doesn't look back. You stand a while in the smoky doorway smell of the[tentative preview; final validation pending]
+ Drowned Man, putting together what you know: a green coin, a boat with no name, a reef. Then you go the long way round to your own house and wait for the light to fail.
+
+It fails slowly. All afternoon the fog thins and thickens without making up its mind. You eat bread you don't taste, fill the water breaker, put two lanterns, a coil of new line and your father's old boat-hook into a sack, and you sit by the window with the harbour log on your knees. You read Tobias's struck-out line until you know it by heart. *Low, black, no sail seen.* At four the church strikes and the ebb is running hard. At six the sun goes down behind the cliffs, bloody and blurred, and up the hill the Guild hall lights its lamps one by one. **Sundown.** Somewhere behind those windows Morwenna Slade is looking at an empty desk.
+
+You button the log back inside your oilskins and go down to the quay.
+
+Hollis is still at your bow line. Tregear has a pipe going and a muffler up to his ears. They both straighten when your boots ring on the slipway steps, and Hollis, a heavy, slab-faced pilot's mate you've drunk with a dozen times, puts himself between you and the ring.
+
+"Evening, Ajax. Master's orders. Boat stays put."
+
+"Master's orders are that this is no longer my mooring," you say. "So I'm taking my boat off it. **Stand away from my line.**"
+
+Tregear looks at Hollis. Hollis looks at your hands, then at your face, and you can see him remember the night in the Drowned Man when a collier's mate tried to put one over on you. He works his jaw.
+
+"She'll have my hide."
+
+"Tell her I knocked you down. Tregear will swear to it, won't you, lad?"
+
+The boy takes his pipe out of his mouth and nods, too quickly. Hollis spits on the stones, steps back, and you've the bow line off the ring and coiled before he can think better of it.
+
+Then the clogs come.
+
+They clatter across the cobbles from the head of the mole, and **Hester Marrow** comes with them, a bundle under one arm and her too-big shawl knotted round her waist like a deckhand's. She doesn't ask. She drops the bundle into the *Kittiwake*'s waist and stands on the edge of the quay, white-faced and fierce.
+
+"I saw the light," she says before you can speak. "You didn't. I know where it was. I can point."
+
+"Your uncle—"
+
+"Isn't my uncle any more." Her voice wobbles and holds. "If you leave me, I'll take a punt and follow. I can scull. I'm not good, but I can."
+
+Hollis snorts. You look at her, at the grey eyes that missed nothing at two in the morning, and you think of a ship's boy of twelve who once stowed away on a brig because nobody would take him.
+
+"Get in," you say. "Sit on the thwart and don't touch anything I don't tell you to."
+
+You push off. The harbour floor is nearly bare, weed-black and shining, and the *Kittiwake* draws barely enough water to float down the channel. You scull her out with the long oar over the stern while Hester crouches on the thwart, gripping it with both hands. Behind you, a door bangs up the hill. **A tall figure with a cane** stands framed in the Guild hall's lamplit doorway, and doesn't move.
+
+Out along the Long Mole a small light is travelling. It stops at each iron post, goes up on a long brass pole and leaves a lamp burning behind it. As you come level with the end of the mole, the light stops at the foot of the empty tower and lifts a hooded lantern. An old man in a stovepipe hat and a greatcoat stands there, scarf wound up to his nose, one eye milky and the other pale and bright as a gull's. **Gideon Penhallow**, the lamplighter. He has walked the mole every dusk of your life, and you don't think he has ever spoken to you.
+
+He speaks now, across the black water.
+
+"Keep the Teeth to larboard, sailor." His voice is thin and dry as a reed. "And if you hear her ring, *don't answer*. She isn't calling you."
+
+Then he lowers the lantern, and the fog takes him.
+
+You get the lugsail up past the mole's end. It fills sluggishly in a breath of westerly and the *Kittiwake* heels and begins to talk under her forefoot. The harbour lamps shrink behind you into a necklace, then a smudge, and then nothing. Hester turns round on the thwart to watch them go, and when they're gone she turns back and doesn't look again.
+
+An hour out, the slack water comes. The wind dies to almost nothing. The sail hangs. The sea goes oily and quiet, and the fog comes down out of nowhere, thick and cold and smelling of the deep pots. You can't see your own bow.
+
+"Ajax," Hester whispers. She isn't looking at you. She's pointing past the bow, where the water ought to be breaking white on the **Skerry of Teeth**.
+
+It isn't breaking. Ahead of you the sea has gone **smooth**, black and flat in a wide circle, and the fog sits on it without moving. Somewhere inside the circle, low down near the water, a small green light blinks once, then again.
+
+The *Kittiwake* is drifting straight toward it.
+[committed turn 7]
+Action 1: Get the sweeps out and pull hard to keep the boat off the smooth water (Cautious)
+Action 2: Let the Kittiwake drift into the circle, boat-hook ready, and make for the green light (Bold)
+Action 3: Ask Hester whether this is the same light she saw from her loft, and take soundings over the side (Investigate)
+Play: enter text, empty line to continue, or /action N.
+/inspect
+Inspection: phase=Ready revision=10
+Turns: 7
+Chapter: 0 title=Some("The Empty Yoke")
+World: "**Grayhallow** is a small harbour town built into a cleft of dark cliffs, where slate roofs climb in steps above a horseshoe quay and the smell of tar, kelp and woodsmoke never quite leaves the air. For three hundred years its life has been set by one sound: the **tide bell**. It hung in the squat stone tower at the end of the Long Mole, rung not by any hand but by the sea itself, through a float-and-chain mechanism that swung the clapper as the flood tide rose. When the bell spoke, the fishing boats turned for home, the cockle-pickers left the sands, and anyone crossing the old causeway to the island knew they had less than an hour.\n\n*Last night, the bell did not ring.* At dawn the harbourmaster found the tower open to the wind, the iron yoke empty, and the great bronze bell, taller than a man and heavy as a cart, **simply gone**. There are no drag marks on the mole and no wheel ruts on the quay. Only a smear of green weed on the tower steps, and wet footprints that walk *out* to the water's edge and stop.\n\nGrayhallow is a quiet town, and it handles trouble quietly. The **Pilots' Guild** runs the harbour from a whitewashed hall above the fish market. Its members are careful, proud men and women who sell their knowledge of the shoals and have every reason to keep the boats safe and in work. The **Masons' Lodge** built the bell tower and has kept it in repair for generations. Its members are tight-lipped about the old construction marks cut into the tower's foundation stones, and some of those marks match carvings found nowhere else but out on the island. The town's lesser folk all keep their own counsel: cockle-wives, net-menders and a lamplighter who walks the mole at dusk.\n\nOut across the grey water of **the Sound** lies **Holm Ure**, a low green island with a ruined chapel, a dozen sheep, and a lighthouse that has been dark for forty years. It is reached on foot by the **Drowning Causeway**, a cobbled road visible only at low water, or by boat in a crossing of about two hours. The island's last keepers, the **Wardens of the Holm**, were said to have given the bell to Grayhallow in the first place, on the condition that it would \"**answer the sea for as long as the sea asks**.\" Lately, fishermen swear they have seen lantern-light moving in the dead lighthouse at night. Last night, two of them claim, they heard a bell ringing faintly from the island, *out of time with any tide*.\n\nThe stakes are simple and close. In three days comes the **spring tide**, the highest of the year, when the flood runs over the causeway faster than a man can run. Without the bell, the cockle-pickers on the far sands will have no warning, and neither will anyone caught on the causeway. The Pilots want the bell found before panic empties the harbour. The Lodge wants it found before anyone asks too many questions about what lies under the tower. And something on Holm Ure seems to want it **exactly where it is**.\n\nThe journey is short but changes everything. **The first chapter** stays in Grayhallow. It is a mystery of salt-stained ledgers, an empty bell tower, a guild hall full of half-truths, and the hiring or borrowing of a boat. **The chapter break comes mid-crossing**, at the **Skerry of Teeth**, a black reef halfway across the Sound, where a sea-fog rolls in without warning and the harbour vanishes behind. Something there will make plain that the bell did not leave by any ordinary means. **The second chapter** lands on Holm Ure, with its ruined chapel, its dark lighthouse and a tidal cave beneath the cliffs where the old Wardens' secret has waited for someone to come and ask.\n\nA local custom matters to the cast. Forty years ago, the trading brig *Ajax* was lost on the Skerry of Teeth on the same night the lighthouse went dark. Grayhallow families named children born that winter after her, so the name **Ajax** still turns up in more than one household. To avoid mix-ups, townsfolk tell them apart by trade: one Ajax is known on the quay as a **sailor**, and the other in the Lodge yard as a **mason**. They are separate people with separate lives. No one else in the story shares that name. Every other islander, guild member and townsperson has a name of their own.\n\n*The atmosphere is hushed and briny: gulls, fog, cold stone, lamplight on wet cobbles. The pace is brisk. This is a mystery to be solved within a single turning of the tide.*"
+Situation: "At dusk Ajax sailed the Kittiwake out of Grayhallow on low water with Hester Marrow aboard. An hour out, at slack water, the wind died and a sudden thick fog fell near the Skerry of Teeth. The reef isn't breaking. Instead the sea ahead is smooth and black in a wide circle, a small green light blinks low inside it, and the becalmed boat is drifting straight toward it."
+Identity: protagonist name="Ajax (the sailor)" state=Some("At the tiller of the Kittiwake, becalmed in sudden thick fog at slack water near the Skerry of Teeth, about an hour out of Grayhallow. Still carries Tobias's harbour log inside his oilskins; aboard are lanterns, new line, water and his father's boat-hook. Outside the Guild now, his mooring forfeit. The boat is drifting toward a smooth black circle of water with a green light blinking inside it.")
+Identity: tobias-fenwick name="Tobias Fenwick" state=Some("Last seen on the Long Mole. With sundown passed and the log not returned, Morwenna is likely to question him now.")
+Identity: morwenna-slade name="Morwenna Slade" state=Some("Sundown passed with no log on her desk. She watched from the lamplit Guild hall doorway as the Kittiwake left harbour without a warrant. Likely to turn on Tobias now.")
+Identity: elias-rook name="Elias Rook" state=Some("Has not yet appeared in the story.")
+Identity: gideon-penhallow name="Gideon Penhallow" state=Some("Lighting the lamps on the Long Mole at dusk. At the foot of the empty tower he called a warning to Ajax as the Kittiwake passed: keep the Teeth to larboard, and if you hear her ring, don't answer, because she isn't calling you. Then he vanished into the fog.")
+Identity: dougal-strand name="Dougal Strand" state=Some("Left Ajax outside the Drowned Man without explaining the green coins; avoiding him for fear of the Guild.")
+Identity: corra-vane name="Corra Vane" state=Some("Has not yet appeared in the story.")
+Identity: hester-quayle name="Hester Marrow" state=Some("Aboard the Kittiwake on the thwart after forcing her way along on the crossing, with a bundle of belongings. Frightened but fierce, pointing at the smooth water and green light ahead, which look like what she saw from her loft.")
+Major event: "Ajax the sailor reported hearing the bell ringing from Holm Ure at 2 a.m., and was laughed off by the duty pilot Pellow."
+Major event: "On the morning after the bell vanished, the town gathered at the roped-off Long Mole; Hester Quayle approached Ajax, and Tobias Fenwick asked him for a word."
+Major event: "Tobias Fenwick showed Ajax the harbour log: two nights ago (the 11th, about 1 a.m.) he logged an unlit, low black vessel with no name or sail that entered past the Mole, ignored his hail and left toward the Skerry of Teeth; Morwenna Slade's note ordered him to strike it as 'mistaken'."
+Major event: "Tobias said Old Treloar's boy also heard the bell from Holm Ure at the same hour, and asked Ajax to go and look."
+Major event: "Ajax saw the footprints: long, narrow, bare-soled, ending at the mole's edge, with a smear of green weed on the tower's top step."
+Major event: "Ajax hid Tobias's harbour log inside his oilskins and agreed to say Tobias only showed him the footprints."
+Major event: "The girl known as Hester Quayle revealed she was born Hester Marrow and asked to be called that from now on."
+Major event: "Hester told Ajax that just after 2 a.m. she saw the tower door open with no one there, heard a long dragging chain-on-stone groan, saw a round patch of water at the mole's end go smooth and black for a while, smelled deep water, and saw a brief green light out toward the Skerry; then the bell was gone."
+Major event: "Morwenna Slade arrived at the rope and asked Ajax to talk privately, seeming to notice something under his coat."
+Major event: "Ajax sent Hester Marrow home and went with Morwenna Slade to her study in the Guild hall, revealing nothing about the log, the black vessel or Hester's account."
+Major event: "Morwenna offered Ajax a purse of gold to dismiss his bell story, or gold plus a Guild boat and two men to search where she directs, and threatened to withhold a pilot's warrant and hinted at his Guild mooring."
+Major event: "Ajax noticed the Guild's tower maintenance ledger on Morwenna's shelf with pages torn out near the back."
+Major event: "Ajax refused Morwenna's gold and told her he will cross to Holm Ure without a warrant."
+Major event: "Morwenna declared Ajax outside the Guild: mooring forfeit, no rescue if he founders; she used his father's death on the Skerry to deter him."
+Major event: "When Ajax raised the dark lighthouse, Morwenna flinched and glanced at the torn maintenance ledger, then claimed she was only ten years old then."
+Major event: "Morwenna demanded whatever Tobias gave Ajax be returned to her desk by sundown, or she will interrogate Tobias."
+Major event: "Two Guild men were posted at the Kittiwake's mooring."
+Major event: "The Guild men guarding the Kittiwake are named Hollis and Tregear."
+Major event: "Ajax saw that Dougal Strand is paying at the Drowned Man with strange green, sea-rusted coins, and Dougal grew nervous when Ajax noticed."
+Major event: "Ajax kept Tobias's harbour log past Morwenna's sundown deadline."
+Major event: "At dusk Ajax faced down Hollis and Tregear and took the Kittiwake off her Guild mooring; Morwenna watched from the Guild hall doorway."
+Major event: "Hester Marrow insisted on coming and joined Ajax aboard as crew."
+Major event: "Gideon Penhallow, lighting the mole lamps, warned Ajax: 'Keep the Teeth to larboard, and if you hear her ring, don't answer. She isn't calling you.'"
+Major event: "An hour out, at slack water, fog fell; near the Skerry of Teeth the sea went smooth and black in a circle with a green light blinking in it, as Hester had seen from the mole."
+Upcoming event: "Sundown has passed without the log; Morwenna will interrogate Tobias, who will crack."
+Upcoming event: "The Guild's tower maintenance ledger in Morwenna's study has pages torn out; she reacted when the dark lighthouse was mentioned."
+Upcoming event: "Dougal Strand was paid in green sea-rusted coin; its source is unexplained."
+Upcoming event: "The smooth black circle and green light at the Skerry of Teeth will show that the bell did not leave by any ordinary means; the chapter break comes here."
+Upcoming event: "Gideon Penhallow's warning: 'if you hear her ring, don't answer.' He knows more about the island and the last Warden."
+Upcoming event: "Old Treloar's boy is a second witness to the bell ringing on Holm Ure."
+Upcoming event: "Holm Ure awaits: the ruined chapel, the dark lighthouse with its lantern-light, and the tidal cave."
+Upcoming event: "The spring tide arrives in three days."
+/action 2
+Generating; /cancel or Ctrl-C cancels, /quit exits.
+You let her drift.
+
+There's no wind to fight it with anyway, and you've a feeling that sculling away would be like running from a dog. The *Kitti[tentative preview; final validation pending]
+wake* glides forward with no sound under her forefoot at all. You stand in the stern sheets with your father's boat-hook held crossways in both hands, ash shaft gone pale with age and the iron hook rusted brown. Hester has slid down off the thwart into the bilge, where the boat's ribs can hold her.
+
+The bow crosses the edge of the circle, and **the sea stops moving.**
+
+You feel it in your legs before you understand it. There's no lift and no roll, not even the faint breathing every hull does on the stillest night. The *Kittiwake* sits on the water as a cup sits on a table. The fog stands round you in walls, and inside them the air is so cold your breath hangs in front of your face and doesn't drift away.
+
+"Ajax," Hester breathes. "*Look down.*"
+
+You look down.
+
+The water is clear. It shouldn't be. The Sound is green and murky even in high summer, but inside this circle it's as clear as window glass, and the green light lets you see a long way into it. The light hangs just off your larboard bow at the height of your knee. It's a lantern, old and squat, with thick panes of green glass streaked with salt, and it's lashed to a cork float that doesn't bob. From the float a chain runs straight down. The links are as thick as your wrist and furred with weed, and the chain goes down past where any light should reach.
+
+You lean out and hook it, gently, the way you'd take hold of a sleeping man. **It's moving.** Under the hook the links slide past one slow notch at a time, travelling east toward Holm Ure. It sounds like the groan Hester heard from her loft, only quieter, and it comes up through the boat-hook into your hands.
+
+Then you see the bottom.
+
+It's the Skerry of Teeth, the way no living sailor has seen it: black spines of rock standing up from white sand, and lying across them a wreck. She's long-dead, her ribs bare and green, but she was a brig, and her stern-board has come to rest on the sand, face up. Weed hangs off it like hair, but the carved letters are deep and the green light catches them.
+
+***AJAX.***
+
+Your throat closes. *Father.* Forty years you've sailed round this reef. You never knew she lay so shallow, so close, so whole.
+
+Past her broken ribs, along the sand, something big is moving.
+
+It's the bell. **The tide bell of Grayhallow**, taller than a man, its bronze gone sea-dark, lying on its side and sliding along the sea floor. The chain is made fast through its crown. It doesn't drag and it doesn't jolt. It glides, as if the sand were ice, and all round it, too dim to see properly, there are shapes. They're long and pale and slow, and they walk on the bottom with their hands laid on the bronze, the way bearers walk beside a coffin. They're barefoot, with narrow feet, and there are too many of them to count.
+
+Hester makes a small noise and claps both red hands over her mouth.
+
+One of the pale shapes stops walking.
+
+It lifts its head. You can't see a face. The water and the dark take it from you, but you know, the way you know a squall is coming, that **it's looking up at the hull of your boat.** The others stop too. The bell stops. The chain under your boat-hook goes still.
+
+Then the bell rings.
+
+It doesn't ring the way it rang from the tower. The sound comes up through forty feet of water and through the planks of the *Kittiwake*, deep and slow, and you feel it in your teeth and the bones of your feet. It's one stroke. Up at your masthead the little brass fog bell you've carried for twenty years starts to shiver on its hook, and gives out a faint thin hum all by itself.
+
+*If you hear her ring, don't answer.*
+
+The fog bell's clapper is trembling. One more stroke from below and it will swing. Hester is staring up at it with her hands still over her mouth. Down on the white sand, every pale head is turned up toward you, **waiting.**
+[committed turn 8]
+Action 1: Lunge for the masthead and clamp the fog bell's clapper silent with your hand (Cautious)
+Action 2: Keep the boat-hook on the chain and haul, trying to drag the bell back toward you (Bold)
+Action 3: Lean out and look closer at the green lantern and its float for any Warden's mark (Investigate)
+Play: enter text, empty line to continue, or /action N.
+/inspect
+Inspection: phase=Ready revision=11
+Turns: 8
+Chapter: 0 title=Some("The Empty Yoke")
+World: "**Grayhallow** is a small harbour town built into a cleft of dark cliffs, where slate roofs climb in steps above a horseshoe quay and the smell of tar, kelp and woodsmoke never quite leaves the air. For three hundred years its life has been set by one sound: the **tide bell**. It hung in the squat stone tower at the end of the Long Mole, rung not by any hand but by the sea itself, through a float-and-chain mechanism that swung the clapper as the flood tide rose. When the bell spoke, the fishing boats turned for home, the cockle-pickers left the sands, and anyone crossing the old causeway to the island knew they had less than an hour.\n\n*Last night, the bell did not ring.* At dawn the harbourmaster found the tower open to the wind, the iron yoke empty, and the great bronze bell, taller than a man and heavy as a cart, **simply gone**. There are no drag marks on the mole and no wheel ruts on the quay. Only a smear of green weed on the tower steps, and wet footprints that walk *out* to the water's edge and stop.\n\nGrayhallow is a quiet town, and it handles trouble quietly. The **Pilots' Guild** runs the harbour from a whitewashed hall above the fish market. Its members are careful, proud men and women who sell their knowledge of the shoals and have every reason to keep the boats safe and in work. The **Masons' Lodge** built the bell tower and has kept it in repair for generations. Its members are tight-lipped about the old construction marks cut into the tower's foundation stones, and some of those marks match carvings found nowhere else but out on the island. The town's lesser folk all keep their own counsel: cockle-wives, net-menders and a lamplighter who walks the mole at dusk.\n\nOut across the grey water of **the Sound** lies **Holm Ure**, a low green island with a ruined chapel, a dozen sheep, and a lighthouse that has been dark for forty years. It is reached on foot by the **Drowning Causeway**, a cobbled road visible only at low water, or by boat in a crossing of about two hours. The island's last keepers, the **Wardens of the Holm**, were said to have given the bell to Grayhallow in the first place, on the condition that it would \"**answer the sea for as long as the sea asks**.\" Lately, fishermen swear they have seen lantern-light moving in the dead lighthouse at night. Last night, two of them claim, they heard a bell ringing faintly from the island, *out of time with any tide*.\n\nThe stakes are simple and close. In three days comes the **spring tide**, the highest of the year, when the flood runs over the causeway faster than a man can run. Without the bell, the cockle-pickers on the far sands will have no warning, and neither will anyone caught on the causeway. The Pilots want the bell found before panic empties the harbour. The Lodge wants it found before anyone asks too many questions about what lies under the tower. And something on Holm Ure seems to want it **exactly where it is**.\n\nThe journey is short but changes everything. **The first chapter** stays in Grayhallow. It is a mystery of salt-stained ledgers, an empty bell tower, a guild hall full of half-truths, and the hiring or borrowing of a boat. **The chapter break comes mid-crossing**, at the **Skerry of Teeth**, a black reef halfway across the Sound, where a sea-fog rolls in without warning and the harbour vanishes behind. Something there will make plain that the bell did not leave by any ordinary means. **The second chapter** lands on Holm Ure, with its ruined chapel, its dark lighthouse and a tidal cave beneath the cliffs where the old Wardens' secret has waited for someone to come and ask.\n\nA local custom matters to the cast. Forty years ago, the trading brig *Ajax* was lost on the Skerry of Teeth on the same night the lighthouse went dark. Grayhallow families named children born that winter after her, so the name **Ajax** still turns up in more than one household. To avoid mix-ups, townsfolk tell them apart by trade: one Ajax is known on the quay as a **sailor**, and the other in the Lodge yard as a **mason**. They are separate people with separate lives. No one else in the story shares that name. Every other islander, guild member and townsperson has a name of their own.\n\n*The atmosphere is hushed and briny: gulls, fog, cold stone, lamplight on wet cobbles. The pace is brisk. This is a mystery to be solved within a single turning of the tide.*"
+Situation: "Inside the smooth black circle at the Skerry of Teeth, the Kittiwake sits dead still on unnaturally clear water. Ajax has his boat-hook on a huge weed-furred chain that runs from a green-glass lantern float down to the bottom. Below lie the wreck of the brig Ajax and the stolen tide bell, which a host of pale barefoot figures are gliding along the sea floor toward Holm Ure. They have stopped and are looking up at the boat. The bell has rung once underwater, and the Kittiwake's own masthead fog bell is trembling as if about to answer."
+Identity: protagonist name="Ajax (the sailor)" state=Some("Standing in the Kittiwake's stern inside the still circle at the Skerry of Teeth, with his father's boat-hook hooked onto the moving chain. Shaken to his core after seeing his father's lost brig on the bottom. Still carries Tobias's harbour log in his oilskins. Remembering Gideon's warning not to answer as his own fog bell trembles.")
+Identity: tobias-fenwick name="Tobias Fenwick" state=Some("Last seen on the Long Mole. With sundown passed and the log not returned, Morwenna is likely to question him now.")
+Identity: morwenna-slade name="Morwenna Slade" state=Some("Sundown passed with no log on her desk. She watched from the lamplit Guild hall doorway as the Kittiwake left harbour without a warrant. Likely to turn on Tobias now.")
+Identity: elias-rook name="Elias Rook" state=Some("Has not yet appeared in the story.")
+Identity: gideon-penhallow name="Gideon Penhallow" state=Some("Lighting the lamps on the Long Mole at dusk. At the foot of the empty tower he called a warning to Ajax as the Kittiwake passed: keep the Teeth to larboard, and if you hear her ring, don't answer, because she isn't calling you. Then he vanished into the fog.")
+Identity: dougal-strand name="Dougal Strand" state=Some("Left Ajax outside the Drowned Man without explaining the green coins; avoiding him for fear of the Guild.")
+Identity: corra-vane name="Corra Vane" state=Some("Has not yet appeared in the story.")
+Identity: hester-quayle name="Hester Marrow" state=Some("Crouched in the Kittiwake's bilge, terrified, with both hands clapped over her mouth, staring up at the trembling fog bell at the masthead.")
+Major event: "Ajax the sailor reported hearing the bell ringing from Holm Ure at 2 a.m., and was laughed off by the duty pilot Pellow."
+Major event: "On the morning after the bell vanished, the town gathered at the roped-off Long Mole; Hester Quayle approached Ajax, and Tobias Fenwick asked him for a word."
+Major event: "Tobias Fenwick showed Ajax the harbour log: two nights ago (the 11th, about 1 a.m.) he logged an unlit, low black vessel with no name or sail that entered past the Mole, ignored his hail and left toward the Skerry of Teeth; Morwenna Slade's note ordered him to strike it as 'mistaken'."
+Major event: "Tobias said Old Treloar's boy also heard the bell from Holm Ure at the same hour, and asked Ajax to go and look."
+Major event: "Ajax saw the footprints: long, narrow, bare-soled, ending at the mole's edge, with a smear of green weed on the tower's top step."
+Major event: "Ajax hid Tobias's harbour log inside his oilskins and agreed to say Tobias only showed him the footprints."
+Major event: "The girl known as Hester Quayle revealed she was born Hester Marrow and asked to be called that from now on."
+Major event: "Hester told Ajax that just after 2 a.m. she saw the tower door open with no one there, heard a long dragging chain-on-stone groan, saw a round patch of water at the mole's end go smooth and black for a while, smelled deep water, and saw a brief green light out toward the Skerry; then the bell was gone."
+Major event: "Morwenna Slade arrived at the rope and asked Ajax to talk privately, seeming to notice something under his coat."
+Major event: "Ajax sent Hester Marrow home and went with Morwenna Slade to her study in the Guild hall, revealing nothing about the log, the black vessel or Hester's account."
+Major event: "Morwenna offered Ajax a purse of gold to dismiss his bell story, or gold plus a Guild boat and two men to search where she directs, and threatened to withhold a pilot's warrant and hinted at his Guild mooring."
+Major event: "Ajax noticed the Guild's tower maintenance ledger on Morwenna's shelf with pages torn out near the back."
+Major event: "Ajax refused Morwenna's gold and told her he will cross to Holm Ure without a warrant."
+Major event: "Morwenna declared Ajax outside the Guild: mooring forfeit, no rescue if he founders; she used his father's death on the Skerry to deter him."
+Major event: "When Ajax raised the dark lighthouse, Morwenna flinched and glanced at the torn maintenance ledger, then claimed she was only ten years old then."
+Major event: "Morwenna demanded whatever Tobias gave Ajax be returned to her desk by sundown, or she will interrogate Tobias."
+Major event: "Two Guild men were posted at the Kittiwake's mooring."
+Major event: "The Guild men guarding the Kittiwake are named Hollis and Tregear."
+Major event: "Ajax saw that Dougal Strand is paying at the Drowned Man with strange green, sea-rusted coins, and Dougal grew nervous when Ajax noticed."
+Major event: "Ajax kept Tobias's harbour log past Morwenna's sundown deadline."
+Major event: "At dusk Ajax faced down Hollis and Tregear and took the Kittiwake off her Guild mooring; Morwenna watched from the Guild hall doorway."
+Major event: "Hester Marrow insisted on coming and joined Ajax aboard as crew."
+Major event: "Gideon Penhallow, lighting the mole lamps, warned Ajax: 'Keep the Teeth to larboard, and if you hear her ring, don't answer. She isn't calling you.'"
+Major event: "An hour out, at slack water, fog fell; near the Skerry of Teeth the sea went smooth and black in a circle with a green light blinking in it, as Hester had seen from the mole."
+Major event: "At the Skerry of Teeth the Kittiwake drifted into the smooth circle, where the sea went motionless and glass-clear."
+Major event: "The green light is an old green-glass lantern on a cork float, marking a massive weed-furred chain that is moving slowly east toward Holm Ure."
+Major event: "Ajax saw the wreck of the brig Ajax lying shallow on the Skerry, her stern-board with its name intact."
+Major event: "The tide bell is being carried along the sea floor toward Holm Ure, chained through its crown, by many pale, long, barefoot figures; it did not leave by any ordinary means."
+Major event: "The figures stopped and looked up at the boat; the bell rang once underwater, and the Kittiwake's masthead fog bell began to tremble as if to answer."
+Upcoming event: "Sundown has passed without the log; Morwenna will interrogate Tobias, who will crack."
+Upcoming event: "The Guild's tower maintenance ledger in Morwenna's study has pages torn out; she reacted when the dark lighthouse was mentioned."
+Upcoming event: "Dougal Strand was paid in green sea-rusted coin; its source is unexplained."
+Upcoming event: "The smooth black circle and green light at the Skerry of Teeth will show that the bell did not leave by any ordinary means; the chapter break comes here."
+Upcoming event: "Gideon Penhallow's warning: 'if you hear her ring, don't answer.' He knows more about the island and the last Warden."
+Upcoming event: "Old Treloar's boy is a second witness to the bell ringing on Holm Ure."
+Upcoming event: "Holm Ure awaits: the ruined chapel, the dark lighthouse with its lantern-light, and the tidal cave."
+Upcoming event: "The spring tide arrives in three days."
+/action 1
+Generating; /cancel or Ctrl-C cancels, /quit exits.
+You let go of the boat-hook and lunge.
+
+The *Kittiwake*[tentative preview; final validation pending]
+'s mast is no taller than two men, and you've climbed it in black squalls with the boat on her beam ends. Tonight the boat doesn't move at all, and somehow that's worse. You get one boot on the thwart and the other on the gunwale, haul yourself up the halyard hand over hand, and reach the brass fog bell just as **the second stroke comes up from below.**
+
+It hits the hull like a fist under a table. The planks shudder. The fog bell's clapper swings toward the lip, and you close your hand over the mouth of the bell and catch the clapper in your fist.
+
+**The cold is like nothing you've touched.** It's worse than winter rigging or ice in a herring hold. It's the cold of the deep sea floor, and it goes into the bones of your hand and up your wrist. The brass hums against your palm, trying to ring, and the clapper twists in your fingers like a fish. You set your teeth and hold on. Your knuckles go white, then grey. The faded brig on your forearm stands out against skin gone the colour of tallow.
+
+*Don't answer. She isn't calling you.*
+
+"Ajax!" Hester's voice cracks. "The hook! It's going!"
+
+You look down. Your father's boat-hook has jammed between two links of the great chain. The chain is moving again, slowly, east, and it's dragging the hook with it. The ash shaft scrapes along the gunwale toward the bow. Hester has thrown herself across the thwart and grabbed it in both raw hands. She's hauling back with everything her thin body has, and the chain is hauling harder. Her clogs skid on the wet bottom boards. She's going over the side after it.
+
+"**Let it go!**"
+
+"It's your da's—"
+
+"*Hester Marrow, let go!*"
+
+She lets go. The boat-hook slides over the bow without a splash and sinks after the chain, turning slowly in the clear water, pale ash and brown iron. You watch it go down past the green lantern and past the weed-furred links, toward the stern-board of a brig with your name on it. Then it's gone.
+
+There's no third stroke.
+
+Down on the white sand, the pale heads turn away from you one by one. They don't hurry. The one that looked up first is the last to look away, and for a long moment you're sure it's studying the hand you've clamped round the fog bell. Then it puts its long palm back on the bronze, and the procession moves on. The tide bell of Grayhallow glides away over the sand toward Holm Ure, past the broken ribs of the *Ajax*, into darkness the green light can't reach.
+
+The humming in your fist dies away. The brass is only brass again.
+
+Then **the sea comes back.**
+
+It happens all at once. The *Kittiwake* drops a foot, as though something that held her up has let her go. Water slaps against the strakes, the hull rolls, and the boom swings over and cracks against the shrouds. You lose your grip on the halyard, fall into the waist and land hard on your shoulder beside Hester. The glass-clear water turns back to the Sound's own murk in a heartbeat. The green lantern blinks once and goes out, or sinks, or was never there. And off the starboard bow, close enough to hear the suck and roar of it, the **Skerry of Teeth** is breaking white in the fog. Black spines show between the swells. The set is running onto them.
+
+*Keep the Teeth to larboard.* You've drifted to the wrong side of them.
+
+"Ajax, your hand—" Hester has hold of your wrist. Your right hand is curled into a claw, white and numb to the elbow. Frost has feathered across the creases of the palm and is melting there in the warm air like it's embarrassed to be seen.
+
+"Later." You get your feet under you. The flood has started. You can feel it lifting the stern, eager, shoving you toward the reef in a long smooth heave. "Sit down in the bilge and hold on."
+
+You get the long oar over the stern one-handed and lean on it. Somewhere ahead and to larboard, through a tear in the fog, a light shows.
+
+It's high up, on a dark tower, where no light has shown for forty years. **The lighthouse on Holm Ure.** It isn't the great lamp. It's small and swaying, the colour of bottle glass, as if someone were climbing a stair with a lantern. And under the boom of the surf, thin and patient and out of time with any tide, a little bell is ringing from the island.
+
+Hester grips the gunwale and stares at it. "That's not *her*," she whispers. "Is it?"
+
+The *Kittiwake* lifts on the swell, and the Teeth roar.
+[committed turn 9]
+Action 1: Scull hard to claw off the Teeth and heave to in open water until the fog lifts (Cautious)
+Action 2: Run the lugsail up and drive the Kittiwake through the gap toward the lighthouse light (Bold)
+Action 3: Have Hester take a bearing on the lighthouse while you mark which way the flood is setting (Investigate)
+Play: enter text, empty line to continue, or /action N.
+/inspect
+Inspection: phase=Ready revision=12
+Turns: 9
+Chapter: 0 title=Some("The Empty Yoke")
+World: "**Grayhallow** is a small harbour town built into a cleft of dark cliffs, where slate roofs climb in steps above a horseshoe quay and the smell of tar, kelp and woodsmoke never quite leaves the air. For three hundred years its life has been set by one sound: the **tide bell**. It hung in the squat stone tower at the end of the Long Mole, rung not by any hand but by the sea itself, through a float-and-chain mechanism that swung the clapper as the flood tide rose. When the bell spoke, the fishing boats turned for home, the cockle-pickers left the sands, and anyone crossing the old causeway to the island knew they had less than an hour.\n\n*Last night, the bell did not ring.* At dawn the harbourmaster found the tower open to the wind, the iron yoke empty, and the great bronze bell, taller than a man and heavy as a cart, **simply gone**. There are no drag marks on the mole and no wheel ruts on the quay. Only a smear of green weed on the tower steps, and wet footprints that walk *out* to the water's edge and stop.\n\nGrayhallow is a quiet town, and it handles trouble quietly. The **Pilots' Guild** runs the harbour from a whitewashed hall above the fish market. Its members are careful, proud men and women who sell their knowledge of the shoals and have every reason to keep the boats safe and in work. The **Masons' Lodge** built the bell tower and has kept it in repair for generations. Its members are tight-lipped about the old construction marks cut into the tower's foundation stones, and some of those marks match carvings found nowhere else but out on the island. The town's lesser folk all keep their own counsel: cockle-wives, net-menders and a lamplighter who walks the mole at dusk.\n\nOut across the grey water of **the Sound** lies **Holm Ure**, a low green island with a ruined chapel, a dozen sheep, and a lighthouse that has been dark for forty years. It is reached on foot by the **Drowning Causeway**, a cobbled road visible only at low water, or by boat in a crossing of about two hours. The island's last keepers, the **Wardens of the Holm**, were said to have given the bell to Grayhallow in the first place, on the condition that it would \"**answer the sea for as long as the sea asks**.\" Lately, fishermen swear they have seen lantern-light moving in the dead lighthouse at night. Last night, two of them claim, they heard a bell ringing faintly from the island, *out of time with any tide*.\n\nThe stakes are simple and close. In three days comes the **spring tide**, the highest of the year, when the flood runs over the causeway faster than a man can run. Without the bell, the cockle-pickers on the far sands will have no warning, and neither will anyone caught on the causeway. The Pilots want the bell found before panic empties the harbour. The Lodge wants it found before anyone asks too many questions about what lies under the tower. And something on Holm Ure seems to want it **exactly where it is**.\n\nThe journey is short but changes everything. **The first chapter** stays in Grayhallow. It is a mystery of salt-stained ledgers, an empty bell tower, a guild hall full of half-truths, and the hiring or borrowing of a boat. **The chapter break comes mid-crossing**, at the **Skerry of Teeth**, a black reef halfway across the Sound, where a sea-fog rolls in without warning and the harbour vanishes behind. Something there will make plain that the bell did not leave by any ordinary means. **The second chapter** lands on Holm Ure, with its ruined chapel, its dark lighthouse and a tidal cave beneath the cliffs where the old Wardens' secret has waited for someone to come and ask.\n\nA local custom matters to the cast. Forty years ago, the trading brig *Ajax* was lost on the Skerry of Teeth on the same night the lighthouse went dark. Grayhallow families named children born that winter after her, so the name **Ajax** still turns up in more than one household. To avoid mix-ups, townsfolk tell them apart by trade: one Ajax is known on the quay as a **sailor**, and the other in the Lodge yard as a **mason**. They are separate people with separate lives. No one else in the story shares that name. Every other islander, guild member and townsperson has a name of their own.\n\n*The atmosphere is hushed and briny: gulls, fog, cold stone, lamplight on wet cobbles. The pace is brisk. This is a mystery to be solved within a single turning of the tide.*"
+Situation: "The still circle at the Skerry of Teeth has collapsed and the ordinary sea has returned. The Kittiwake is rolling in fog on the wrong side of the Teeth, with the flood tide setting her onto the breaking reef to starboard. Ajax is sculling one-handed because his right hand is frost-numbed. Ahead and to larboard a small green lantern-light is climbing inside the dark Holm Ure lighthouse, and a thin lesser bell is ringing from the island, out of time with any tide."
+Identity: protagonist name="Ajax (the sailor)" state=Some("In the Kittiwake's stern just off the Skerry of Teeth, sculling one-handed against the flood that is setting the boat onto the reef (it is to starboard, the wrong side). His right hand is frost-numbed to the elbow from silencing the fog bell. He has lost his father's boat-hook to the chain. Still carries Tobias's harbour log in his oilskins. Shaken, but determined to reach Holm Ure.")
+Identity: tobias-fenwick name="Tobias Fenwick" state=Some("Last seen on the Long Mole. With sundown passed and the log not returned, Morwenna is likely to question him now.")
+Identity: morwenna-slade name="Morwenna Slade" state=Some("Sundown passed with no log on her desk. She watched from the lamplit Guild hall doorway as the Kittiwake left harbour without a warrant. Likely to turn on Tobias now.")
+Identity: elias-rook name="Elias Rook" state=Some("Has not yet appeared in the story.")
+Identity: gideon-penhallow name="Gideon Penhallow" state=Some("Lighting the lamps on the Long Mole at dusk. At the foot of the empty tower he called a warning to Ajax as the Kittiwake passed: keep the Teeth to larboard, and if you hear her ring, don't answer, because she isn't calling you. Then he vanished into the fog.")
+Identity: dougal-strand name="Dougal Strand" state=Some("Left Ajax outside the Drowned Man without explaining the green coins; avoiding him for fear of the Guild.")
+Identity: corra-vane name="Corra Vane" state=Some("Has not yet appeared in the story.")
+Identity: hester-quayle name="Hester Marrow" state=Some("In the Kittiwake's bilge, gripping the gunwale. Frightened but holding together after nearly being dragged overboard trying to save the boat-hook. Staring at the green light in the Holm Ure lighthouse and asking whether the bell ringing there is the tide bell.")
+Major event: "Ajax saw the footprints: long, narrow, bare-soled, ending at the mole's edge, with a smear of green weed on the tower's top step."
+Major event: "Ajax hid Tobias's harbour log inside his oilskins and agreed to say Tobias only showed him the footprints."
+Major event: "The girl known as Hester Quayle revealed she was born Hester Marrow and asked to be called that from now on."
+Major event: "Hester told Ajax that just after 2 a.m. she saw the tower door open with no one there, heard a long dragging chain-on-stone groan, saw a round patch of water at the mole's end go smooth and black for a while, smelled deep water, and saw a brief green light out toward the Skerry; then the bell was gone."
+Major event: "Morwenna Slade arrived at the rope and asked Ajax to talk privately, seeming to notice something under his coat."
+Major event: "Ajax sent Hester Marrow home and went with Morwenna Slade to her study in the Guild hall, revealing nothing about the log, the black vessel or Hester's account."
+Major event: "Morwenna offered Ajax a purse of gold to dismiss his bell story, or gold plus a Guild boat and two men to search where she directs, and threatened to withhold a pilot's warrant and hinted at his Guild mooring."
+Major event: "Ajax noticed the Guild's tower maintenance ledger on Morwenna's shelf with pages torn out near the back."
+Major event: "Ajax refused Morwenna's gold and told her he will cross to Holm Ure without a warrant."
+Major event: "Morwenna declared Ajax outside the Guild: mooring forfeit, no rescue if he founders; she used his father's death on the Skerry to deter him."
+Major event: "When Ajax raised the dark lighthouse, Morwenna flinched and glanced at the torn maintenance ledger, then claimed she was only ten years old then."
+Major event: "Morwenna demanded whatever Tobias gave Ajax be returned to her desk by sundown, or she will interrogate Tobias."
+Major event: "Two Guild men were posted at the Kittiwake's mooring."
+Major event: "The Guild men guarding the Kittiwake are named Hollis and Tregear."
+Major event: "Ajax saw that Dougal Strand is paying at the Drowned Man with strange green, sea-rusted coins, and Dougal grew nervous when Ajax noticed."
+Major event: "Ajax kept Tobias's harbour log past Morwenna's sundown deadline."
+Major event: "At dusk Ajax faced down Hollis and Tregear and took the Kittiwake off her Guild mooring; Morwenna watched from the Guild hall doorway."
+Major event: "Hester Marrow insisted on coming and joined Ajax aboard as crew."
+Major event: "Gideon Penhallow, lighting the mole lamps, warned Ajax: 'Keep the Teeth to larboard, and if you hear her ring, don't answer. She isn't calling you.'"
+Major event: "An hour out, at slack water, fog fell; near the Skerry of Teeth the sea went smooth and black in a circle with a green light blinking in it, as Hester had seen from the mole."
+Major event: "At the Skerry of Teeth the Kittiwake drifted into the smooth circle, where the sea went motionless and glass-clear."
+Major event: "The green light is an old green-glass lantern on a cork float, marking a massive weed-furred chain that is moving slowly east toward Holm Ure."
+Major event: "Ajax saw the wreck of the brig Ajax lying shallow on the Skerry, her stern-board with its name intact."
+Major event: "The tide bell is being carried along the sea floor toward Holm Ure, chained through its crown, by many pale, long, barefoot figures; it did not leave by any ordinary means."
+Major event: "The figures stopped and looked up at the boat; the bell rang once underwater, and the Kittiwake's masthead fog bell began to tremble as if to answer."
+Major event: "Ajax silenced the Kittiwake's fog bell by gripping its clapper through the second underwater stroke; it left his right hand frost-numbed."
+Major event: "Ajax's father's boat-hook jammed in the moving chain and was dragged down to the sea floor; Hester nearly went overboard trying to hold it."
+Major event: "With no answer from the boat, the pale figures turned away and carried the tide bell on toward Holm Ure."
+Major event: "The still circle collapsed and the Kittiwake was left on the wrong side of the Teeth as the flood began."
+Major event: "A green lantern-light appeared climbing inside the dark Holm Ure lighthouse, and a small bell rang from the island out of time with any tide."
+Upcoming event: "Sundown has passed without the log; Morwenna will interrogate Tobias, who will crack."
+Upcoming event: "The Guild's tower maintenance ledger in Morwenna's study has pages torn out; she reacted when the dark lighthouse was mentioned."
+Upcoming event: "Dougal Strand was paid in green sea-rusted coin; its source is unexplained."
+Upcoming event: "Gideon Penhallow knows more about the island and the last Warden; his warning not to answer the bell proved true."
+Upcoming event: "Old Treloar's boy is a second witness to the bell ringing on Holm Ure."
+Upcoming event: "The pale figures are carrying the tide bell along the sea floor by its chain toward Holm Ure, perhaps to the tidal cave."
+Upcoming event: "Someone with a green lantern is in the Holm Ure lighthouse, ringing a lesser bell."
+Upcoming event: "Holm Ure awaits: the ruined chapel, the dark lighthouse and the tidal cave."
+Upcoming event: "The Kittiwake must get clear of the Skerry of Teeth on the flood."
+Upcoming event: "The spring tide arrives in three days."
+/action 2
+Generating; /cancel or Ctrl-C cancels, /quit exits.
+You[tentative preview; final validation pending]
+ don't stop to think about it. Thinking would take too long.
+
+"Hester. **The halyard.** That rope by your hand, the one that runs up the mast. When I say haul, you haul like your uncle's after you."
+
+She's on her feet before you've finished, red hands closing on the wet hemp. You get your left shoulder into the long oar and swing the *Kittiwake*'s stern round until her bow points at the Teeth. Straight at them, at the one place where two black spines stand apart with a gap between, and the swell runs through dark and unbroken instead of bursting white. It's no wider than a cart track, maybe, and the flood is pouring into it like water down a drain.
+
+*Keep the Teeth to larboard.* You can't. They're on both sides now.
+
+"**Haul!**"
+
+Hester throws her whole weight on the rope. The yard jerks up the mast a foot at a time, the tan sail shaking out dark and heavy with fog-damp. She's grunting with every pull, clogs braced against the thwart, and you can see her arms trembling, but she doesn't stop. Halfway up the sail catches what little air there is, and then the flood catches *you*. The *Kittiwake* lifts her stern and surges, and you're not steering into the gap any more. **You're being thrown into it.**
+
+"Belay! Round the cleat, round and over—*good*—now get down!"
+
+She drops into the bilge. The Teeth come up on either side.
+
+The noise is the worst of it. The surf booms in the hollow places of the rock and the sound comes back off the other wall, so the boat seems to run down a throat full of roaring. Spray comes over the gunwale in sheets. To starboard a spine of black rock slides past close enough to touch, bearded with weed and studded with mussels, and the sea sucks back off it and shows you how far down it goes. You lean on the oar with everything you have. Your dead right hand hangs useless at your side and your left arm burns from wrist to shoulder. The *Kittiwake* shudders as something grinds along her keel, a long iron-hard scrape that sets your teeth on edge. *Not now. Not here. Not on top of him.*
+
+Then the scraping stops, and she's through.
+
+The swell flattens out. The roar falls behind you to a sullen grumble, and the fog opens a little, the way it does sometimes past a headland. The sail fills properly at last with a cold breath off the island. You take a long shaking breath of your own.
+
+"Are we—" Hester lifts her head over the gunwale. Her hair is plastered flat with spray and her lips are blue. "Are we *past* it?"
+
+"We're past it."
+
+She laughs, a short wild hiccup of a laugh that's half a sob, and then she claps a hand over her mouth as if she's ashamed of it. You don't tell her you'd like to do the same.
+
+The flood carries you the rest of the way, faster than you'd have dared sail it. Holm Ure rises out of the murk ahead, low and long. At first it's only a darker grey, and then you can make out turf-topped cliffs, a sheep path scratched pale across a slope, and the broken gable of a chapel standing against the sky like a tooth. Above it all is the lighthouse. Close to, it's taller than you remembered, its whitewash gone leprous and grey. The great lantern room at the top is dark, its glass blind with forty years of salt.
+
+The little green light has stopped climbing. It has come to rest at a narrow window about two-thirds of the way up the tower, and it isn't moving.
+
+And the small bell has stopped ringing.
+
+*Someone heard us come through the Teeth,* you think. *Someone's watching.*
+
+You find a cove below the cliffs on the island's south side, a crescent of grey shingle between two arms of rock. The *Kittiwake* runs her forefoot up onto it with a long rattling hiss. You go over the side into knee-deep water so cold it makes you gasp, and with Hester pulling on the painter you drag her up above the weed line one-handed. The stones are slick and smell of kelp and sheep. Somewhere on the slope above a ewe coughs like an old man.
+
+Away to your left, where the cliff curves round toward the east, there's a darker darkness at the foot of the rock. It's a cave mouth, low and arched and half-drowned, with the flood already licking into it. From somewhere deep inside comes a sound you know. It's faint, almost below hearing, and it rises up through the shingle and into the soles of your boots: **the long, slow groan of a chain moving over stone.**
+
+Hester hears it too. She steps close to your side without seeming to know she's done it.
+
+"That's where they're taking her," she whispers. Then she tips her head back and looks up the dark slope at the tower, at the steady green eye in its window. "And that's whoever's been ringing for her."
+
+Your right hand is starting to come back to life. It hurts like hot needles. The tide is rising behind you, and somewhere across the Sound, Grayhallow has two days and a night left before the spring flood.
+You don't stop to think about it. Thinking would take too long.
+
+"Hester. **The halyard.** That rope by your hand, the one that runs up the mast. When I say haul, you haul like your uncle's after you."
+
+She's on her feet before you've finished, red hands closing on the wet hemp. You get your left shoulder into the long oar and swing the *Kittiwake*'s stern round until her bow points at the Teeth. Straight at them, at the one place where two black spines stand apart with a gap between, and the swell runs through dark and unbroken instead of bursting white. It's no wider than a cart track, maybe, and the flood is pouring into it like water down a drain.
+
+*Keep the Teeth to larboard.* You can't. They're on both sides now.
+
+"**Haul!**"
+
+Hester throws her whole weight on the rope. The yard jerks up the mast a foot at a time, the tan sail shaking out dark and heavy with fog-damp. She's grunting with every pull, clogs braced against the thwart, and you can see her arms trembling, but she doesn't stop. Halfway up the sail catches what little air there is, and then the flood catches *you*. The *Kittiwake* lifts her stern and surges, and you're not steering into the gap any more. **You're being thrown into it.**
+
+"Belay! Round the cleat, round and over... *good*... now get down!"
+
+She drops into the bilge. The Teeth come up on either side.
+
+The noise is the worst of it. The surf booms in the hollow places of the rock and the sound comes back off the other wall, so the boat seems to run down a throat full of roaring. Spray comes over the gunwale in sheets. To starboard a spine of black rock slides past close enough to touch, bearded with weed and studded with mussels, and the sea sucks back off it and shows you how far down it goes. You lean on the oar with everything you have. Your dead right hand hangs useless at your side and your left arm burns from wrist to shoulder. The *Kittiwake* shudders as something grinds along her keel, a long iron-hard scrape that sets your teeth on edge. *Not now. Not here. Not on top of him.*
+
+Then the scraping stops, and she's through.
+
+The swell flattens out. The roar falls behind you to a sullen grumble, and the fog opens a little, the way it does sometimes past a headland. The sail fills properly at last with a cold breath off the island. You take a long shaking breath of your own.
+
+"Are we..." Hester lifts her head over the gunwale. Her hair is plastered flat with spray and her lips are blue. "Are we *past* it?"
+
+"We're past it."
+
+She laughs, a short wild hiccup of a laugh that's half a sob, and then she claps a hand over her mouth as if she's ashamed of it. You don't tell her you'd like to do the same.
+
+The flood carries you the rest of the way, faster than you'd have dared sail it. Holm Ure rises out of the murk ahead, low and long. At first it's only a darker grey, and then you can make out turf-topped cliffs, a sheep path scratched pale across a slope, and the broken gable of a chapel standing against the sky like a tooth. Above it all is the lighthouse. Close to, it's taller than you remembered, its whitewash gone leprous and grey. The great lantern room at the top is dark, its glass blind with forty years of salt.
+
+The little green light has stopped climbing. It has come to rest at a narrow window about two-thirds of the way up the tower, and it isn't moving.
+
+And the small bell has stopped ringing.
+
+*Someone heard us come through the Teeth,* you think. *Someone's watching.*
+
+You find a cove below the cliffs on the island's south side, a crescent of grey shingle between two arms of rock. The *Kittiwake* runs her forefoot up onto it with a long rattling hiss. You go over the side into knee-deep water so cold it makes you gasp, and with Hester pulling on the painter you drag her up above the weed line one-handed. The stones are slick and smell of kelp and sheep. Somewhere on the slope above, a ewe coughs like an old man.
+
+Away to your left, where the cliff curves round toward the east, there's a deeper darkness at the foot of the rock. It's a cave mouth, low and arched and half-drowned, with the flood already licking into it. From somewhere deep inside comes a sound you know. It's faint, almost below hearing, and it rises up through the shingle and into the soles of your boots: **the long, slow groan of a chain moving over stone.**
+
+Hester hears it too. She steps close to your side without seeming to know she's done it.
+
+"That's where they're taking her," she whispers. Then she tips her head back and looks up the dark slope at the tower, at the steady green eye in its window. "And that's whoever's been ringing for her."
+
+Your right hand is starting to come back to life. It hurts like hot needles. The tide is rising behind you, and somewhere across the Sound, Grayhallow has two days and a night left before the spring flood.
+[authoritative final replaces the tentative preview]
+[committed turn 10]
+Action 1: Shelter with Hester in the lee of the boat and watch the tower until first light (Cautious)
+Action 2: Climb the sheep path straight up to the lighthouse and hammer on its door (Bold)
+Action 3: Creep along the shingle to the cave mouth and listen to the chain (Investigate)
+Play: enter text, empty line to continue, or /action N.
+/inspect
+Inspection: phase=Ready revision=13
+Turns: 10
+Chapter: 0 title=Some("The Empty Yoke")
+World: "**Grayhallow** is a small harbour town built into a cleft of dark cliffs, where slate roofs climb in steps above a horseshoe quay and the smell of tar, kelp and woodsmoke never quite leaves the air. For three hundred years its life has been set by one sound: the **tide bell**. It hung in the squat stone tower at the end of the Long Mole, rung not by any hand but by the sea itself, through a float-and-chain mechanism that swung the clapper as the flood tide rose. When the bell spoke, the fishing boats turned for home, the cockle-pickers left the sands, and anyone crossing the old causeway to the island knew they had less than an hour.\n\n*Last night, the bell did not ring.* At dawn the harbourmaster found the tower open to the wind, the iron yoke empty, and the great bronze bell, taller than a man and heavy as a cart, **simply gone**. There are no drag marks on the mole and no wheel ruts on the quay. Only a smear of green weed on the tower steps, and wet footprints that walk *out* to the water's edge and stop.\n\nGrayhallow is a quiet town, and it handles trouble quietly. The **Pilots' Guild** runs the harbour from a whitewashed hall above the fish market. Its members are careful, proud men and women who sell their knowledge of the shoals and have every reason to keep the boats safe and in work. The **Masons' Lodge** built the bell tower and has kept it in repair for generations. Its members are tight-lipped about the old construction marks cut into the tower's foundation stones, and some of those marks match carvings found nowhere else but out on the island. The town's lesser folk all keep their own counsel: cockle-wives, net-menders and a lamplighter who walks the mole at dusk.\n\nOut across the grey water of **the Sound** lies **Holm Ure**, a low green island with a ruined chapel, a dozen sheep, and a lighthouse that has been dark for forty years. It is reached on foot by the **Drowning Causeway**, a cobbled road visible only at low water, or by boat in a crossing of about two hours. The island's last keepers, the **Wardens of the Holm**, were said to have given the bell to Grayhallow in the first place, on the condition that it would \"**answer the sea for as long as the sea asks**.\" Lately, fishermen swear they have seen lantern-light moving in the dead lighthouse at night. Last night, two of them claim, they heard a bell ringing faintly from the island, *out of time with any tide*.\n\nThe stakes are simple and close. In three days comes the **spring tide**, the highest of the year, when the flood runs over the causeway faster than a man can run. Without the bell, the cockle-pickers on the far sands will have no warning, and neither will anyone caught on the causeway. The Pilots want the bell found before panic empties the harbour. The Lodge wants it found before anyone asks too many questions about what lies under the tower. And something on Holm Ure seems to want it **exactly where it is**.\n\nThe journey is short but changes everything. **The first chapter** stays in Grayhallow. It is a mystery of salt-stained ledgers, an empty bell tower, a guild hall full of half-truths, and the hiring or borrowing of a boat. **The chapter break comes mid-crossing**, at the **Skerry of Teeth**, a black reef halfway across the Sound, where a sea-fog rolls in without warning and the harbour vanishes behind. Something there will make plain that the bell did not leave by any ordinary means. **The second chapter** lands on Holm Ure, with its ruined chapel, its dark lighthouse and a tidal cave beneath the cliffs where the old Wardens' secret has waited for someone to come and ask.\n\nA local custom matters to the cast. Forty years ago, the trading brig *Ajax* was lost on the Skerry of Teeth on the same night the lighthouse went dark. Grayhallow families named children born that winter after her, so the name **Ajax** still turns up in more than one household. To avoid mix-ups, townsfolk tell them apart by trade: one Ajax is known on the quay as a **sailor**, and the other in the Lodge yard as a **mason**. They are separate people with separate lives. No one else in the story shares that name. Every other islander, guild member and townsperson has a name of their own.\n\n*The atmosphere is hushed and briny: gulls, fog, cold stone, lamplight on wet cobbles. The pace is brisk. This is a mystery to be solved within a single turning of the tide.*"
+Situation: "Night. The Kittiwake has come through a narrow gap in the Skerry of Teeth on the flood and is beached in a shingle cove on Holm Ure's south side. Ajax and Hester stand on the shore. The green lantern-light has stopped at a window two-thirds up the lighthouse and the island bell has gone silent, as if someone is watching them. To the east, at the cliff foot, a half-drowned tidal cave mouth gives off the faint groan of the moving chain."
+Identity: protagonist name="Ajax (the sailor)" state=Some("Standing soaked to the knees on a shingle cove on Holm Ure beside the beached Kittiwake. His right hand is painfully coming back to life after the frost-numbing. His left arm is exhausted from sculling. He still carries Tobias's harbour log in his oilskins. He no longer has his father's boat-hook. Resolute, and weighing whether to go to the lighthouse or the cave.")
+Identity: tobias-fenwick name="Tobias Fenwick" state=Some("Last seen on the Long Mole. With sundown passed and the log not returned, Morwenna is likely to question him now.")
+Identity: morwenna-slade name="Morwenna Slade" state=Some("Sundown passed with no log on her desk. She watched from the lamplit Guild hall doorway as the Kittiwake left harbour without a warrant. Likely to turn on Tobias now.")
+Identity: elias-rook name="Elias Rook" state=Some("Has not yet appeared in the story.")
+Identity: gideon-penhallow name="Gideon Penhallow" state=Some("Lighting the lamps on the Long Mole at dusk. At the foot of the empty tower he called a warning to Ajax as the Kittiwake passed: keep the Teeth to larboard, and if you hear her ring, don't answer, because she isn't calling you. Then he vanished into the fog.")
+Identity: dougal-strand name="Dougal Strand" state=Some("Left Ajax outside the Drowned Man without explaining the green coins; avoiding him for fear of the Guild.")
+Identity: corra-vane name="Corra Vane" state=Some("Unseen but present: the green lantern-light watching from a window two-thirds up the Holm Ure lighthouse. She stopped ringing her lesser bell when the Kittiwake came through the Teeth.")
+Identity: hester-quayle name="Hester Marrow" state=Some("On the shingle at Holm Ure, close at Ajax's side, soaked, blue-lipped and shaking from cold and fear but steady. She hauled the sail through the Teeth. Convinced the bell is being taken into the cave and that whoever is in the lighthouse has been ringing for it.")
+Major event: "Hester told Ajax that just after 2 a.m. she saw the tower door open with no one there, heard a long dragging chain-on-stone groan, saw a round patch of water at the mole's end go smooth and black for a while, smelled deep water, and saw a brief green light out toward the Skerry; then the bell was gone."
+Major event: "Morwenna Slade arrived at the rope and asked Ajax to talk privately, seeming to notice something under his coat."
+Major event: "Ajax sent Hester Marrow home and went with Morwenna Slade to her study in the Guild hall, revealing nothing about the log, the black vessel or Hester's account."
+Major event: "Morwenna offered Ajax a purse of gold to dismiss his bell story, or gold plus a Guild boat and two men to search where she directs, and threatened to withhold a pilot's warrant and hinted at his Guild mooring."
+Major event: "Ajax noticed the Guild's tower maintenance ledger on Morwenna's shelf with pages torn out near the back."
+Major event: "Ajax refused Morwenna's gold and told her he will cross to Holm Ure without a warrant."
+Major event: "Morwenna declared Ajax outside the Guild: mooring forfeit, no rescue if he founders; she used his father's death on the Skerry to deter him."
+Major event: "When Ajax raised the dark lighthouse, Morwenna flinched and glanced at the torn maintenance ledger, then claimed she was only ten years old then."
+Major event: "Morwenna demanded whatever Tobias gave Ajax be returned to her desk by sundown, or she will interrogate Tobias."
+Major event: "Two Guild men were posted at the Kittiwake's mooring."
+Major event: "The Guild men guarding the Kittiwake are named Hollis and Tregear."
+Major event: "Ajax saw that Dougal Strand is paying at the Drowned Man with strange green, sea-rusted coins, and Dougal grew nervous when Ajax noticed."
+Major event: "Ajax kept Tobias's harbour log past Morwenna's sundown deadline."
+Major event: "At dusk Ajax faced down Hollis and Tregear and took the Kittiwake off her Guild mooring; Morwenna watched from the Guild hall doorway."
+Major event: "Hester Marrow insisted on coming and joined Ajax aboard as crew."
+Major event: "Gideon Penhallow, lighting the mole lamps, warned Ajax: 'Keep the Teeth to larboard, and if you hear her ring, don't answer. She isn't calling you.'"
+Major event: "An hour out, at slack water, fog fell; near the Skerry of Teeth the sea went smooth and black in a circle with a green light blinking in it, as Hester had seen from the mole."
+Major event: "At the Skerry of Teeth the Kittiwake drifted into the smooth circle, where the sea went motionless and glass-clear."
+Major event: "The green light is an old green-glass lantern on a cork float, marking a massive weed-furred chain that is moving slowly east toward Holm Ure."
+Major event: "Ajax saw the wreck of the brig Ajax lying shallow on the Skerry, her stern-board with its name intact."
+Major event: "The tide bell is being carried along the sea floor toward Holm Ure, chained through its crown, by many pale, long, barefoot figures; it did not leave by any ordinary means."
+Major event: "The figures stopped and looked up at the boat; the bell rang once underwater, and the Kittiwake's masthead fog bell began to tremble as if to answer."
+Major event: "Ajax silenced the Kittiwake's fog bell by gripping its clapper through the second underwater stroke; it left his right hand frost-numbed."
+Major event: "Ajax's father's boat-hook jammed in the moving chain and was dragged down to the sea floor; Hester nearly went overboard trying to hold it."
+Major event: "With no answer from the boat, the pale figures turned away and carried the tide bell on toward Holm Ure."
+Major event: "The still circle collapsed and the Kittiwake was left on the wrong side of the Teeth as the flood began."
+Major event: "A green lantern-light appeared climbing inside the dark Holm Ure lighthouse, and a small bell rang from the island out of time with any tide."
+Major event: "Ajax drove the Kittiwake through a narrow gap in the Skerry of Teeth on the flood, with Hester hauling the sail; the keel scraped rock but the boat came through."
+Major event: "The Kittiwake landed in a shingle cove on Holm Ure's south side; the green light stopped at a lighthouse window and the island bell went silent as they arrived."
+Major event: "A tidal cave mouth at the foot of the island's cliffs gives off the groan of the moving chain: the bell is likely being taken there."
+Upcoming event: "Sundown has passed without the log; Morwenna will interrogate Tobias, who will crack."
+Upcoming event: "The Guild's tower maintenance ledger in Morwenna's study has pages torn out; she reacted when the dark lighthouse was mentioned."
+Upcoming event: "Dougal Strand was paid in green sea-rusted coin; its source is unexplained."
+Upcoming event: "Gideon Penhallow knows more about the island and the last Warden; his warning not to answer the bell proved true."
+Upcoming event: "Old Treloar's boy is a second witness to the bell ringing on Holm Ure."
+Upcoming event: "The pale figures are carrying the tide bell by its chain into the tidal cave beneath Holm Ure's cliffs."
+Upcoming event: "Someone with a green lantern is watching from a window of the Holm Ure lighthouse, and has been ringing a lesser bell."
+Upcoming event: "The ruined chapel on Holm Ure is still unexplored."
+Upcoming event: "The Kittiwake's keel scraped the Teeth; possible damage unchecked."
+Upcoming event: "The spring tide arrives in three days."
+/action 1
+Generating; /cancel or Ctrl-C cancels, /quit exits.
+You and Hester haul the *Kittiwake* round on the shingle until she lies canted on her bilge with her keel to the wind. You drag the damp lugsail off the yard and make a kind of tent out of it, pegging the foot down with stones. Then the two of you crawl into the[tentative preview; final validation pending]
+ lee of the hull, where the planks still hold a little of the day's warmth. It's not much of a shelter, but the wind off the Sound goes over you instead of through you.
+
+Before you settle, you run your left hand along the keel in the dark. Halfway aft your fingers find the scrape the Teeth left: a long, raw groove gouged into the oak, with splinters standing up like the hairs on a dog's back. Just above it, one of the garboard strakes has started. When you press it, water weeps out along the seam, slow as sweat. *She'll float. She won't like it.* You'll need oakum and tar and an hour on a falling tide, and you have none of those things.
+
+Hester unties her bundle by feel. It holds half a loaf, a lump of hard cheese, a pair of darned stockings and, wrapped in a rag, a heel of her uncle's tobacco twist, which she offers you very seriously.
+
+"I thought sailors liked it."
+
+"This one does." You don't smoke it. You put it in your pocket, and you can see she's pleased.
+
+She makes you take off your wet sea boots and pull on her dry stockings, and you let her, because your right hand still won't close enough to argue. The feeling comes back in waves. First there are hot needles, then a deep ache like a bruise on the bone, then needles again. The frost has left the creases of your palm a dull, blotched red, and the skin there feels thin, like the skin on boiled milk.
+
+"Does it hurt?" she asks.
+
+"Like the devil."
+
+"Good," she says, sounding relieved. "Mam said it's when it *stops* hurting you worry."
+
+Then there's only waiting. Up on the slope the lighthouse is a darker shape against the dark. The green eye sits in its window two-thirds of the way up and doesn't move or blink, and it never goes out. Under the shingle, faint but steady, the chain goes on groaning into the cave. The flood creeps up the cove a stone's width at a time, hissing and drawing back, and then it's lapping at the *Kittiwake*'s stern. You shift the two of you higher up the beach and settle again.
+
+Somewhere past midnight Hester's head drops against your shoulder. She jerks it up, says "I'm awake," and is asleep again before she's finished saying it. You let her be. You pull the corner of the sail over her and sit with your back against your boat's wounded keel, watching the light.
+
+*Forty years dark,* you think. *Forty years, and somebody's carried a lantern up those stairs.* You think about the stern-board lying face up on the white sand with your name carved into it, and the boat-hook turning slowly as it sank. You put your good hand flat against your coat, where Tobias's log still sits. It's damp but whole.
+
+It must be near two in the morning, near high water, when **the groaning stops.**
+
+You feel the silence before you hear it. The shingle under you goes still, the way a deck does when an engine dies. For a long moment there's nothing but the surf. Then, from deep inside the cliff, so muffled it could be your own heartbeat, comes **one stroke** of a great bell. It doesn't sound underwater now. It sounds *enclosed*, as if it has rung inside a stone room.
+
+Up in the tower, the little bell answers. It rings three soft strokes, careful and evenly spaced, the way you'd hush a child. Then it stops.
+
+Neither of them rings again.
+
+Hester sleeps through it. You don't sleep at all.
+
+Towards dawn the green light moves at last. It drops from window to window as it comes down the tower, disappears and shows again at the foot, then comes along the slope above the cove, swinging low. It follows the sheep path. You watch it come, and you keep very still, with one hand on Hester's shoulder. A hundred yards off it stops. Then it goes out.
+
+The sky goes from black to iron to the colour of a dead fire. The fog has lifted into a low lid of cloud, and the Sound lies grey and sullen behind you. Far off across it, too small to be sure of, there's a smudge of chimney smoke that might be Grayhallow.
+
+When there's light enough to see the colour of the weed, you see her.
+
+She's standing on the western arm of the cove, on the black rock just above the tideline, close enough to have been listening to you breathe. She's a woman of perhaps thirty and **barefoot on the cold stone**, in layered undyed wool and a short cape of sealskin. Black hair hangs to her waist in wind-knots, and you can see small things threaded through it, shells and pale chips of sea-glass, that tick faintly together when she moves her head. A squat lantern of thick green glass hangs unlit from one hand. On the back of that hand, a blue spiral is tattooed in faded ink.
+
+Her eyes are the green of deep water over sand. They go from you to the sleeping girl, to the tented sail and the scarred keel, and last of all to your right hand, red and blotched and lying open in your lap. They stay there.
+
+"You came through the Teeth on the flood," she says. She has an island voice, flat and clipped, with no warmth in it. "In the dark. In *that*." She doesn't look at the *Kittiwake*; she doesn't need to. "Either you're the luckiest fool in Grayhallow, or she let you through." Her grip shifts on the lantern. "So tell me which one sent you. **The Lodge or the Guild?**"
+
+Beside you, Hester stirs, opens her eyes, and goes rigid.
+[committed turn 11]
+Action 1: Stay seated with Hester behind you and tell the woman only that you came alone (Cautious)
+Action 2: Hold up your frost-burned hand and tell her what you saw on the Skerry (Bold)
+Action 3: Tell her neither sent you: you're Ajax, son of a deckhand lost on the brig (Social)
+Play: enter text, empty line to continue, or /action N.
+/inspect
+Inspection: phase=Ready revision=14
+Turns: 11
+Chapter: 1 title=Some("The Keeper of the Green Lantern")
+World: "**Grayhallow** is a small harbour town built into a cleft of dark cliffs, where slate roofs climb in steps above a horseshoe quay and the smell of tar, kelp and woodsmoke never quite leaves the air. For three hundred years its life has been set by one sound: the **tide bell**. It hung in the squat stone tower at the end of the Long Mole, rung not by any hand but by the sea itself, through a float-and-chain mechanism that swung the clapper as the flood tide rose. When the bell spoke, the fishing boats turned for home, the cockle-pickers left the sands, and anyone crossing the old causeway to the island knew they had less than an hour.\n\n*Last night, the bell did not ring.* At dawn the harbourmaster found the tower open to the wind, the iron yoke empty, and the great bronze bell, taller than a man and heavy as a cart, **simply gone**. There are no drag marks on the mole and no wheel ruts on the quay. Only a smear of green weed on the tower steps, and wet footprints that walk *out* to the water's edge and stop.\n\nGrayhallow is a quiet town, and it handles trouble quietly. The **Pilots' Guild** runs the harbour from a whitewashed hall above the fish market. Its members are careful, proud men and women who sell their knowledge of the shoals and have every reason to keep the boats safe and in work. The **Masons' Lodge** built the bell tower and has kept it in repair for generations. Its members are tight-lipped about the old construction marks cut into the tower's foundation stones, and some of those marks match carvings found nowhere else but out on the island. The town's lesser folk all keep their own counsel: cockle-wives, net-menders and a lamplighter who walks the mole at dusk.\n\nOut across the grey water of **the Sound** lies **Holm Ure**, a low green island with a ruined chapel, a dozen sheep, and a lighthouse that has been dark for forty years. It is reached on foot by the **Drowning Causeway**, a cobbled road visible only at low water, or by boat in a crossing of about two hours. The island's last keepers, the **Wardens of the Holm**, were said to have given the bell to Grayhallow in the first place, on the condition that it would \"**answer the sea for as long as the sea asks**.\" Lately, fishermen swear they have seen lantern-light moving in the dead lighthouse at night. Last night, two of them claim, they heard a bell ringing faintly from the island, *out of time with any tide*.\n\nThe stakes are simple and close. In three days comes the **spring tide**, the highest of the year, when the flood runs over the causeway faster than a man can run. Without the bell, the cockle-pickers on the far sands will have no warning, and neither will anyone caught on the causeway. The Pilots want the bell found before panic empties the harbour. The Lodge wants it found before anyone asks too many questions about what lies under the tower. And something on Holm Ure seems to want it **exactly where it is**.\n\nThe journey is short but changes everything. **The first chapter** stays in Grayhallow. It is a mystery of salt-stained ledgers, an empty bell tower, a guild hall full of half-truths, and the hiring or borrowing of a boat. **The chapter break comes mid-crossing**, at the **Skerry of Teeth**, a black reef halfway across the Sound, where a sea-fog rolls in without warning and the harbour vanishes behind. Something there will make plain that the bell did not leave by any ordinary means. **The second chapter** lands on Holm Ure, with its ruined chapel, its dark lighthouse and a tidal cave beneath the cliffs where the old Wardens' secret has waited for someone to come and ask.\n\nA local custom matters to the cast. Forty years ago, the trading brig *Ajax* was lost on the Skerry of Teeth on the same night the lighthouse went dark. Grayhallow families named children born that winter after her, so the name **Ajax** still turns up in more than one household. To avoid mix-ups, townsfolk tell them apart by trade: one Ajax is known on the quay as a **sailor**, and the other in the Lodge yard as a **mason**. They are separate people with separate lives. No one else in the story shares that name. Every other islander, guild member and townsperson has a name of their own.\n\n*The atmosphere is hushed and briny: gulls, fog, cold stone, lamplight on wet cobbles. The pace is brisk. This is a mystery to be solved within a single turning of the tide.*"
+Situation: "Grey dawn in the shingle cove on Holm Ure's south side. Ajax and Hester spent the night sheltering under the sail against the beached, leaking Kittiwake. A barefoot island woman with a green-glass lantern (Corra Vane, not yet named) stands on the cove's western rocks and has demanded to know whether the Lodge or the Guild sent them. Hester has just woken."
+Identity: protagonist name="Ajax (the sailor)" state=Some("Standing soaked to the knees on a shingle cove on Holm Ure beside the beached Kittiwake. His right hand is painfully coming back to life after the frost-numbing. His left arm is exhausted from sculling. He still carries Tobias's harbour log in his oilskins. He no longer has his father's boat-hook. Resolute, and weighing whether to go to the lighthouse or the cave.")
+Identity: tobias-fenwick name="Tobias Fenwick" state=Some("Last seen on the Long Mole. With sundown passed and the log not returned, Morwenna is likely to question him now.")
+Identity: morwenna-slade name="Morwenna Slade" state=Some("Sundown passed with no log on her desk. She watched from the lamplit Guild hall doorway as the Kittiwake left harbour without a warrant. Likely to turn on Tobias now.")
+Identity: elias-rook name="Elias Rook" state=Some("Has not yet appeared in the story.")
+Identity: gideon-penhallow name="Gideon Penhallow" state=Some("Lighting the lamps on the Long Mole at dusk. At the foot of the empty tower he called a warning to Ajax as the Kittiwake passed: keep the Teeth to larboard, and if you hear her ring, don't answer, because she isn't calling you. Then he vanished into the fog.")
+Identity: dougal-strand name="Dougal Strand" state=Some("Left Ajax outside the Drowned Man without explaining the green coins; avoiding him for fear of the Guild.")
+Identity: corra-vane name="Corra Vane" state=Some("Unseen but present: the green lantern-light watching from a window two-thirds up the Holm Ure lighthouse. She stopped ringing her lesser bell when the Kittiwake came through the Teeth.")
+Identity: hester-quayle name="Hester Marrow" state=Some("On the shingle at Holm Ure, close at Ajax's side, soaked, blue-lipped and shaking from cold and fear but steady. She hauled the sail through the Teeth. Convinced the bell is being taken into the cave and that whoever is in the lighthouse has been ringing for it.")
+Major event: "Ajax noticed the Guild's tower maintenance ledger on Morwenna's shelf with pages torn out near the back."
+Major event: "Ajax refused Morwenna's gold and told her he will cross to Holm Ure without a warrant."
+Major event: "Morwenna declared Ajax outside the Guild: mooring forfeit, no rescue if he founders; she used his father's death on the Skerry to deter him."
+Major event: "When Ajax raised the dark lighthouse, Morwenna flinched and glanced at the torn maintenance ledger, then claimed she was only ten years old then."
+Major event: "Morwenna demanded whatever Tobias gave Ajax be returned to her desk by sundown, or she will interrogate Tobias."
+Major event: "Two Guild men were posted at the Kittiwake's mooring."
+Major event: "The Guild men guarding the Kittiwake are named Hollis and Tregear."
+Major event: "Ajax saw that Dougal Strand is paying at the Drowned Man with strange green, sea-rusted coins, and Dougal grew nervous when Ajax noticed."
+Major event: "Ajax kept Tobias's harbour log past Morwenna's sundown deadline."
+Major event: "At dusk Ajax faced down Hollis and Tregear and took the Kittiwake off her Guild mooring; Morwenna watched from the Guild hall doorway."
+Major event: "Hester Marrow insisted on coming and joined Ajax aboard as crew."
+Major event: "Gideon Penhallow, lighting the mole lamps, warned Ajax: 'Keep the Teeth to larboard, and if you hear her ring, don't answer. She isn't calling you.'"
+Major event: "An hour out, at slack water, fog fell; near the Skerry of Teeth the sea went smooth and black in a circle with a green light blinking in it, as Hester had seen from the mole."
+Major event: "At the Skerry of Teeth the Kittiwake drifted into the smooth circle, where the sea went motionless and glass-clear."
+Major event: "The green light is an old green-glass lantern on a cork float, marking a massive weed-furred chain that is moving slowly east toward Holm Ure."
+Major event: "Ajax saw the wreck of the brig Ajax lying shallow on the Skerry, her stern-board with its name intact."
+Major event: "The tide bell is being carried along the sea floor toward Holm Ure, chained through its crown, by many pale, long, barefoot figures; it did not leave by any ordinary means."
+Major event: "The figures stopped and looked up at the boat; the bell rang once underwater, and the Kittiwake's masthead fog bell began to tremble as if to answer."
+Major event: "Ajax silenced the Kittiwake's fog bell by gripping its clapper through the second underwater stroke; it left his right hand frost-numbed."
+Major event: "Ajax's father's boat-hook jammed in the moving chain and was dragged down to the sea floor; Hester nearly went overboard trying to hold it."
+Major event: "With no answer from the boat, the pale figures turned away and carried the tide bell on toward Holm Ure."
+Major event: "The still circle collapsed and the Kittiwake was left on the wrong side of the Teeth as the flood began."
+Major event: "A green lantern-light appeared climbing inside the dark Holm Ure lighthouse, and a small bell rang from the island out of time with any tide."
+Major event: "Ajax drove the Kittiwake through a narrow gap in the Skerry of Teeth on the flood, with Hester hauling the sail; the keel scraped rock but the boat came through."
+Major event: "The Kittiwake landed in a shingle cove on Holm Ure's south side; the green light stopped at a lighthouse window and the island bell went silent as they arrived."
+Major event: "A tidal cave mouth at the foot of the island's cliffs gives off the groan of the moving chain: the bell is likely being taken there."
+Major event: "The Kittiwake has a gouged keel and a started garboard strake that weeps water; she needs oakum and tar before a safe crossing."
+Major event: "Around high water (about 2 a.m.) the chain's groaning stopped; the tide bell rang once, muffled, inside the cliff, and the lighthouse's little bell answered with three soft strokes: the bell has arrived in the cave."
+Major event: "Before dawn the green light came down from the lighthouse along the sheep path toward the cove and went out."
+Major event: "At first light a barefoot woman with a green-glass Warden's lantern confronted Ajax in the cove, asking whether the Lodge or the Guild sent him, and noting the frost-burn on his hand."
+Upcoming event: "Sundown has passed without the log; Morwenna will interrogate Tobias, who will crack."
+Upcoming event: "The Guild's tower maintenance ledger in Morwenna's study has pages torn out; she reacted when the dark lighthouse was mentioned."
+Upcoming event: "Dougal Strand was paid in green sea-rusted coin; its source is unexplained."
+Upcoming event: "Gideon Penhallow knows more about the island and the last Warden; his warning not to answer the bell proved true."
+Upcoming event: "Old Treloar's boy is a second witness to the bell ringing on Holm Ure."
+Upcoming event: "The tide bell now lies inside the tidal cave beneath Holm Ure's cliffs, carried there by the pale figures."
+Upcoming event: "The lantern-bearer from the lighthouse has come down to the cove and is questioning Ajax; her identity and intentions are unrevealed."
+Upcoming event: "The ruined chapel on Holm Ure is still unexplored."
+Upcoming event: "The Kittiwake's keel is gouged and a garboard strake is leaking; she must be repaired before recrossing."
+Upcoming event: "The spring tide arrives in about two days."
+/action 3
+Generating; /cancel or Ctrl-C cancels, /quit exits.
+"[tentative preview; final validation pending]
+Neither."
+
+Your voice comes out rough, a night's silence still in it. You push yourself up off the shingle with your good hand. Hester's stockings are bunched round your ankles and your sea boots lie steaming beside the keel, so you can't look like much. You stand anyway.
+
+"Nobody sent me. Morwenna Slade threw me out of the Guild yesterday for saying I'd come. The Lodge doesn't know I'm alive." You nod back over your shoulder at the Sound, toward the black line of the Skerry under the cloud. "My name's **Ajax**. I was born the winter the brig went down out there. My father was a deckhand aboard her. He never came home. I saw her last night, lying on the sand under the Teeth with her name still on the stern-board. And I saw what was carrying your bell past her."
+
+The woman doesn't move, but something in her face does. It isn't softening. It's more like a sail spilling wind for a moment before it fills again.
+
+"*Ajax.*" She tastes the name the way you'd test a doubtful coin with your teeth. "Half the brats born in Grayhallow that winter got called after her. My grandmother wrote that down too. She thought it was a cruel thing, naming children after a grave." Her eyes go back to your right hand. "So you're the sailor one. Not the one who cuts stone."
+
+"You know the other?"
+
+"I know *of* him. I know the Lodge." She says *Lodge* as if she's spitting out a fishbone. Then she steps down off the rock onto the shingle, light-footed, careless of the cold, and comes close enough that you can smell her: peat smoke, lamp oil and sheep's wool, with something under it like the inside of a shell. Hester scrambles up and puts herself half in front of you. She has a beach stone in her fist, and her chin is shaking.
+
+The woman looks down at her. Her mouth twitches. It might be the beginnings of a smile.
+
+"Put it down, little net-mender. If I wanted you hurt I'd have let the Teeth do it." She looks up at you again. "Show me the hand."
+
+You hold it out. She doesn't touch it. She bends over it and studies the blotched red creases of the palm, the shiny skin, the white tips of the fingers that still won't straighten. The shells in her hair tick together softly.
+
+"You held something that was ringing," she says quietly. "Something that wanted to answer her. And you didn't let it." She straightens up. "That's why they let you go. That's why you're standing on my beach instead of lying on the sand beside your father with your eyes open." She says it flatly, without any cruelty, the way you'd tell someone the depth of a channel. "**Who told you not to answer?**"
+
+You hesitate. The cove is very quiet. Out by the cave mouth the ebb is sucking back over the stones, and the chain no longer groans in there.
+
+"The lamplighter on the Long Mole," you say. "Old man, one blind eye. Gideon Penhallow."
+
+**That** reaches her. The lantern swings in her hand and clinks against her knee. For a heartbeat her whole face goes naked, and you can see shock in it, and an old hunger, and something close to rage.
+
+"*Penhallow.*" She breathes it out. "He's alive. He's still *alive*, and lighting lamps for them." She turns half away from you, toward the dark tower on the slope, and when she turns back her voice is iron again. "My name is **Corra Vane**. My grandmother was the last Warden of the Holm. Gideon Penhallow was her under-keeper, and he walked off this island the night the light went out and the brig struck. He never came back to tell anyone why."
+
+She lifts the unlit green lantern a little, as if it were an answer to something.
+
+"Your bell wasn't stolen, Ajax-the-sailor. **It was taken back.** Grayhallow broke the bargain forty years ago, and the sea has been patient a long time." She glances at the scarred keel of the *Kittiwake* and at the weeping seam above it. "You can't cross in that. Not before the spring tide, and not without tar. I have tar up at the tower, and a fire, and my grandmother's books." She pauses. "I also have no reason to trust you."
+
+"Then why offer?"
+
+Corra looks at your hand again for a long moment.
+
+"Because you didn't answer," she says. "Come up and eat. Or stay down here and go into the cave on your own, and find out what's waiting in it." She turns and starts up the sheep path, bare heels pale on the turf, and doesn't look back to see whether you follow.
+
+Hester lets the stone drop. "Ajax," she whispers, "she's *mad*."
+
+"Maybe." You watch the woman climb toward the tower, the green lantern swinging dark at her side. *Maybe not.*
+"Neither."
+
+Your voice comes out rough, a night's silence still in it. You push yourself up off the shingle with your good hand. Hester's stockings are bunched round your ankles and your sea boots lie steaming beside the keel, so you can't look like much. You stand anyway.
+
+"Nobody sent me. Morwenna Slade threw me out of the Guild yesterday for saying I'd come. The Lodge doesn't know I'm alive." You nod back over your shoulder at the Sound, toward the black line of the Skerry under the cloud. "My name's **Ajax**. I was born the winter the brig went down out there. My father was a deckhand aboard her. He never came home. I saw her last night, lying on the sand under the Teeth with her name still on the stern-board. And I saw what was carrying your bell past her."
+
+The woman doesn't move, but something in her face does. It isn't softening. It's more like a sail spilling wind for a moment before it fills again.
+
+"*Ajax.*" She tastes the name the way you'd test a doubtful coin with your teeth. "Half the brats born in Grayhallow that winter got called after her. My grandmother wrote that down too. She thought it was a cruel thing, naming children after a grave." Her eyes go back to your right hand. "So you're the sailor one. Not the one who cuts stone."
+
+"You know the other?"
+
+"I know *of* him. I know the Lodge." She says *Lodge* as if she's spitting out a fishbone. Then she steps down off the rock onto the shingle, light-footed, careless of the cold, and comes close enough that you can smell her: peat smoke, lamp oil and sheep's wool, with something under it like the inside of a shell. Hester scrambles up and puts herself half in front of you. She has a beach stone in her fist, and her chin is shaking.
+
+The woman looks down at her. Her mouth twitches. It might be the beginnings of a smile.
+
+"Put it down, little net-mender. If I wanted you hurt I'd have let the Teeth do it." She looks up at you again. "Show me the hand."
+
+You hold it out. She doesn't touch it. She bends over it and studies the blotched red creases of the palm, the shiny skin, the white tips of the fingers that still won't straighten. The shells in her hair tick together softly.
+
+"You held something that was ringing," she says quietly. "Something that wanted to answer her. And you didn't let it." She straightens up. "That's why they let you go. That's why you're standing on my beach instead of lying on the sand beside your father with your eyes open." She says it flatly, without any cruelty, the way you'd tell someone the depth of a channel. "Who told you not to answer?"
+
+You hesitate. The cove is very quiet. Out by the cave mouth the ebb is sucking back over the stones, and there's no groan of chain from inside any more.
+
+"The lamplighter on the Long Mole," you say. "Old man, one blind eye. Gideon Penhallow."
+
+**That** reaches her. The lantern swings in her hand and clinks against her knee. For a heartbeat her whole face goes naked, and you can see shock in it, and an old hunger, and something close to rage.
+
+"*Penhallow.*" She breathes it out. "He's alive. He's still *alive*, and lighting lamps for them." She turns half away from you, toward the dark tower on the slope, and when she turns back her voice is iron again. "My name is **Corra Vane**. My grandmother was the last Warden of the Holm. Gideon Penhallow was her under-keeper, and he walked off this island the night the light went out and the brig struck. He never came back to tell anyone why."
+
+She lifts the unlit green lantern a little, as if it answered something.
+
+"Your bell wasn't stolen, Ajax-the-sailor. **It was taken back.** Grayhallow broke the bargain forty years ago, and the sea has been patient a long time." She glances at the scarred keel of the *Kittiwake* and the weeping seam above it. "You can't cross in that. Not before the spring tide, and not without tar. I have tar up at the tower, and a fire, and my grandmother's books." She pauses. "I also have no reason to trust you."
+
+"Then why offer?"
+
+Corra looks at your hand again for a long moment.
+
+"Because you didn't answer," she says. "Come up and eat. Or stay down here and go into the cave on your own, and find out what's waiting in it." She turns and starts up the sheep path, bare heels pale on the turf, and doesn't look back to see whether you follow.
+
+Hester lets the stone drop. "Ajax," she whispers, "she's *mad*."
+
+"Maybe." You watch the woman climb toward the tower, the shells glinting in her hair. *Maybe not.* Behind you the tide is ebbing, and the cave mouth is opening wider with every wave.
+[authoritative final replaces the tentative preview]
+[committed turn 12]
+Action 1: Stay in the cove, pull your boots on and look over the Kittiwake's leak before you trust anyone (Cautious)
+Action 2: Leave Corra to it and wade into the cave mouth on the falling tide (Bold)
+Action 3: Follow Corra up the path and ask what took the bell, and what Gideon did that night (Social)
+Play: enter text, empty line to continue, or /action N.
+/inspect
+Inspection: phase=Ready revision=15
+Turns: 12
+Chapter: 1 title=Some("The Keeper of the Green Lantern")
+World: "**Grayhallow** is a small harbour town built into a cleft of dark cliffs, where slate roofs climb in steps above a horseshoe quay and the smell of tar, kelp and woodsmoke never quite leaves the air. For three hundred years its life has been set by one sound: the **tide bell**. It hung in the squat stone tower at the end of the Long Mole, rung not by any hand but by the sea itself, through a float-and-chain mechanism that swung the clapper as the flood tide rose. When the bell spoke, the fishing boats turned for home, the cockle-pickers left the sands, and anyone crossing the old causeway to the island knew they had less than an hour.\n\n*Last night, the bell did not ring.* At dawn the harbourmaster found the tower open to the wind, the iron yoke empty, and the great bronze bell, taller than a man and heavy as a cart, **simply gone**. There are no drag marks on the mole and no wheel ruts on the quay. Only a smear of green weed on the tower steps, and wet footprints that walk *out* to the water's edge and stop.\n\nGrayhallow is a quiet town, and it handles trouble quietly. The **Pilots' Guild** runs the harbour from a whitewashed hall above the fish market. Its members are careful, proud men and women who sell their knowledge of the shoals and have every reason to keep the boats safe and in work. The **Masons' Lodge** built the bell tower and has kept it in repair for generations. Its members are tight-lipped about the old construction marks cut into the tower's foundation stones, and some of those marks match carvings found nowhere else but out on the island. The town's lesser folk all keep their own counsel: cockle-wives, net-menders and a lamplighter who walks the mole at dusk.\n\nOut across the grey water of **the Sound** lies **Holm Ure**, a low green island with a ruined chapel, a dozen sheep, and a lighthouse that has been dark for forty years. It is reached on foot by the **Drowning Causeway**, a cobbled road visible only at low water, or by boat in a crossing of about two hours. The island's last keepers, the **Wardens of the Holm**, were said to have given the bell to Grayhallow in the first place, on the condition that it would \"**answer the sea for as long as the sea asks**.\" Lately, fishermen swear they have seen lantern-light moving in the dead lighthouse at night. Last night, two of them claim, they heard a bell ringing faintly from the island, *out of time with any tide*.\n\nThe stakes are simple and close. In three days comes the **spring tide**, the highest of the year, when the flood runs over the causeway faster than a man can run. Without the bell, the cockle-pickers on the far sands will have no warning, and neither will anyone caught on the causeway. The Pilots want the bell found before panic empties the harbour. The Lodge wants it found before anyone asks too many questions about what lies under the tower. And something on Holm Ure seems to want it **exactly where it is**.\n\nThe journey is short but changes everything. **The first chapter** stays in Grayhallow. It is a mystery of salt-stained ledgers, an empty bell tower, a guild hall full of half-truths, and the hiring or borrowing of a boat. **The chapter break comes mid-crossing**, at the **Skerry of Teeth**, a black reef halfway across the Sound, where a sea-fog rolls in without warning and the harbour vanishes behind. Something there will make plain that the bell did not leave by any ordinary means. **The second chapter** lands on Holm Ure, with its ruined chapel, its dark lighthouse and a tidal cave beneath the cliffs where the old Wardens' secret has waited for someone to come and ask.\n\nA local custom matters to the cast. Forty years ago, the trading brig *Ajax* was lost on the Skerry of Teeth on the same night the lighthouse went dark. Grayhallow families named children born that winter after her, so the name **Ajax** still turns up in more than one household. To avoid mix-ups, townsfolk tell them apart by trade: one Ajax is known on the quay as a **sailor**, and the other in the Lodge yard as a **mason**. They are separate people with separate lives. No one else in the story shares that name. Every other islander, guild member and townsperson has a name of their own.\n\n*The atmosphere is hushed and briny: gulls, fog, cold stone, lamplight on wet cobbles. The pace is brisk. This is a mystery to be solved within a single turning of the tide.*"
+Situation: "Dawn in the shingle cove on Holm Ure. Ajax told Corra Vane that no one sent him and that he is the son of a deckhand lost on the brig Ajax. She revealed her name and that she is the last Warden's granddaughter, was shaken to learn Gideon Penhallow is alive, and offered tar, fire, food and her grandmother's books at the lighthouse before walking up the sheep path without waiting. Hester thinks she is mad. The ebb is opening the cave mouth."
+Identity: protagonist name="Ajax (the sailor)" state=Some("Standing in the Holm Ure cove in Hester's dry stockings, his sea boots off beside the keel. His right hand is frost-blotched and stiff but recovering. He carries Tobias's log and Hester's tobacco twist. Weighing Corra's offer to come up to the lighthouse against going into the cave.")
+Identity: tobias-fenwick name="Tobias Fenwick" state=Some("Last seen on the Long Mole. With sundown passed and the log not returned, Morwenna is likely to question him now.")
+Identity: morwenna-slade name="Morwenna Slade" state=Some("Sundown passed with no log on her desk. She watched from the lamplit Guild hall doorway as the Kittiwake left harbour without a warrant. Likely to turn on Tobias now.")
+Identity: elias-rook name="Elias Rook" state=Some("Has not yet appeared in the story.")
+Identity: gideon-penhallow name="Gideon Penhallow" state=Some("Lighting the lamps on the Long Mole at dusk. At the foot of the empty tower he called a warning to Ajax as the Kittiwake passed: keep the Teeth to larboard, and if you hear her ring, don't answer, because she isn't calling you. Then he vanished into the fog.")
+Identity: dougal-strand name="Dougal Strand" state=Some("Left Ajax outside the Drowned Man without explaining the green coins; avoiding him for fear of the Guild.")
+Identity: corra-vane name="Corra Vane" state=Some("Walking up the sheep path toward the lighthouse with her unlit green lantern, having offered Ajax tar, fire, food and her grandmother's journals. Shaken and angry to learn Gideon Penhallow is alive. Guarded, but she grants Ajax a measure of respect because he did not answer the bell.")
+Identity: hester-quayle name="Hester Marrow" state=Some("On the shingle beside Ajax. She just dropped the beach stone she raised against Corra. Cold, frightened and suspicious, and she whispered that Corra is mad.")
+Major event: "Morwenna demanded whatever Tobias gave Ajax be returned to her desk by sundown, or she will interrogate Tobias."
+Major event: "Two Guild men were posted at the Kittiwake's mooring."
+Major event: "The Guild men guarding the Kittiwake are named Hollis and Tregear."
+Major event: "Ajax saw that Dougal Strand is paying at the Drowned Man with strange green, sea-rusted coins, and Dougal grew nervous when Ajax noticed."
+Major event: "Ajax kept Tobias's harbour log past Morwenna's sundown deadline."
+Major event: "At dusk Ajax faced down Hollis and Tregear and took the Kittiwake off her Guild mooring; Morwenna watched from the Guild hall doorway."
+Major event: "Hester Marrow insisted on coming and joined Ajax aboard as crew."
+Major event: "Gideon Penhallow, lighting the mole lamps, warned Ajax: 'Keep the Teeth to larboard, and if you hear her ring, don't answer. She isn't calling you.'"
+Major event: "An hour out, at slack water, fog fell; near the Skerry of Teeth the sea went smooth and black in a circle with a green light blinking in it, as Hester had seen from the mole."
+Major event: "At the Skerry of Teeth the Kittiwake drifted into the smooth circle, where the sea went motionless and glass-clear."
+Major event: "The green light is an old green-glass lantern on a cork float, marking a massive weed-furred chain that is moving slowly east toward Holm Ure."
+Major event: "Ajax saw the wreck of the brig Ajax lying shallow on the Skerry, her stern-board with its name intact."
+Major event: "The tide bell is being carried along the sea floor toward Holm Ure, chained through its crown, by many pale, long, barefoot figures; it did not leave by any ordinary means."
+Major event: "The figures stopped and looked up at the boat; the bell rang once underwater, and the Kittiwake's masthead fog bell began to tremble as if to answer."
+Major event: "Ajax silenced the Kittiwake's fog bell by gripping its clapper through the second underwater stroke; it left his right hand frost-numbed."
+Major event: "Ajax's father's boat-hook jammed in the moving chain and was dragged down to the sea floor; Hester nearly went overboard trying to hold it."
+Major event: "With no answer from the boat, the pale figures turned away and carried the tide bell on toward Holm Ure."
+Major event: "The still circle collapsed and the Kittiwake was left on the wrong side of the Teeth as the flood began."
+Major event: "A green lantern-light appeared climbing inside the dark Holm Ure lighthouse, and a small bell rang from the island out of time with any tide."
+Major event: "Ajax drove the Kittiwake through a narrow gap in the Skerry of Teeth on the flood, with Hester hauling the sail; the keel scraped rock but the boat came through."
+Major event: "The Kittiwake landed in a shingle cove on Holm Ure's south side; the green light stopped at a lighthouse window and the island bell went silent as they arrived."
+Major event: "A tidal cave mouth at the foot of the island's cliffs gives off the groan of the moving chain: the bell is likely being taken there."
+Major event: "The Kittiwake has a gouged keel and a started garboard strake that weeps water; she needs oakum and tar before a safe crossing."
+Major event: "Around high water (about 2 a.m.) the chain's groaning stopped; the tide bell rang once, muffled, inside the cliff, and the lighthouse's little bell answered with three soft strokes: the bell has arrived in the cave."
+Major event: "Before dawn the green light came down from the lighthouse along the sheep path toward the cove and went out."
+Major event: "At first light a barefoot woman with a green-glass Warden's lantern confronted Ajax in the cove, asking whether the Lodge or the Guild sent him, and noting the frost-burn on his hand."
+Major event: "Ajax told Corra that neither Lodge nor Guild sent him, and that his father died aboard the brig Ajax."
+Major event: "Corra Vane named herself as granddaughter of the last Warden and said the bell was not stolen but 'taken back' because Grayhallow broke the bargain forty years ago."
+Major event: "Corra said Ajax was let go because he did not answer the bell; learning that Gideon Penhallow is alive and warned him shook her badly. Gideon was her grandmother's under-keeper and left the night the light failed."
+Major event: "Corra offered Ajax tar for the Kittiwake, a fire and her grandmother's journals at the lighthouse, then headed up the path."
+Upcoming event: "Sundown has passed without the log; Morwenna will interrogate Tobias, who will crack."
+Upcoming event: "The Guild's tower maintenance ledger in Morwenna's study has pages torn out; she reacted when the dark lighthouse was mentioned."
+Upcoming event: "Dougal Strand was paid in green sea-rusted coin; its source is unexplained."
+Upcoming event: "Gideon Penhallow knows more about the island and the last Warden; Corra now knows he is alive and wants answers from him."
+Upcoming event: "Old Treloar's boy is a second witness to the bell ringing on Holm Ure."
+Upcoming event: "The tide bell now lies inside the tidal cave beneath Holm Ure's cliffs, carried there by the pale figures."
+Upcoming event: "Corra has offered tar, shelter and her grandmother's journals at the lighthouse; her full knowledge of what took the bell is unrevealed."
+Upcoming event: "The ruined chapel on Holm Ure is still unexplored."
+Upcoming event: "The Kittiwake's keel is gouged and a garboard strake is leaking; she must be repaired before recrossing."
+Upcoming event: "The spring tide arrives in about two days."
+/quit
+Session closed; in-memory state discarded.
+
+Script done on 2026-10-03 20:14:39+02:00 [COMMAND_EXIT_CODE="0"]

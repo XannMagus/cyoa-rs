@@ -1,0 +1,49 @@
+# Turn 10: tentative preview (<) vs committed final (>), from the CRLF-stripped PTY transcript
+1,2c1
+< You
+<  don't stop to think about it. Thinking would take too long.
+---
+> You don't stop to think about it. Thinking would take too long.
+14c13
+< "Belay! Round the cleat, round and over—*good*—now get down!"
+---
+> "Belay! Round the cleat, round and over... *good*... now get down!"
+24c23
+< "Are we—" Hester lifts her head over the gunwale. Her hair is plastered flat with spray and her lips are blue. "Are we *past* it?"
+---
+> "Are we..." Hester lifts her head over the gunwale. Her hair is plastered flat with spray and her lips are blue. "Are we *past* it?"
+38c37
+< You find a cove below the cliffs on the island's south side, a crescent of grey shingle between two arms of rock. The *Kittiwake* runs her forefoot up onto it with a long rattling hiss. You go over the side into knee-deep water so cold it makes you gasp, and with Hester pulling on the painter you drag her up above the weed line one-handed. The stones are slick and smell of kelp and sheep. Somewhere on the slope above a ewe coughs like an old man.
+---
+> You find a cove below the cliffs on the island's south side, a crescent of grey shingle between two arms of rock. The *Kittiwake* runs her forefoot up onto it with a long rattling hiss. You go over the side into knee-deep water so cold it makes you gasp, and with Hester pulling on the painter you drag her up above the weed line one-handed. The stones are slick and smell of kelp and sheep. Somewhere on the slope above, a ewe coughs like an old man.
+40c39
+< Away to your left, where the cliff curves round toward the east, there's a darker darkness at the foot of the rock. It's a cave mouth, low and arched and half-drowned, with the flood already licking into it. From somewhere deep inside comes a sound you know. It's faint, almost below hearing, and it rises up through the shingle and into the soles of your boots: **the long, slow groan of a chain moving over stone.**
+---
+> Away to your left, where the cliff curves round toward the east, there's a deeper darkness at the foot of the rock. It's a cave mouth, low and arched and half-drowned, with the flood already licking into it. From somewhere deep inside comes a sound you know. It's faint, almost below hearing, and it rises up through the shingle and into the soles of your boots: **the long, slow groan of a chain moving over stone.**
+
+# Turn 12: tentative preview (<) vs committed final (>)
+1,2c1
+< "
+< Neither."
+---
+> "Neither."
+22c21
+< "You held something that was ringing," she says quietly. "Something that wanted to answer her. And you didn't let it." She straightens up. "That's why they let you go. That's why you're standing on my beach instead of lying on the sand beside your father with your eyes open." She says it flatly, without any cruelty, the way you'd tell someone the depth of a channel. "**Who told you not to answer?**"
+---
+> "You held something that was ringing," she says quietly. "Something that wanted to answer her. And you didn't let it." She straightens up. "That's why they let you go. That's why you're standing on my beach instead of lying on the sand beside your father with your eyes open." She says it flatly, without any cruelty, the way you'd tell someone the depth of a channel. "Who told you not to answer?"
+24c23
+< You hesitate. The cove is very quiet. Out by the cave mouth the ebb is sucking back over the stones, and the chain no longer groans in there.
+---
+> You hesitate. The cove is very quiet. Out by the cave mouth the ebb is sucking back over the stones, and there's no groan of chain from inside any more.
+32c31
+< She lifts the unlit green lantern a little, as if it were an answer to something.
+---
+> She lifts the unlit green lantern a little, as if it answered something.
+34c33
+< "Your bell wasn't stolen, Ajax-the-sailor. **It was taken back.** Grayhallow broke the bargain forty years ago, and the sea has been patient a long time." She glances at the scarred keel of the *Kittiwake* and at the weeping seam above it. "You can't cross in that. Not before the spring tide, and not without tar. I have tar up at the tower, and a fire, and my grandmother's books." She pauses. "I also have no reason to trust you."
+---
+> "Your bell wasn't stolen, Ajax-the-sailor. **It was taken back.** Grayhallow broke the bargain forty years ago, and the sea has been patient a long time." She glances at the scarred keel of the *Kittiwake* and the weeping seam above it. "You can't cross in that. Not before the spring tide, and not without tar. I have tar up at the tower, and a fire, and my grandmother's books." She pauses. "I also have no reason to trust you."
+44c43
+< "Maybe." You watch the woman climb toward the tower, the green lantern swinging dark at her side. *Maybe not.*
+---
+> "Maybe." You watch the woman climb toward the tower, the shells glinting in her hair. *Maybe not.* Behind you the tide is ebbing, and the cave mouth is opening wider with every wave.

@@ -59,8 +59,9 @@ limitations](../reviews/2026-10-02-headless/README.md).
   exact-two-Ajax adapter follow-up below did meet it; neither observation guarantees
   arbitrary future naming compliance. No adapter or shared-schema change was made.
 
-Codex's live headless gate is complete. Claude's independent live headless gate,
-full account/tool isolation and the remaining questions below stay open.
+Codex's live headless gate is complete; Claude's independent gate passed on
+2026-10-03 in its own session (see `01-claude-cli.md`). Full account/tool isolation
+and the remaining questions below stay open.
 
 ## Confirmed: composed live adapter gate, 0.159.3, 2026-10-02
 
@@ -104,7 +105,7 @@ model was selected, and no model identity or cost appeared in the responses.
   separately retained diagnostic attempt, not an adapter retry.
 
 The bounded adapter gate is complete. The later headless gate is recorded above;
-Claude's own live headless gate and full account/tool isolation stay open.
+full account/tool isolation stays open.
 
 ## Confirmed: actual adapter outline smoke, 0.157.1, 2026-09-27
 

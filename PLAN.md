@@ -29,7 +29,7 @@ complete on the same terms: a frozen 2.1.286 profile, isolated preparation, a pr
 codec, Backend reconciliation, composed story acceptance through real fixture
 children, eleven persistent mutations, and the 2026-10-02 live outline/cast/opening/
 continuation/cancellation gate ([evidence](reviews/2026-10-02-claude-step8/README.md)).
-Codex's shipped live headless acceptance is complete; Claude's remains pending. See the
+Codex's and Claude's shipped live headless acceptance are both complete. See the
 [presentation/headless handoff](docs/plans/phase1-presentation-handoff.md).
 The next slice is expanded in the
 [controller and worker implementation plan](docs/plans/phase1-controller-and-worker.md).
@@ -37,8 +37,10 @@ The controller/worker slice is implemented and tested offline through both adapt
 fixtures. Linux headless play and demo now drive that runtime, with binary tests
 through both adapters and cancellable input/output shutdown. Live headless gates
 remain separate obligations: Codex passed six turns, chapter breaks, cancellation
-and explicit retry ([evidence](reviews/2026-10-02-headless/README.md)); Claude's
-gate is pending. See the
+and explicit retry ([evidence](reviews/2026-10-02-headless/README.md)); Claude
+passed twelve turns, a chapter break, cancellation and explicit retry
+([evidence](reviews/2026-10-03-claude-headless/README.md)). Both-backend Phase 1
+acceptance is complete; Phase 2 (persistence) is next. See the
 [implementation record](reviews/2026-10-02-controller-worker/README.md).
 
 ## Context

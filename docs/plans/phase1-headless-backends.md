@@ -3,7 +3,9 @@
 Status: **transport foundations repaired; Codex and Claude adapters, composed
 fixture acceptance and bounded live adapter gates implemented; controller/worker
 implemented offline; Linux headless/demo play and binary acceptance implemented;
-Codex live headless gate complete; Claude live headless gate pending.**
+Codex (2026-10-02) and Claude (2026-10-03) live headless gates complete;
+both-backend Phase 1 acceptance complete.** Claude evidence:
+[live headless record](../../reviews/2026-10-03-claude-headless/README.md).
 Written 2026-09-25 against `3dfce38`; implementation initially landed in
 `c8c7f8b`..`a28ba66`, then underwent the [process-supervisor review](../../reviews/2026-09-25-process-supervisor/README.md)
 and [documented repairs](../../reviews/2026-09-25-supervisor-repairs/README.md).
@@ -17,7 +19,7 @@ Its steps 1–7 are complete, and so is the
 Continue with the [presentation/headless handoff](phase1-presentation-handoff.md);
 both backends' live headless gates remain independent obligations. Codex passed
 its shipped-command gate ([evidence](../../reviews/2026-10-02-headless/README.md));
-Claude's remains pending.
+Claude passed its own on 2026-10-03 ([evidence](../../reviews/2026-10-03-claude-headless/README.md)).
 This is the next implementation sequence after
 [Phase 0 acceptance](../decisions/phase0-acceptance.md). It refines
 [PLAN.md](../../PLAN.md)'s walking-skeleton phase; project contracts and explicit
