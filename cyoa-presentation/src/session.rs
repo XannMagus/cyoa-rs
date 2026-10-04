@@ -258,6 +258,15 @@ impl SessionController {
         self.next_revision()?;
         Ok(())
     }
+    pub(crate) fn reserve_selection_opening(&self) -> Result<(), SessionError> {
+        self.ready()?;
+        self.revision
+            .0
+            .checked_add(2)
+            .ok_or(SessionError::Exhausted)?;
+        self.last_id.checked_add(1).ok_or(SessionError::Exhausted)?;
+        Ok(())
+    }
     pub fn replace_game(&mut self, game: GameState) -> Result<(), SessionError> {
         self.can_replace_game()?;
         let revision = self.next_revision()?;
@@ -566,6 +575,19 @@ mod tests {
                 .unwrap_err(),
             SessionError::Exhausted
         );
+        session.revision = SessionRevision(0);
+        session.last_id = u64::MAX;
+        assert_eq!(
+            session.reserve_selection_opening(),
+            Err(SessionError::Exhausted)
+        );
+        session.last_id = 0;
+        session.revision = SessionRevision(u64::MAX - 1);
+        assert_eq!(
+            session.reserve_selection_opening(),
+            Err(SessionError::Exhausted)
+        );
+        assert_eq!(session.phase(), Phase::Ready);
         session.revision = SessionRevision(0);
         let request = session.submit_brief(Brief::new("brief").unwrap()).unwrap();
         let wrong = RequestKey {

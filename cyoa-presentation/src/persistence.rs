@@ -72,6 +72,7 @@ pub enum PersistenceEvent {
     Loaded {
         old_id: SaveId,
         backup: bool,
+        unrecognized_fields: Vec<String>,
     },
     Listed(SavePageResult),
     Failed(StorageFailure),
@@ -237,12 +238,20 @@ where
         }
         let canonical = matches!(intent, Intent::Select(_) | Intent::Rewind(_));
         let selection = matches!(intent, Intent::Select(_));
+        if selection {
+            self.controller().reserve_selection_opening()?;
+        }
         // Every generation can produce a turn; reserve autosave capacity before admission.
         self.capacity_for(if selection { 2 } else { 1 })?;
         if matches!(intent, Intent::Rewind(_)) && self.controller().game().is_none() {
             return Err(CoordinationError::NoGame);
         }
-        self.runtime.dispatch(intent)?;
+        if let Err(error) = self.runtime.dispatch(intent) {
+            if matches!(error, RuntimeError::Spawn(_)) {
+                self.worker_fault = true;
+            }
+            return Err(error.into());
+        }
         if canonical {
             self.durability = Durability::Dirty;
             self.deferred_opening = selection;
@@ -305,25 +314,46 @@ where
         self.capacity()?;
         self.validate_source(&loaded)
             .map_err(|_| CoordinationError::Session(SessionError::WrongStage))?;
+        let old_id = loaded.stored.metadata.id.clone();
+        let backup = loaded.stored.copy == SaveCopy::Backup;
+        let unrecognized_fields = loaded.stored.unrecognized_fields.clone();
         self.install_loaded(loaded)?;
+        self.notifications.push(PersistenceEvent::Loaded {
+            old_id,
+            backup,
+            unrecognized_fields,
+        });
         Ok(())
     }
     fn validate_source(&self, loaded: &LoadedGame) -> Result<(), StorageFailure> {
-        if loaded.stored.snapshot.source == self.source
-            && (self.source == StorySource::Live || loaded.stored.snapshot.game.turns().len() <= 5)
-        {
-            return Ok(());
-        }
-        Err(StorageFailure {
-            operation: StorageOperation::Load,
-            stage: StorageStage::Admission,
-            kind: StorageFailureKind::Unsupported,
-            message: "save source does not match this session, or demo exceeds five turns".into(),
-            visibility: WriteVisibility::Unchanged,
-            pending: None,
-            cleanup_errors: Box::default(),
-        })
+        validate_loaded_source(loaded, self.source)
     }
+}
+pub fn validate_loaded_source(
+    loaded: &LoadedGame,
+    source: StorySource,
+) -> Result<(), StorageFailure> {
+    if loaded.stored.snapshot.source == source
+        && (source == StorySource::Live || loaded.stored.snapshot.game.turns().len() <= 5)
+    {
+        return Ok(());
+    }
+    Err(StorageFailure {
+        operation: StorageOperation::Load,
+        stage: StorageStage::Admission,
+        kind: StorageFailureKind::Unsupported,
+        message: "save source does not match this session, or demo exceeds five turns".into(),
+        visibility: WriteVisibility::Unchanged,
+        pending: None,
+        cleanup_errors: Box::default(),
+    })
+}
+impl<G, R, F> PersistedSession<G, R, F>
+where
+    G: StoryGenerator + Send + 'static,
+    R: GameRepository + Send + 'static,
+    F: Fn(PreparedWriteEvidence) -> R + Send + Sync + 'static,
+{
     fn install_loaded(&mut self, loaded: LoadedGame) -> Result<(), CoordinationError> {
         let backup = loaded.stored.copy == SaveCopy::Backup;
         self.runtime.replace_game(loaded.stored.snapshot.game)?;
@@ -467,9 +497,14 @@ where
                     Ok(StorageOutcome::Loaded(loaded)) if running.effect == Effect::Load => {
                         let old_id = loaded.stored.metadata.id.clone();
                         let backup = loaded.stored.copy == SaveCopy::Backup;
+                        let unrecognized_fields = loaded.stored.unrecognized_fields.clone();
                         self.install_loaded(*loaded)
                             .expect("load transition capacity reserved at admission");
-                        vec![PersistenceEvent::Loaded { old_id, backup }]
+                        vec![PersistenceEvent::Loaded {
+                            old_id,
+                            backup,
+                            unrecognized_fields,
+                        }]
                     }
                     Ok(StorageOutcome::Listed(page)) if running.effect == Effect::List => {
                         vec![PersistenceEvent::Listed(page)]
@@ -537,3 +572,67 @@ where
 #[cfg(test)]
 #[path = "persistence_tests.rs"]
 mod tests;
+
+/// Operations needed by the headless driver, independent of generator/repository
+/// composition. Canonical queries remain borrowed; effects own their inputs.
+pub trait HeadlessSession {
+    fn controller(&self) -> &SessionController;
+    fn dispatch(&mut self, intent: Intent) -> Result<(), CoordinationError>;
+    fn save(&mut self, copy: bool) -> Result<(), CoordinationError>;
+    fn list(&mut self, page: SavePage) -> Result<(), CoordinationError>;
+    fn load(&mut self, command: LoadGame) -> Result<(), CoordinationError>;
+    fn poll(&mut self) -> Vec<PersistenceEvent>;
+    fn binding(&self) -> &SaveBinding;
+    fn durability(&self) -> Durability;
+    fn storage_busy(&self) -> bool;
+    fn storage_failure(&self) -> Option<&StorageFailure>;
+    fn shutdown(&self) -> Shutdown;
+    fn output_drained(&mut self);
+    fn exit_failed(&self) -> bool;
+}
+impl<G, R, F> HeadlessSession for PersistedSession<G, R, F>
+where
+    G: StoryGenerator + Send + 'static,
+    R: GameRepository + Send + 'static,
+    F: Fn(PreparedWriteEvidence) -> R + Send + Sync + 'static,
+{
+    fn controller(&self) -> &SessionController {
+        self.controller()
+    }
+    fn dispatch(&mut self, intent: Intent) -> Result<(), CoordinationError> {
+        self.dispatch(intent)
+    }
+    fn save(&mut self, copy: bool) -> Result<(), CoordinationError> {
+        self.save(copy)
+    }
+    fn list(&mut self, page: SavePage) -> Result<(), CoordinationError> {
+        self.list(page)
+    }
+    fn load(&mut self, command: LoadGame) -> Result<(), CoordinationError> {
+        self.load(command)
+    }
+    fn poll(&mut self) -> Vec<PersistenceEvent> {
+        self.poll()
+    }
+    fn binding(&self) -> &SaveBinding {
+        self.binding()
+    }
+    fn durability(&self) -> Durability {
+        self.durability()
+    }
+    fn storage_busy(&self) -> bool {
+        self.storage_busy()
+    }
+    fn storage_failure(&self) -> Option<&StorageFailure> {
+        self.storage_failure()
+    }
+    fn shutdown(&self) -> Shutdown {
+        self.shutdown()
+    }
+    fn output_drained(&mut self) {
+        self.output_drained()
+    }
+    fn exit_failed(&self) -> bool {
+        self.exit_failed()
+    }
+}

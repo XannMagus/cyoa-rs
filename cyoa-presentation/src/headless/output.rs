@@ -13,6 +13,7 @@ pub(super) struct QueuedOutput<'a> {
     sink: &'a mut dyn Write,
     bytes: VecDeque<u8>,
     last_progress: Option<Instant>,
+    faulted: bool,
 }
 impl<'a> QueuedOutput<'a> {
     pub(super) fn new(sink: &'a mut dyn Write) -> Self {
@@ -20,12 +21,21 @@ impl<'a> QueuedOutput<'a> {
             sink,
             bytes: VecDeque::new(),
             last_progress: None,
+            faulted: false,
         }
     }
     pub(super) fn is_empty(&self) -> bool {
         self.bytes.is_empty()
     }
+    pub(super) fn is_faulted(&self) -> bool {
+        self.faulted
+    }
     pub(super) fn pump(&mut self, now: Instant) -> io::Result<()> {
+        let result = self.pump_inner(now);
+        self.faulted |= result.is_err();
+        result
+    }
+    fn pump_inner(&mut self, now: Instant) -> io::Result<()> {
         let mut remaining = PUMP_BYTES;
         for _ in 0..PUMP_CALLS {
             if self.bytes.is_empty() || remaining == 0 {
@@ -59,6 +69,7 @@ impl<'a> QueuedOutput<'a> {
 impl Write for QueuedOutput<'_> {
     fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
         if bytes.len() > CAPACITY - self.bytes.len() {
+            self.faulted = true;
             return Err(io::Error::other("terminal output queue exceeds 1 MiB"));
         }
         if !bytes.is_empty() && self.bytes.is_empty() {

@@ -1,14 +1,22 @@
 //! CLI intent only; the composition root selects concrete adapters.
 use clap::{Args, Parser, Subcommand, ValueEnum};
+use cyoa_application::persistence::{LoadGame, SaveCopy, SaveId, SavePage};
+use cyoa_core::{
+    game::TurnCount,
+    limits::{Limits, RestoreLimits},
+};
 use std::{ffi::OsString, path::PathBuf};
 
 #[derive(Debug, Parser)]
 #[command(
     name = "cyoa",
     version,
-    about = "A choose-your-own-adventure game (memory-only headless play)."
+    about = "A choose-your-own-adventure game with headless play and saves."
 )]
 pub struct Cli {
+    /// App data directory; saves are stored in its saves subdirectory.
+    #[arg(long, global = true, value_parser = absolute_path)]
+    pub data_dir: Option<PathBuf>,
     #[command(subcommand)]
     pub command: Command,
 }
@@ -20,6 +28,46 @@ impl Cli {
 #[derive(Debug, Subcommand)]
 pub enum Command {
     Play(PlayOptions),
+    List(ListOptions),
+    Inspect(InspectOptions),
+}
+fn absolute_path(value: &str) -> Result<PathBuf, String> {
+    let path = PathBuf::from(value);
+    if path.is_absolute() {
+        Ok(path)
+    } else {
+        Err("--data-dir must be an absolute path".into())
+    }
+}
+fn save_id(value: &str) -> Result<SaveId, String> {
+    SaveId::new(value).map_err(|e| e.to_string())
+}
+#[derive(Debug, Args)]
+pub struct ListOptions {
+    #[arg(long, value_parser = save_id)]
+    pub after: Option<SaveId>,
+    #[arg(long, default_value_t = 100, value_parser = clap::value_parser!(u8).range(1..=100))]
+    pub limit: u8,
+}
+#[derive(Debug, Args)]
+pub struct InspectOptions {
+    #[arg(value_parser = save_id)]
+    pub id: SaveId,
+    #[arg(long)]
+    pub backup: bool,
+}
+#[derive(Debug, Clone, Copy, ValueEnum)]
+pub enum LimitsChoice {
+    Current,
+    Original,
+}
+impl LimitsChoice {
+    pub fn policy(self) -> RestoreLimits {
+        match self {
+            Self::Current => RestoreLimits::Current(Limits::default()),
+            Self::Original => RestoreLimits::Original,
+        }
+    }
 }
 #[derive(Debug, Clone, Copy, ValueEnum)]
 pub enum BackendChoice {
@@ -27,7 +75,7 @@ pub enum BackendChoice {
     Codex,
 }
 #[derive(Debug, Args)]
-#[command(group(clap::ArgGroup::new("source").required(true).args(["backend", "demo"])), after_help = "During play: empty line continues; /action N, /event, /retry, /cancel, /inspect, /help, /quit. Prefix // to send an initial slash. Ctrl-C cancels generation; idle Ctrl-C or EOF exits. No saves or autosave.")]
+#[command(group(clap::ArgGroup::new("source").required(true).args(["backend", "demo"])), after_help = "During play: empty line continues; /action N, /event, /retry, /cancel, /inspect, /save, /save-copy, /list, /load ID --limits current|original [--backup], /rewind N, /help, /quit. Prefix // to send an initial slash. Selection, accepted turns and rewinds autosave; quit saves the last canonical state. Ctrl-C cancels generation; idle Ctrl-C or EOF exits.")]
 pub struct PlayOptions {
     /// Only the headless interface is currently implemented.
     #[arg(long, required = true)]
@@ -49,4 +97,76 @@ pub struct PlayOptions {
     /// Optional vendor model selection; configured does not mean observed.
     #[arg(long, requires = "backend", conflicts_with = "demo")]
     pub model: Option<String>,
+    #[arg(long, value_parser = save_id, requires = "limits")]
+    pub load: Option<SaveId>,
+    #[arg(long, value_enum, requires = "load")]
+    pub limits: Option<LimitsChoice>,
+    #[arg(long, requires = "load")]
+    pub backup: bool,
+}
+
+pub enum PersistenceCommand {
+    Save { copy: bool },
+    List(SavePage),
+    Load(LoadGame),
+    Rewind(TurnCount),
+}
+#[derive(Parser)]
+#[command(name = "/load", disable_help_flag = true, disable_version_flag = true)]
+struct LoadLine {
+    #[arg(value_parser = save_id)]
+    id: SaveId,
+    #[arg(long, value_enum, required = true)]
+    limits: LimitsChoice,
+    #[arg(long)]
+    backup: bool,
+}
+/// Parse reserved persistence commands before any effect or lifecycle edit.
+pub fn persistence_command(line: &str) -> Option<Result<PersistenceCommand, String>> {
+    let words: Vec<_> = line.split_whitespace().collect();
+    let command = *words.first()?;
+    let result = match command {
+        "/save" | "/save-copy" => {
+            if words.len() == 1 {
+                Ok(PersistenceCommand::Save {
+                    copy: command == "/save-copy",
+                })
+            } else {
+                Err("/save and /save-copy take no arguments".into())
+            }
+        }
+        "/list" => match words.as_slice() {
+            [_] => Ok(PersistenceCommand::List(
+                SavePage::new(None, 100).expect("valid page"),
+            )),
+            [_, id] => save_id(id).map(|id| {
+                PersistenceCommand::List(SavePage::new(Some(id), 100).expect("valid page"))
+            }),
+            _ => Err("Usage: /list [AFTER_ID]".into()),
+        },
+        "/rewind" => match words.as_slice() {
+            [_, count] => count
+                .parse::<usize>()
+                .ok()
+                .and_then(|v| TurnCount::new(v).ok())
+                .map(PersistenceCommand::Rewind)
+                .ok_or_else(|| "/rewind requires a positive turn count".into()),
+            _ => Err("Usage: /rewind N".into()),
+        },
+        "/load" => LoadLine::try_parse_from(&words)
+            .map(|v| {
+                PersistenceCommand::Load(LoadGame {
+                    id: v.id,
+                    copy: if v.backup {
+                        SaveCopy::Backup
+                    } else {
+                        SaveCopy::Primary
+                    },
+                    limits: v.limits.policy(),
+                })
+            })
+            .map_err(|_| "Usage: /load SAVE_ID --limits current|original [--backup]".into()),
+        _ => return None,
+    };
+    Some(result)
 }

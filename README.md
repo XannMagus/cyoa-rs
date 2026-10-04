@@ -71,7 +71,7 @@ The complete story and both actual adapters are exercised through controlled chi
 fixtures. Linux headless play and the credential-free demo are implemented;
 the gate now runs 37 mutations, including final error-report backpressure and
 demo cancellation/retry regressions ([repair evidence](reviews/2026-10-03-headless-repairs/README.md)).
-TUI, autosave/headless save commands and export remain pending.
+TUI and export remain pending. Phase 2 persistence is described below.
 
 Phase 2 steps 1–2 implement checked established-cast restoration, application
 persistence commands/queries and a strictly validated version-one save codec.
@@ -83,9 +83,11 @@ Linux atomic repository with exact backups, conflict checks and reconciliation
 helpers and the presentation storage worker are also implemented
 ([S4 evidence](reviews/2026-10-04-persistence-s4/README.md)). Canonical autosave/load/
 rewind/shutdown coordination is implemented and tested through shipped helpers
-([S5 evidence](reviews/2026-10-04-persistence-s5/README.md)). Steps 6–7 remain pending:
-headless commands and complete Phase 2 acceptance.
-User-facing save/load is not yet implemented.
+([S5 evidence](reviews/2026-10-04-persistence-s5/README.md)). Public headless
+save/load/list/inspect/rewind and restart flows are implemented
+([S6 evidence](reviews/2026-10-04-persistence-s6/README.md)). S7's complete fault
+acceptance and focused persistence mutations remain pending; Phase 2 is not yet
+claimed complete.
 
 - `cyoa-core`: checked domain types, namesake-preserving casts and stable IDs,
   summary deltas, typed limits, owned protagonist selection, turns, chapters and
@@ -123,6 +125,9 @@ and stale-worker rejection; the headless view drives this same controller.
 cargo run -p cyoa-cli -- play --headless --demo
 cargo run -p cyoa-cli -- play --headless --backend codex
 cargo run -p cyoa-cli -- play --headless --backend claude
+cargo run -p cyoa-cli -- list
+cargo run -p cyoa-cli -- inspect SAVE_ID
+cargo run -p cyoa-cli -- play --headless --demo --load SAVE_ID --limits original
 ```
 
 Enter a brief, accept the outline with an empty line (or `/edit` its title and
@@ -131,7 +136,27 @@ an empty line to continue, or `/action N`. Ordinary numbers remain player text;
 `//` sends an initial slash. `/event` requests an interesting event. `/help`,
 `/inspect`, `/diagnostics`, `/retry`, `/cancel` and `/quit` are available.
 Retry repeats the failed intent only when a failure/cancellation has finished.
-Unsupported commands make no inference call. All state is in memory only.
+Unsupported commands make no inference call. Selection saves the zero-turn game
+before its automatic opening; each accepted turn and rewind autosaves. `/quit`,
+EOF and idle Ctrl-C save the last canonical state before exit. A failed save
+retains the story in memory and blocks further play until `/save` succeeds;
+storage retry makes no inference call. Wait for `Saved: ... durability=Clean`
+before sending the next story command in scripts.
+
+Use `/save`, `/save-copy`, `/list [AFTER_ID]`, `/load SAVE_ID --limits
+current|original [--backup]` and `/rewind N` during idle play. `/save-copy` creates
+a new slot and switches only after success. Every load requires an explicit
+limits policy; `current` uses this executable's default settings, while `original`
+uses the game's creation settings. A loaded zero-turn game waits for explicit
+continuation. Backup recovery creates a fresh slot and preserves the original
+primary/backup. List and inspect need no vendor credentials; valid live resumes
+authenticate the explicitly chosen backend after save validation. Demo saves
+require `--demo`; live saves accept either selected backend.
+
+Saves live under `$XDG_DATA_HOME/cyoa/saves` on Linux, with the normal user-data
+fallback. Global `--data-dir ABS_PATH` selects an app directory whose `saves/`
+subdirectory is managed. Relative paths are rejected. Saves are version-one JSON
+with an exact previous-byte backup; IDs displayed after saving are stable.
 
 Story prose goes to stdout; prompts, actions, diagnostics and preview status go to
 stderr. Preview prose is tentative until a committed marker; failures discard it,
@@ -218,7 +243,8 @@ Linux-tested for both backends, including composed story acceptance, persistent
 adapter mutations and a bounded live adapter gate each. Controller/worker and Linux
 headless/demo acceptance are implemented. Both backends passed the live headless
 gate (Codex 2026-10-02, Claude 2026-10-03), so Phase 1 is complete; persistence
-(Phase 2) is next. v1 completion still requires the remaining phases.
+(Phase 2) has S1–S6 implemented and S7 acceptance remaining. v1 completion still
+requires the remaining phases.
 
 ## Where to start
 

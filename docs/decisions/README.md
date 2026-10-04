@@ -109,8 +109,8 @@ protect this stronger Rust construction guarantee. Evidence: `652f0b2`.
 
 ### LIMITS-001 Typed bounds and explicit restoration policy
 
-**Partial: domain, prompts, orchestration, save-codec and local disk restoration enforced;
-user-facing persistence pending.** Different
+**Partial: domain, prompts, orchestration, save-codec, local disk and headless
+restoration enforced; complete Phase 2 acceptance pending.** Different
 bounds have distinct types. Event cap and playable minimum must be positive;
 NPC cap and prose bridge allow zero. Zero NPC cap consumes no candidates.
 
@@ -446,8 +446,9 @@ protects it at the real-child boundary.
 ### PRODUCT-001 Standalone TUI, persistence, export, and image boundary
 
 **Partial: terminal-independent controller/worker, Linux headless/demo and
-persistence use cases/version-one codec and supervised local atomic storage enforced;
-autosave/headless persistence, TUI and export pending.** Rust TUI and headless demo replace the Qt/calibre host. Keep vendor and
+persistence use cases/version-one codec, supervised local atomic storage and
+autosave/headless persistence enforced; full phase acceptance, TUI and export
+pending.** Rust TUI and headless demo replace the Qt/calibre host. Keep vendor and
 filesystem work in adapters, one generation in flight, UI-owned canonical state,
 worker progress messages, cancellable children, cached narrative wrapping. Do not
 hold a state mutex during a model call. Save atomically with backup and versioned
@@ -467,7 +468,8 @@ stdin/signal shutdown, saves, rendering cache or exports. Evidence:
 Headless item 7 adds shipped `play --headless --backend claude|codex` and
 `play --headless --demo`, manual outline replacement, checked selection, one
 opening call, explicit retry, action numbering, literal slash input and read-only
-canonical inspection. Memory-only status is explicit. Linux readiness polling
+canonical inspection. At that checkpoint memory-only status was explicit; S6
+below adds persistence. Linux readiness polling
 and SIGINT flags avoid a blocked input thread; EOF, quit, invalid input and output
 errors close/join workers. Nonblocking output retains temporary pipe backpressure
 in bounded queues, as specified by the 2026-10-03 decision below. Previews have tentative/discarded/final boundaries; divergent final text
@@ -524,7 +526,7 @@ validation (two usable playables remain acceptable by default). Prompt and schem
 rendering share the calculation. Boundary tests cover caps 0–3 and 8, minimums
 1–4 and 6, and the maximum representable minimum without arithmetic overflow.
 Restored-limit orchestration is enforced by the registered application test;
-persistence remains pending.
+the later Phase 2 records below cover persistence.
 
 CHAPTER-001 also covers loaded prompt/schema instructions and JSON turn mapping
 through commit and rewind. Continuing turns can supply a new title; null preserves
@@ -889,3 +891,32 @@ shipped-helper primary/backup observations are registered. The full shared gate
 passed; see `reviews/2026-10-04-persistence-s5/README.md`. Public headless commands
 and output/shutdown composition remain S6; complete Phase 2 fault/mutation
 acceptance remains S7. No new live backend claim or schema/prompt change.
+
+### Phase 2 step 6 public headless persistence evidence (2026-10-04)
+
+Public list/inspect are credential-free, and startup resume validates the save,
+explicit current/original policy and Live/Demo source before vendor resolution
+or authentication. Only admitted sessions persist restore-policy changes. Both
+backend fixtures create and resume live saves under the peer backend, retaining
+original records and captured future context (BACKENDS-001/ACCEPTANCE-001).
+Demo resumes select by committed count, preserve all five passages through
+consumed-result cancellation/retry and rewind, and reject source/scenario/version/
+excess-count mismatches without inference or vendor fallback.
+
+The headless driver now uses the canonical persistence coordinator for autosave,
+/save, /save-copy, /list, /load, /rewind and final save. Zero-turn resumed games wait
+for explicit opening; backup recovery creates a fresh slot and preserves both
+original files. Successful load clears edits; failed load preserves them. Storage
+evidence is separate from generation diagnostics. The same finite output queues
+and absolute final drain remain, after both owned workers finish. Input/output
+errors still save canonical state and remain errors; controlled silent helpers
+prove input responsiveness, two-attempt shutdown bounds and actual PID reaping.
+Selection reserves its opening request/revision capacity before canonical change.
+Every existing play test has a temporary data root, with story/cleanup/output
+assertions retained and actual five-turn save/audit bytes also checked.
+
+These PRODUCT-001/STREAM-001/BACKENDS-001/ACCEPTANCE-001 regressions are registered.
+The S6 evidence audit is `reviews/2026-10-04-persistence-s6/README.md`. S7's full
+composed fault acceptance and focused persistence mutations remain pending;
+Phase 2 completion, TUI, exports and prompt overrides are not claimed. Backend
+schema/prompt/protocol code and live verification records are unchanged.

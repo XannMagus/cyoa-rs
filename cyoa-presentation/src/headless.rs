@@ -1,9 +1,11 @@
 //! Append-only terminal view over the canonical session controller.
 use crate::{
-    runtime::{Intent, SessionRuntime},
+    commands::{PersistenceCommand, persistence_command},
+    persistence::{HeadlessSession, PersistenceEvent, SaveBinding, Shutdown},
+    runtime::Intent,
     session::{Acceptance, Failure, Phase, Stage},
 };
-use cyoa_application::generation::{StoryGenerator, TurnDirection};
+use cyoa_application::{generation::TurnDirection, persistence::*};
 use cyoa_core::{
     text::{Brief, PlayerInput, WorldDescription, WorldTitle},
     world::{PlayablePosition, WorldOutline},
@@ -42,13 +44,13 @@ impl Default for View {
         }
     }
 }
-const HELP: &str = "Commands: /help /quit /cancel /retry /inspect /diagnostics\nOutline: empty line accepts; /edit replaces title and description.\nPlay: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.\nCtrl-C cancels generation; idle Ctrl-C and EOF exit. Input during generation is rejected except help, inspection, diagnostics, cancellation and quit.\n";
+const HELP: &str = "Commands: /help /quit /cancel /retry /inspect /diagnostics /save /save-copy /list [AFTER_ID]\n/load SAVE_ID --limits current|original [--backup]; /rewind N\nOutline: empty line accepts; /edit replaces title and description.\nPlay: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.\nCtrl-C cancels generation; idle Ctrl-C and EOF exit. Selection, accepted turns and rewind autosave. During storage, help, inspection, diagnostics and quit remain available.\n";
 
 /// Always close and join workers, including on input/output errors.
 /// Sinks must be nonblocking and unbuffered (the Linux terminal guards provide
 /// this). Order is preserved within each stream, not between stdout and stderr.
-pub fn run<G: StoryGenerator + Send + 'static>(
-    runtime: &mut SessionRuntime<G>,
+pub fn run(
+    runtime: &mut dyn HeadlessSession,
     input: &mut dyn Input,
     story: &mut dyn Write,
     control: &mut dyn Write,
@@ -58,14 +60,38 @@ pub fn run<G: StoryGenerator + Send + 'static>(
     let mut control = QueuedOutput::new(control);
     let result = drive(runtime, input, &mut story, &mut control, demo);
     let _ = runtime.dispatch(Intent::Quit);
-    while runtime.controller().phase() != Phase::Closed {
-        runtime.poll();
-        std::thread::sleep(Duration::from_millis(10));
+    // A terminal fault cannot bypass the obligatory canonical save. Keep polling
+    // input and the healthy output sink while both owned workers finish.
+    let mut story_ok = !story.is_faulted();
+    let mut control_ok = !control.is_faulted();
+    while !matches!(
+        runtime.shutdown(),
+        Shutdown::DrainingOutput | Shutdown::Closed
+    ) {
+        if let Ok(InputEvent::Interrupt | InputEvent::Eof) = input.poll(Duration::from_millis(25)) {
+            let _ = runtime.dispatch(Intent::Quit);
+        }
+        for event in runtime.poll() {
+            if control_ok && let Err(_) = storage_event(runtime, event, &mut control) {
+                control_ok = false;
+            }
+        }
+        if story_ok && story.pump(Instant::now()).is_err() {
+            story_ok = false;
+        }
+        if control_ok && control.pump(Instant::now()).is_err() {
+            control_ok = false;
+        }
+    }
+    if result.is_ok() && runtime.exit_failed() {
+        return Err(io::Error::other(
+            "session closed with a worker failure or unsaved canonical revision; in-memory state may be lost",
+        ));
     }
     result
 }
-fn drive<G: StoryGenerator + Send + 'static>(
-    runtime: &mut SessionRuntime<G>,
+fn drive(
+    runtime: &mut dyn HeadlessSession,
     input: &mut dyn Input,
     story: &mut QueuedOutput<'_>,
     control: &mut QueuedOutput<'_>,
@@ -73,7 +99,7 @@ fn drive<G: StoryGenerator + Send + 'static>(
 ) -> io::Result<()> {
     writeln!(
         control,
-        "This session is memory only: no saves or autosave."
+        "Autosave enabled: selection, accepted turns, rewind and quit save canonical state."
     )?;
     if demo {
         writeln!(
@@ -81,10 +107,18 @@ fn drive<G: StoryGenerator + Send + 'static>(
             "Demo harbour-v1: five prerecorded turns; your choices do not alter the recorded fiction. Exhaustion never switches to a live backend."
         )?;
     }
-    writeln!(
-        control,
-        "Brief: enter a nonblank adventure idea. /help lists commands."
-    )?;
+    if runtime.controller().game().is_some() {
+        writeln!(
+            control,
+            "Resumed game; loading makes no inference call. Empty line continues."
+        )?;
+        inspect(runtime, control)?;
+    } else {
+        writeln!(
+            control,
+            "Brief: enter a nonblank adventure idea. /help lists commands."
+        )?;
+    }
     control.flush()?;
     let mut view = View::default();
     loop {
@@ -109,7 +143,15 @@ fn drive<G: StoryGenerator + Send + 'static>(
             }
             InputEvent::Line(line) => view.line(runtime, &line, control)?,
         }
-        for acceptance in runtime.poll() {
+        for event in runtime.poll() {
+            let PersistenceEvent::Generation { acceptance, .. } = event else {
+                if matches!(&event, PersistenceEvent::Loaded { .. }) {
+                    view.edit = Edit::None;
+                    view.printed.clear();
+                }
+                storage_event(runtime, event, control)?;
+                continue;
+            };
             match acceptance {
                 Acceptance::Committed => view.committed(runtime, story, control)?,
                 Acceptance::Failed => {
@@ -143,12 +185,16 @@ fn drive<G: StoryGenerator + Send + 'static>(
                 view.printed = preview.to_owned();
             }
         }
-        if runtime.controller().phase() == Phase::Closed {
+        if runtime.shutdown() == Shutdown::DrainingOutput {
             if !view.printed.is_empty() {
                 writeln!(story)?;
                 writeln!(control, "[tentative preview discarded on exit]")?;
             }
-            writeln!(control, "Session closed; in-memory state discarded.")?;
+            writeln!(
+                control,
+                "Session closed; durability={:?}.",
+                runtime.durability()
+            )?;
             control.flush()?;
             // The worker is already joined. Drain queued bytes before reporting
             // success, with an absolute bound even if a reader keeps trickling.
@@ -169,6 +215,7 @@ fn drive<G: StoryGenerator + Send + 'static>(
                 control.pump(Instant::now())?;
                 check_deadline()?;
                 if story.is_empty() && control.is_empty() {
+                    runtime.output_drained();
                     return Ok(());
                 }
                 if matches!(
@@ -192,9 +239,9 @@ fn drive<G: StoryGenerator + Send + 'static>(
     }
 }
 impl View {
-    fn dispatch<G: StoryGenerator + Send + 'static>(
+    fn dispatch(
         &mut self,
-        runtime: &mut SessionRuntime<G>,
+        runtime: &mut dyn HeadlessSession,
         intent: Intent,
         control: &mut dyn Write,
     ) -> io::Result<bool> {
@@ -215,9 +262,9 @@ impl View {
             }
         }
     }
-    fn line<G: StoryGenerator + Send + 'static>(
+    fn line(
         &mut self,
-        runtime: &mut SessionRuntime<G>,
+        runtime: &mut dyn HeadlessSession,
         line: &str,
         control: &mut dyn Write,
     ) -> io::Result<()> {
@@ -248,6 +295,30 @@ impl View {
                 return Ok(());
             }
             _ => (),
+        }
+        if let Some(command) = persistence_command(trimmed) {
+            let result = match command {
+                Ok(PersistenceCommand::Save { copy }) => runtime.save(copy),
+                Ok(PersistenceCommand::List(page)) => runtime.list(page),
+                Ok(PersistenceCommand::Load(command)) => runtime.load(command),
+                Ok(PersistenceCommand::Rewind(count)) => runtime.dispatch(Intent::Rewind(count)),
+                Err(message) => {
+                    writeln!(control, "Rejected: {message}")?;
+                    return Ok(());
+                }
+            };
+            match result {
+                Ok(()) => writeln!(
+                    control,
+                    "Storage operation started; /inspect and /quit remain available."
+                )?,
+                Err(error) => writeln!(control, "Rejected: {error}")?,
+            }
+            return Ok(());
+        }
+        if runtime.storage_busy() || runtime.shutdown() != Shutdown::Open {
+            writeln!(control, "Rejected: storage or shutdown is in progress.")?;
+            return Ok(());
         }
         if matches!(
             runtime.controller().phase(),
@@ -357,14 +428,11 @@ impl View {
             Stage::CastSelection { .. } => {
                 let position = trimmed.parse::<usize>().ok().and_then(|n| n.checked_sub(1));
                 if let Some(position) = position {
-                    if self.dispatch(
+                    self.dispatch(
                         runtime,
                         Intent::Select(PlayablePosition::new(position)),
                         control,
-                    )? {
-                        // Selection and the single opening call remain explicit intents.
-                        self.dispatch(runtime, Intent::Turn(TurnDirection::Continue), control)?;
-                    }
+                    )?;
                 } else {
                     writeln!(
                         control,
@@ -383,9 +451,9 @@ impl View {
         }
         Ok(())
     }
-    fn committed<G: StoryGenerator + Send + 'static>(
+    fn committed(
         &mut self,
-        runtime: &SessionRuntime<G>,
+        runtime: &dyn HeadlessSession,
         story: &mut dyn Write,
         control: &mut dyn Write,
     ) -> io::Result<()> {
@@ -440,10 +508,7 @@ impl View {
         Ok(())
     }
 }
-fn show_stage<G: StoryGenerator + Send + 'static>(
-    runtime: &SessionRuntime<G>,
-    control: &mut dyn Write,
-) -> io::Result<()> {
+fn show_stage(runtime: &dyn HeadlessSession, control: &mut dyn Write) -> io::Result<()> {
     match runtime.controller().stage() {
         Stage::OutlineReview { outline, .. } => {
             writeln!(
@@ -470,10 +535,7 @@ fn show_stage<G: StoryGenerator + Send + 'static>(
     }
     Ok(())
 }
-fn show_failure<G: StoryGenerator + Send + 'static>(
-    runtime: &SessionRuntime<G>,
-    control: &mut dyn Write,
-) -> io::Result<()> {
+fn show_failure(runtime: &dyn HeadlessSession, control: &mut dyn Write) -> io::Result<()> {
     match runtime.controller().failure() {
         Some(Failure::Generation(e)) => {
             writeln!(control, "Generation failed: {e}. State unchanged.")
@@ -486,10 +548,14 @@ fn show_failure<G: StoryGenerator + Send + 'static>(
         None => Ok(()),
     }
 }
-fn diagnostics<G: StoryGenerator + Send + 'static>(
-    runtime: &SessionRuntime<G>,
-    control: &mut dyn Write,
-) -> io::Result<()> {
+fn diagnostics(runtime: &dyn HeadlessSession, control: &mut dyn Write) -> io::Result<()> {
+    if let Some(error) = runtime.storage_failure() {
+        writeln!(
+            control,
+            "Storage failure: operation={:?} stage={:?} kind={:?} visibility={:?}: {}",
+            error.operation, error.stage, error.kind, error.visibility, error
+        )?;
+    }
     let failure = match runtime.controller().failure() {
         Some(Failure::Generation(e)) | Some(Failure::Cancelled { rejected: Err(e) }) => Some(e),
         _ => None,
@@ -509,10 +575,7 @@ fn diagnostics<G: StoryGenerator + Send + 'static>(
     }
     Ok(())
 }
-fn inspect<G: StoryGenerator + Send + 'static>(
-    runtime: &SessionRuntime<G>,
-    control: &mut dyn Write,
-) -> io::Result<()> {
+fn inspect(runtime: &dyn HeadlessSession, control: &mut dyn Write) -> io::Result<()> {
     let c = runtime.controller();
     writeln!(
         control,
@@ -520,8 +583,30 @@ fn inspect<G: StoryGenerator + Send + 'static>(
         c.phase(),
         c.revision().get()
     )?;
+    match runtime.binding() {
+        SaveBinding::Unbound => writeln!(
+            control,
+            "Save: unbound durability={:?}",
+            runtime.durability()
+        )?,
+        SaveBinding::Bound {
+            id, disk_revision, ..
+        } => writeln!(
+            control,
+            "Save: {} disk_revision={} durability={:?}",
+            id.as_str(),
+            disk_revision.get(),
+            runtime.durability()
+        )?,
+    }
     if let Some(game) = c.game() {
         writeln!(control, "Turns: {}", game.turns().len())?;
+        writeln!(
+            control,
+            "Active limits: {:?}\nOriginal limits: {:?}",
+            game.limits(),
+            game.original_limits()
+        )?;
         if let Some(chapter) = game.current_chapter() {
             writeln!(
                 control,
@@ -556,4 +641,172 @@ fn inspect<G: StoryGenerator + Send + 'static>(
         writeln!(control, "No game selected.")?;
     }
     Ok(())
+}
+
+fn storage_event(
+    runtime: &dyn HeadlessSession,
+    event: PersistenceEvent,
+    control: &mut dyn Write,
+) -> io::Result<()> {
+    match event {
+        PersistenceEvent::Saved(receipt) => writeln!(
+            control,
+            "Saved: {} disk_revision={} turns={} durability={:?}",
+            receipt.metadata.id.as_str(),
+            receipt.metadata.revision.get(),
+            runtime.controller().game().map_or(0, |g| g.turns().len()),
+            runtime.durability()
+        ),
+        PersistenceEvent::Loaded {
+            old_id,
+            backup,
+            unrecognized_fields,
+        } => {
+            if backup {
+                writeln!(
+                    control,
+                    "Recovered backup from {}; saving into a fresh slot.",
+                    old_id.as_str()
+                )?;
+            } else {
+                writeln!(control, "Loaded: {}", old_id.as_str())?;
+            }
+            for field in unrecognized_fields {
+                writeln!(
+                    control,
+                    "Unknown optional field (omitted on resave): {}",
+                    display_text(&field)
+                )?;
+            }
+            inspect(runtime, control)
+        }
+        PersistenceEvent::Listed(page) => render_listing(&page, control),
+        PersistenceEvent::Failed(error) => {
+            writeln!(
+                control,
+                "Storage failed: {error}; visibility={:?}; durability={:?}.",
+                error.visibility,
+                runtime.durability()
+            )?;
+            if matches!(
+                error.operation,
+                StorageOperation::Create | StorageOperation::Replace | StorageOperation::Reconcile
+            ) {
+                writeln!(
+                    control,
+                    "Canonical story remains in memory; save failed; use /save. The in-memory revision may be lost on exit."
+                )?;
+            }
+            if error.operation == StorageOperation::Load {
+                writeln!(
+                    control,
+                    "Primary loads never fall back automatically. To inspect or recover a backup, use --backup explicitly."
+                )?;
+            }
+            Ok(())
+        }
+        _ => Ok(()),
+    }
+}
+/// Display-only escaping/truncation; retained save values remain untouched.
+fn display_text(text: &str) -> String {
+    let mut clipped: String = text.chars().take(512).collect();
+    if text.chars().nth(512).is_some() {
+        clipped.push_str(" [display truncated]");
+    }
+    format!("{clipped:?}")
+}
+pub fn render_listing(page: &SavePageResult, out: &mut dyn Write) -> io::Result<()> {
+    if page.entries.is_empty() {
+        writeln!(out, "No saves.")?;
+    }
+    for entry in &page.entries {
+        write!(out, "{} ", entry.id.as_str())?;
+        match &entry.status {
+            SaveListingStatus::Valid {
+                title,
+                saved_at,
+                turn_count,
+                source,
+            } => writeln!(
+                out,
+                "title={} turns={} source={:?} saved_at_unix={}.{:03} backup={}",
+                display_text(title),
+                turn_count,
+                source,
+                saved_at.unix_seconds(),
+                saved_at.nanoseconds() / 1_000_000,
+                entry.backup_available
+            )?,
+            status => writeln!(out, "status={status:?} backup={}", entry.backup_available)?,
+        }
+    }
+    if let Some(next) = &page.next {
+        writeln!(
+            out,
+            "Next page: --after {} (during play: /list {})",
+            next.as_str(),
+            next.as_str()
+        )?;
+    }
+    Ok(())
+}
+pub fn render_saved_game(stored: &StoredGame, out: &mut dyn Write) -> io::Result<()> {
+    writeln!(
+        out,
+        "Save: {} copy={:?} disk_revision={} source={:?}",
+        stored.metadata.id.as_str(),
+        stored.copy,
+        stored.metadata.revision.get(),
+        stored.snapshot.source
+    )?;
+    writeln!(
+        out,
+        "Title: {}\nTurns: {}\nActive limits: {:?}\nOriginal limits: {:?}",
+        display_text(stored.snapshot.game.world().outline().title().as_str()),
+        stored.snapshot.game.turns().len(),
+        stored.snapshot.game.limits(),
+        stored.snapshot.game.original_limits()
+    )?;
+    for field in &stored.unrecognized_fields {
+        writeln!(
+            out,
+            "Unknown optional field (omitted on resave): {}",
+            display_text(field)
+        )?;
+    }
+    Ok(())
+}
+
+/// Read-only commands share the finite output queue and absolute drain bound.
+pub fn query_output(
+    sink: &mut dyn Write,
+    render: impl FnOnce(&mut dyn Write) -> io::Result<()>,
+    mut interrupted: impl FnMut() -> bool,
+) -> io::Result<()> {
+    let mut output = QueuedOutput::new(sink);
+    render(&mut output)?;
+    let deadline = Instant::now() + output::STALL_LIMIT;
+    loop {
+        if interrupted() {
+            return Err(io::ErrorKind::Interrupted.into());
+        }
+        if Instant::now() >= deadline {
+            return Err(io::Error::new(
+                io::ErrorKind::TimedOut,
+                "terminal output did not drain on exit",
+            ));
+        }
+        output.pump(Instant::now())?;
+        if Instant::now() >= deadline {
+            return Err(io::Error::new(
+                io::ErrorKind::TimedOut,
+                "terminal output did not drain on exit",
+            ));
+        }
+        if output.is_empty() {
+            return Ok(());
+        }
+        std::thread::sleep(Duration::from_millis(1));
+    }
 }

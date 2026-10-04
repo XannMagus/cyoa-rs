@@ -14,8 +14,10 @@ use cyoa_core::{
 use cyoa_infrastructure::generation::demo;
 use cyoa_presentation::{
     headless::{self, Input, InputEvent},
+    persistence::{HeadlessSession, PersistedSession},
     runtime::{Intent, SessionRuntime},
     session::{Phase, SessionController},
+    storage::StorageRunner,
     worker::PreviewLimit,
 };
 use std::{
@@ -45,11 +47,38 @@ impl Input for Lines {
         })
     }
 }
-fn runtime<G: StoryGenerator + Send + 'static>(generator: G) -> SessionRuntime<G> {
-    SessionRuntime::new(
+fn runtime<G: StoryGenerator + Send + 'static>(
+    generator: G,
+) -> PersistedSession<
+    G,
+    cyoa_infrastructure::persistence::helper::SupervisedRepository,
+    impl Fn(
+        cyoa_application::persistence::PreparedWriteEvidence,
+    ) -> cyoa_infrastructure::persistence::helper::SupervisedRepository,
+> {
+    let runtime = SessionRuntime::new(
         SessionController::new(Limits::default(), StoryStyle::default()),
         StoryUseCases::new(generator),
         PreviewLimit::default(),
+    );
+    let root = tempfile::tempdir().unwrap();
+    let config = cyoa_infrastructure::persistence::helper::HelperConfig::new(
+        std::path::PathBuf::from(env!("CARGO_BIN_EXE_cyoa")),
+        root.path().into(),
+    )
+    .unwrap();
+    PersistedSession::new(
+        runtime,
+        StorageRunner::new(move |evidence| {
+            let _keep_root_alive = &root;
+            cyoa_infrastructure::persistence::helper::SupervisedRepository::new(
+                config.clone(),
+                evidence,
+            )
+        }),
+        cyoa_application::persistence::StorySource::Demo {
+            scenario: cyoa_application::persistence::DemoScenarioId::HarbourV1,
+        },
     )
 }
 struct Paused {
@@ -87,7 +116,7 @@ fn paused_control_reader_resumes_and_final_drain_delivers_every_help_once() {
     headless::run(&mut runtime, &mut input, &mut story, &mut control, true).unwrap();
     let text = String::from_utf8(control.written).unwrap();
     assert_eq!(text.matches("Commands: /help").count(), 400);
-    assert!(text.ends_with("Session closed; in-memory state discarded.\n"));
+    assert!(text.ends_with("Session closed; durability=Clean.\n"));
     assert_eq!(runtime.controller().phase(), Phase::Closed);
 }
 struct Trickle {
@@ -325,7 +354,7 @@ fn initially_full_real_control_pipe_recovers_without_losing_help_or_close() {
     assert_eq!(&bytes[..filled], vec![b'x'; filled]);
     let text = std::str::from_utf8(&bytes[filled..]).unwrap();
     assert_eq!(text.matches("Commands: /help").count(), 400);
-    assert!(text.ends_with("Session closed; in-memory state discarded.\n"));
+    assert!(text.ends_with("Session closed; durability=Clean.\n"));
 }
 #[cfg(target_os = "linux")]
 #[test]
@@ -334,7 +363,7 @@ fn initially_full_real_story_pipe_drains_exact_committed_narrative_on_exit() {
     use std::{cell::RefCell, rc::Rc};
     let (mut story, reader, filled) = full_pipe_with_delayed_reader();
     let mut runtime = runtime(demo::harbour_v1().unwrap());
-    fn settle<G: StoryGenerator + Send + 'static>(runtime: &mut SessionRuntime<G>) {
+    fn settle(runtime: &mut dyn HeadlessSession) {
         let deadline = Instant::now() + Duration::from_secs(2);
         while runtime.controller().phase() == Phase::Running {
             runtime.poll();
@@ -350,9 +379,6 @@ fn initially_full_real_story_pipe_drains_exact_committed_narrative_on_exit() {
     settle(&mut runtime);
     runtime
         .dispatch(Intent::Select(PlayablePosition::new(0)))
-        .unwrap();
-    runtime
-        .dispatch(Intent::Turn(TurnDirection::Continue))
         .unwrap();
     struct Capture(Rc<RefCell<Vec<u8>>>);
     impl Write for Capture {

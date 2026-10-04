@@ -21,7 +21,9 @@ See [S2 evidence](../../reviews/2026-10-04-persistence-s2/README.md).
 presentation storage runner; see [S4 evidence](../../reviews/2026-10-04-persistence-s4/README.md).
 **S5 implements canonical persistence coordination**; see
 [S5 evidence](../../reviews/2026-10-04-persistence-s5/README.md).
-S6–S7 remain planned; public headless save/load commands are not implemented.
+**S6 implements public headless commands and resume**; see
+[S6 evidence](../../reviews/2026-10-04-persistence-s6/README.md).
+S7's composed fault acceptance and focused persistence mutations remain planned.
 The proposals and audit below retain their planning context.
 
 ## 1. Outcome, scope and authority
@@ -676,7 +678,7 @@ plan as authorization. Physical crash durability on untested filesystems, future
 schema migrations remain named evidence limits,
 not questions for the user to settle before vendor-independent work.
 
-## 8. Acceptance matrix (planning targets; S1–S4 evidence above)
+## 8. Acceptance matrix (planning targets; S1–S6 evidence above)
 
 IDs below denote test groups with concrete targets and expected observations.
 Assertions use independent fixture expectations, not encoder output as the sole
@@ -740,7 +742,7 @@ failures. No behavior-changing survivor allowance or weakened historical tests.
 
 This maps every requirement/decision in the handoff to concrete work and evidence.
 “Covered” here means specified and testable in this historical planning audit.
-Actual S1–S4 enforcement and remaining S5–S7 work are recorded above and in their
+Actual S1–S6 enforcement and remaining S7 work are recorded above and in their
 evidence files; this table alone does not establish feature enforcement.
 
 | Handoff item | Plan location | Acceptance / implementation |

@@ -1,6 +1,7 @@
 use cyoa_application::{
     cancellation::CancellationSource,
     generation::{StoryGenerator, StoryUseCases},
+    persistence::*,
 };
 use cyoa_core::{limits::Limits, style::StoryStyle};
 use cyoa_infrastructure::{
@@ -10,11 +11,17 @@ use cyoa_infrastructure::{
         codex_cli::{CodexCliBackend, CodexExecutable, CodexInvocationConfig, CodexModel},
     },
     generation::{demo, engine::GenerationEngine, templates::GenerationTemplates},
+    persistence::{
+        helper::{HelperConfig, SupervisedRepository},
+        repository::data_directory,
+    },
 };
 use cyoa_presentation::{
     commands::{BackendChoice, Cli, Command, PlayOptions},
+    persistence::{PersistedSession, validate_loaded_source},
     runtime::SessionRuntime,
     session::SessionController,
+    storage::StorageRunner,
     worker::PreviewLimit,
 };
 use std::{
@@ -59,17 +66,89 @@ fn execute() -> Result<(), Box<dyn std::error::Error>> {
         )?;
         return Ok(());
     }
-    let Command::Play(options) = Cli::parse().command;
+    let cli = Cli::parse();
     #[cfg(not(target_os = "linux"))]
     {
-        let _ = options;
+        let _ = cli;
         Err(cyoa_presentation::terminal::unsupported().into())
     }
     #[cfg(target_os = "linux")]
     {
+        let helper = HelperConfig::new(std::env::current_exe()?, data_directory(cli.data_dir)?)?;
+        let options = match cli.command {
+            Command::List(options) => {
+                let page = SavePage::new(options.after, options.limit)?;
+                let result = connect(move |token| {
+                    PersistenceUseCases::new(SupervisedRepository::new(
+                        helper,
+                        PreparedWriteEvidence::default(),
+                    ))
+                    .list_saves(ListSaves { page }, token)
+                })?;
+                return query_output(|out| {
+                    cyoa_presentation::headless::render_listing(&result, out)
+                });
+            }
+            Command::Inspect(options) => {
+                let stored = connect(move |token| {
+                    PersistenceUseCases::new(SupervisedRepository::new(
+                        helper,
+                        PreparedWriteEvidence::default(),
+                    ))
+                    .inspect_save(
+                        InspectSave {
+                            id: options.id,
+                            copy: if options.backup {
+                                SaveCopy::Backup
+                            } else {
+                                SaveCopy::Primary
+                            },
+                        },
+                        token,
+                    )
+                })?;
+                return query_output(|out| {
+                    cyoa_presentation::headless::render_saved_game(&stored, out)
+                });
+            }
+            Command::Play(options) => options,
+        };
+        let source = if options.demo {
+            StorySource::Demo {
+                scenario: DemoScenarioId::HarbourV1,
+            }
+        } else {
+            StorySource::Live
+        };
+        let loaded = if let Some(id) = options.load.clone() {
+            let config = helper.clone();
+            let command = LoadGame {
+                id,
+                copy: if options.backup {
+                    SaveCopy::Backup
+                } else {
+                    SaveCopy::Primary
+                },
+                limits: options
+                    .limits
+                    .expect("Clap requires explicit restore policy")
+                    .policy(),
+            };
+            let loaded = connect(move |token| {
+                PersistenceUseCases::new(SupervisedRepository::new(
+                    config,
+                    PreparedWriteEvidence::default(),
+                ))
+                .load_game(command, token)
+            })?;
+            validate_loaded_source(&loaded, source)?;
+            Some(loaded)
+        } else {
+            None
+        };
         // Auth preflight precedes the UI. No background stdin reader is spawned.
         if options.demo {
-            play(demo::harbour_v1()?, true)
+            play(demo::harbour_v1()?, source, helper, loaded)
         } else {
             let selected_path = std::env::var_os("PATH").unwrap_or_default();
             let home = options
@@ -92,9 +171,11 @@ fn execute() -> Result<(), Box<dyn std::error::Error>> {
                         config_dir(&options, "CODEX_HOME"),
                         options.model.map(CodexModel::new).transpose()?,
                     )?;
-                    play_backend(connect(move |token| {
-                        CodexCliBackend::connect(config, token)
-                    })?)
+                    play_backend(
+                        connect(move |token| CodexCliBackend::connect(config, token))?,
+                        helper,
+                        loaded,
+                    )
                 }
                 BackendChoice::Claude => {
                     let executable = ClaudeExecutable::resolve(
@@ -112,20 +193,19 @@ fn execute() -> Result<(), Box<dyn std::error::Error>> {
                         config_dir(&options, "CLAUDE_CONFIG_DIR"),
                         options.model.map(ClaudeModel::new).transpose()?,
                     )?;
-                    play_backend(connect(move |token| {
-                        ClaudeCliBackend::connect(config, token)
-                    })?)
+                    play_backend(
+                        connect(move |token| ClaudeCliBackend::connect(config, token))?,
+                        helper,
+                        loaded,
+                    )
                 }
             }
         }
     }
 }
 #[cfg(target_os = "linux")]
-fn connect<T: Send>(
-    job: impl FnOnce(
-        &cyoa_application::cancellation::CancellationToken,
-    ) -> Result<T, cyoa_infrastructure::backend::BackendError>
-    + Send,
+fn connect<T: Send, E: std::error::Error + Send + 'static>(
+    job: impl FnOnce(&cyoa_application::cancellation::CancellationToken) -> Result<T, E> + Send,
 ) -> Result<T, Box<dyn std::error::Error>> {
     let interrupt = cyoa_presentation::terminal::InterruptFlag::new()?;
     let source = CancellationSource::default();
@@ -155,19 +235,27 @@ fn config_dir(options: &PlayOptions, variable: &str) -> Option<PathBuf> {
         .or_else(|| std::env::var_os(variable).map(PathBuf::from))
 }
 #[cfg(target_os = "linux")]
-fn play_backend<B: Backend + Send + 'static>(backend: B) -> Result<(), Box<dyn std::error::Error>> {
+fn play_backend<B: Backend + Send + 'static>(
+    backend: B,
+    helper: HelperConfig,
+    loaded: Option<LoadedGame>,
+) -> Result<(), Box<dyn std::error::Error>> {
     play(
         GenerationEngine::new(backend, GenerationTemplates::bundled()?),
-        false,
+        StorySource::Live,
+        helper,
+        loaded,
     )
 }
 #[cfg(target_os = "linux")]
 fn play<G: StoryGenerator + Send + 'static>(
     generator: G,
-    demo: bool,
+    source: StorySource,
+    helper: HelperConfig,
+    loaded: Option<LoadedGame>,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let cases = StoryUseCases::new(generator);
-    let mut runtime = SessionRuntime::new(
+    let runtime = SessionRuntime::new(
         SessionController::new(Limits::default(), StoryStyle::default()),
         cases,
         PreviewLimit::default(),
@@ -175,6 +263,24 @@ fn play<G: StoryGenerator + Send + 'static>(
     let mut input = cyoa_presentation::terminal::TerminalInput::new()?;
     let mut story = cyoa_presentation::terminal::Flags::new(io::stdout())?;
     let mut control = cyoa_presentation::terminal::Flags::new(io::stderr())?;
+    let mut runtime = PersistedSession::new(
+        runtime,
+        StorageRunner::new(move |evidence| SupervisedRepository::new(helper.clone(), evidence)),
+        source,
+    );
+    if let Some(loaded) = loaded {
+        runtime.admit_loaded(loaded)?;
+    }
+    let demo = source != StorySource::Live;
     cyoa_presentation::headless::run(&mut runtime, &mut input, &mut story, &mut control, demo)?;
+    Ok(())
+}
+#[cfg(target_os = "linux")]
+fn query_output(
+    render: impl FnOnce(&mut dyn Write) -> io::Result<()>,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let interrupt = cyoa_presentation::terminal::InterruptFlag::new()?;
+    let mut out = cyoa_presentation::terminal::Flags::new(io::stdout())?;
+    cyoa_presentation::headless::query_output(out.get_mut(), render, || interrupt.take())?;
     Ok(())
 }

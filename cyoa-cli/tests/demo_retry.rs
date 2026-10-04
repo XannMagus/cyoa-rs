@@ -190,3 +190,120 @@ fn cancellation_after_demo_consumption_retries_each_stage_and_preserves_all_pass
     assert_eq!(runtime.controller().phase(), Phase::Failed);
     assert_eq!(runtime.controller().game(), Some(&before));
 }
+
+#[test]
+fn cancelled_consumed_demo_passages_preserve_disk_and_retry_all_five_with_persistence() {
+    use cyoa_application::{cancellation::CancellationSource, persistence::*};
+    use cyoa_infrastructure::persistence::{
+        codec,
+        helper::{HelperConfig, SupervisedRepository},
+        repository::LocalRepository,
+    };
+    use cyoa_presentation::{
+        persistence::{Durability, HeadlessSession, PersistedSession},
+        storage::StorageRunner,
+    };
+    let root = tempfile::tempdir().unwrap();
+    let id = SaveId::new("harbour-0123456789abcdef0123456789abcdef").unwrap();
+    let game = codec::decode(
+        include_bytes!("../../cyoa-infrastructure/tests/fixtures/saves/v1-minimal.json"),
+        &id,
+        SaveCopy::Primary,
+    )
+    .unwrap()
+    .snapshot
+    .game;
+    let (consumed_tx, consumed_rx) = mpsc::channel();
+    let (release_tx, release_rx) = mpsc::channel();
+    let runtime = SessionRuntime::new(
+        SessionController::from_game(game),
+        StoryUseCases::new(Gate {
+            inner: demo_generator(),
+            consumed: consumed_tx,
+            release: release_rx,
+        }),
+        PreviewLimit::default(),
+    );
+    let config = HelperConfig::new(
+        std::path::PathBuf::from(env!("CARGO_BIN_EXE_cyoa")),
+        root.path().into(),
+    )
+    .unwrap();
+    let mut session = PersistedSession::new(
+        runtime,
+        StorageRunner::new(move |evidence| SupervisedRepository::new(config.clone(), evidence)),
+        StorySource::Demo {
+            scenario: DemoScenarioId::HarbourV1,
+        },
+    );
+    fn finish(session: &mut dyn HeadlessSession) {
+        let deadline = Instant::now() + Duration::from_secs(5);
+        while session.storage_busy()
+            || matches!(
+                session.controller().phase(),
+                Phase::Running | Phase::Cancelling | Phase::Closing
+            )
+        {
+            session.poll();
+            assert!(Instant::now() < deadline);
+            thread::sleep(Duration::from_millis(1));
+        }
+    }
+    session.save(false).unwrap();
+    finish(&mut session);
+    let mut reader = LocalRepository::new(root.path().into()).unwrap();
+    let token = CancellationSource::default().token();
+    let id = reader
+        .list(SavePage::new(None, 100).unwrap(), &token)
+        .unwrap()
+        .entries[0]
+        .id
+        .clone();
+    let path = root
+        .path()
+        .join("saves")
+        .join(format!("{}.json", id.as_str()));
+    for (index, narrative) in [
+        "Opening: the lantern flickered.",
+        "Second: the bell rang.",
+        "Voyage: the ship sailed.",
+        "Fourth: the waves rose.",
+        "Rewritten: the ship stayed.",
+    ]
+    .iter()
+    .enumerate()
+    {
+        let before = session.controller().game().unwrap().clone();
+        let bytes = std::fs::read(&path).unwrap();
+        session
+            .dispatch(Intent::Turn(TurnDirection::Continue))
+            .unwrap();
+        consumed_rx.recv_timeout(Duration::from_secs(2)).unwrap();
+        session.dispatch(Intent::Cancel).unwrap();
+        release_tx.send(()).unwrap();
+        finish(&mut session);
+        assert_eq!(session.controller().game(), Some(&before));
+        assert_eq!(std::fs::read(&path).unwrap(), bytes);
+        assert_eq!(session.durability(), Durability::Clean);
+        session.dispatch(Intent::Retry).unwrap();
+        consumed_rx.recv_timeout(Duration::from_secs(2)).unwrap();
+        release_tx.send(()).unwrap();
+        finish(&mut session);
+        let stored = reader.load(&id, SaveCopy::Primary, &token).unwrap();
+        assert_eq!(stored.snapshot.game.turns().len(), index + 1);
+        assert_eq!(
+            stored
+                .snapshot
+                .game
+                .turns()
+                .last()
+                .unwrap()
+                .turn()
+                .narrative()
+                .as_str(),
+            *narrative,
+            "persistent demo replay drift"
+        );
+        assert_eq!(&stored.snapshot.game, session.controller().game().unwrap());
+    }
+}

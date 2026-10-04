@@ -1108,6 +1108,50 @@
           "command_surface_rejects_demo_vendor_settings_and_unimplemented_ui",
           "malformed_turn_keeps_state_and_raw_candidate_until_explicit_retry"
         ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "commands",
+        "tests": [
+          "persistence_cli_rejects_missing_policy_paths_invalid_ids_and_page_bounds",
+          "persistence_cli_accepts_explicit_resume_policies_and_auth_free_queries",
+          "in_session_persistence_syntax_rejects_partial_paths_and_invalid_rewind_before_effects"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "headless_persistence",
+        "tests": [
+          "auth_free_list_inspect_and_invalid_resume_leave_save_bytes_unchanged",
+          "zero_turn_resume_waits_for_explicit_opening_and_rewind_persists_before_next_request",
+          "explicit_backup_recovery_creates_a_fresh_slot_and_preserves_damaged_originals",
+          "both_fixture_backends_restart_from_disk_and_live_saves_are_vendor_neutral",
+          "startup_policy_changes_persist_after_auth_and_failed_auth_never_rewrites_a_save",
+          "in_session_load_keeps_failed_edit_buffers_and_save_copy_switches_slots_only_after_success"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "demo_persistence",
+        "tests": [
+          "harbour_restart_rewind_and_exhaustion_preserve_fixed_passages_without_vendor_access",
+          "unknown_scenario_future_version_source_mismatch_and_excess_demo_turns_fail_before_auth"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "demo_retry",
+        "tests": [
+          "cancelled_consumed_demo_passages_preserve_disk_and_retry_all_five_with_persistence"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "persistence_shutdown",
+        "tests": [
+          "bounded_silent_storage_keeps_input_responsive_and_reaps_current_and_final_helpers",
+          "input_and_output_errors_still_save_last_canonical_story_and_remain_errors"
+        ]
       }
     ]
   },
@@ -1448,6 +1492,50 @@
         "target": "storage_helper",
         "tests": [
           "coordinator_rewind_load_and_quit_persist_through_shipped_helpers"
+        ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "commands",
+        "tests": [
+          "persistence_cli_rejects_missing_policy_paths_invalid_ids_and_page_bounds",
+          "persistence_cli_accepts_explicit_resume_policies_and_auth_free_queries",
+          "in_session_persistence_syntax_rejects_partial_paths_and_invalid_rewind_before_effects"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "headless_persistence",
+        "tests": [
+          "auth_free_list_inspect_and_invalid_resume_leave_save_bytes_unchanged",
+          "zero_turn_resume_waits_for_explicit_opening_and_rewind_persists_before_next_request",
+          "explicit_backup_recovery_creates_a_fresh_slot_and_preserves_damaged_originals",
+          "both_fixture_backends_restart_from_disk_and_live_saves_are_vendor_neutral",
+          "startup_policy_changes_persist_after_auth_and_failed_auth_never_rewrites_a_save",
+          "in_session_load_keeps_failed_edit_buffers_and_save_copy_switches_slots_only_after_success"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "demo_persistence",
+        "tests": [
+          "harbour_restart_rewind_and_exhaustion_preserve_fixed_passages_without_vendor_access",
+          "unknown_scenario_future_version_source_mismatch_and_excess_demo_turns_fail_before_auth"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "demo_retry",
+        "tests": [
+          "cancelled_consumed_demo_passages_preserve_disk_and_retry_all_five_with_persistence"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "persistence_shutdown",
+        "tests": [
+          "bounded_silent_storage_keeps_input_responsive_and_reaps_current_and_final_helpers",
+          "input_and_output_errors_still_save_last_canonical_story_and_remain_errors"
         ]
       }
     ]
@@ -1862,6 +1950,50 @@
         "tests": [
           "coordinator_rewind_load_and_quit_persist_through_shipped_helpers"
         ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "commands",
+        "tests": [
+          "persistence_cli_rejects_missing_policy_paths_invalid_ids_and_page_bounds",
+          "persistence_cli_accepts_explicit_resume_policies_and_auth_free_queries",
+          "in_session_persistence_syntax_rejects_partial_paths_and_invalid_rewind_before_effects"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "headless_persistence",
+        "tests": [
+          "auth_free_list_inspect_and_invalid_resume_leave_save_bytes_unchanged",
+          "zero_turn_resume_waits_for_explicit_opening_and_rewind_persists_before_next_request",
+          "explicit_backup_recovery_creates_a_fresh_slot_and_preserves_damaged_originals",
+          "both_fixture_backends_restart_from_disk_and_live_saves_are_vendor_neutral",
+          "startup_policy_changes_persist_after_auth_and_failed_auth_never_rewrites_a_save",
+          "in_session_load_keeps_failed_edit_buffers_and_save_copy_switches_slots_only_after_success"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "demo_persistence",
+        "tests": [
+          "harbour_restart_rewind_and_exhaustion_preserve_fixed_passages_without_vendor_access",
+          "unknown_scenario_future_version_source_mismatch_and_excess_demo_turns_fail_before_auth"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "demo_retry",
+        "tests": [
+          "cancelled_consumed_demo_passages_preserve_disk_and_retry_all_five_with_persistence"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "persistence_shutdown",
+        "tests": [
+          "bounded_silent_storage_keeps_input_responsive_and_reaps_current_and_final_helpers",
+          "input_and_output_errors_still_save_last_canonical_story_and_remain_errors"
+        ]
       }
     ]
   },
@@ -1913,6 +2045,50 @@
         "target": "headless",
         "tests": [
           "both_shipped_backend_commands_play_retry_and_inspect_canonical_story"
+        ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "commands",
+        "tests": [
+          "persistence_cli_rejects_missing_policy_paths_invalid_ids_and_page_bounds",
+          "persistence_cli_accepts_explicit_resume_policies_and_auth_free_queries",
+          "in_session_persistence_syntax_rejects_partial_paths_and_invalid_rewind_before_effects"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "headless_persistence",
+        "tests": [
+          "auth_free_list_inspect_and_invalid_resume_leave_save_bytes_unchanged",
+          "zero_turn_resume_waits_for_explicit_opening_and_rewind_persists_before_next_request",
+          "explicit_backup_recovery_creates_a_fresh_slot_and_preserves_damaged_originals",
+          "both_fixture_backends_restart_from_disk_and_live_saves_are_vendor_neutral",
+          "startup_policy_changes_persist_after_auth_and_failed_auth_never_rewrites_a_save",
+          "in_session_load_keeps_failed_edit_buffers_and_save_copy_switches_slots_only_after_success"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "demo_persistence",
+        "tests": [
+          "harbour_restart_rewind_and_exhaustion_preserve_fixed_passages_without_vendor_access",
+          "unknown_scenario_future_version_source_mismatch_and_excess_demo_turns_fail_before_auth"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "demo_retry",
+        "tests": [
+          "cancelled_consumed_demo_passages_preserve_disk_and_retry_all_five_with_persistence"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "persistence_shutdown",
+        "tests": [
+          "bounded_silent_storage_keeps_input_responsive_and_reaps_current_and_final_helpers",
+          "input_and_output_errors_still_save_last_canonical_story_and_remain_errors"
         ]
       }
     ]
