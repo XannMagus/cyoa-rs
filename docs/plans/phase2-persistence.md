@@ -15,7 +15,9 @@ gate, including domain mutation scrutiny. See
 **S2 is complete**: inward persistence vocabulary/use cases, strict version-one
 codec, synthetic-only migration dispatch and independent acceptance fixtures.
 See [S2 evidence](../../reviews/2026-10-04-persistence-s2/README.md).
-S3–S7 remain planned; disk persistence/autosave/headless commands are not yet
+**S3 implements the blocking Linux atomic repository**; see
+[S3 evidence](../../reviews/2026-10-04-persistence-s3/README.md).
+S4–S7 remain planned; supervised storage/autosave/headless commands are not yet
 implemented. The proposals and audit below retain their planning context.
 
 ## 1. Outcome, scope and authority

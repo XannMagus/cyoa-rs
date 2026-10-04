@@ -77,9 +77,11 @@ Phase 2 steps 1–2 implement checked established-cast restoration, application
 persistence commands/queries and a strictly validated version-one save codec.
 Frozen fixtures and in-memory round trips cover exact audit text, original/active
 limits, selection, identities, chapters and rewind context. The
-[implementation plan](docs/plans/phase2-persistence.md) keeps steps 3–7 pending:
-filesystem storage, supervised helpers, autosave coordination and headless commands.
-No user-facing save/load or disk durability is claimed by these first two steps.
+[implementation plan](docs/plans/phase2-persistence.md) now also has a blocking
+Linux atomic repository with exact backups, conflict checks and reconciliation
+([S3 evidence](reviews/2026-10-04-persistence-s3/README.md)). Steps 4–7 remain pending:
+supervised helpers, autosave coordination and headless commands.
+User-facing save/load is not yet implemented.
 
 - `cyoa-core`: checked domain types, namesake-preserving casts and stable IDs,
   summary deltas, typed limits, owned protagonist selection, turns, chapters and

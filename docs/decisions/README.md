@@ -109,8 +109,8 @@ protect this stronger Rust construction guarantee. Evidence: `652f0b2`.
 
 ### LIMITS-001 Typed bounds and explicit restoration policy
 
-**Partial: domain, prompts, orchestration and save-codec restoration enforced;
-disk persistence pending.** Different
+**Partial: domain, prompts, orchestration, save-codec and local disk restoration enforced;
+user-facing persistence pending.** Different
 bounds have distinct types. Event cap and playable minimum must be positive;
 NPC cap and prose bridge allow zero. Zero NPC cap consumes no candidates.
 
@@ -137,8 +137,8 @@ extension; do not infer permission to revert it from the Python source.
 
 ### ARCH-001 Dependencies point inward
 
-**Partial: dependency graph, generation and persistence use cases enforced;
-concrete storage and other use cases pending.** Domain
+**Partial: dependency graph, generation and persistence use cases/local storage enforced;
+supervised storage and other use cases pending.** Domain
 owns vendor-independent rules. Application owns orchestration and its ports.
 Presentation drives application; infrastructure implements inward-owned ports;
 main wires concrete adapters. Application must not import concrete infrastructure
@@ -446,8 +446,8 @@ protects it at the real-child boundary.
 ### PRODUCT-001 Standalone TUI, persistence, export, and image boundary
 
 **Partial: terminal-independent controller/worker, Linux headless/demo and
-in-memory persistence use cases/version-one codec enforced; disk persistence,
-TUI and export pending.** Rust TUI and headless demo replace the Qt/calibre host. Keep vendor and
+persistence use cases/version-one codec and local atomic storage enforced;
+supervised/headless persistence, TUI and export pending.** Rust TUI and headless demo replace the Qt/calibre host. Keep vendor and
 filesystem work in adapters, one generation in flight, UI-owned canonical state,
 worker progress messages, cancellable children, cached narrative wrapping. Do not
 hold a state mutex during a model call. Save atomically with backup and versioned
@@ -829,3 +829,17 @@ process/helper acceptance, autosave or headless persistence. Those remain S3–S
 The existing mutation gates and domain-only scope remain intact. See
 `reviews/2026-10-04-persistence-s2/README.md` for commands, observed failures,
 verification and the acceptance-scope audit.
+
+### Phase 2 step 3 local storage evidence (2026-10-04)
+
+LocalRepository implements the inward port with Linux directory-relative no-follow
+reads, checked entry ownership/link/type, stable nonblocking locks, exact-byte
+optimistic conflict checks, bounded paging and atomic primary/backup replacement.
+New file/backup sync and backup directory sync precede primary replacement; only
+final directory sync authorizes a receipt. Post-replacement failure preserves
+visibility and exact prepared bytes for reconciliation. Corrupt primary never
+rotates into a good backup. Explicit recovery creates a fresh slot. Registered
+real-file and private fault regressions enforce PRODUCT-001/TEXT-001/ARCH-001;
+repeated disk restore cycles also cover LIMITS-001. See
+`reviews/2026-10-04-persistence-s3/README.md`. This is blocking adapter evidence,
+not supervised helper execution, autosave or headless persistence (S4–S7).

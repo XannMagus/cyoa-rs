@@ -303,6 +303,28 @@
         "tests": [
           "audit_strings_including_empty_whitespace_crlf_and_unicode_roundtrip_without_normalization"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "filesystem_repository",
+        "tests": [
+          "missing_and_unsafe_storage_paths_are_errors_without_following_links",
+          "atomic_create_replace_and_independent_writer_conflict_preserve_exact_backup",
+          "corrupt_primary_never_rotates_over_a_good_backup_and_recovery_creates_a_new_slot",
+          "locks_survive_primary_replacement_and_hostile_entries_are_never_followed",
+          "listing_pages_report_corrupt_future_and_backup_only_without_rewriting_documents",
+          "disk_restore_cycles_preserve_original_limits_and_every_narrowed_snapshot"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "persistence::repository::linux::tests::every_write_failure_preserves_complete_files_visibility_and_retry_material",
+          "persistence::repository::linux::tests::first_create_receipt_loss_reconciles_without_duplicate_slots_or_backup_rotation",
+          "persistence::repository::linux::tests::sync_order_constant_clock_collision_entropy_and_revision_exhaustion_are_observable",
+          "persistence::repository::linux::tests::preparation_read_encode_and_cleanup_failures_keep_the_initiating_cause"
+        ]
       }
     ]
   },
@@ -633,6 +655,28 @@
         "tests": [
           "frozen_full_story_roundtrip_preserves_complete_state_exact_audit_and_next_rewind_request",
           "zero_turn_selected_second_playable_roundtrip_restores_one_opening_request"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "filesystem_repository",
+        "tests": [
+          "missing_and_unsafe_storage_paths_are_errors_without_following_links",
+          "atomic_create_replace_and_independent_writer_conflict_preserve_exact_backup",
+          "corrupt_primary_never_rotates_over_a_good_backup_and_recovery_creates_a_new_slot",
+          "locks_survive_primary_replacement_and_hostile_entries_are_never_followed",
+          "listing_pages_report_corrupt_future_and_backup_only_without_rewriting_documents",
+          "disk_restore_cycles_preserve_original_limits_and_every_narrowed_snapshot"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "persistence::repository::linux::tests::every_write_failure_preserves_complete_files_visibility_and_retry_material",
+          "persistence::repository::linux::tests::first_create_receipt_loss_reconciles_without_duplicate_slots_or_backup_rotation",
+          "persistence::repository::linux::tests::sync_order_constant_clock_collision_entropy_and_revision_exhaustion_are_observable",
+          "persistence::repository::linux::tests::preparation_read_encode_and_cleanup_failures_keep_the_initiating_cause"
         ]
       }
     ]
@@ -1207,6 +1251,28 @@
         "target": "save_compatibility",
         "tests": [
           "audit_strings_including_empty_whitespace_crlf_and_unicode_roundtrip_without_normalization"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "filesystem_repository",
+        "tests": [
+          "missing_and_unsafe_storage_paths_are_errors_without_following_links",
+          "atomic_create_replace_and_independent_writer_conflict_preserve_exact_backup",
+          "corrupt_primary_never_rotates_over_a_good_backup_and_recovery_creates_a_new_slot",
+          "locks_survive_primary_replacement_and_hostile_entries_are_never_followed",
+          "listing_pages_report_corrupt_future_and_backup_only_without_rewriting_documents",
+          "disk_restore_cycles_preserve_original_limits_and_every_narrowed_snapshot"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "persistence::repository::linux::tests::every_write_failure_preserves_complete_files_visibility_and_retry_material",
+          "persistence::repository::linux::tests::first_create_receipt_loss_reconciles_without_duplicate_slots_or_backup_rotation",
+          "persistence::repository::linux::tests::sync_order_constant_clock_collision_entropy_and_revision_exhaustion_are_observable",
+          "persistence::repository::linux::tests::preparation_read_encode_and_cleanup_failures_keep_the_initiating_cause"
         ]
       }
     ]
