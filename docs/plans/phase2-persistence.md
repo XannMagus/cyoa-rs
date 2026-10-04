@@ -12,7 +12,11 @@ Implementation update (2026-10-04): **S1 is complete**. The checked established
 cast constructor and its four registered domain regressions passed the full
 gate, including domain mutation scrutiny. See
 [S1 evidence](../../reviews/2026-10-04-persistence-s1/README.md).
-S2–S7 remain planned; the proposals and audit below retain their planning context.
+**S2 is complete**: inward persistence vocabulary/use cases, strict version-one
+codec, synthetic-only migration dispatch and independent acceptance fixtures.
+See [S2 evidence](../../reviews/2026-10-04-persistence-s2/README.md).
+S3–S7 remain planned; disk persistence/autosave/headless commands are not yet
+implemented. The proposals and audit below retain their planning context.
 
 ## 1. Outcome, scope and authority
 

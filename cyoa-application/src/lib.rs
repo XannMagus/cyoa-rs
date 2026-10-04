@@ -9,3 +9,4 @@ pub mod diagnostics;
 pub mod image;
 
 pub mod generation;
+pub mod persistence;

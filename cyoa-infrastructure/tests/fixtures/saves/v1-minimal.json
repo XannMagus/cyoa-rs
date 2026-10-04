@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "id": "harbour-0123456789abcdef0123456789abcdef",
+  "revision": 1,
+  "title": "Harbour",
+  "saved_at": "2026-10-04T12:00:00.000Z",
+  "turn_count": 0,
+  "source": {"kind": "live"},
+  "game": {
+    "brief": "Two Ajaxes, a harbour and a voyage",
+    "world": {
+      "title": "Harbour",
+      "world_description": "A sheltered harbour",
+      "characters": [
+        {"name": "Ajax", "description": "A sailor", "backstory": "Grew up at sea"},
+        {"name": "Ajax", "description": "A mason", "backstory": "Built the wall"}
+      ]
+    },
+    "character_index": 1,
+    "original_limits": {"max_major_events": 4, "max_generated_npcs": 8, "prose_bridge_turns": 3, "min_playable_characters": 2},
+    "active_limits": {"max_major_events": 4, "max_generated_npcs": 8, "prose_bridge_turns": 3, "min_playable_characters": 2}
+  }
+}

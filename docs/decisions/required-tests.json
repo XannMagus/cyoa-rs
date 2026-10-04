@@ -57,6 +57,22 @@
           "established_cast_is_not_pruned_or_rejected_by_restore_generation_limits",
           "restored_single_playable_and_no_npcs_is_a_valid_zero_turn_game"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "persistence_roundtrip",
+        "tests": [
+          "frozen_full_story_roundtrip_preserves_complete_state_exact_audit_and_next_rewind_request",
+          "zero_turn_selected_second_playable_roundtrip_restores_one_opening_request"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "persistence_limits",
+        "tests": [
+          "repeated_codec_restore_cycles_rebind_every_snapshot_without_resurrecting_events_or_pruning_casts",
+          "zero_turn_restore_uses_selected_cap_and_preserves_established_single_playable"
+        ]
       }
     ]
   },
@@ -103,6 +119,21 @@
         "target": "headless",
         "tests": [
           "both_shipped_backend_commands_play_retry_and_inspect_canonical_story"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "persistence_roundtrip",
+        "tests": [
+          "frozen_full_story_roundtrip_preserves_complete_state_exact_audit_and_next_rewind_request",
+          "zero_turn_selected_second_playable_roundtrip_restores_one_opening_request"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "save_validation",
+        "tests": [
+          "stored_history_cannot_be_normalized_capped_or_reidentified"
         ]
       }
     ]
@@ -257,6 +288,21 @@
           "malformed_turn_keeps_state_and_raw_candidate_until_explicit_retry",
           "quotes_unicode_multiline_narrative_and_numeric_player_intent_survive_binary_io"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "persistence_roundtrip",
+        "tests": [
+          "frozen_full_story_roundtrip_preserves_complete_state_exact_audit_and_next_rewind_request",
+          "zero_turn_selected_second_playable_roundtrip_restores_one_opening_request"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "save_compatibility",
+        "tests": [
+          "audit_strings_including_empty_whitespace_crlf_and_unicode_roundtrip_without_normalization"
+        ]
       }
     ]
   },
@@ -269,6 +315,20 @@
         "target": "decision_contracts",
         "tests": [
           "text_002_unicode_lowercase_is_not_python_casefold"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "save_validation",
+        "tests": [
+          "stored_history_cannot_be_normalized_capped_or_reidentified"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "save_compatibility",
+        "tests": [
+          "stored_unicode_matching_preserves_sharp_s_distinctions_and_rejects_lowercase_duplicates"
         ]
       }
     ]
@@ -317,6 +377,21 @@
           "restored_cast_preserves_namesakes_role_order_and_checked_selection",
           "established_cast_is_not_pruned_or_rejected_by_restore_generation_limits",
           "restored_single_playable_and_no_npcs_is_a_valid_zero_turn_game"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "persistence_roundtrip",
+        "tests": [
+          "frozen_full_story_roundtrip_preserves_complete_state_exact_audit_and_next_rewind_request",
+          "zero_turn_selected_second_playable_roundtrip_restores_one_opening_request"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "save_validation",
+        "tests": [
+          "malformed_versions_metadata_and_world_are_rejected_without_repair"
         ]
       }
     ]
@@ -392,6 +467,21 @@
           "established_cast_is_not_pruned_or_rejected_by_restore_generation_limits",
           "restored_single_playable_and_no_npcs_is_a_valid_zero_turn_game"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "persistence_limits",
+        "tests": [
+          "repeated_codec_restore_cycles_rebind_every_snapshot_without_resurrecting_events_or_pruning_casts",
+          "zero_turn_restore_uses_selected_cap_and_preserves_established_single_playable"
+        ]
+      },
+      {
+        "package": "cyoa-application",
+        "target": "persistence",
+        "tests": [
+          "explicit_restore_policy_and_read_only_queries_do_not_write_or_rebind_the_disk_stamp"
+        ]
       }
     ]
   },
@@ -441,6 +531,14 @@
         "target": "headless",
         "tests": [
           "both_shipped_backend_commands_play_retry_and_inspect_canonical_story"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "persistence_roundtrip",
+        "tests": [
+          "frozen_full_story_roundtrip_preserves_complete_state_exact_audit_and_next_rewind_request",
+          "zero_turn_selected_second_playable_roundtrip_restores_one_opening_request"
         ]
       }
     ]
@@ -515,6 +613,26 @@
         "target": "worker",
         "tests": [
           "quick_action_and_player_text_share_the_same_generation_intent"
+        ]
+      },
+      {
+        "package": "cyoa-application",
+        "target": "persistence",
+        "tests": [
+          "repository_failures_are_preserved_without_retry_or_changing_the_owned_snapshot",
+          "pre_cancelled_commands_and_queries_never_call_the_repository",
+          "late_read_cancellation_rejects_results_but_never_hides_a_durable_write_receipt",
+          "checked_persistence_values_reject_invalid_names_counters_pages_and_bounds",
+          "explicit_restore_policy_and_read_only_queries_do_not_write_or_rebind_the_disk_stamp",
+          "explicit_storage_commands_make_exactly_one_call_each_and_return_observed_receipts"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "persistence_roundtrip",
+        "tests": [
+          "frozen_full_story_roundtrip_preserves_complete_state_exact_audit_and_next_rewind_request",
+          "zero_turn_selected_second_playable_roundtrip_restores_one_opening_request"
         ]
       }
     ]
@@ -612,6 +730,28 @@
           "restored_cast_preserves_namesakes_role_order_and_checked_selection",
           "established_cast_is_not_pruned_or_rejected_by_restore_generation_limits",
           "restored_single_playable_and_no_npcs_is_a_valid_zero_turn_game"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "save_validation",
+        "tests": [
+          "malformed_versions_metadata_and_world_are_rejected_without_repair",
+          "invalid_json_utf8_and_duplicate_keys_are_never_last_key_wins",
+          "stored_history_cannot_be_normalized_capped_or_reidentified",
+          "required_fields_and_known_field_types_cannot_hide_behind_defaults",
+          "size_depth_overflow_and_nested_duplicate_keys_are_bounded_errors"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "save_compatibility",
+        "tests": [
+          "only_shipped_version_one_is_supported_and_reads_leave_input_bytes_unchanged",
+          "optional_omissions_nulls_and_empty_replacements_keep_distinct_meanings",
+          "additive_optional_fields_warn_and_are_omitted_on_resave_while_known_fields_survive",
+          "additive_source_fields_are_reported_for_both_source_variants",
+          "valid_authoritative_snapshots_and_unknown_style_keys_are_preserved_without_delta_replay"
         ]
       }
     ]
@@ -985,6 +1125,88 @@
           "initially_full_real_control_pipe_recovers_without_losing_help_or_close",
           "initially_full_real_story_pipe_drains_exact_committed_narrative_on_exit",
           "reader_resuming_after_final_deadline_cannot_turn_expiry_into_success"
+        ]
+      },
+      {
+        "package": "cyoa-application",
+        "target": "persistence",
+        "tests": [
+          "repository_failures_are_preserved_without_retry_or_changing_the_owned_snapshot",
+          "pre_cancelled_commands_and_queries_never_call_the_repository",
+          "late_read_cancellation_rejects_results_but_never_hides_a_durable_write_receipt",
+          "checked_persistence_values_reject_invalid_names_counters_pages_and_bounds",
+          "explicit_restore_policy_and_read_only_queries_do_not_write_or_rebind_the_disk_stamp",
+          "explicit_storage_commands_make_exactly_one_call_each_and_return_observed_receipts"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "save_validation",
+        "tests": [
+          "malformed_versions_metadata_and_world_are_rejected_without_repair",
+          "invalid_json_utf8_and_duplicate_keys_are_never_last_key_wins",
+          "stored_history_cannot_be_normalized_capped_or_reidentified",
+          "required_fields_and_known_field_types_cannot_hide_behind_defaults",
+          "size_depth_overflow_and_nested_duplicate_keys_are_bounded_errors"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "save_compatibility",
+        "tests": [
+          "only_shipped_version_one_is_supported_and_reads_leave_input_bytes_unchanged",
+          "optional_omissions_nulls_and_empty_replacements_keep_distinct_meanings",
+          "additive_optional_fields_warn_and_are_omitted_on_resave_while_known_fields_survive",
+          "additive_source_fields_are_reported_for_both_source_variants",
+          "valid_authoritative_snapshots_and_unknown_style_keys_are_preserved_without_delta_replay"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "persistence_roundtrip",
+        "tests": [
+          "frozen_full_story_roundtrip_preserves_complete_state_exact_audit_and_next_rewind_request",
+          "zero_turn_selected_second_playable_roundtrip_restores_one_opening_request"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "persistence_limits",
+        "tests": [
+          "repeated_codec_restore_cycles_rebind_every_snapshot_without_resurrecting_events_or_pruning_casts",
+          "zero_turn_restore_uses_selected_cap_and_preserves_established_single_playable"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "persistence_roundtrip",
+        "tests": [
+          "content_stamps_cover_exact_bytes_and_have_independent_sha256_evidence"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "persistence::codec::tests::bounded_writer_rejects_a_document_or_final_newline_that_exceeds_the_limit",
+          "persistence::codec::tests::canonical_writer_timestamps_cover_utc_year_boundaries_and_millisecond_precision",
+          "persistence::migrations::tests::synthetic_scaffold_rejects_missing_steps_and_incorrect_advancement",
+          "persistence::migrations::tests::synthetic_scaffold_runs_each_step_once_in_order_without_shipping_legacy_support"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "save_compatibility",
+        "tests": [
+          "supported_demo_source_roundtrips_and_rejects_impossible_passage_counts",
+          "stored_unicode_matching_preserves_sharp_s_distinctions_and_rejects_lowercase_duplicates"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "save_compatibility",
+        "tests": [
+          "audit_strings_including_empty_whitespace_crlf_and_unicode_roundtrip_without_normalization"
         ]
       }
     ]

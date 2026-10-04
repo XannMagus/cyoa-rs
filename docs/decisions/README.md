@@ -109,7 +109,8 @@ protect this stronger Rust construction guarantee. Evidence: `652f0b2`.
 
 ### LIMITS-001 Typed bounds and explicit restoration policy
 
-**Partial: domain, prompts and orchestration enforced; persistence pending.** Different
+**Partial: domain, prompts, orchestration and save-codec restoration enforced;
+disk persistence pending.** Different
 bounds have distinct types. Event cap and playable minimum must be positive;
 NPC cap and prose bridge allow zero. Zero NPC cap consumes no candidates.
 
@@ -136,7 +137,8 @@ extension; do not infer permission to revert it from the Python source.
 
 ### ARCH-001 Dependencies point inward
 
-**Partial: dependency graph and generation use cases enforced; other use cases pending.** Domain
+**Partial: dependency graph, generation and persistence use cases enforced;
+concrete storage and other use cases pending.** Domain
 owns vendor-independent rules. Application owns orchestration and its ports.
 Presentation drives application; infrastructure implements inward-owned ports;
 main wires concrete adapters. Application must not import concrete infrastructure
@@ -152,8 +154,8 @@ tests; the original Python module layout and old two-crate plan are not preceden
 
 ### ARCH-002 Domain types establish invariants
 
-**Partial: constructors and wire-boundary DTO mappings checked, use-case
-mappings pending.**
+**Partial: constructors, generation mappings and save-boundary reconstruction
+checked; subsequent feature mappings pending.**
 Prefer domain newtypes over interchangeable primitives; aliases are semantic only.
 Use checked construction for constraints and enums/typestate for legal alternatives.
 Do not assume valid fields imply a valid aggregate. Keep fields private when
@@ -443,8 +445,9 @@ protects it at the real-child boundary.
 
 ### PRODUCT-001 Standalone TUI, persistence, export, and image boundary
 
-**Partial: terminal-independent controller/worker and Linux headless/demo enforced;
-TUI, persistence and export pending.** Rust TUI and headless demo replace the Qt/calibre host. Keep vendor and
+**Partial: terminal-independent controller/worker, Linux headless/demo and
+in-memory persistence use cases/version-one codec enforced; disk persistence,
+TUI and export pending.** Rust TUI and headless demo replace the Qt/calibre host. Keep vendor and
 filesystem work in adapters, one generation in flight, UI-owned canonical state,
 worker progress messages, cancellable children, cached narrative wrapping. Do not
 hold a state mutex during a model call. Save atomically with backup and versioned
@@ -791,3 +794,38 @@ Registered core regressions cover these ARCH-002/STATE-001/LIMITS-001/IDENTITY-0
 obligations. `WorldCast::new` retains its generation behavior. Save DTO mapping,
 disk round trips and user-facing persistence remain pending; this constructor
 alone does not establish them.
+
+### Phase 2 step 2 save-boundary and application evidence (2026-10-04)
+
+Application-owned persistence values, repository ports and `PersistenceUseCases`
+now separate save commands from load-policy application and read-only list/inspect
+queries (ARCH-001/002). Fake repositories establish one call per operation, no
+automatic retries, preservation of storage visibility/pending/cleanup evidence,
+pre-cancel admission, post-read cancellation and durable-write receipts. Loading
+applies the selected current/original policy without writing automatically;
+a later presentation coordinator must persist accepted policy changes.
+
+Infrastructure's separate version-one save DTOs/codec reject duplicate JSON keys,
+wrong known-field types, missing required values, invalid metadata and lossy
+text/event/action/cast reconstruction. Unknown optional fields are reported and
+omitted on re-save. Only version one is supported; private synthetic migration
+chains test dispatch mechanics without inventing legacy format support. UTC
+metadata uses checked millisecond precision (finer clock precision rounds down);
+write revision and exact-byte SHA-256 stamps establish ordering/conflict evidence,
+not the clock. Files are bounded to 64 MiB including their final newline.
+
+Registered round trips use independent minimal/full/additive fixtures and actual
+scripted generation through failure, cancellation, rewind and the next request.
+Selection, role order/namesakes/stable IDs, Unicode-lowercase distinctions,
+chapter markers/retitles, null/empty updates, flat styles, observed provenance,
+zero-versus-absent list-price estimates and exact raw/trace audit text survive
+(STATE-001, IDENTITY-001/002, TEXT-001/002, CHAPTER-001). Snapshot memory remains
+authoritative without delta replay. Repeated codec cycles narrow every snapshot,
+preserve original settings, then restore original settings without resurrecting
+lost events or applying generation-only cast bounds (LIMITS-001).
+
+These are application/codec checks for PRODUCT-001, not filesystem durability,
+process/helper acceptance, autosave or headless persistence. Those remain S3–S7.
+The existing mutation gates and domain-only scope remain intact. See
+`reviews/2026-10-04-persistence-s2/README.md` for commands, observed failures,
+verification and the acceptance-scope audit.

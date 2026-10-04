@@ -15,6 +15,9 @@ serde_json.workspace = true
 tempfile = "3"
 thiserror.workspace = true
 toml = "1.1.6"
+sha2 = "0.10.9"
+time = { version = "0.3.47", features = ["formatting", "parsing"] }
+serde_ignored = "0.1.14"
 
 # Process-group signaling, poll-set readiness and non-blocking pipe fds for
 # the vendor-neutral process supervisor (Phase 1 item 3). Safe public API

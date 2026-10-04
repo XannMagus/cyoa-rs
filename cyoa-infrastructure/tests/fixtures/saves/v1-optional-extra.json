@@ -1,0 +1,404 @@
+{
+  "version": 1,
+  "id": "harbour-0123456789abcdef0123456789abcdef",
+  "revision": 7,
+  "title": "Harbour",
+  "saved_at": "2026-10-04T12:00:00.000Z",
+  "turn_count": 5,
+  "source": {
+    "kind": "live"
+  },
+  "game": {
+    "brief": "Two Ajaxes, a harbour and a voyage",
+    "world": {
+      "title": "Harbour",
+      "world_description": "A sheltered harbour",
+      "characters": [
+        {
+          "name": "Ajax",
+          "description": "A sailor",
+          "backstory": "Grew up at sea",
+          "optional_portrait": {
+            "uri": "unused"
+          }
+        },
+        {
+          "name": "Ajax",
+          "description": "A mason",
+          "backstory": "Built the wall"
+        }
+      ],
+      "npcs": [
+        {
+          "name": "Ajax",
+          "description": "A merchant",
+          "backstory": "Sells sails",
+          "relationships": "Knows the sailor"
+        },
+        {
+          "name": "Ajax",
+          "description": "A guard",
+          "backstory": "Guards the wall",
+          "relationships": "Knows the mason"
+        }
+      ]
+    },
+    "character_index": 1,
+    "original_limits": {
+      "max_major_events": 4,
+      "max_generated_npcs": 8,
+      "prose_bridge_turns": 3,
+      "min_playable_characters": 2
+    },
+    "active_limits": {
+      "max_major_events": 4,
+      "max_generated_npcs": 8,
+      "prose_bridge_turns": 3,
+      "min_playable_characters": 2
+    },
+    "art_style": "unknown-art",
+    "pace": "unknown-pace",
+    "tone": "unknown-tone",
+    "narration": "unknown-narration",
+    "turns": [
+      {
+        "player_input": "",
+        "raw_response": "",
+        "prompt_trace": null,
+        "provenance": {},
+        "turn": {
+          "narrative": "Opening: the lantern flickered.",
+          "quick_actions": [
+            {
+              "text": "Go",
+              "kind": "unrecognized-kind"
+            }
+          ],
+          "scene_description": "",
+          "summary_update": {
+            "current_situation": "",
+            "new_major_events": [
+              "A",
+              "B"
+            ],
+            "upcoming_events": [
+              "Depart"
+            ],
+            "character_updates": [
+              {
+                "id": "ajax",
+                "current_state": "At the shop"
+              },
+              {
+                "id": "ajax-2",
+                "current_state": "At the gate"
+              }
+            ]
+          },
+          "starts_new_chapter": true,
+          "chapter_title": "Harbour"
+        },
+        "summary": {
+          "world": "A sheltered harbour",
+          "current_situation": "The adventure has not yet begun.",
+          "major_events": [
+            "A",
+            "B"
+          ],
+          "upcoming_events": [
+            "Depart"
+          ],
+          "characters": [
+            {
+              "id": "protagonist",
+              "name": "Ajax",
+              "description": "A mason",
+              "backstory": "Built the wall",
+              "relationships": "",
+              "current_state": ""
+            },
+            {
+              "id": "ajax",
+              "name": "Ajax",
+              "description": "A merchant",
+              "backstory": "Sells sails",
+              "relationships": "Knows the sailor",
+              "current_state": "At the shop"
+            },
+            {
+              "id": "ajax-2",
+              "name": "Ajax",
+              "description": "A guard",
+              "backstory": "Guards the wall",
+              "relationships": "Knows the mason",
+              "current_state": "At the gate"
+            }
+          ]
+        }
+      },
+      {
+        "player_input": "Sail onward",
+        "raw_response": " \t\r\n",
+        "prompt_trace": null,
+        "provenance": {
+          "provider": "observed-provider",
+          "model": "observed-model",
+          "list_price_estimate": {
+            "amount": 0,
+            "currency": "USD"
+          }
+        },
+        "turn": {
+          "narrative": "Second: the bell rang.",
+          "quick_actions": [
+            {
+              "text": "Board"
+            }
+          ],
+          "scene_description": "",
+          "summary_update": {
+            "current_situation": "",
+            "new_major_events": [
+              "C"
+            ],
+            "upcoming_events": null,
+            "character_updates": []
+          },
+          "starts_new_chapter": false,
+          "chapter_title": "Retitled"
+        },
+        "summary": {
+          "world": "A sheltered harbour",
+          "current_situation": "The adventure has not yet begun.",
+          "major_events": [
+            "A",
+            "B",
+            "C"
+          ],
+          "upcoming_events": [
+            "Depart"
+          ],
+          "characters": [
+            {
+              "id": "protagonist",
+              "name": "Ajax",
+              "description": "A mason",
+              "backstory": "Built the wall",
+              "relationships": "",
+              "current_state": ""
+            },
+            {
+              "id": "ajax",
+              "name": "Ajax",
+              "description": "A merchant",
+              "backstory": "Sells sails",
+              "relationships": "Knows the sailor",
+              "current_state": "At the shop"
+            },
+            {
+              "id": "ajax-2",
+              "name": "Ajax",
+              "description": "A guard",
+              "backstory": "Guards the wall",
+              "relationships": "Knows the mason",
+              "current_state": "At the gate"
+            }
+          ]
+        }
+      },
+      {
+        "player_input": "Sail onward",
+        "raw_response": "\r\nquoted \"reply\" 🌊\r\n",
+        "prompt_trace": {
+          "instructions": " \r\nInstructions 🌊\t",
+          "prompt": "\r\nPrompt \"quoted\"\r\n"
+        },
+        "provenance": {},
+        "turn": {
+          "narrative": "Voyage: the ship sailed.",
+          "quick_actions": [
+            {
+              "text": "Watch"
+            }
+          ],
+          "scene_description": "",
+          "summary_update": {
+            "current_situation": "",
+            "new_major_events": [
+              "D"
+            ],
+            "upcoming_events": [],
+            "character_updates": []
+          },
+          "starts_new_chapter": true,
+          "chapter_title": "Voyage"
+        },
+        "summary": {
+          "world": "A sheltered harbour",
+          "current_situation": "The adventure has not yet begun.",
+          "major_events": [
+            "A",
+            "B",
+            "C",
+            "D"
+          ],
+          "upcoming_events": [],
+          "characters": [
+            {
+              "id": "protagonist",
+              "name": "Ajax",
+              "description": "A mason",
+              "backstory": "Built the wall",
+              "relationships": "",
+              "current_state": ""
+            },
+            {
+              "id": "ajax",
+              "name": "Ajax",
+              "description": "A merchant",
+              "backstory": "Sells sails",
+              "relationships": "Knows the sailor",
+              "current_state": "At the shop"
+            },
+            {
+              "id": "ajax-2",
+              "name": "Ajax",
+              "description": "A guard",
+              "backstory": "Guards the wall",
+              "relationships": "Knows the mason",
+              "current_state": "At the gate"
+            }
+          ]
+        }
+      },
+      {
+        "player_input": "Sail onward",
+        "raw_response": "response four",
+        "prompt_trace": null,
+        "provenance": {},
+        "turn": {
+          "narrative": "Fourth: the waves rose.",
+          "quick_actions": [
+            {
+              "text": "Wait"
+            }
+          ],
+          "scene_description": "",
+          "summary_update": {
+            "current_situation": "",
+            "new_major_events": [
+              "E"
+            ],
+            "upcoming_events": null,
+            "character_updates": []
+          },
+          "starts_new_chapter": false,
+          "chapter_title": "At Sea"
+        },
+        "summary": {
+          "world": "A sheltered harbour",
+          "current_situation": "The adventure has not yet begun.",
+          "major_events": [
+            "B",
+            "C",
+            "D",
+            "E"
+          ],
+          "upcoming_events": [],
+          "characters": [
+            {
+              "id": "protagonist",
+              "name": "Ajax",
+              "description": "A mason",
+              "backstory": "Built the wall",
+              "relationships": "",
+              "current_state": ""
+            },
+            {
+              "id": "ajax",
+              "name": "Ajax",
+              "description": "A merchant",
+              "backstory": "Sells sails",
+              "relationships": "Knows the sailor",
+              "current_state": "At the shop"
+            },
+            {
+              "id": "ajax-2",
+              "name": "Ajax",
+              "description": "A guard",
+              "backstory": "Guards the wall",
+              "relationships": "Knows the mason",
+              "current_state": "At the gate"
+            }
+          ]
+        }
+      },
+      {
+        "player_input": "Sail onward",
+        "raw_response": "response five",
+        "prompt_trace": null,
+        "provenance": {},
+        "turn": {
+          "narrative": "Rewritten: the ship stayed.",
+          "quick_actions": [
+            {
+              "text": "Land"
+            }
+          ],
+          "scene_description": "",
+          "summary_update": {
+            "current_situation": "",
+            "new_major_events": [
+              "F"
+            ],
+            "upcoming_events": null,
+            "character_updates": []
+          },
+          "starts_new_chapter": false,
+          "chapter_title": null
+        },
+        "summary": {
+          "world": "A sheltered harbour",
+          "current_situation": "The adventure has not yet begun.",
+          "major_events": [
+            "C",
+            "D",
+            "E",
+            "F"
+          ],
+          "upcoming_events": [],
+          "characters": [
+            {
+              "id": "protagonist",
+              "name": "Ajax",
+              "description": "A mason",
+              "backstory": "Built the wall",
+              "relationships": "",
+              "current_state": ""
+            },
+            {
+              "id": "ajax",
+              "name": "Ajax",
+              "description": "A merchant",
+              "backstory": "Sells sails",
+              "relationships": "Knows the sailor",
+              "current_state": "At the shop"
+            },
+            {
+              "id": "ajax-2",
+              "name": "Ajax",
+              "description": "A guard",
+              "backstory": "Guards the wall",
+              "relationships": "Knows the mason",
+              "current_state": "At the gate"
+            }
+          ]
+        }
+      }
+    ],
+    "future_style": "future-value"
+  },
+  "future_optional": {
+    "label": "Safe to omit"
+  }
+}

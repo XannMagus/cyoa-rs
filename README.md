@@ -73,10 +73,13 @@ the gate now runs 37 mutations, including final error-report backpressure and
 demo cancellation/retry regressions ([repair evidence](reviews/2026-10-03-headless-repairs/README.md)).
 TUI, saves/autosave and export remain pending.
 
-Phase 2 has an [implementation plan](docs/plans/phase2-persistence.md) for
-persistence, autosave and headless save/load/rewind. It specifies the proposed
-format, failure policies, implementation sequence and handoff audit; it does not
-claim persistence is implemented.
+Phase 2 steps 1–2 implement checked established-cast restoration, application
+persistence commands/queries and a strictly validated version-one save codec.
+Frozen fixtures and in-memory round trips cover exact audit text, original/active
+limits, selection, identities, chapters and rewind context. The
+[implementation plan](docs/plans/phase2-persistence.md) keeps steps 3–7 pending:
+filesystem storage, supervised helpers, autosave coordination and headless commands.
+No user-facing save/load or disk durability is claimed by these first two steps.
 
 - `cyoa-core`: checked domain types, namesake-preserving casts and stable IDs,
   summary deltas, typed limits, owned protagonist selection, turns, chapters and
@@ -84,14 +87,16 @@ claim persistence is implemented.
   active event caps to every snapshot. Character-edit propagation is still pending.
 - `cyoa-application`: inward-owned generation ports and commands for outline, cast,
   turns and rewind; cancellation tokens with scoped wake notifications, transport
-  diagnostics and the image port. No JSON/vendor types.
+  diagnostics and the image port. Typed persistence ports/commands/queries apply
+  explicit restore policy and preserve storage outcomes. No JSON/vendor types.
 - `cyoa-infrastructure`: validated bundled templates, schema generation, wire
   mapping, generation orchestration, incremental narrative extraction,
   request-recording complete/chunked scripted transports and a process supervisor
   exercised against an in-repo subprocess fixture. Claude schema adaptation and the
   local advisor-suppression instruction live in `backend_compat::claude_cli`. Codex
   and Claude each have isolated request preparation, a private protocol codec and an
-  executable `Backend` reconciled with the supervisor.
+  executable `Backend` reconciled with the supervisor. Separate save DTOs and a
+  bounded version-one codec validate historical state without replay or repair.
 - `cyoa-presentation`: session controller, owned worker/runtime, explicit CLI
   intent and Linux headless input/output with cancellation and shutdown.
 - `cyoa-cli`: executable and composition root.

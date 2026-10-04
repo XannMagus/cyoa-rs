@@ -7,3 +7,4 @@ pub mod backend;
 pub mod backends;
 pub mod generation;
 pub mod image;
+pub mod persistence;
