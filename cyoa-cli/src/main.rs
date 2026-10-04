@@ -45,6 +45,20 @@ fn report_error(error: &dyn std::fmt::Display) {
     }
 }
 fn execute() -> Result<(), Box<dyn std::error::Error>> {
+    if std::env::args_os().nth(1).as_deref()
+        == Some(OsStr::new(
+            cyoa_infrastructure::persistence::helper::INTERNAL_HELPER_ARG,
+        ))
+    {
+        if std::env::args_os().len() != 2 {
+            return Err("internal storage helper takes no further arguments".into());
+        }
+        cyoa_infrastructure::persistence::helper::run_internal(
+            io::stdin().lock(),
+            io::stdout().lock(),
+        )?;
+        return Ok(());
+    }
     let Command::Play(options) = Cli::parse().command;
     #[cfg(not(target_os = "linux"))]
     {

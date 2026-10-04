@@ -325,6 +325,20 @@
           "persistence::repository::linux::tests::sync_order_constant_clock_collision_entropy_and_revision_exhaustion_are_observable",
           "persistence::repository::linux::tests::preparation_read_encode_and_cleanup_failures_keep_the_initiating_cause"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "filesystem_repository",
+        "tests": [
+          "hostile_unicode_titles_never_become_paths_and_retitle_preserves_the_slot_id"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "persistence::repository::linux::tests::default_data_location_honors_absolute_xdg_and_rejects_relative_locations"
+        ]
       }
     ]
   },
@@ -677,6 +691,20 @@
           "persistence::repository::linux::tests::first_create_receipt_loss_reconciles_without_duplicate_slots_or_backup_rotation",
           "persistence::repository::linux::tests::sync_order_constant_clock_collision_entropy_and_revision_exhaustion_are_observable",
           "persistence::repository::linux::tests::preparation_read_encode_and_cleanup_failures_keep_the_initiating_cause"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "filesystem_repository",
+        "tests": [
+          "hostile_unicode_titles_never_become_paths_and_retitle_preserves_the_slot_id"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "persistence::repository::linux::tests::default_data_location_honors_absolute_xdg_and_rejects_relative_locations"
         ]
       }
     ]
@@ -1274,6 +1302,71 @@
           "persistence::repository::linux::tests::sync_order_constant_clock_collision_entropy_and_revision_exhaustion_are_observable",
           "persistence::repository::linux::tests::preparation_read_encode_and_cleanup_failures_keep_the_initiating_cause"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "persistence::repository::linux::tests::killed_helpers_leave_complete_crash_window_files_release_locks_and_reconcile_once",
+          "persistence::helper::tests::private_protocol_rejects_duplicate_keys_unknown_fields_versions_and_wrong_shapes_before_disk"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "storage_transport",
+        "tests": [
+          "silent_helper_cancellation_and_timeout_reap_children_and_keep_prepared_identity",
+          "lost_invalid_multiple_or_capped_replies_never_authorize_success_and_reconcile_exact_write",
+          "preparation_exhausting_the_total_deadline_launches_no_helper_or_disk_write",
+          "replacement_prepares_with_one_read_child_and_dispatches_one_mutating_child"
+        ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "storage",
+        "tests": [
+          "polling_is_nonblocking_preparation_precedes_completion_and_close_joins_cancelled_work",
+          "worker_panics_distinguish_unprepared_from_uncertain_writes_and_retain_identity",
+          "dropping_runner_cancels_and_joins_without_leaving_storage_work_detached"
+        ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "lib",
+        "tests": [
+          "storage::tests::failed_storage_thread_spawn_preserves_ready_state_and_never_runs_factory"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "storage_helper",
+        "tests": [
+          "internal_helper_runs_storage_before_clap_or_auth_and_preserves_exact_documents",
+          "unavailable_or_precancelled_helpers_cannot_report_durable_success",
+          "presentation_storage_runner_drives_shipped_helpers_off_the_event_loop",
+          "closing_or_dropping_storage_runner_reaps_a_real_silent_helper"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "persistence::helper::tests::preparation_clock_or_entropy_failure_launches_no_helper_and_keeps_visibility_unchanged"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "filesystem_repository",
+        "tests": [
+          "hostile_unicode_titles_never_become_paths_and_retitle_preserves_the_slot_id"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "persistence::repository::linux::tests::default_data_location_honors_absolute_xdg_and_rejects_relative_locations"
+        ]
       }
     ]
   },
@@ -1594,6 +1687,57 @@
           "initially_full_real_control_pipe_recovers_without_losing_help_or_close",
           "initially_full_real_story_pipe_drains_exact_committed_narrative_on_exit",
           "reader_resuming_after_final_deadline_cannot_turn_expiry_into_success"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "persistence::repository::linux::tests::killed_helpers_leave_complete_crash_window_files_release_locks_and_reconcile_once",
+          "persistence::helper::tests::private_protocol_rejects_duplicate_keys_unknown_fields_versions_and_wrong_shapes_before_disk"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "storage_transport",
+        "tests": [
+          "silent_helper_cancellation_and_timeout_reap_children_and_keep_prepared_identity",
+          "lost_invalid_multiple_or_capped_replies_never_authorize_success_and_reconcile_exact_write",
+          "preparation_exhausting_the_total_deadline_launches_no_helper_or_disk_write",
+          "replacement_prepares_with_one_read_child_and_dispatches_one_mutating_child"
+        ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "storage",
+        "tests": [
+          "polling_is_nonblocking_preparation_precedes_completion_and_close_joins_cancelled_work",
+          "worker_panics_distinguish_unprepared_from_uncertain_writes_and_retain_identity",
+          "dropping_runner_cancels_and_joins_without_leaving_storage_work_detached"
+        ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "lib",
+        "tests": [
+          "storage::tests::failed_storage_thread_spawn_preserves_ready_state_and_never_runs_factory"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "storage_helper",
+        "tests": [
+          "internal_helper_runs_storage_before_clap_or_auth_and_preserves_exact_documents",
+          "unavailable_or_precancelled_helpers_cannot_report_durable_success",
+          "presentation_storage_runner_drives_shipped_helpers_off_the_event_loop",
+          "closing_or_dropping_storage_runner_reaps_a_real_silent_helper"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "persistence::helper::tests::preparation_clock_or_entropy_failure_launches_no_helper_and_keeps_visibility_unchanged"
         ]
       }
     ]

@@ -384,3 +384,60 @@ fn disk_restore_cycles_preserve_original_limits_and_every_narrowed_snapshot() {
         .unwrap();
     assert_eq!(inspected.snapshot, original);
 }
+
+#[test]
+fn hostile_unicode_titles_never_become_paths_and_retitle_preserves_the_slot_id() {
+    use cyoa_core::{
+        game::GameState,
+        limits::RestoreLimits,
+        text::WorldTitle,
+        world::{World, WorldOutline},
+    };
+    fn retitle(mut snapshot: SaveSnapshot, title: &str) -> SaveSnapshot {
+        let game = &snapshot.game;
+        let world = World::new(
+            WorldOutline::new(
+                WorldTitle::new(title).unwrap(),
+                game.world().outline().description().clone(),
+            ),
+            game.world().cast().clone(),
+        )
+        .select(game.selected_world().position())
+        .unwrap();
+        snapshot.game = GameState::restore(
+            game.brief().clone(),
+            world,
+            game.style().clone(),
+            game.original_limits(),
+            RestoreLimits::Current(game.limits()),
+            game.turns().to_vec(),
+        );
+        snapshot
+    }
+    let root = tempfile::tempdir().unwrap();
+    let mut repo = LocalRepository::new(root.path().into()).unwrap();
+    let token = CancellationSource::default().token();
+    let hostile = retitle(snapshot(), "../../ 霧 🔥 / Story!?");
+    let first = repo.create(hostile.clone(), &token).unwrap();
+    assert!(first.metadata.id.as_str().starts_with("story-"));
+    assert_eq!(
+        repo.load(&first.metadata.id, SaveCopy::Primary, &token)
+            .unwrap()
+            .snapshot,
+        hostile
+    );
+    let changed = retitle(hostile, "A different title");
+    let second = repo
+        .replace(
+            SaveTarget {
+                id: first.metadata.id.clone(),
+                expected_stamp: first.stamp,
+            },
+            changed,
+            &token,
+        )
+        .unwrap();
+    assert_eq!(second.metadata.id, first.metadata.id);
+    assert_eq!(fs::read_dir(root.path()).unwrap().count(), 1);
+    assert_eq!(fs::read_dir(root.path().join("saves")).unwrap().count(), 3);
+}

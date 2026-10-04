@@ -71,7 +71,7 @@ The complete story and both actual adapters are exercised through controlled chi
 fixtures. Linux headless play and the credential-free demo are implemented;
 the gate now runs 37 mutations, including final error-report backpressure and
 demo cancellation/retry regressions ([repair evidence](reviews/2026-10-03-headless-repairs/README.md)).
-TUI, saves/autosave and export remain pending.
+TUI, autosave/headless save commands and export remain pending.
 
 Phase 2 steps 1–2 implement checked established-cast restoration, application
 persistence commands/queries and a strictly validated version-one save codec.
@@ -79,8 +79,10 @@ Frozen fixtures and in-memory round trips cover exact audit text, original/activ
 limits, selection, identities, chapters and rewind context. The
 [implementation plan](docs/plans/phase2-persistence.md) now also has a blocking
 Linux atomic repository with exact backups, conflict checks and reconciliation
-([S3 evidence](reviews/2026-10-04-persistence-s3/README.md)). Steps 4–7 remain pending:
-supervised helpers, autosave coordination and headless commands.
+([S3 evidence](reviews/2026-10-04-persistence-s3/README.md)). Supervised storage
+helpers and the presentation storage worker are also implemented
+([S4 evidence](reviews/2026-10-04-persistence-s4/README.md)). Steps 5–7 remain pending:
+autosave coordination, headless commands and complete Phase 2 acceptance.
 User-facing save/load is not yet implemented.
 
 - `cyoa-core`: checked domain types, namesake-preserving casts and stable IDs,

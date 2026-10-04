@@ -66,13 +66,7 @@ pub fn decode(
     if bytes.len() > MAX_SAVE_BYTES {
         return Err(SaveCodecError::too_large(bytes.len()));
     }
-    let mut deserializer = serde_json::Deserializer::from_slice(bytes);
-    let value = UniqueValue { depth: 0 }
-        .deserialize(&mut deserializer)
-        .map_err(|e| SaveCodecError::invalid("$", e.to_string()))?;
-    deserializer
-        .end()
-        .map_err(|e| SaveCodecError::invalid("$", e.to_string()))?;
+    let value = unique_value(bytes).map_err(|e| SaveCodecError::invalid("$", e.to_string()))?;
     let value = migrations::upgrade(value)?;
     let mut unrecognized_fields = SourceSave::unrecognized_fields(&value);
     let envelope: SaveEnvelopeV1 =
@@ -123,6 +117,13 @@ pub fn decode(
         copy,
         unrecognized_fields,
     })
+}
+
+pub(super) fn unique_value(bytes: &[u8]) -> Result<Value, serde_json::Error> {
+    let mut deserializer = serde_json::Deserializer::from_slice(bytes);
+    let value = UniqueValue { depth: 0 }.deserialize(&mut deserializer)?;
+    deserializer.end()?;
+    Ok(value)
 }
 
 pub fn encode(snapshot: &SaveSnapshot, metadata: &SaveMetadata) -> Result<Vec<u8>, SaveCodecError> {

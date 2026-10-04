@@ -48,7 +48,7 @@ fn io_failure(op: StorageOperation, stage: StorageStage, e: io::Error) -> Storag
     };
     failure(op, stage, kind, e.to_string())
 }
-fn decode_failure(op: StorageOperation, e: codec::SaveCodecError) -> StorageFailure {
+pub(super) fn decode_failure(op: StorageOperation, e: codec::SaveCodecError) -> StorageFailure {
     let kind = match e.kind() {
         codec::SaveCodecErrorKind::Invalid => StorageFailureKind::Corrupt {
             location: e.location().into(),
@@ -117,6 +117,25 @@ mod linux {
         }
         pub fn data_dir(&self) -> &Path {
             &self.app
+        }
+        /// Validated exact file bytes for the private helper protocol; the slot
+        /// stays locked through both bounded reading and codec validation.
+        pub fn read_document(
+            &mut self,
+            id: &SaveId,
+            copy: SaveCopy,
+            cancel: &CancellationToken,
+        ) -> Result<Vec<u8>, StorageFailure> {
+            let op = StorageOperation::Load;
+            Self::admitted(cancel, op)?;
+            let dir = self.directory(false, op)?;
+            let _lock = Self::lock(&dir, id, op)?;
+            let bytes = dir
+                .read(&name(id, copy))
+                .map_err(|e| io_failure(op, StorageStage::Read, e))?;
+            codec::decode(&bytes, id, copy).map_err(|e| decode_failure(op, e))?;
+            Self::admitted(cancel, op)?;
+            Ok(bytes)
         }
         fn directory(
             &mut self,

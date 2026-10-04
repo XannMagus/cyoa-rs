@@ -17,8 +17,10 @@ codec, synthetic-only migration dispatch and independent acceptance fixtures.
 See [S2 evidence](../../reviews/2026-10-04-persistence-s2/README.md).
 **S3 implements the blocking Linux atomic repository**; see
 [S3 evidence](../../reviews/2026-10-04-persistence-s3/README.md).
-S4–S7 remain planned; supervised storage/autosave/headless commands are not yet
-implemented. The proposals and audit below retain their planning context.
+**S4 implements supervised storage execution** through the internal helper and
+presentation storage runner; see [S4 evidence](../../reviews/2026-10-04-persistence-s4/README.md).
+S5–S7 remain planned; autosave coordination and public headless save/load commands
+are not implemented. The proposals and audit below retain their planning context.
 
 ## 1. Outcome, scope and authority
 
@@ -185,7 +187,13 @@ pending snapshots to one. It avoids coalescing away an obligated turn autosave.
 
 Use a dedicated storage worker thread, polled/joined like the existing generation
 runner, whose repository adapter supervises **one isolated storage helper process
-per operation**. The helper is an internal `cyoa` invocation wired before public
+per read/write suboperation**. Create/reconcile/load/list use one child; replacement
+uses a read-only preparation child then one mutating child, sharing one total deadline.
+The S2 `SaveTarget` has a content stamp but no disk revision: the preliminary read
+obtains the checked revision so the worker can encode and publish exact retry material
+before dispatching the mutating child. This S4 refinement preserves the application
+port, keeps filesystem work isolated and performs no automatic write retry.
+The helper is an internal `cyoa` invocation wired before public
 Clap/auth handling, with request/response pipes; it contains filesystem work and
 codec validation. Parent-side serialization/decoding also runs on the storage
 worker, never on the input loop. It owns snapshots only. One operation is in flight;
@@ -666,7 +674,7 @@ plan as authorization. Physical crash durability on untested filesystems, future
 schema migrations remain named evidence limits,
 not questions for the user to settle before vendor-independent work.
 
-## 8. Acceptance matrix (all proposed, none registered yet)
+## 8. Acceptance matrix (planning targets; S1–S4 evidence above)
 
 IDs below denote test groups with concrete targets and expected observations.
 Assertions use independent fixture expectations, not encoder output as the sole
@@ -729,8 +737,9 @@ failures. No behavior-changing survivor allowance or weakened historical tests.
 ## 10. Handoff completeness audit
 
 This maps every requirement/decision in the handoff to concrete work and evidence.
-“Covered” here means specified and testable in this plan; all A/S items are future
-work. It does not establish feature enforcement.
+“Covered” here means specified and testable in this historical planning audit.
+Actual S1–S4 enforcement and remaining S5–S7 work are recorded above and in their
+evidence files; this table alone does not establish feature enforcement.
 
 | Handoff item | Plan location | Acceptance / implementation |
 |---|---|---|

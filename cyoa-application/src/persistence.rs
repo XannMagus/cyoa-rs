@@ -446,3 +446,16 @@ fn check_cancelled(
         Ok(())
     }
 }
+
+/// Request-scoped preparation evidence, published before a storage helper can
+/// mutate disk. Retained by the caller even when the worker unwinds.
+#[derive(Clone, Default)]
+pub struct PreparedWriteEvidence(std::sync::Arc<std::sync::Mutex<Option<PendingWrite>>>);
+impl PreparedWriteEvidence {
+    pub fn publish(&self, pending: PendingWrite) {
+        *self.0.lock().unwrap_or_else(|e| e.into_inner()) = Some(pending);
+    }
+    pub fn pending(&self) -> Option<PendingWrite> {
+        self.0.lock().unwrap_or_else(|e| e.into_inner()).clone()
+    }
+}

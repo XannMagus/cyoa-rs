@@ -138,7 +138,7 @@ extension; do not infer permission to revert it from the Python source.
 ### ARCH-001 Dependencies point inward
 
 **Partial: dependency graph, generation and persistence use cases/local storage enforced;
-supervised storage and other use cases pending.** Domain
+supervised storage enforced; other use cases pending.** Domain
 owns vendor-independent rules. Application owns orchestration and its ports.
 Presentation drives application; infrastructure implements inward-owned ports;
 main wires concrete adapters. Application must not import concrete infrastructure
@@ -446,8 +446,8 @@ protects it at the real-child boundary.
 ### PRODUCT-001 Standalone TUI, persistence, export, and image boundary
 
 **Partial: terminal-independent controller/worker, Linux headless/demo and
-persistence use cases/version-one codec and local atomic storage enforced;
-supervised/headless persistence, TUI and export pending.** Rust TUI and headless demo replace the Qt/calibre host. Keep vendor and
+persistence use cases/version-one codec and supervised local atomic storage enforced;
+autosave/headless persistence, TUI and export pending.** Rust TUI and headless demo replace the Qt/calibre host. Keep vendor and
 filesystem work in adapters, one generation in flight, UI-owned canonical state,
 worker progress messages, cancellable children, cached narrative wrapping. Do not
 hold a state mutex during a model call. Save atomically with backup and versioned
@@ -843,3 +843,27 @@ real-file and private fault regressions enforce PRODUCT-001/TEXT-001/ARCH-001;
 repeated disk restore cycles also cover LIMITS-001. See
 `reviews/2026-10-04-persistence-s3/README.md`. This is blocking adapter evidence,
 not supervised helper execution, autosave or headless persistence (S4–S7).
+
+### Phase 2 step 4 supervised storage evidence (2026-10-04)
+
+SupervisedRepository executes bounded, strictly typed private helper requests
+through the existing vendor-neutral process supervisor. The internal binary
+entrypoint precedes Clap/auth, uses no ambient child environment, and owns a
+private scratch cwd. Reply candidates cannot override child failure, cancellation,
+timeout, output bounds or cleanup failure. Mutating failures retain exact prepared
+identity; lost replies reconcile rather than create another slot. The unchanged
+GameRepository port is still inward-owned. Replacement needs a read-only preparation
+child to obtain the revision missing from SaveTarget, then one mutating child under
+the same operation deadline; this ordinary S4 scheduling refinement is documented
+in the plan. The worker publishes retry evidence before a mutating helper launches.
+
+Presentation StorageRunner accepts owned commands/queries and request/revision
+keys. It never performs JSON/disk work or joins a live thread during polling.
+Preparation and terminal events remain separate; panic before preparation is
+Unchanged, panic after preparation retains Unknown and the token. Closing/dropping
+cancels and joins supervised work without a detached writer. Registry entries under
+PRODUCT-001/STREAM-001 cover real binary CRUD, fixture child cancellation/deadlines/
+reply loss and kernel PID disappearance, process-kill crash-window file observations,
+lock release, reconciliation, worker spawn/panic/close and strict protocol admission.
+No headless/autosave coordination or Phase 2 completion is claimed (S5–S7).
+See `reviews/2026-10-04-persistence-s4/README.md` for the scope audit and gate.
