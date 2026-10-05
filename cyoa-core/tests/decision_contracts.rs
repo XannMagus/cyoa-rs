@@ -79,3 +79,18 @@ fn text_002_unicode_lowercase_is_not_python_casefold() {
             .is_none()
     );
 }
+
+#[test]
+fn text_002_combining_marks_stay_inside_generated_id_words() {
+    // Rust's alphabetic property includes Other_Alphabetic combining marks (vowel
+    // signs, harakat), so they stay inside a word; a virama (not alphabetic) still
+    // separates. Calibre's isalnum splits at every mark: "ह-न-द", "م-ح-م-د".
+    // Kept on purpose (user decision, 2026-10-05).
+    for (name, id) in [
+        ("हिन्दी", "हिन-दी"),
+        ("Café Noir", "café-noir"),
+        ("مُحَمَّد", "مُحَمَّد"),
+    ] {
+        assert_eq!(CharacterId::for_name(name).as_str(), id, "{name}");
+    }
+}

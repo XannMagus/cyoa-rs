@@ -98,6 +98,15 @@ deduplication is equality of normalized fields, not case-insensitive name matchi
 This is an intentional, documented port difference, not a Unicode bug to fix from
 Python. A future policy change requires a migration/identity assessment.
 
+Generated-ID word characters follow Rust's `char::is_alphanumeric` (Alphabetic or
+Numeric), not Python's `str.isalnum` (user decision, 2026-10-05). Alphabetic includes
+Other_Alphabetic combining marks, so Indic vowel signs and Arabic harakat stay
+inside a word: `हिन्दी` → `हिन-दी` (the non-alphabetic virama still separates) and
+`مُحَمَّد` stays whole, where calibre yields `ह-न-द` and `م-ح-م-د`. Whole-word slugs
+are kept as more readable. Matching the Python categories would need a Unicode
+general-category crate in the domain. IDs persist once assigned, so saves are
+unaffected.
+
 ### STATE-001 Selection belongs to its world
 
 **Enforced.** `PlayablePosition` is an unchecked request. `World::select` validates
