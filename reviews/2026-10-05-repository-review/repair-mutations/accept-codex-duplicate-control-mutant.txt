@@ -1,0 +1,22 @@
+   Compiling cyoa-infrastructure v0.1.0 (/tmp/tmp.C0ElapA73O/work/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.25s
+     Running tests/codex_backend.rs (/tmp/tmp.C0ElapA73O/target/debug/deps/codex_backend-b8f4684a0dbcb201)
+
+running 1 test
+test duplicate_control_keys_reject_without_emission_and_preserve_prior_candidate ... FAILED
+
+failures:
+
+---- duplicate_control_keys_reject_without_emission_and_preserve_prior_candidate stdout ----
+
+thread 'duplicate_control_keys_reject_without_emission_and_preserve_prior_candidate' (63848) panicked at cyoa-infrastructure/tests/codex_backend.rs:251:9:
+ambiguous Codex control record was accepted: {"type":"turn.failed","error":{"message":"failed"},"type":"turn.completed"}
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    duplicate_control_keys_reject_without_emission_and_preserve_prior_candidate
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 15 filtered out; finished in 0.05s
+
+error: test failed, to rerun pass `-p cyoa-infrastructure --test codex_backend`

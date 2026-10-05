@@ -638,6 +638,27 @@ sixteen observed direct children and workspaces disappeared. See
 
 ## Review discipline
 
+Repository review repairs (2026-10-05): registered real-child tests reject duplicate
+Codex keys in the record and its immediate `item`, `error` and `usage` control
+objects before interpreting fields (BACKENDS-001/ARCH-002). Decoded equal keys,
+including escaped spellings and repeated identical values, are ambiguous. Prior
+candidate/diagnostic bytes survive rejection and no payload is emitted. Unknown
+metadata subtrees and the model-authored text remain outside this control check.
+Claude auth preflight now uses a private typed status DTO, rejecting repeated
+`loggedIn`, `authMethod` and `apiProvider` keys before generation admission;
+unrelated status fields remain tolerated. Each scope predicate stays in its own
+adapter (ARCH-003); the duplicate-key traversal is the vendor-neutral
+`json::duplicate_key_location` helper both backends share (merged 2026-10-06).
+
+Linux input bounds measure each line's bytes including CR/LF delimiters when
+present, with a 64 KiB maximum; only an incomplete line is bounded by the entire buffered length.
+Read-ahead from later lines cannot reject a valid line (PRODUCT-001/STREAM-001).
+The public-binary regression exercises a preceding short line, valid near/exact
+limits, trailing buffered commands, EOF and actual oversized-line rejection.
+Three persistent mutations restore these defects, bringing the handwritten gate
+to 45 without changing the domain sweep. See the
+[repair record](../../reviews/2026-10-05-repository-review/repairs.md).
+
 Every implementation report names affected decision IDs and runs the gate. If a
 pending feature is implemented, add its regressions to the registry and change its
 coverage state in the same commit. Do not satisfy a requirement with an ignored

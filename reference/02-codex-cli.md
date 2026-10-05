@@ -25,6 +25,14 @@ That step added no authenticated observations; step 7 below supplies the live ga
 
 ## Confirmed: outline smoke on 0.160.0, 2026-10-05
 
+The subsequent review-repair smoke also passed on 0.160.0 through the repaired
+codec, accepting “The Bell Beneath the Tide” in 46,340 ms. One emission matched
+the candidate exactly; stderr was empty; reported input/cached/output counts
+were 14,443/0/831. No model override, observed model or cost. See the
+[repair captures](../reviews/2026-10-05-repository-review/repairs.md#live-codex-verification).
+This is another outline smoke only. Duplicate-control rejection is separately
+tested with synthetic children; no claim that the live CLI emitted duplicates.
+
 The repository review ran the existing `codex_adapter_smoke` example through the
 actual adapter, bundled outline request and domain mapping. Installed CLI:
 `codex-cli 0.160.0`. Subscription preflight passed; no model override was supplied.
@@ -226,6 +234,11 @@ Implemented protocol rules:
 6. Reject malformed required event fields, invalid protocol UTF-8/JSON and
    truncated JSON records. Accept a complete final JSON record without newline,
    and CRLF framing without changing retained transcript or decoded payload bytes.
+   Reject duplicate decoded keys (even equal values) in the record and immediate
+   `item`, `error` and `usage` objects before interpreting any control fields.
+   Unknown nested metadata and the model-authored `item.text` string remain
+   outside this check. This repair has synthetic real-child evidence, not a new
+   observed vendor failure convention.
 7. Usage is optional telemetry, never the payload authority. Missing means unknown;
    explicit zero means zero. Map total/cached input through existing
    normalize_input_tokens (cached greater than total becomes unknown). Keep output

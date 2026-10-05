@@ -10,7 +10,7 @@ handoff" section — this project is expected to be implemented across sessions
 using different coding agents on different machines, each with its own CLI
 already authenticated.
 
-This repo contains the Rust workspace scaffold, design research, and ported
+This repo contains the implemented Phase 0–2 Rust workspace, design research, and ported
 prompt/schema reference content. No calibre checkout is needed.
 
 ## Status
@@ -36,6 +36,10 @@ save.**
   - Physical power-loss durability on arbitrary filesystems is not established.
 - The pre-Phase 3 cleanup is recorded in
   [the 2026-10-05 review](reviews/2026-10-05-cleanup/README.md).
+- Astra's independent 2026-10-05 review found three boundary bugs (ambiguous Codex
+  control keys, ambiguous Claude auth status, input read-ahead); its
+  [findings](reviews/2026-10-05-repository-review/README.md) and
+  [repairs](reviews/2026-10-05-repository-review/repairs.md) are merged here.
 
 Each [project contract](docs/decisions/README.md) states whether it is enforced,
 and a Partial one names its remaining gap. Dated evidence lives in `reviews/`
@@ -121,7 +125,9 @@ and a disagreeing final passage is printed as a correction. Ctrl-C during
 generation cancels and joins the worker; idle Ctrl-C, `/quit` and EOF exit. Input
 while busy is rejected except the control/query commands. Scripts must wait for
 stage prompts rather than queue an entire game; EOF during generation cancels it.
-Input lines are UTF-8, bounded to 64 KiB. A closed or stalled output pipe is an I/O
+Input lines are UTF-8, bounded to 64 KiB including CR/LF delimiters when present;
+buffered bytes from later lines do not count against the current line.
+A closed or stalled output pipe is an I/O
 error and closes the session instead of blocking cancellation.
 
 Choose exactly one backend or demo. Optional `--executable`, `--home`,

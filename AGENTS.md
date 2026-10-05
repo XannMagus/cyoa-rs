@@ -71,6 +71,10 @@ not be counted as detected regressions. Keep domain, boundary, orchestration and
 live-backend evidence distinct. Before starting the next phase, read PLAN.md's
 current status and build order, and the `Remaining:` line of each Partial contract.
 
+The repository review's three findings are repaired with registered boundary tests
+and three additional handwritten mutations (45 total); see
+`reviews/2026-10-05-repository-review/repairs.md`.
+
 The gate also runs pinned cargo-mutants/cargo-nextest against `cyoa-core` and only
 its own tests (TESTING-001). Install the documented tool versions before running
 the gate; see `docs/testing/domain-mutations.md`. Never allowlist a behavior-changing

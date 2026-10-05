@@ -1,0 +1,34 @@
+   Compiling cyoa-presentation v0.1.0 (/tmp/tmp.C0ElapA73O/work/cyoa-presentation)
+   Compiling cyoa-cli v0.1.0 (/tmp/tmp.C0ElapA73O/work/cyoa-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.46s
+     Running tests/headless.rs (/tmp/tmp.C0ElapA73O/target/debug/deps/headless-4005e788edfc1c99)
+
+running 1 test
+test input_line_bound_ignores_read_ahead_and_rejects_oversized_lines ... FAILED
+
+failures:
+
+---- input_line_bound_ignores_read_ahead_and_rejects_oversized_lines stdout ----
+
+thread 'input_line_bound_ignores_read_ahead_and_rejects_oversized_lines' (67248) panicked at cyoa-cli/tests/headless.rs:516:9:
+assertion `left == right` failed: input line bound must ignore read-ahead: length=65530 newline=true: Autosave enabled: selection, accepted turns, rewind and quit save canonical state.
+Demo harbour-v1: five prerecorded turns; your choices do not alter the recorded fiction. Exhaustion never switches to a live backend.
+Brief: enter a nonblank adventure idea. /help lists commands.
+Commands: /help /quit /cancel /retry /inspect /diagnostics /save /save-copy /list [AFTER_ID]
+/load SAVE_ID --limits current|original [--backup]; /rewind N
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Selection, accepted turns and rewind autosave. During storage, help, inspection, diagnostics and quit remain available.
+cyoa: input line exceeds 64 KiB
+
+  left: false
+ right: true
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    input_line_bound_ignores_read_ahead_and_rejects_oversized_lines
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 14 filtered out; finished in 0.03s
+
+error: test failed, to rerun pass `-p cyoa-cli --test headless`

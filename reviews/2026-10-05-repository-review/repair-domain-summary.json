@@ -1,0 +1,47 @@
+{
+  "cargo_mutants_version": "27.1.0",
+  "success": 0,
+  "total_mutants": 179,
+  "caught": 100,
+  "unviable": 79,
+  "missed": 0,
+  "timeout": 0,
+  "baseline": [
+    {
+      "summary": "Success",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 2.553937196,
+          "process_status": "Success",
+          "argv": [
+            "/home/xann/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/cargo",
+            "nextest",
+            "run",
+            "--no-run",
+            "--verbose",
+            "--package=cyoa-core@0.1.0",
+            "--locked",
+            "--offline"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201006366,
+          "process_status": "Success",
+          "argv": [
+            "/home/xann/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/cargo",
+            "nextest",
+            "run",
+            "--verbose",
+            "--package=cyoa-core@0.1.0",
+            "--locked",
+            "--offline",
+            "--profile",
+            "domain-mutations"
+          ]
+        }
+      ]
+    }
+  ]
+}
