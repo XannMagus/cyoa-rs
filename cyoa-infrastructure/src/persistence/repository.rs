@@ -694,48 +694,49 @@ mod linux {
                     && page.after().is_none_or(|after| id > *after)
                 {
                     ids.insert(id);
-                    if ids.len() > page.limit() as usize + 1 {
+                    if ids.len() > usize::from(page.size().get()) + 1 {
                         ids.pop_last();
                     }
                 }
             }
-            let more = ids.len() > page.limit() as usize;
+            let more = ids.len() > usize::from(page.size().get());
             if more {
                 ids.pop_last();
             }
             let mut entries = vec![];
             for id in ids {
                 Self::admitted(cancel, op)?;
-                let backup_available = dir.open_file(&name(&id, SaveCopy::Backup), false).is_ok();
+                // Both copies are read under the slot lock, as every other read is.
                 let status = match Self::lock(&dir, &id, op) {
                     Err(e) if e.kind == StorageFailureKind::Busy => SaveListingStatus::Busy,
                     Err(_) => SaveListingStatus::Unreadable,
-                    Ok(_lock) => match self.read(&dir, &id, SaveCopy::Primary, op) {
-                        Ok(g) => SaveListingStatus::Valid {
-                            title: g.snapshot.game().world().outline().title().as_str().into(),
-                            saved_at: g.metadata.saved_at,
-                            turn_count: g.snapshot.game().turns().len(),
-                            source: g.snapshot.source(),
-                        },
-                        Err(e) => match e.kind {
-                            StorageFailureKind::FutureVersion { found, .. } => {
-                                SaveListingStatus::FutureVersion { version: found }
-                            }
-                            StorageFailureKind::Corrupt { .. } | StorageFailureKind::TooLarge => {
-                                SaveListingStatus::Corrupt
-                            }
-                            StorageFailureKind::NotFound if backup_available => {
-                                SaveListingStatus::BackupOnly
-                            }
-                            _ => SaveListingStatus::Unreadable,
-                        },
-                    },
+                    Ok(_lock) => {
+                        let backup = if dir.open_file(&name(&id, SaveCopy::Backup), false).is_ok() {
+                            BackupCopy::Present
+                        } else {
+                            BackupCopy::Absent
+                        };
+                        let primary = match self.read(&dir, &id, SaveCopy::Primary, op) {
+                            Ok(g) => PrimaryCopy::Valid(SaveSummary {
+                                title: g.snapshot.game().world().outline().title().clone(),
+                                saved_at: g.metadata.saved_at,
+                                turns: SavedTurnCount::new(g.snapshot.game().turns().len()),
+                                source: g.snapshot.source(),
+                            }),
+                            Err(e) => match e.kind {
+                                StorageFailureKind::FutureVersion { found, .. } => {
+                                    PrimaryCopy::FutureVersion { version: found }
+                                }
+                                StorageFailureKind::Corrupt { .. }
+                                | StorageFailureKind::TooLarge => PrimaryCopy::Corrupt,
+                                StorageFailureKind::NotFound => PrimaryCopy::Missing,
+                                _ => PrimaryCopy::Unreadable,
+                            },
+                        };
+                        SaveListingStatus::Inspected { primary, backup }
+                    }
                 };
-                entries.push(SaveListing {
-                    id,
-                    status,
-                    backup_available,
-                });
+                entries.push(SaveListing { id, status });
             }
             let next = if more {
                 entries.last().map(|e| e.id.clone())

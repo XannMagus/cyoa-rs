@@ -127,14 +127,13 @@ impl GameRepository for FakeRepository {
         p: SavePage,
         _: &CancellationToken,
     ) -> Result<SavePageResult, StorageFailure> {
-        assert_eq!(p.limit(), 2);
+        assert_eq!(p.size().get(), 2);
         assert_eq!(p.after(), Some(&id()));
         self.call(StorageOperation::List)?;
         Ok(SavePageResult {
             entries: vec![SaveListing {
                 id: id(),
                 status: SaveListingStatus::Busy,
-                backup_available: true,
             }],
             next: Some(id()),
         })
@@ -216,7 +215,7 @@ fn repository_failures_are_preserved_without_retry_or_changing_the_owned_snapsho
             _ => cases
                 .list_saves(
                     ListSaves {
-                        page: SavePage::new(Some(id()), 2).unwrap(),
+                        page: SavePage::new(Some(id()), PageSize::new(2).unwrap()),
                     },
                     &token,
                 )
@@ -277,7 +276,7 @@ fn pre_cancelled_commands_and_queries_never_call_the_repository() {
         cases
             .list_saves(
                 ListSaves {
-                    page: SavePage::new(Some(id()), 2).unwrap()
+                    page: SavePage::new(Some(id()), PageSize::new(2).unwrap())
                 },
                 &token
             )
@@ -330,7 +329,7 @@ fn late_read_cancellation_rejects_results_but_never_hides_a_durable_write_receip
                 cases
                     .list_saves(
                         ListSaves {
-                            page: SavePage::new(Some(id()), 2).unwrap()
+                            page: SavePage::new(Some(id()), PageSize::new(2).unwrap())
                         },
                         &token
                     )
@@ -371,9 +370,9 @@ fn checked_persistence_values_reject_invalid_names_counters_pages_and_bounds() {
     assert!(StorageRequestId::new(u64::MAX).unwrap().next().is_err());
     assert_eq!(SaveRevision::new(1).unwrap().next().unwrap().get(), 2);
     assert_eq!(StorageRequestId::new(1).unwrap().next().unwrap().get(), 2);
-    assert!(SavePage::new(None, 0).is_err());
-    assert!(SavePage::new(None, 101).is_err());
-    assert!(SavePage::new(None, 100).is_ok());
+    assert!(PageSize::new(0).is_err());
+    assert!(PageSize::new(101).is_err());
+    assert!(PageSize::new(100).is_ok());
     assert!(SavedAt::new(0, 1_000_000_000).is_err());
     assert!(SavedAt::new(-62_135_596_801, 0).is_err());
     assert!(SavedAt::new(253_402_300_800, 0).is_err());
@@ -437,7 +436,7 @@ fn explicit_restore_policy_and_read_only_queries_do_not_write_or_rebind_the_disk
     let listed = cases
         .list_saves(
             ListSaves {
-                page: SavePage::new(Some(id()), 2).unwrap(),
+                page: SavePage::new(Some(id()), PageSize::new(2).unwrap()),
             },
             &token,
         )

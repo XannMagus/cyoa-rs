@@ -24,7 +24,7 @@ fn missing_and_unsafe_storage_paths_are_errors_without_following_links() {
     let mut repo = LocalRepository::new(root.path().join("data")).unwrap();
     let token = CancellationSource::default().token();
     assert!(
-        repo.list(SavePage::new(None, 100).unwrap(), &token)
+        repo.list(SavePage::new(None, PageSize::new(100).unwrap()), &token)
             .unwrap()
             .entries
             .is_empty()
@@ -108,10 +108,16 @@ fn atomic_create_replace_and_independent_writer_conflict_preserve_exact_backup()
         1
     );
     let listing = repo
-        .list(SavePage::new(None, 100).unwrap(), &token)
+        .list(SavePage::new(None, PageSize::new(100).unwrap()), &token)
         .unwrap();
     assert_eq!(listing.entries.len(), 1);
-    assert!(listing.entries[0].backup_available);
+    assert!(matches!(
+        listing.entries[0].status,
+        SaveListingStatus::Inspected {
+            backup: BackupCopy::Present,
+            ..
+        }
+    ));
     assert!(
         !dir.join(format!("{}.assets", second.metadata.id.as_str()))
             .exists()
@@ -174,14 +180,14 @@ fn corrupt_primary_never_rotates_over_a_good_backup_and_recovery_creates_a_new_s
     assert_eq!(fs::read(&path).unwrap(), b"corrupt");
     fs::remove_file(&path).unwrap();
     let listing = repo
-        .list(SavePage::new(None, 100).unwrap(), &token)
+        .list(SavePage::new(None, PageSize::new(100).unwrap()), &token)
         .unwrap();
-    assert!(
-        listing
-            .entries
-            .iter()
-            .any(|e| e.id == first.metadata.id && e.status == SaveListingStatus::BackupOnly)
-    );
+    assert!(listing.entries.iter().any(|e| e.id == first.metadata.id
+        && e.status
+            == SaveListingStatus::Inspected {
+                primary: PrimaryCopy::Missing,
+                backup: BackupCopy::Present,
+            }));
 }
 
 #[test]
@@ -209,7 +215,7 @@ fn locks_survive_primary_replacement_and_hostile_entries_are_never_followed() {
         StorageFailureKind::Busy
     );
     assert_eq!(
-        repo.list(SavePage::new(None, 100).unwrap(), &token)
+        repo.list(SavePage::new(None, PageSize::new(100).unwrap()), &token)
             .unwrap()
             .entries[0]
             .status,
@@ -294,7 +300,7 @@ fn listing_pages_report_corrupt_future_and_backup_only_without_rewriting_documen
             .unwrap();
     }
     let rows = repo
-        .list(SavePage::new(None, 100).unwrap(), &token)
+        .list(SavePage::new(None, PageSize::new(100).unwrap()), &token)
         .unwrap()
         .entries;
     let dir = root.path().join("saves");
@@ -307,7 +313,9 @@ fn listing_pages_report_corrupt_future_and_backup_only_without_rewriting_documen
     let mut after = None;
     let mut statuses = vec![];
     loop {
-        let result = repo.list(SavePage::new(after, 1).unwrap(), &token).unwrap();
+        let result = repo
+            .list(SavePage::new(after, PageSize::new(1).unwrap()), &token)
+            .unwrap();
         assert_eq!(result.entries.len(), 1);
         statuses.push(result.entries[0].status.clone());
         after = result.next;
@@ -318,9 +326,20 @@ fn listing_pages_report_corrupt_future_and_backup_only_without_rewriting_documen
     assert_eq!(
         statuses,
         vec![
-            SaveListingStatus::Corrupt,
-            SaveListingStatus::FutureVersion { version: 2 },
-            SaveListingStatus::BackupOnly
+            SaveListingStatus::Inspected {
+                primary: PrimaryCopy::Corrupt,
+                backup: BackupCopy::Absent,
+            },
+            SaveListingStatus::Inspected {
+                primary: PrimaryCopy::FutureVersion {
+                    version: SaveFormatVersion::new(2).unwrap(),
+                },
+                backup: BackupCopy::Absent,
+            },
+            SaveListingStatus::Inspected {
+                primary: PrimaryCopy::Missing,
+                backup: BackupCopy::Present,
+            },
         ]
     );
     assert_eq!(fs::read(path(0)).unwrap(), b"bad");

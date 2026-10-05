@@ -21,7 +21,7 @@ fn harbour_restart_rewind_and_exhaustion_preserve_fixed_passages_without_vendor_
     let mut repo = LocalRepository::new(app._data.path().into()).unwrap();
     let id = repo
         .list(
-            SavePage::new(None, 100).unwrap(),
+            SavePage::new(None, PageSize::new(100).unwrap()),
             &CancellationSource::default().token(),
         )
         .unwrap()

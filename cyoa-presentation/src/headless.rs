@@ -725,23 +725,39 @@ pub fn render_listing(page: &SavePageResult, out: &mut dyn Write) -> io::Result<
     }
     for entry in &page.entries {
         write!(out, "{} ", entry.id.as_str())?;
-        match &entry.status {
-            SaveListingStatus::Valid {
-                title,
-                saved_at,
-                turn_count,
-                source,
-            } => writeln!(
+        let (primary, backup) = match &entry.status {
+            SaveListingStatus::Inspected { primary, backup } => {
+                (primary, *backup == BackupCopy::Present)
+            }
+            // Not inspected under the slot lock: no claim about either copy.
+            SaveListingStatus::Busy => {
+                writeln!(out, "status=Busy backup=unknown")?;
+                continue;
+            }
+            SaveListingStatus::Unreadable => {
+                writeln!(out, "status=Unreadable backup=unknown")?;
+                continue;
+            }
+        };
+        match primary {
+            PrimaryCopy::Valid(summary) => writeln!(
                 out,
-                "title={} turns={} source={:?} saved_at_unix={}.{:03} backup={}",
-                display_text(title),
-                turn_count,
-                source,
-                saved_at.unix_seconds(),
-                saved_at.nanoseconds() / 1_000_000,
-                entry.backup_available
+                "title={} turns={} source={:?} saved_at_unix={}.{:03} backup={backup}",
+                display_text(summary.title.as_str()),
+                summary.turns.get(),
+                summary.source,
+                summary.saved_at.unix_seconds(),
+                summary.saved_at.nanoseconds() / 1_000_000,
             )?,
-            status => writeln!(out, "status={status:?} backup={}", entry.backup_available)?,
+            PrimaryCopy::Missing if backup => writeln!(out, "status=BackupOnly backup=true")?,
+            PrimaryCopy::Missing => writeln!(out, "status=Missing backup=false")?,
+            PrimaryCopy::Corrupt => writeln!(out, "status=Corrupt backup={backup}")?,
+            PrimaryCopy::FutureVersion { version } => writeln!(
+                out,
+                "status=FutureVersion version={} backup={backup}",
+                version.get()
+            )?,
+            PrimaryCopy::Unreadable => writeln!(out, "status=Unreadable backup={backup}")?,
         }
     }
     if let Some(next) = &page.next {

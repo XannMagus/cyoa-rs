@@ -8,6 +8,7 @@ use cyoa_application::{
     cancellation::{CancellationSource, CancellationToken},
     persistence::*,
 };
+use cyoa_core::text::WorldTitle;
 use serde::{Deserialize, Serialize};
 use std::{
     io::{self, Read, Write},
@@ -116,9 +117,10 @@ impl From<StorageFailureKind> for KindWire {
             StorageFailureKind::Busy => Self::Busy,
             StorageFailureKind::Conflict => Self::Conflict,
             StorageFailureKind::Corrupt { location } => Self::Corrupt { location },
-            StorageFailureKind::FutureVersion { found, supported } => {
-                Self::FutureVersion { found, supported }
-            }
+            StorageFailureKind::FutureVersion { found, supported } => Self::FutureVersion {
+                found: found.get(),
+                supported: supported.get(),
+            },
             StorageFailureKind::Unsupported => Self::Unsupported,
             StorageFailureKind::TooLarge => Self::TooLarge,
             StorageFailureKind::Io => Self::Io,
@@ -135,8 +137,15 @@ impl From<KindWire> for StorageFailureKind {
             KindWire::Busy => Self::Busy,
             KindWire::Conflict => Self::Conflict,
             KindWire::Corrupt { location } => Self::Corrupt { location },
+            // A zero version breaks the helper protocol: report it as the helper's fault.
             KindWire::FutureVersion { found, supported } => {
-                Self::FutureVersion { found, supported }
+                match (
+                    SaveFormatVersion::new(found),
+                    SaveFormatVersion::new(supported),
+                ) {
+                    (Ok(found), Ok(supported)) => Self::FutureVersion { found, supported },
+                    _ => Self::WorkerFault,
+                }
             }
             KindWire::Unsupported => Self::Unsupported,
             KindWire::TooLarge => Self::TooLarge,
@@ -253,11 +262,17 @@ enum OutputWire {
 struct RowWire {
     id: String,
     status: ListingWire,
-    backup: bool,
 }
 #[derive(Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 enum ListingWire {
+    Inspected { primary: PrimaryWire, backup: bool },
+    Busy,
+    Unreadable,
+}
+#[derive(Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+enum PrimaryWire {
     Valid {
         title: String,
         seconds: i64,
@@ -265,39 +280,38 @@ enum ListingWire {
         count: usize,
         demo: bool,
     },
+    Missing,
     Corrupt,
     FutureVersion {
         version: u32,
     },
     Unreadable,
-    Busy,
-    BackupOnly,
 }
 impl From<SaveListing> for RowWire {
     fn from(v: SaveListing) -> Self {
         Self {
             id: v.id.as_str().into(),
-            backup: v.backup_available,
             status: match v.status {
-                SaveListingStatus::Valid {
-                    title,
-                    saved_at,
-                    turn_count,
-                    source,
-                } => ListingWire::Valid {
-                    title,
-                    seconds: saved_at.unix_seconds(),
-                    nanos: saved_at.nanoseconds(),
-                    count: turn_count,
-                    demo: matches!(source, StorySource::Demo { .. }),
+                SaveListingStatus::Inspected { primary, backup } => ListingWire::Inspected {
+                    backup: backup == BackupCopy::Present,
+                    primary: match primary {
+                        PrimaryCopy::Valid(summary) => PrimaryWire::Valid {
+                            title: summary.title.as_str().into(),
+                            seconds: summary.saved_at.unix_seconds(),
+                            nanos: summary.saved_at.nanoseconds(),
+                            count: summary.turns.get(),
+                            demo: matches!(summary.source, StorySource::Demo { .. }),
+                        },
+                        PrimaryCopy::Missing => PrimaryWire::Missing,
+                        PrimaryCopy::Corrupt => PrimaryWire::Corrupt,
+                        PrimaryCopy::FutureVersion { version } => PrimaryWire::FutureVersion {
+                            version: version.get(),
+                        },
+                        PrimaryCopy::Unreadable => PrimaryWire::Unreadable,
+                    },
                 },
-                SaveListingStatus::Corrupt => ListingWire::Corrupt,
-                SaveListingStatus::FutureVersion { version } => {
-                    ListingWire::FutureVersion { version }
-                }
-                SaveListingStatus::Unreadable => ListingWire::Unreadable,
                 SaveListingStatus::Busy => ListingWire::Busy,
-                SaveListingStatus::BackupOnly => ListingWire::BackupOnly,
+                SaveListingStatus::Unreadable => ListingWire::Unreadable,
             },
         }
     }
@@ -422,7 +436,8 @@ fn execute(request: Request) -> Result<OutputWire, StorageFailure> {
                 .map(SaveId::new)
                 .transpose()
                 .map_err(|e| boundary(StorageOperation::List, e.to_string()))?;
-            let page = SavePage::new(after, limit)
+            let page = PageSize::new(limit)
+                .map(|size| SavePage::new(after, size))
                 .map_err(|e| boundary(StorageOperation::List, e.to_string()))?;
             let result = repo.list(page, &token)?;
             Ok(OutputWire::Page {
@@ -813,7 +828,7 @@ impl GameRepository for SupervisedRepository {
     ) -> Result<SavePageResult, StorageFailure> {
         let op = StorageOperation::List;
         let after = page.after().cloned();
-        let limit = page.limit();
+        let limit = page.size().get();
         let output = self.call(
             IntentWire::List {
                 after: after.as_ref().map(|id| id.as_str().into()),
@@ -827,7 +842,7 @@ impl GameRepository for SupervisedRepository {
         let OutputWire::Page { entries, next } = output else {
             return Err(boundary(op, "helper returned wrong output kind"));
         };
-        if entries.len() > limit as usize {
+        if entries.len() > usize::from(limit) {
             return Err(boundary(op, "helper exceeded page size"));
         }
         let mut rows = vec![];
@@ -839,54 +854,65 @@ impl GameRepository for SupervisedRepository {
                 return Err(boundary(op, "helper listing is unordered"));
             }
             let status = match row.status {
-                ListingWire::Valid {
-                    title,
-                    seconds,
-                    nanos,
-                    count,
-                    demo,
-                } => {
-                    let at =
-                        SavedAt::new(seconds, nanos).map_err(|e| boundary(op, e.to_string()))?;
-                    if title.trim().is_empty() || at.nanoseconds() != nanos || (demo && count > 5) {
-                        return Err(boundary(op, "helper listing metadata invalid"));
-                    }
-                    SaveListingStatus::Valid {
-                        title,
-                        saved_at: at,
-                        turn_count: count,
-                        source: if demo {
-                            StorySource::Demo {
-                                scenario: DemoScenarioId::HarbourV1,
+                ListingWire::Inspected { primary, backup } => SaveListingStatus::Inspected {
+                    backup: if backup {
+                        BackupCopy::Present
+                    } else {
+                        BackupCopy::Absent
+                    },
+                    primary: match primary {
+                        PrimaryWire::Valid {
+                            title,
+                            seconds,
+                            nanos,
+                            count,
+                            demo,
+                        } => {
+                            let at = SavedAt::new(seconds, nanos)
+                                .map_err(|e| boundary(op, e.to_string()))?;
+                            let title = WorldTitle::new(title)
+                                .map_err(|_| boundary(op, "helper listing metadata invalid"))?;
+                            let source = if demo {
+                                StorySource::Demo {
+                                    scenario: DemoScenarioId::HarbourV1,
+                                }
+                            } else {
+                                StorySource::Live
+                            };
+                            if at.nanoseconds() != nanos || !source.admits(count) {
+                                return Err(boundary(op, "helper listing metadata invalid"));
                             }
-                        } else {
-                            StorySource::Live
-                        },
-                    }
-                }
-                ListingWire::Corrupt => SaveListingStatus::Corrupt,
-                ListingWire::FutureVersion { version } if version > 1 => {
-                    SaveListingStatus::FutureVersion { version }
-                }
-                ListingWire::FutureVersion { .. } => {
-                    return Err(boundary(op, "invalid future version"));
-                }
-                ListingWire::Unreadable => SaveListingStatus::Unreadable,
+                            PrimaryCopy::Valid(SaveSummary {
+                                title,
+                                saved_at: at,
+                                turns: SavedTurnCount::new(count),
+                                source,
+                            })
+                        }
+                        PrimaryWire::Missing => PrimaryCopy::Missing,
+                        PrimaryWire::Corrupt => PrimaryCopy::Corrupt,
+                        PrimaryWire::FutureVersion { version } => {
+                            match SaveFormatVersion::new(version) {
+                                Ok(version) if version > super::migrations::CURRENT => {
+                                    PrimaryCopy::FutureVersion { version }
+                                }
+                                _ => return Err(boundary(op, "invalid future version")),
+                            }
+                        }
+                        PrimaryWire::Unreadable => PrimaryCopy::Unreadable,
+                    },
+                },
                 ListingWire::Busy => SaveListingStatus::Busy,
-                ListingWire::BackupOnly => SaveListingStatus::BackupOnly,
+                ListingWire::Unreadable => SaveListingStatus::Unreadable,
             };
-            rows.push(SaveListing {
-                id,
-                status,
-                backup_available: row.backup,
-            });
+            rows.push(SaveListing { id, status });
         }
         let next = next
             .map(SaveId::new)
             .transpose()
             .map_err(|e| boundary(op, e.to_string()))?;
         if next.is_some()
-            && (rows.len() != limit as usize || rows.last().map(|row| &row.id) != next.as_ref())
+            && (rows.len() != usize::from(limit) || rows.last().map(|row| &row.id) != next.as_ref())
         {
             return Err(boundary(op, "helper listing cursor invalid"));
         }
@@ -900,6 +926,22 @@ impl GameRepository for SupervisedRepository {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn helper_versions_round_trip_and_a_zero_version_is_a_helper_fault() {
+        let found = SaveFormatVersion::new(3).unwrap();
+        let supported = super::super::migrations::CURRENT;
+        let wire = KindWire::from(StorageFailureKind::FutureVersion { found, supported });
+        assert_eq!(
+            StorageFailureKind::from(wire),
+            StorageFailureKind::FutureVersion { found, supported }
+        );
+        for (found, supported) in [(0, 1), (2, 0)] {
+            assert_eq!(
+                StorageFailureKind::from(KindWire::FutureVersion { found, supported }),
+                StorageFailureKind::WorkerFault
+            );
+        }
+    }
     #[test]
     fn private_protocol_rejects_duplicate_keys_unknown_fields_versions_and_wrong_shapes_before_disk()
      {

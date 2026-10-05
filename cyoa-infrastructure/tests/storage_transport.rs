@@ -159,7 +159,7 @@ fn lost_invalid_multiple_or_capped_replies_never_authorize_success_and_reconcile
         assert_eq!(receipt.metadata.revision.get(), 1);
         assert_eq!(
             local
-                .list(SavePage::new(None, 100).unwrap(), &token)
+                .list(SavePage::new(None, PageSize::new(100).unwrap()), &token)
                 .unwrap()
                 .entries
                 .len(),

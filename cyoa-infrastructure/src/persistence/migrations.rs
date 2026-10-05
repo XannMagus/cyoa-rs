@@ -1,15 +1,18 @@
 //! No older Rust format has shipped. Only version one is currently supported.
 use super::codec::SaveCodecError;
+use cyoa_application::persistence::SaveFormatVersion;
 use serde_json::Value;
-pub(super) const CURRENT: u32 = 1;
+pub(super) const CURRENT: SaveFormatVersion =
+    SaveFormatVersion::from_nonzero(std::num::NonZeroU32::MIN);
 pub(super) fn upgrade(value: Value) -> Result<Value, SaveCodecError> {
     dispatch(value, CURRENT, &[])
 }
 type Migration = fn(Value) -> Result<Value, SaveCodecError>;
+/// Each step upgrades a document from the version it is keyed by to the next.
 fn dispatch(
     mut value: Value,
-    current: u32,
-    steps: &[(u32, Migration)],
+    current: SaveFormatVersion,
+    steps: &[(SaveFormatVersion, Migration)],
 ) -> Result<Value, SaveCodecError> {
     let mut version = version(&value)?;
     if version > current {
@@ -23,7 +26,9 @@ fn dispatch(
             .1;
         value = step(value)?;
         let next = version
+            .get()
             .checked_add(1)
+            .and_then(|next| SaveFormatVersion::new(next).ok())
             .ok_or_else(|| SaveCodecError::invalid("version", "version overflow"))?;
         if self::version(&value)? != next {
             return Err(SaveCodecError::invalid(
@@ -35,22 +40,32 @@ fn dispatch(
     }
     Ok(value)
 }
-fn version(value: &Value) -> Result<u32, SaveCodecError> {
+fn version(value: &Value) -> Result<SaveFormatVersion, SaveCodecError> {
     value
         .get("version")
         .and_then(Value::as_u64)
         .and_then(|v| u32::try_from(v).ok())
-        .filter(|v| *v > 0)
+        .and_then(|v| SaveFormatVersion::new(v).ok())
         .ok_or_else(|| SaveCodecError::invalid("version", "required positive u32 version"))
 }
 #[cfg(test)]
 mod tests {
     use super::*;
     use serde_json::json;
+    fn v(version: u32) -> SaveFormatVersion {
+        SaveFormatVersion::new(version).unwrap()
+    }
+    fn rejection(result: Result<Value, SaveCodecError>) -> String {
+        result.unwrap_err().to_string()
+    }
     #[test]
     fn synthetic_scaffold_rejects_missing_steps_and_incorrect_advancement() {
-        assert!(dispatch(json!({"version":1}), 2, &[]).is_err());
-        assert!(dispatch(json!({"version":1}), 2, &[(1, |v| Ok(v))]).is_err());
+        // Each failure is identified, so one cannot stand in for the other.
+        assert!(rejection(dispatch(json!({"version":1}), v(2), &[])).contains("no migration"));
+        assert!(
+            rejection(dispatch(json!({"version":1}), v(2), &[(v(1), Ok)]))
+                .contains("must advance exactly one version")
+        );
     }
     #[test]
     fn synthetic_scaffold_runs_each_step_once_in_order_without_shipping_legacy_support() {
@@ -65,10 +80,10 @@ mod tests {
             Ok(v)
         }
         assert_eq!(
-            dispatch(json!({"version":1}), 3, &[(1, first), (2, second)]).unwrap(),
+            dispatch(json!({"version":1}), v(3), &[(v(1), first), (v(2), second)]).unwrap(),
             json!({"version":3,"first":true})
         );
-        assert!(upgrade(json!({"version":0})).is_err());
-        assert!(upgrade(json!({"version":2})).is_err());
+        assert!(rejection(upgrade(json!({"version":0}))).contains("positive"));
+        assert!(rejection(upgrade(json!({"version":2}))).contains("newer than supported"));
     }
 }

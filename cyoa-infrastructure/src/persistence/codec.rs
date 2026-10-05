@@ -12,7 +12,10 @@ use time::{OffsetDateTime, UtcOffset, format_description::well_known::Rfc3339};
 pub enum SaveCodecErrorKind {
     Invalid,
     TooLarge,
-    FutureVersion { found: u32, supported: u32 },
+    FutureVersion {
+        found: SaveFormatVersion,
+        supported: SaveFormatVersion,
+    },
 }
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 #[error("invalid save at {location}: {message}")]
@@ -35,12 +38,14 @@ impl SaveCodecError {
             message: message.into(),
         }
     }
-    pub(super) fn future(found: u32, supported: u32) -> Self {
+    pub(super) fn future(found: SaveFormatVersion, supported: SaveFormatVersion) -> Self {
         Self {
             kind: SaveCodecErrorKind::FutureVersion { found, supported },
             location: "version".into(),
             message: format!(
-                "Save version {found} is newer than supported version {supported}; use a newer cyoa."
+                "Save version {} is newer than supported version {}; use a newer cyoa.",
+                found.get(),
+                supported.get()
             ),
         }
     }
@@ -132,7 +137,7 @@ fn encode_bounded(
     )
     .expect("fixed valid timestamp format");
     let envelope = SaveEnvelopeV1 {
-        version: migrations::CURRENT,
+        version: migrations::CURRENT.get(),
         id: metadata.id.as_str().into(),
         revision: metadata.revision.get(),
         title: snapshot.game().world().outline().title().as_str().into(),

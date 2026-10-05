@@ -128,7 +128,7 @@ fn polling_is_nonblocking_preparation_precedes_completion_and_close_joins_cancel
             .start(
                 key(),
                 StorageIntent::List(ListSaves {
-                    page: SavePage::new(None, 1).unwrap()
+                    page: SavePage::new(None, PageSize::new(1).unwrap())
                 })
             )
             .is_err()

@@ -216,13 +216,13 @@ fn explicit_backup_recovery_creates_a_fresh_slot_and_preserves_damaged_originals
         let mut repo = LocalRepository::new(root.path().into()).unwrap();
         let page = repo
             .list(
-                SavePage::new(None, 100).unwrap(),
+                SavePage::new(None, PageSize::new(100).unwrap()),
                 &CancellationSource::default().token(),
             )
             .unwrap();
         assert_eq!(page.entries.len(), 2);
         assert!(page.entries.iter().any(|e| e.id != receipt.metadata.id
-            && matches!(e.status, SaveListingStatus::Valid { turn_count: 0, .. })));
+            && matches!(&e.status, SaveListingStatus::Inspected { primary: PrimaryCopy::Valid(summary), .. } if summary.turns.get() == 0)));
     }
 }
 #[test]
@@ -238,7 +238,7 @@ fn both_fixture_backends_restart_from_disk_and_live_saves_are_vendor_neutral() {
         let mut repo = LocalRepository::new(app._data.path().into()).unwrap();
         let page = repo
             .list(
-                SavePage::new(None, 100).unwrap(),
+                SavePage::new(None, PageSize::new(100).unwrap()),
                 &CancellationSource::default().token(),
             )
             .unwrap();
@@ -420,7 +420,7 @@ fn in_session_load_keeps_failed_edit_buffers_and_save_copy_switches_slots_only_a
     let mut reader = LocalRepository::new(app._data.path().into()).unwrap();
     let token = CancellationSource::default().token();
     let page = reader
-        .list(SavePage::new(None, 100).unwrap(), &token)
+        .list(SavePage::new(None, PageSize::new(100).unwrap()), &token)
         .unwrap();
     assert_eq!(page.entries.len(), 2);
     let copy_id = page

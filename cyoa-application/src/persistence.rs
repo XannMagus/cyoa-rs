@@ -4,6 +4,7 @@ use crate::cancellation::CancellationToken;
 use cyoa_core::{
     game::{GameState, TurnCount},
     limits::RestoreLimits,
+    text::WorldTitle,
 };
 use thiserror::Error;
 
@@ -279,8 +280,13 @@ pub enum StorageFailureKind {
     NotFound,
     Busy,
     Conflict,
-    Corrupt { location: String },
-    FutureVersion { found: u32, supported: u32 },
+    Corrupt {
+        location: String,
+    },
+    FutureVersion {
+        found: SaveFormatVersion,
+        supported: SaveFormatVersion,
+    },
     Unsupported,
     TooLarge,
     Io,
@@ -312,49 +318,110 @@ impl StorageFailure {
         }
     }
 }
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SavePage {
-    after: Option<SaveId>,
-    limit: u8,
+/// A save file format version; always positive.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct SaveFormatVersion(std::num::NonZeroU32);
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Error)]
+#[error("save format versions start at 1")]
+pub struct InvalidSaveFormatVersion;
+impl SaveFormatVersion {
+    pub const fn from_nonzero(version: std::num::NonZeroU32) -> Self {
+        Self(version)
+    }
+    pub fn new(version: u32) -> Result<Self, InvalidSaveFormatVersion> {
+        std::num::NonZeroU32::new(version)
+            .map(Self)
+            .ok_or(InvalidSaveFormatVersion)
+    }
+    pub fn get(self) -> u32 {
+        self.0.get()
+    }
 }
+/// Entries per listing page, 1 to [`PageSize::MAX`].
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub struct PageSize(u8);
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Error)]
 #[error("save listing page size must be between 1 and 100")]
 pub struct InvalidSavePage;
-impl SavePage {
-    pub fn new(after: Option<SaveId>, limit: u8) -> Result<Self, InvalidSavePage> {
-        if !(1..=100).contains(&limit) {
-            return Err(InvalidSavePage);
+impl PageSize {
+    pub const MAX: Self = Self(100);
+    pub fn new(size: u8) -> Result<Self, InvalidSavePage> {
+        if (1..=Self::MAX.0).contains(&size) {
+            Ok(Self(size))
+        } else {
+            Err(InvalidSavePage)
         }
-        Ok(Self { after, limit })
+    }
+    pub fn get(self) -> u8 {
+        self.0
+    }
+}
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct SavePage {
+    after: Option<SaveId>,
+    size: PageSize,
+}
+impl SavePage {
+    pub fn new(after: Option<SaveId>, size: PageSize) -> Self {
+        Self { after, size }
     }
     pub fn after(&self) -> Option<&SaveId> {
         self.after.as_ref()
     }
-    pub fn limit(&self) -> u8 {
-        self.limit
+    pub fn size(&self) -> PageSize {
+        self.size
     }
 }
+/// The number of turns recorded in a save.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub struct SavedTurnCount(usize);
+impl SavedTurnCount {
+    pub fn new(turns: usize) -> Self {
+        Self(turns)
+    }
+    pub fn get(self) -> usize {
+        self.0
+    }
+}
+/// What a listing shows for a readable primary save.
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum SaveListingStatus {
-    Valid {
-        title: String,
-        saved_at: SavedAt,
-        turn_count: usize,
-        source: StorySource,
-    },
+pub struct SaveSummary {
+    pub title: WorldTitle,
+    pub saved_at: SavedAt,
+    pub turns: SavedTurnCount,
+    pub source: StorySource,
+}
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum BackupCopy {
+    Present,
+    Absent,
+}
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum PrimaryCopy {
+    Valid(SaveSummary),
+    /// No primary file; with a present backup this is a backup-only slot.
+    Missing,
     Corrupt,
     FutureVersion {
-        version: u32,
+        version: SaveFormatVersion,
     },
     Unreadable,
+}
+/// A listed slot. Both copies are only reported when the slot was inspected
+/// under its lock; a busy or unlockable slot makes no claim about either.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum SaveListingStatus {
+    Inspected {
+        primary: PrimaryCopy,
+        backup: BackupCopy,
+    },
     Busy,
-    BackupOnly,
+    Unreadable,
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SaveListing {
     pub id: SaveId,
     pub status: SaveListingStatus,
-    pub backup_available: bool,
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SavePageResult {

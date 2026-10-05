@@ -299,7 +299,7 @@ mod tests {
         };
         let intent = || {
             StorageIntent::List(ListSaves {
-                page: SavePage::new(None, 1).unwrap(),
+                page: SavePage::new(None, PageSize::new(1).unwrap()),
             })
         };
         assert!(

@@ -287,7 +287,7 @@ fn input_and_output_errors_still_save_last_canonical_story_and_remain_errors() {
         let mut repo = LocalRepository::new(root.path().into()).unwrap();
         let token = cyoa_application::cancellation::CancellationSource::default().token();
         let page = repo
-            .list(SavePage::new(None, 100).unwrap(), &token)
+            .list(SavePage::new(None, PageSize::new(100).unwrap()), &token)
             .unwrap();
         assert_eq!(page.entries.len(), 1);
         let stored = repo

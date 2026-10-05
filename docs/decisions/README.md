@@ -209,6 +209,16 @@ game. "State unchanged on error" is therefore something the caller receives, not
 something it must trust. The free `generation::rewind` and `StoryUseCases::rewind`
 wrappers, which mutated a caller's `&mut GameState`, are removed; rewind is the
 aggregate's own `GameState::rewind`.
+
+Persistence values are typed (2026-10-05 review): `PageSize` (1–100),
+`SaveFormatVersion` (positive), `SavedTurnCount`, and a listing `SaveSummary` with
+a real `WorldTitle`. A listing is either `Inspected { primary, backup }`, read
+under the slot lock like every other read, or `Busy`/`Unreadable`, which make no
+claim about either copy. "Backup only" is a `Missing` primary with a `Present`
+backup, so the former `BackupOnly` status can no longer contradict a separate
+`backup_available` flag. The helper's own copies of the demo length and the
+supported version now use `StorySource::admits` and `migrations::CURRENT`, and a
+zero version on the helper wire is a `WorkerFault`.
 `cyoa-infrastructure`'s `generation::wire` now maps calibre-shaped request/response
 DTOs into these domain types, colocated per struct (the `clocker` `TimeLogEntryDTO`
 pattern): blank wire strings map to `None`, `upcoming_events`' null-vs-empty

@@ -78,7 +78,7 @@ fn execute() -> Result<(), Box<dyn std::error::Error>> {
         let repository = |helper| PersistenceUseCases::new(SupervisedRepository::new(helper));
         let options = match cli.command {
             Command::List(options) => {
-                let query = options.query()?;
+                let query = options.query();
                 let result = run_interruptible("save listing", move |token| {
                     repository(helper).list_saves(query, token)
                 })?;

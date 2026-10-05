@@ -195,9 +195,9 @@ fn parsed_options_translate_into_application_commands_without_panicking() {
     else {
         panic!("expected list")
     };
-    let page = list.query().unwrap().page;
+    let page = list.query().page;
     assert_eq!(
-        (page.after().map(|id| id.as_str()), page.limit()),
+        (page.after().map(|id| id.as_str()), page.size().get()),
         (Some(ID), 7)
     );
 }

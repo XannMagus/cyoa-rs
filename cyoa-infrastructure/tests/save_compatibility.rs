@@ -47,8 +47,8 @@ fn only_shipped_version_one_is_supported_and_reads_leave_input_bytes_unchanged()
     assert_eq!(
         future.kind(),
         &SaveCodecErrorKind::FutureVersion {
-            found: 2,
-            supported: 1
+            found: cyoa_application::persistence::SaveFormatVersion::new(2).unwrap(),
+            supported: cyoa_application::persistence::SaveFormatVersion::new(1).unwrap(),
         }
     );
     assert!(future.to_string().contains("use a newer cyoa"));

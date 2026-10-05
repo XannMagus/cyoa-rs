@@ -52,10 +52,8 @@ fn malformed_versions_metadata_and_world_are_rejected_without_repair() {
         )
         .unwrap_err()
         .kind(),
-        SaveCodecErrorKind::FutureVersion {
-            found: 2,
-            supported: 1
-        }
+        SaveCodecErrorKind::FutureVersion { found, supported }
+            if found.get() == 2 && supported.get() == 1
     ));
 }
 #[test]

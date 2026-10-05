@@ -254,7 +254,7 @@ fn cancelled_consumed_demo_passages_preserve_disk_and_retry_all_five_with_persis
     let mut reader = LocalRepository::new(root.path().into()).unwrap();
     let token = CancellationSource::default().token();
     let id = reader
-        .list(SavePage::new(None, 100).unwrap(), &token)
+        .list(SavePage::new(None, PageSize::new(100).unwrap()), &token)
         .unwrap()
         .entries[0]
         .id

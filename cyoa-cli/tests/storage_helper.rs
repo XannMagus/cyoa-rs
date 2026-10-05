@@ -86,7 +86,7 @@ fn internal_helper_runs_storage_before_clap_or_auth_and_preserves_exact_document
     );
     assert_eq!(
         reader
-            .list(SavePage::new(None, 100).unwrap(), &token)
+            .list(SavePage::new(None, PageSize::new(100).unwrap()), &token)
             .unwrap()
             .entries
             .len(),

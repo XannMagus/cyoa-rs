@@ -1,7 +1,7 @@
 //! CLI intent only; the composition root selects concrete adapters.
 use clap::{Args, Parser, Subcommand, ValueEnum};
 use cyoa_application::persistence::{
-    DemoScenarioId, InspectSave, InvalidSavePage, ListSaves, LoadGame, SaveCopy, SaveId, SavePage,
+    DemoScenarioId, InspectSave, ListSaves, LoadGame, PageSize, SaveCopy, SaveId, SavePage,
     StorySource,
 };
 use cyoa_core::{
@@ -42,6 +42,12 @@ fn absolute_path(value: &str) -> Result<PathBuf, String> {
         Err("--data-dir must be an absolute path".into())
     }
 }
+fn page_size(value: &str) -> Result<PageSize, String> {
+    value
+        .parse::<u8>()
+        .map_err(|e| e.to_string())
+        .and_then(|size| PageSize::new(size).map_err(|e| e.to_string()))
+}
 fn save_id(value: &str) -> Result<SaveId, String> {
     SaveId::new(value).map_err(|e| e.to_string())
 }
@@ -49,8 +55,8 @@ fn save_id(value: &str) -> Result<SaveId, String> {
 pub struct ListOptions {
     #[arg(long, value_parser = save_id)]
     pub after: Option<SaveId>,
-    #[arg(long, default_value_t = 100, value_parser = clap::value_parser!(u8).range(1..=100))]
-    pub limit: u8,
+    #[arg(long, default_value = "100", value_parser = page_size)]
+    pub limit: PageSize,
 }
 #[derive(Debug, Args)]
 pub struct InspectOptions {
@@ -138,10 +144,10 @@ fn copy(backup: bool) -> SaveCopy {
     }
 }
 impl ListOptions {
-    pub fn query(&self) -> Result<ListSaves, InvalidSavePage> {
-        Ok(ListSaves {
-            page: SavePage::new(self.after.clone(), self.limit)?,
-        })
+    pub fn query(&self) -> ListSaves {
+        ListSaves {
+            page: SavePage::new(self.after.clone(), self.limit),
+        }
     }
 }
 impl InspectOptions {
@@ -205,12 +211,9 @@ pub fn persistence_command(line: &str) -> Option<Result<PersistenceCommand, Stri
             }
         }
         "/list" => match words.as_slice() {
-            [_] => Ok(PersistenceCommand::List(
-                SavePage::new(None, 100).expect("valid page"),
-            )),
-            [_, id] => save_id(id).map(|id| {
-                PersistenceCommand::List(SavePage::new(Some(id), 100).expect("valid page"))
-            }),
+            [_] => Ok(PersistenceCommand::List(SavePage::new(None, PageSize::MAX))),
+            [_, id] => save_id(id)
+                .map(|id| PersistenceCommand::List(SavePage::new(Some(id), PageSize::MAX))),
             _ => Err("Usage: /list [AFTER_ID]".into()),
         },
         "/rewind" => match words.as_slice() {

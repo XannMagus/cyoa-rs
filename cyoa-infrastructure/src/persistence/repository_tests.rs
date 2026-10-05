@@ -147,7 +147,7 @@ mod tests {
                 .exists()
         );
         assert_eq!(
-            repo.list(SavePage::new(None, 100).unwrap(), &token)
+            repo.list(SavePage::new(None, PageSize::new(100).unwrap()), &token)
                 .unwrap()
                 .entries
                 .len(),
@@ -455,7 +455,7 @@ mod tests {
                 assert_eq!(receipt, again);
                 assert_eq!(
                     fresh
-                        .list(SavePage::new(None, 100).unwrap(), &token)
+                        .list(SavePage::new(None, PageSize::new(100).unwrap()), &token)
                         .unwrap()
                         .entries
                         .len(),

@@ -55,7 +55,7 @@ fn saved_canonical(app: &App) -> cyoa_application::persistence::StoredGame {
             .unwrap();
     let token = CancellationSource::default().token();
     let page = repo
-        .list(SavePage::new(None, 100).unwrap(), &token)
+        .list(SavePage::new(None, PageSize::new(100).unwrap()), &token)
         .unwrap();
     assert_eq!(
         page.entries.len(),
@@ -140,7 +140,10 @@ fn both_shipped_backend_commands_play_retry_and_inspect_canonical_story() {
         let token = cyoa_application::cancellation::CancellationSource::default().token();
         let page = saves
             .list(
-                cyoa_application::persistence::SavePage::new(None, 100).unwrap(),
+                cyoa_application::persistence::SavePage::new(
+                    None,
+                    cyoa_application::persistence::PageSize::new(100).unwrap(),
+                ),
                 &token,
             )
             .unwrap();

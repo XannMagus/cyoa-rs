@@ -817,7 +817,9 @@
         "target": "lib",
         "tests": [
           "generation::backend_compat::codex_cli::tests::adapted_turn_keeps_order_nullability_defaults_and_empty_strings",
-          "backends::claude_cli::protocol::tests::usage_and_provenance_distinguish_unknown_from_zero_and_never_invent_cost"
+          "backends::claude_cli::protocol::tests::usage_and_provenance_distinguish_unknown_from_zero_and_never_invent_cost",
+          "persistence::helper::tests::helper_versions_round_trip_and_a_zero_version_is_a_helper_fault",
+          "persistence::migrations::tests::synthetic_scaffold_rejects_missing_steps_and_incorrect_advancement"
         ]
       },
       {
