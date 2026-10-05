@@ -116,6 +116,7 @@ mod linux {
             })
         }
         fn line(&mut self, end: usize, newline: bool) -> io::Result<InputEvent> {
+            check_line_length(end + usize::from(newline))?;
             let bytes: Vec<_> = self.bytes.drain(..end + usize::from(newline)).collect();
             let mut text = String::from_utf8(bytes[..end].to_vec())
                 .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
@@ -161,20 +162,27 @@ mod linux {
                 }
                 Err(e) => return Err(e.into()),
             }
-            if self.bytes.len() > 65_536 {
-                return Err(io::Error::new(
-                    io::ErrorKind::InvalidData,
-                    "input line exceeds 64 KiB",
-                ));
-            }
             if let Some(end) = self.bytes.iter().position(|b| *b == b'\n') {
                 return self.line(end, true);
             }
+            check_line_length(self.bytes.len())?;
             if self.eof && self.bytes.is_empty() {
                 Ok(InputEvent::Eof)
             } else {
                 Ok(InputEvent::Pending)
             }
+        }
+    }
+    // Bound the line's bytes, including CR/LF delimiters when present. Read-ahead
+    // belongs to subsequent lines and must not count toward this line's limit.
+    fn check_line_length(length: usize) -> io::Result<()> {
+        if length > 65_536 {
+            Err(io::Error::new(
+                io::ErrorKind::InvalidData,
+                "input line exceeds 64 KiB",
+            ))
+        } else {
+            Ok(())
         }
     }
 }

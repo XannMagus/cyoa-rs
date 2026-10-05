@@ -7,7 +7,7 @@ bash scripts/test_mutation_outcome.sh
 manifest=scripts/mutations/manifest.json
 registry=docs/decisions/required-tests.json
 jq -e --slurpfile registry "$registry" '
-  type == "array" and length >= 44
+  type == "array" and length >= 45
   and ([.[].id] | length == (unique | length))
   and ([.[].id] as $ids | all([
     "name-only-deduplication", "duplicate-opening-request",
@@ -27,7 +27,7 @@ jq -e --slurpfile registry "$registry" '
     "accept-stale-storage-receipt", "autosave-unaccepted-generation",
     "rotate-corrupt-primary", "mark-post-rename-failure-clean",
     "retry-generation-on-save-failure", "accept-codex-duplicate-control",
-    "accept-claude-duplicate-auth"
+    "accept-claude-duplicate-auth", "count-input-read-ahead"
   ][]; . as $id | $ids | index($id) != null))
   and all(.[];
     (if (.id | test("^(accept-codex-duplicate-control|accept-claude-duplicate-auth|count-input-read-ahead)$")) then

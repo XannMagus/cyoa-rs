@@ -383,5 +383,14 @@
     "test": "duplicate_auth_keys_fail_closed_before_generation_and_retain_status",
     "file": "cyoa-infrastructure/src/backends/claude_cli/adapter.rs",
     "failure_contains": "ambiguous Claude authentication was accepted"
+  },
+  {
+    "id": "count-input-read-ahead",
+    "decision": "STREAM-001",
+    "package": "cyoa-cli",
+    "target": "headless",
+    "test": "input_line_bound_ignores_read_ahead_and_rejects_oversized_lines",
+    "file": "cyoa-presentation/src/terminal.rs",
+    "failure_contains": "input line bound must ignore read-ahead"
   }
 ]

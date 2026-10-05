@@ -1607,6 +1607,13 @@
           "input_and_output_errors_still_save_last_canonical_story_and_remain_errors",
           "blocked_storage_and_faulted_output_sinks_preserve_canonical_state_and_reap_helpers"
         ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "headless",
+        "tests": [
+          "input_line_bound_ignores_read_ahead_and_rejects_oversized_lines"
+        ]
       }
     ]
   },
@@ -2065,6 +2072,13 @@
           "bounded_silent_storage_keeps_input_responsive_and_reaps_current_and_final_helpers",
           "input_and_output_errors_still_save_last_canonical_story_and_remain_errors",
           "blocked_storage_and_faulted_output_sinks_preserve_canonical_state_and_reap_helpers"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "headless",
+        "tests": [
+          "input_line_bound_ignores_read_ahead_and_rejects_oversized_lines"
         ]
       }
     ]

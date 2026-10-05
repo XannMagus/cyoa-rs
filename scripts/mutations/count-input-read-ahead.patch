@@ -1,0 +1,10 @@
+--- a/cyoa-presentation/src/terminal.rs
++++ b/cyoa-presentation/src/terminal.rs
+@@ -134,6 +134,6 @@
+             }
++            check_line_length(self.bytes.len())?;
+             if let Some(end) = self.bytes.iter().position(|b| *b == b'\n') {
+                 return self.line(end, true);
+             }
+-            check_line_length(self.bytes.len())?;
+             if self.eof && self.bytes.is_empty() {
