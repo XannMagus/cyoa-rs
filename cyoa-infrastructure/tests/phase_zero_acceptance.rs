@@ -51,7 +51,7 @@ fn start(turns: Vec<String>) -> (UseCases, GameState) {
     );
     (cases, game)
 }
-fn advance(cases: &mut UseCases, game: &mut GameState) {
+fn advance(cases: &mut UseCases, game: GameState) -> GameState {
     cases
         .take_turn(
             game,
@@ -59,14 +59,14 @@ fn advance(cases: &mut UseCases, game: &mut GameState) {
             &CancellationSource::default().token(),
             &mut |_| {},
         )
-        .unwrap();
+        .unwrap()
 }
 
 #[test]
 fn invalid_rewind_is_an_error_without_state_changes_or_generation() {
-    let (mut cases, mut game) = start(vec![]);
+    let (cases, mut game) = start(vec![]);
     let before = game.clone();
-    assert!(cases.rewind(&mut game, TurnCount::new(1).unwrap()).is_err());
+    assert!(game.rewind(TurnCount::new(1).unwrap()).is_err());
     assert_eq!(game, before);
     assert_eq!(cases.into_generator().into_backend().requests().len(), 2);
 }
@@ -76,10 +76,10 @@ fn rewinding_the_only_turn_restores_opening_context_without_an_extra_call() {
     let opening = fixture()["turns"][0].to_string();
     let (mut cases, mut game) = start(vec![opening.clone(), opening]);
     let initial = game.clone();
-    advance(&mut cases, &mut game);
-    cases.rewind(&mut game, TurnCount::new(1).unwrap()).unwrap();
+    game = advance(&mut cases, game);
+    game.rewind(TurnCount::new(1).unwrap()).unwrap();
     assert_eq!(game, initial);
-    advance(&mut cases, &mut game);
+    game = advance(&mut cases, game);
     assert_eq!(game.turns().len(), 1);
     let backend = cases.into_generator().into_backend();
     assert_eq!(backend.requests().len(), 4);
@@ -115,13 +115,13 @@ fn full_story_preserves_contracts_through_failure_retry_cancellation_and_rewind(
         turns[3].clone(),
         turns[4].clone(),
     ]);
-    advance(&mut cases, &mut game);
+    game = advance(&mut cases, game);
     assert_eq!(game.current_chapter().unwrap().number().get(), 0);
     assert_eq!(
         game.turns()[0].turn().quick_actions().as_slice()[0].kind(),
         QuickActionKind::Other
     );
-    advance(&mut cases, &mut game);
+    game = advance(&mut cases, game);
     assert_eq!(game.turns().len(), 2);
     assert_eq!(
         game.current_chapter().unwrap().title().unwrap().as_str(),
@@ -145,14 +145,16 @@ fn full_story_preserves_contracts_through_failure_retry_cancellation_and_rewind(
     let before_error = game.clone();
     let source = CancellationSource::default();
     let mut preview = String::new();
-    let error = cases
+    let failed = cases
         .take_turn(
-            &mut game,
+            game,
             TurnDirection::Continue,
             &source.token(),
             &mut |text| preview.push_str(text),
         )
         .unwrap_err();
+    game = failed.state;
+    let error = failed.failure;
     assert_eq!(error.kind(), FailureKind::Transport);
     assert_eq!(
         error.raw_response().as_str().as_bytes(),
@@ -160,16 +162,16 @@ fn full_story_preserves_contracts_through_failure_retry_cancellation_and_rewind(
     );
     assert_eq!(preview, "Broken preview 🎭");
     assert_eq!(game, before_error);
-    advance(&mut cases, &mut game); // Explicit retry, exactly one further request.
+    game = advance(&mut cases, game); // Explicit retry, exactly one further request.
     assert_eq!(events(&game), ["C", "D"]);
     assert!(upcoming(&game).is_empty());
     assert_eq!(game.current_chapter().unwrap().number().get(), 1);
     assert_eq!(game.prose_context().0.len(), 2);
     let before_cancel = game.clone();
     let mut preview = String::new();
-    let error = cases
+    let failed = cases
         .take_turn(
-            &mut game,
+            game,
             TurnDirection::Continue,
             &source.token(),
             &mut |text| {
@@ -178,21 +180,23 @@ fn full_story_preserves_contracts_through_failure_retry_cancellation_and_rewind(
             },
         )
         .unwrap_err();
+    game = failed.state;
+    let error = failed.failure;
     assert_eq!(error.kind(), FailureKind::Cancelled);
     assert!(!preview.is_empty());
     assert!(turns[3].starts_with(error.raw_response().as_str()));
     assert!(error.raw_response().as_str().len() < turns[3].len());
     assert_eq!(game, before_cancel);
-    advance(&mut cases, &mut game);
+    game = advance(&mut cases, game);
     assert_eq!(game.turns().len(), 4);
     assert_eq!(events(&game), ["D", "E"]);
     assert_eq!(
         game.current_chapter().unwrap().title().unwrap().as_str(),
         "At Sea"
     );
-    cases.rewind(&mut game, TurnCount::new(2).unwrap()).unwrap();
+    game.rewind(TurnCount::new(2).unwrap()).unwrap();
     assert_eq!(game, before_error);
-    advance(&mut cases, &mut game);
+    game = advance(&mut cases, game);
     assert_eq!(game.turns().len(), 3);
     assert_eq!(
         game.current_chapter().unwrap().title().unwrap().as_str(),

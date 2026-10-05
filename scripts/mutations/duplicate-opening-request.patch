@@ -1,12 +1,12 @@
 --- a/cyoa-application/src/generation.rs
 +++ b/cyoa-application/src/generation.rs
-@@ -142,6 +142,9 @@
+@@ -173,6 +173,9 @@
+         cancel: &CancellationToken,
          on_narrative: &mut dyn FnMut(&str),
-     ) -> Result<(), GenerationFailure> {
-         check_cancelled(cancel, RawResponse::new(""))?;
+     ) -> Result<GameState, Box<TurnFailure>> {
 +        if state.turns().is_empty() {
-+            let _ = self.generator.turn(state, &direction, cancel, &mut |_| {});
++            let _ = self.generator.turn(&state, &direction, cancel, &mut |_| {});
 +        }
-         let generated = self
-             .generator
-             .turn(state, &direction, cancel, on_narrative)?;
+         let generated = match check_cancelled(cancel, RawResponse::new(""))
+             .and_then(|()| {
+                 self.generator

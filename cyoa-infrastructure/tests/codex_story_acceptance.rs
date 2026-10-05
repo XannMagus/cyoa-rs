@@ -221,14 +221,14 @@ fn start(limits: Limits) -> (Fixture, Cases, GameState) {
 fn advance(
     fixture: &mut Fixture,
     cases: &mut Cases,
-    game: &mut GameState,
+    game: GameState,
     index: usize,
     direction: TurnDirection,
-) {
+) -> GameState {
     let raw = turn(index);
     fixture.respond(&raw);
     let mut previews = vec![];
-    cases
+    let game = cases
         .take_turn(
             game,
             direction,
@@ -246,6 +246,7 @@ fn advance(
         game.turns().last().unwrap().provenance(),
         &Default::default()
     );
+    game
 }
 fn events(game: &GameState) -> Vec<String> {
     game.current_summary()
@@ -274,13 +275,7 @@ fn limits(cap: usize) -> Limits {
 #[test]
 fn late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once() {
     let (mut fixture, mut cases, mut game) = start(limits(2));
-    advance(
-        &mut fixture,
-        &mut cases,
-        &mut game,
-        0,
-        TurnDirection::Continue,
-    );
+    game = advance(&mut fixture, &mut cases, game, 0, TurnDirection::Continue);
     let malformed = " \r\n{\"narrative\":\"broken 🎭";
     let mut invalid = data()["turns"][1].clone();
     invalid["narrative"] = json!("  ");
@@ -300,14 +295,16 @@ fn late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once(
         let stdout = transcript(&raw, terminal);
         fixture.scenario(&stdout, exit, json!({}));
         let mut preview = String::new();
-        let error = cases
+        let failed = cases
             .take_turn(
-                &mut game,
+                game,
                 TurnDirection::Continue,
                 &CancellationSource::default().token(),
                 &mut |s| preview.push_str(s),
             )
             .unwrap_err();
+        game = failed.state;
+        let error = failed.failure;
         assert_eq!(error.kind(), kind);
         assert_eq!(game, before);
         assert_eq!(error.raw_response().as_str(), raw);
@@ -322,13 +319,7 @@ fn late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once(
         fixture.capture(false);
         let failed = fixture.captures.len() - 1;
         fixture.assert_calls(failed + 1);
-        advance(
-            &mut fixture,
-            &mut cases,
-            &mut game,
-            1,
-            TurnDirection::Continue,
-        );
+        game = advance(&mut fixture, &mut cases, game, 1, TurnDirection::Continue);
         assert_eq!(game.turns().len(), before.turns().len() + 1);
         assert_eq!(
             fixture.captures[failed].prompt,
@@ -346,13 +337,7 @@ fn late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once(
 #[test]
 fn real_workspace_cleanup_failure_preserves_the_game_and_candidate() {
     let (mut fixture, mut cases, mut game) = start(limits(2));
-    advance(
-        &mut fixture,
-        &mut cases,
-        &mut game,
-        0,
-        TurnDirection::Continue,
-    );
+    game = advance(&mut fixture, &mut cases, game, 0, TurnDirection::Continue);
     let before = game.clone();
     let raw = turn(1);
     fixture.scenario(
@@ -360,14 +345,16 @@ fn real_workspace_cleanup_failure_preserves_the_game_and_candidate() {
         0,
         json!({"replace_workspace_with_file":true}),
     );
-    let error = cases
+    let failed = cases
         .take_turn(
-            &mut game,
+            game,
             TurnDirection::Continue,
             &CancellationSource::default().token(),
             &mut |_| panic!("cleanup must precede emission"),
         )
         .unwrap_err();
+    game = failed.state;
+    let error = failed.failure;
     assert_eq!(game, before);
     assert_eq!(error.kind(), FailureKind::Transport);
     assert!(error.to_string().contains("WorkspaceCleanup"));
@@ -375,13 +362,7 @@ fn real_workspace_cleanup_failure_preserves_the_game_and_candidate() {
     assert_eq!(error.diagnostics().stdout(), transcript(&raw, "completed"));
     assert_eq!(error.diagnostics().stderr(), STDERR);
     fixture.capture(true);
-    advance(
-        &mut fixture,
-        &mut cases,
-        &mut game,
-        1,
-        TurnDirection::Continue,
-    );
+    advance(&mut fixture, &mut cases, game, 1, TurnDirection::Continue);
     assert_eq!(fixture.captures[3].prompt, fixture.captures[4].prompt);
     fixture.assert_calls(5);
 }
@@ -389,13 +370,7 @@ fn real_workspace_cleanup_failure_preserves_the_game_and_candidate() {
 #[test]
 fn cancellation_and_output_cap_preserve_state_context_and_explicit_retry() {
     let (mut fixture, mut cases, mut game) = start(limits(2));
-    advance(
-        &mut fixture,
-        &mut cases,
-        &mut game,
-        0,
-        TurnDirection::Continue,
-    );
+    game = advance(&mut fixture, &mut cases, game, 0, TurnDirection::Continue);
     let before = game.clone();
     fixture.scenario(&[], 0, json!({"hang_ms":10000}));
     let source = CancellationSource::default();
@@ -412,24 +387,20 @@ fn cancellation_and_output_cap_preserve_state_context_and_explicit_retry() {
         }
         source.cancel();
     });
-    let error = cases
-        .take_turn(&mut game, TurnDirection::Continue, &token, &mut |_| {
+    let failed = cases
+        .take_turn(game, TurnDirection::Continue, &token, &mut |_| {
             panic!("silent child cannot preview")
         })
         .unwrap_err();
+    game = failed.state;
+    let error = failed.failure;
     canceller.join().unwrap();
     assert_eq!(error.kind(), FailureKind::Cancelled);
     assert_eq!(game, before);
     assert_eq!(error.raw_response().as_str(), "");
     fixture.capture(false);
     fixture.assert_calls(4);
-    advance(
-        &mut fixture,
-        &mut cases,
-        &mut game,
-        1,
-        TurnDirection::Continue,
-    );
+    game = advance(&mut fixture, &mut cases, game, 1, TurnDirection::Continue);
     assert_eq!(fixture.captures[3].prompt, fixture.captures[4].prompt);
 
     // Complete-only transport has no pre-terminal preview. Cancel from the
@@ -438,17 +409,14 @@ fn cancellation_and_output_cap_preserve_state_context_and_explicit_retry() {
     fixture.respond(&turn(2));
     let source = CancellationSource::default();
     let mut previews = vec![];
-    let error = cases
-        .take_turn(
-            &mut game,
-            TurnDirection::Continue,
-            &source.token(),
-            &mut |s| {
-                previews.push(s.to_owned());
-                source.cancel();
-            },
-        )
+    let failed = cases
+        .take_turn(game, TurnDirection::Continue, &source.token(), &mut |s| {
+            previews.push(s.to_owned());
+            source.cancel();
+        })
         .unwrap_err();
+    game = failed.state;
+    let error = failed.failure;
     assert_eq!(error.kind(), FailureKind::Cancelled);
     assert_eq!(game, before);
     assert_eq!(previews, ["Voyage: the ship sailed."]);
@@ -460,27 +428,23 @@ fn cancellation_and_output_cap_preserve_state_context_and_explicit_retry() {
     assert_eq!(error.diagnostics().stderr(), STDERR);
     fixture.capture(false);
     fixture.assert_calls(6);
-    advance(
-        &mut fixture,
-        &mut cases,
-        &mut game,
-        2,
-        TurnDirection::Continue,
-    );
+    game = advance(&mut fixture, &mut cases, game, 2, TurnDirection::Continue);
     assert_eq!(fixture.captures[5].prompt, fixture.captures[6].prompt);
 
     let before = game.clone();
     let mut capped = transcript(&turn(3), "completed");
     capped.extend_from_slice(&[b'x'; 40000]);
     fixture.scenario(&capped, 0, json!({}));
-    let error = cases
+    let failed = cases
         .take_turn(
-            &mut game,
+            game,
             TurnDirection::Continue,
             &CancellationSource::default().token(),
             &mut |_| panic!("cap cannot preview"),
         )
         .unwrap_err();
+    game = failed.state;
+    let error = failed.failure;
     assert_eq!(error.kind(), FailureKind::Transport);
     assert_eq!(game, before);
     assert_eq!(error.diagnostics().stdout(), &capped[..32768]);
@@ -490,13 +454,7 @@ fn cancellation_and_output_cap_preserve_state_context_and_explicit_retry() {
     );
     fixture.capture(false);
     fixture.assert_calls(8);
-    advance(
-        &mut fixture,
-        &mut cases,
-        &mut game,
-        3,
-        TurnDirection::Continue,
-    );
+    advance(&mut fixture, &mut cases, game, 3, TurnDirection::Continue);
     assert_eq!(fixture.captures[7].prompt, fixture.captures[8].prompt);
     fixture.assert_calls(9);
 }
@@ -518,13 +476,7 @@ fn both_restore_policies_control_actual_requests_snapshots_and_chapter_bridge() 
     ] {
         let (mut fixture, mut cases, mut game) = start(limits(3));
         for i in 0..3 {
-            advance(
-                &mut fixture,
-                &mut cases,
-                &mut game,
-                i,
-                TurnDirection::Continue,
-            );
+            game = advance(&mut fixture, &mut cases, game, i, TurnDirection::Continue);
         }
         let original_limits = game.original_limits();
         let mut restored = GameState::restore(
@@ -551,10 +503,10 @@ fn both_restore_policies_control_actual_requests_snapshots_and_chapter_bridge() 
             assert!(record.summary().major_events().events().as_slice().len() <= cap);
         }
         let before = restored.clone();
-        advance(
+        restored = advance(
             &mut fixture,
             &mut cases,
-            &mut restored,
+            restored,
             3,
             TurnDirection::Continue,
         );
@@ -584,15 +536,13 @@ fn both_restore_policies_control_actual_requests_snapshots_and_chapter_bridge() 
                 vec!["C", "D", "E"]
             }
         );
-        cases
-            .rewind(&mut restored, TurnCount::new(1).unwrap())
-            .unwrap();
+        restored.rewind(TurnCount::new(1).unwrap()).unwrap();
         assert_eq!(restored, before);
         fixture.assert_calls(6);
-        advance(
+        restored = advance(
             &mut fixture,
             &mut cases,
-            &mut restored,
+            restored,
             4,
             TurnDirection::Continue,
         );
@@ -628,20 +578,8 @@ fn zero_npc_limit_survives_cast_selection_opening_and_continuation() {
         fixture.captures[1].schema["properties"]["npcs"]["description"],
         "No NPCs; return an empty list."
     );
-    advance(
-        &mut fixture,
-        &mut cases,
-        &mut game,
-        0,
-        TurnDirection::Continue,
-    );
-    advance(
-        &mut fixture,
-        &mut cases,
-        &mut game,
-        1,
-        TurnDirection::Continue,
-    );
+    game = advance(&mut fixture, &mut cases, game, 0, TurnDirection::Continue);
+    game = advance(&mut fixture, &mut cases, game, 1, TurnDirection::Continue);
     assert_eq!(game.current_summary().characters().len(), 1);
     assert_eq!(events(&game), ["B", "C"]);
     assert_eq!(upcoming(&game), ["Depart"]);
@@ -659,22 +597,16 @@ fn composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context(
     assert_eq!(game.world().cast().npcs().len(), 2); // exact duplicate merchant removed
     assert_eq!(game.current_summary().characters().len(), 3); // namesakes survive across roles
     let opening_state = game.clone();
-    advance(
-        &mut fixture,
-        &mut cases,
-        &mut game,
-        0,
-        TurnDirection::Continue,
-    );
+    game = advance(&mut fixture, &mut cases, game, 0, TurnDirection::Continue);
     assert_eq!(game.current_chapter().unwrap().number().get(), 0);
     assert_eq!(
         game.turns()[0].turn().quick_actions().as_slice()[0].kind(),
         QuickActionKind::Other
     );
-    advance(
+    game = advance(
         &mut fixture,
         &mut cases,
-        &mut game,
+        game,
         1,
         TurnDirection::Player(PlayerInput::new("Go to the gate").unwrap()),
     );
@@ -699,38 +631,20 @@ fn composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context(
     }
     assert_eq!(summary.characters().len(), 3);
     let before_chapter = game.clone();
-    advance(
-        &mut fixture,
-        &mut cases,
-        &mut game,
-        2,
-        TurnDirection::Continue,
-    );
+    game = advance(&mut fixture, &mut cases, game, 2, TurnDirection::Continue);
     assert_eq!(game.current_chapter().unwrap().number().get(), 1);
     assert!(upcoming(&game).is_empty());
     assert_eq!(game.prose_context().0.len(), 2);
-    advance(
-        &mut fixture,
-        &mut cases,
-        &mut game,
-        3,
-        TurnDirection::Continue,
-    );
+    game = advance(&mut fixture, &mut cases, game, 3, TurnDirection::Continue);
     assert_eq!(
         game.current_chapter().unwrap().title().unwrap().as_str(),
         "At Sea"
     );
     assert_eq!(events(&game), ["D", "E"]);
-    cases.rewind(&mut game, TurnCount::new(2).unwrap()).unwrap();
+    game.rewind(TurnCount::new(2).unwrap()).unwrap();
     assert_eq!(game, before_chapter);
     fixture.assert_calls(6);
-    advance(
-        &mut fixture,
-        &mut cases,
-        &mut game,
-        4,
-        TurnDirection::Continue,
-    );
+    game = advance(&mut fixture, &mut cases, game, 4, TurnDirection::Continue);
     assert_eq!(
         game.current_chapter().unwrap().title().unwrap().as_str(),
         "Retitled"

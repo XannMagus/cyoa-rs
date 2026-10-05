@@ -482,8 +482,8 @@ fn disk_restore_cycles_preserve_original_limits_and_every_narrowed_snapshot() {
                 .as_str()
                 .contains(&format!("at most {cap} major events"))
         );
-        generation
-            .take_turn(&mut restored, TurnDirection::Continue, &token, &mut |_| {})
+        restored = generation
+            .take_turn(restored, TurnDirection::Continue, &token, &mut |_| {})
             .unwrap();
         assert_eq!(
             restored

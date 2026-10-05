@@ -3,7 +3,7 @@
 use crate::cancellation::CancellationToken;
 use crate::diagnostics::TransportDiagnostics;
 use cyoa_core::{
-    game::{GameState, InvalidRewind, TurnCount},
+    game::GameState,
     limits::Limits,
     text::{Brief, PlayerInput, RawResponse},
     turn::{GenerationProvenance, StoryTurn},
@@ -142,9 +142,6 @@ impl<G: StoryGenerator> StoryUseCases<G> {
     pub fn into_generator(self) -> G {
         self.generator
     }
-    pub fn rewind(&mut self, state: &mut GameState, count: TurnCount) -> Result<(), InvalidRewind> {
-        rewind(state, count)
-    }
     pub fn generate_outline(
         &mut self,
         brief: &Brief,
@@ -167,18 +164,25 @@ impl<G: StoryGenerator> StoryUseCases<G> {
         generated.check_cancelled(cancel)?;
         Ok(World::new(outline, generated.into_parts().0))
     }
+    /// Consumes the game and returns it with one more committed turn. On any
+    /// failure the game comes back unchanged inside [`TurnFailure`].
     pub fn take_turn(
         &mut self,
-        state: &mut GameState,
+        mut state: GameState,
         direction: TurnDirection,
         cancel: &CancellationToken,
         on_narrative: &mut dyn FnMut(&str),
-    ) -> Result<(), GenerationFailure> {
-        check_cancelled(cancel, RawResponse::new(""))?;
-        let generated = self
-            .generator
-            .turn(state, &direction, cancel, on_narrative)?;
-        generated.check_cancelled(cancel)?;
+    ) -> Result<GameState, Box<TurnFailure>> {
+        let generated = match check_cancelled(cancel, RawResponse::new(""))
+            .and_then(|()| {
+                self.generator
+                    .turn(&state, &direction, cancel, on_narrative)
+            })
+            .and_then(|generated| generated.check_cancelled(cancel).map(|()| generated))
+        {
+            Ok(generated) => generated,
+            Err(failure) => return Err(Box::new(TurnFailure { state, failure })),
+        };
         let (turn, raw_response, provenance) = generated.into_parts();
         state.commit_turn(
             turn,
@@ -189,12 +193,16 @@ impl<G: StoryGenerator> StoryUseCases<G> {
                 prompt_trace: None,
             },
         );
-        Ok(())
+        Ok(state)
     }
 }
-/// Local command; requires no generator or inference worker.
-pub fn rewind(state: &mut GameState, count: TurnCount) -> Result<(), InvalidRewind> {
-    state.rewind(count)
+/// A failed turn: the unchanged game, returned to its owner, and why it failed.
+#[derive(Debug, Error)]
+#[error("{failure}")]
+pub struct TurnFailure {
+    pub state: GameState,
+    #[source]
+    pub failure: GenerationFailure,
 }
 fn check_cancelled(
     cancel: &CancellationToken,

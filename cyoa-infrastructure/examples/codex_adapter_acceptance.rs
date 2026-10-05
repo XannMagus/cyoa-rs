@@ -270,12 +270,11 @@ fn run() -> Result<(), Error> {
     fs::write(output.join("initial-state.txt"), format!("{state:#?}"))?;
     for label in ["opening", "continuation"] {
         let mut progress = Vec::new();
-        cases.take_turn(
-            &mut state,
-            TurnDirection::Continue,
-            &source.token(),
-            &mut |s| progress.push(s.to_owned()),
-        )?;
+        state = cases
+            .take_turn(state, TurnDirection::Continue, &source.token(), &mut |s| {
+                progress.push(s.to_owned())
+            })
+            .map_err(|failed| failed.failure)?;
         write_json(
             output.join(format!("{label}-progress.json")),
             &json!(progress),
@@ -287,19 +286,22 @@ fn run() -> Result<(), Error> {
     }
     let before = state.clone();
     let mut progress = Vec::new();
-    let result = cases.take_turn(
-        &mut state,
-        TurnDirection::Continue,
-        &source.token(),
-        &mut |s| progress.push(s.to_owned()),
-    );
+    let result = cases
+        .take_turn(state, TurnDirection::Continue, &source.token(), &mut |s| {
+            progress.push(s.to_owned())
+        })
+        .map_err(|failed| (failed.state, failed.failure));
     let cancelled = result
         .as_ref()
-        .is_err_and(|e| e.kind() == FailureKind::Cancelled);
+        .is_err_and(|(_, e)| e.kind() == FailureKind::Cancelled);
+    let state = match &result {
+        Err((returned, _)) => returned.clone(),
+        Ok(advanced) => advanced.clone(),
+    };
     let calls = cases.into_generator().into_backend().call;
     write_json(
         output.join("result.json"),
-        &json!({"accepted":cancelled && state==before && calls==5, "generation_calls":calls,"committed_turns":state.turns().len(),"cancelled":cancelled,"state_unchanged":state==before,"cancelled_progress":progress,"error":result.err().map(|e|e.to_string())}),
+        &json!({"accepted":cancelled && state==before && calls==5, "generation_calls":calls,"committed_turns":state.turns().len(),"cancelled":cancelled,"state_unchanged":state==before,"cancelled_progress":progress,"error":result.err().map(|(_, e)| e.to_string())}),
     )?;
     if !cancelled || state != before || calls != 5 {
         return Err("live acceptance assertions failed".into());

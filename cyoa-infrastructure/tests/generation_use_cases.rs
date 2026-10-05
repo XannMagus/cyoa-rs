@@ -52,14 +52,13 @@ fn cancelled_commands_make_no_backend_calls_and_preserve_state() {
     let mut use_cases = use_cases([]);
     let mut game = game();
     let before = game.clone();
-    let error = use_cases
-        .take_turn(
-            &mut game,
-            TurnDirection::Continue,
-            &source.token(),
-            &mut |_| panic!("no preview expected"),
-        )
+    let failed = use_cases
+        .take_turn(game, TurnDirection::Continue, &source.token(), &mut |_| {
+            panic!("no preview expected")
+        })
         .unwrap_err();
+    game = failed.state;
+    let error = failed.failure;
     assert_eq!(error.kind(), FailureKind::Cancelled);
     assert_eq!(game, before);
     assert_eq!(
@@ -133,14 +132,11 @@ fn failed_turns_preserve_diagnostics_state_and_single_attempt() {
         let mut use_cases = use_cases([response]);
         let mut game = game();
         let before = game.clone();
-        let error = use_cases
-            .take_turn(
-                &mut game,
-                TurnDirection::Continue,
-                &source.token(),
-                &mut |_| {},
-            )
+        let failed = use_cases
+            .take_turn(game, TurnDirection::Continue, &source.token(), &mut |_| {})
             .unwrap_err();
+        game = failed.state;
+        let error = failed.failure;
         assert_eq!(error.kind(), kind);
         assert_eq!(error.raw_response().as_str(), raw);
         assert_eq!(game, before);
@@ -211,9 +207,9 @@ fn restored_limits_reach_captured_prompt_schema_and_committed_memory() {
             backend,
             GenerationTemplates::bundled().unwrap(),
         ));
-        use_cases
+        restored = use_cases
             .take_turn(
-                &mut restored,
+                restored,
                 TurnDirection::Continue,
                 &source.token(),
                 &mut |_| {},
@@ -280,17 +276,12 @@ fn scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_ext
         Limits::default(),
     );
     assert_eq!(game.protagonist().description().as_str(), "A mason");
-    use_cases
-        .take_turn(
-            &mut game,
-            TurnDirection::Continue,
-            &source.token(),
-            &mut |_| {},
-        )
+    game = use_cases
+        .take_turn(game, TurnDirection::Continue, &source.token(), &mut |_| {})
         .unwrap();
-    use_cases
+    game = use_cases
         .take_turn(
-            &mut game,
+            game,
             TurnDirection::Player(PlayerInput::new("Go to the gate").unwrap()),
             &source.token(),
             &mut |_| {},
@@ -361,14 +352,16 @@ fn preview_then_transport_failure_leaves_state_untouched() {
     let mut game = game();
     let before = game.clone();
     let mut preview = String::new();
-    let error = use_cases
+    let failed = use_cases
         .take_turn(
-            &mut game,
+            game,
             TurnDirection::Continue,
             &source.token(),
             &mut |text| preview.push_str(text),
         )
         .unwrap_err();
+    game = failed.state;
+    let error = failed.failure;
     assert_eq!(preview, "Visible preview");
     assert_eq!(
         error.raw_response().as_str(),
@@ -466,14 +459,16 @@ fn success_diagnostics_reach_generation_failure_when_turns_own_post_decode_check
     let source = CancellationSource::default();
     let mut game = game();
     let before = game.clone();
-    let error = use_cases
+    let failed = use_cases
         .take_turn(
-            &mut game,
+            game,
             TurnDirection::Continue,
             &source.token(),
             &mut |_remainder| source.cancel(),
         )
         .unwrap_err();
+    game = failed.state;
+    let error = failed.failure;
     assert_eq!(error.kind(), FailureKind::Cancelled);
     assert_eq!(error.diagnostics().stdout(), diagnostics.stdout());
     assert_eq!(error.diagnostics().stderr(), diagnostics.stderr());
@@ -493,9 +488,9 @@ fn cancelling_after_a_streamed_preview_preserves_state_and_partial_diagnostics()
     let mut game = game();
     let before = game.clone();
     let mut preview = String::new();
-    let error = use_cases
+    let failed = use_cases
         .take_turn(
-            &mut game,
+            game,
             TurnDirection::Continue,
             &source.token(),
             &mut |text| {
@@ -504,6 +499,8 @@ fn cancelling_after_a_streamed_preview_preserves_state_and_partial_diagnostics()
             },
         )
         .unwrap_err();
+    game = failed.state;
+    let error = failed.failure;
     assert_eq!(error.kind(), FailureKind::Cancelled);
     assert!(!preview.is_empty());
     assert!("The lantern flickered.".starts_with(&preview));
@@ -527,9 +524,9 @@ fn chunked_and_complete_transports_commit_the_same_turn_without_duplicate_previe
     let mut whole = use_cases([Ok(raw.clone())]);
     let mut expected = game();
     let mut preview = String::new();
-    whole
+    expected = whole
         .take_turn(
-            &mut expected,
+            expected,
             TurnDirection::Continue,
             &source.token(),
             &mut |text| preview.push_str(text),
@@ -545,9 +542,9 @@ fn chunked_and_complete_transports_commit_the_same_turn_without_duplicate_previe
         let mut actual = game();
         let mut preview = String::new();
         let mut chunks = 0;
-        cases
+        actual = cases
             .take_turn(
-                &mut actual,
+                actual,
                 TurnDirection::Continue,
                 &source.token(),
                 &mut |text| {
@@ -614,14 +611,13 @@ fn validation_failures_retain_transport_diagnostics_for_every_request_kind() {
                     &source.token(),
                 )
                 .unwrap_err(),
-            _ => cases
-                .take_turn(
-                    &mut state,
-                    TurnDirection::Continue,
-                    &source.token(),
-                    &mut |_| {},
-                )
-                .unwrap_err(),
+            _ => {
+                let failed = cases
+                    .take_turn(state, TurnDirection::Continue, &source.token(), &mut |_| {})
+                    .unwrap_err();
+                state = failed.state;
+                failed.failure
+            }
         };
         assert_eq!(error.kind(), FailureKind::InvalidResponse);
         assert_eq!(error.raw_response().as_str(), raw);
@@ -722,14 +718,13 @@ fn application_cancellation_after_generation_preserves_evidence() {
                     &source.token(),
                 )
                 .unwrap_err(),
-            _ => cases
-                .take_turn(
-                    &mut state,
-                    TurnDirection::Continue,
-                    &source.token(),
-                    &mut |_| {},
-                )
-                .unwrap_err(),
+            _ => {
+                let failed = cases
+                    .take_turn(state, TurnDirection::Continue, &source.token(), &mut |_| {})
+                    .unwrap_err();
+                state = failed.state;
+                failed.failure
+            }
         };
         assert_eq!(error.kind(), FailureKind::Cancelled);
         assert_eq!(error.raw_response().as_str(), raw);
@@ -757,13 +752,8 @@ fn successful_generation_preserves_observed_provenance_and_diagnostics() {
         GenerationTemplates::bundled().unwrap(),
     ));
     let mut state = game();
-    cases
-        .take_turn(
-            &mut state,
-            TurnDirection::Continue,
-            &source.token(),
-            &mut |_| {},
-        )
+    state = cases
+        .take_turn(state, TurnDirection::Continue, &source.token(), &mut |_| {})
         .unwrap();
     assert_eq!(
         state.turns()[0]

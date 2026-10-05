@@ -87,14 +87,16 @@ fn frozen_full_story_roundtrip_preserves_complete_state_exact_audit_and_next_rew
     for i in 0..5 {
         if i == 2 {
             let before = game.clone();
-            let error = cases
+            let failed = cases
                 .take_turn(
-                    &mut game,
+                    game,
                     TurnDirection::Player(PlayerInput::new("Sail onward").unwrap()),
                     &token,
                     &mut |_| {},
                 )
                 .unwrap_err();
+            game = failed.state;
+            let error = failed.failure;
             assert_eq!(error.kind(), FailureKind::Transport);
             assert_eq!(game, before);
             let snapshot = SaveSnapshot::new(game.clone(), StorySource::Live).unwrap();
@@ -112,14 +114,16 @@ fn frozen_full_story_roundtrip_preserves_complete_state_exact_audit_and_next_rew
         if i == 3 {
             let before = game.clone();
             let cancellation = source();
-            let error = cases
+            let failed = cases
                 .take_turn(
-                    &mut game,
+                    game,
                     TurnDirection::Player(PlayerInput::new("Sail onward").unwrap()),
                     &cancellation.token(),
                     &mut |_| cancellation.cancel(),
                 )
                 .unwrap_err();
+            game = failed.state;
+            let error = failed.failure;
             assert_eq!(error.kind(), FailureKind::Cancelled);
             assert_eq!(game, before);
         }
@@ -128,8 +132,8 @@ fn frozen_full_story_roundtrip_preserves_complete_state_exact_audit_and_next_rew
         } else {
             TurnDirection::Player(PlayerInput::new("Sail onward").unwrap())
         };
-        cases
-            .take_turn(&mut game, direction, &token, &mut |_| {})
+        game = cases
+            .take_turn(game, direction, &token, &mut |_| {})
             .unwrap();
     }
     // Enrich existing records with independently specified historical audit
@@ -264,9 +268,7 @@ fn frozen_full_story_roundtrip_preserves_complete_state_exact_audit_and_next_rew
         "complete story disk reconstruction must retain all fields"
     );
     let mut restored = disk_game.snapshot.into_game();
-    cases
-        .rewind(&mut restored, TurnCount::new(3).unwrap())
-        .unwrap();
+    restored.rewind(TurnCount::new(3).unwrap()).unwrap();
     let rewound = SaveSnapshot::new(restored.clone(), StorySource::Live).unwrap();
     let receipt = repository
         .replace(
@@ -328,9 +330,9 @@ fn frozen_full_story_roundtrip_preserves_complete_state_exact_audit_and_next_rew
             "next prompt missing {expected}"
         );
     }
-    cases
+    restored = cases
         .take_turn(
-            &mut restored,
+            restored,
             TurnDirection::Player(PlayerInput::new("Sail onward").unwrap()),
             &token,
             &mut |_| {},
@@ -397,9 +399,9 @@ fn zero_turn_selected_second_playable_roundtrip_restores_one_opening_request() {
         ScriptedBackend::new([Ok(data()["turns"][0].to_string())]),
         GenerationTemplates::bundled().unwrap(),
     ));
-    cases
+    game = cases
         .take_turn(
-            &mut game,
+            game,
             TurnDirection::Continue,
             &source().token(),
             &mut |_| {},

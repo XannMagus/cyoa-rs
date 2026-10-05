@@ -1,9 +1,7 @@
 //! Terminal-independent lifecycle. Only this controller owns canonical state.
 use cyoa_application::{
     cancellation::{CancellationSource, CancellationToken},
-    generation::{
-        self, Generated, GenerationFailure, StoryGenerator, StoryUseCases, TurnDirection,
-    },
+    generation::{Generated, GenerationFailure, StoryGenerator, StoryUseCases, TurnDirection},
 };
 use cyoa_core::{
     game::{GameState, TurnCount},
@@ -92,12 +90,12 @@ impl WorkRequest {
             } => cases
                 .generate_world(&brief, outline, &limits, &self.token)
                 .map(WorkSuccess::Cast),
-            Work::Turn {
-                mut game,
-                direction,
-            } => cases
-                .take_turn(&mut game, direction, &self.token, progress)
-                .map(|()| WorkSuccess::Turn(game)),
+            Work::Turn { game, direction } => cases
+                .take_turn(*game, direction, &self.token, progress)
+                .map(|game| WorkSuccess::Turn(Box::new(game)))
+                // The worker's snapshot is discarded: canonical state lives in the
+                // controller and stays unchanged on failure.
+                .map_err(|failed| failed.failure),
         };
         Completion {
             key: self.key,
@@ -395,7 +393,7 @@ impl SessionController {
         let Stage::Playing { game } = &mut self.stage else {
             return Err(SessionError::WrongStage);
         };
-        generation::rewind(game, count).map_err(|_| SessionError::Rewind)?;
+        game.rewind(count).map_err(|_| SessionError::Rewind)?;
         self.revision = revision;
         self.operation = Operation::Ready;
         self.preview.clear();
@@ -595,7 +593,7 @@ mod tests {
             revision: SessionRevision(1),
         };
         let failure = GenerationFailure::new(
-            generation::FailureKind::InvalidResponse,
+            cyoa_application::generation::FailureKind::InvalidResponse,
             "bad",
             cyoa_core::text::RawResponse::new(""),
             cyoa_application::diagnostics::TransportDiagnostics::empty(),

@@ -194,6 +194,14 @@ callers to know tuple storage. String declaration macros must name their purpose
 
 Required tests include invalid constructors, independently typed values, selection
 ownership, and nonblank deltas; compile-fail tests complement runtime regressions.
+
+Use cases consume the aggregate they transform (2026-10-05 review, PLAN's
+consuming-transform rule): `StoryUseCases::take_turn` takes the `GameState` by value
+and returns the game with one more turn, or a `TurnFailure` holding the unchanged
+game. "State unchanged on error" is therefore something the caller receives, not
+something it must trust. The free `generation::rewind` and `StoryUseCases::rewind`
+wrappers, which mutated a caller's `&mut GameState`, are removed; rewind is the
+aggregate's own `GameState::rewind`.
 `cyoa-infrastructure`'s `generation::wire` now maps calibre-shaped request/response
 DTOs into these domain types, colocated per struct (the `clocker` `TimeLogEntryDTO`
 pattern): blank wire strings map to `None`, `upcoming_events`' null-vs-empty

@@ -174,9 +174,9 @@ fn repeated_codec_restore_cycles_rebind_every_snapshot_without_resurrecting_even
         ScriptedBackend::new([Ok(fixture["turns"][4].to_string())]),
         templates,
     ));
-    cases
+    restored = cases
         .take_turn(
-            &mut restored,
+            restored,
             TurnDirection::Continue,
             &CancellationSource::default().token(),
             &mut |_| {},
