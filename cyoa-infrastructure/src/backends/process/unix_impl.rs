@@ -602,26 +602,28 @@ mod fault_tests {
         let (ready, waiter) = std::sync::mpsc::sync_channel(1);
         let canceller = std::thread::spawn(move || {
             waiter
-                .recv_timeout(Duration::from_secs(5))
+                .recv_timeout(Duration::from_secs(30))
                 .expect("supervisor reached poll");
+            let cancelled_at = Instant::now();
             source.cancel();
+            cancelled_at
         });
-        let start = Instant::now();
         let result = run_with(
             &request,
             &token,
             &mut |_| Ok(()),
             Operations {
-                poll_tick: Some(Duration::from_secs(2)),
+                poll_tick: Some(Duration::from_secs(30)),
                 poll_started: Some(ready),
                 ..Operations::default()
             },
         );
-        canceller.join().unwrap();
+        let returned_at = Instant::now();
+        let cancelled_at = canceller.join().unwrap();
         assert!(matches!(result, Err(SupervisorError::Cancelled { .. })));
         assert!(
-            start.elapsed() < Duration::from_secs(1),
-            "waited for the two-second poll tick instead of the self-pipe"
+            returned_at.duration_since(cancelled_at) < Duration::from_secs(10),
+            "waited for the 30-second poll tick instead of the self-pipe"
         );
     }
     fn spec() -> ProcessSpec {

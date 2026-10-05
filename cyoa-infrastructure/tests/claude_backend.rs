@@ -352,7 +352,7 @@ fn silent_cancellation_uses_a_child_handshake_and_pre_cancel_launches_nothing() 
     let token = source.token();
     let report = fixture.report();
     let canceller = std::thread::spawn(move || {
-        let deadline = Instant::now() + Duration::from_secs(2);
+        let deadline = Instant::now() + Duration::from_secs(30);
         while !report.exists() {
             if Instant::now() >= deadline {
                 source.cancel();
@@ -383,7 +383,7 @@ fn silent_cancellation_uses_a_child_handshake_and_pre_cancel_launches_nothing() 
 #[test]
 fn cancellation_from_a_preview_stops_the_live_child_and_keeps_the_evidence() {
     let fixture = Fixture::new(&capture("success-minimal"), 0);
-    fixture.update("hang_after_output_ms", json!(10000));
+    fixture.update("hang_after_output_ms", json!(60000));
     let source = CancellationSource::default();
     let started = Instant::now();
     let mut seen = vec![];
@@ -396,8 +396,8 @@ fn cancellation_from_a_preview_stops_the_live_child_and_keeps_the_evidence() {
         .unwrap_err();
     assert!(matches!(error, BackendError::Cancelled { .. }), "{error}");
     assert!(
-        started.elapsed() < Duration::from_secs(5),
-        "child was killed, not awaited"
+        started.elapsed() < Duration::from_secs(20),
+        "child was killed, not awaited (it would run 60 s)"
     );
     assert_eq!(seen.first(), previews().first());
     assert!(!evidence(&error).1.stdout().is_empty());

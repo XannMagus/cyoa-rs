@@ -78,7 +78,7 @@ fn wait_for_file(path: &std::path::Path, bound: Duration) -> bool {
 /// Ask the kernel whether this PID exists; missing Linux procfs must never
 /// make a Unix cleanup assertion pass vacuously.
 fn assert_process_gone(pid: u32, context: &str) {
-    let deadline = std::time::Instant::now() + Duration::from_secs(2);
+    let deadline = std::time::Instant::now() + Duration::from_secs(30);
     loop {
         let pid = rustix::process::Pid::from_raw(pid.try_into().expect("PID fits i32"))
             .expect("nonzero PID");
@@ -145,30 +145,33 @@ fn cancellation_while_the_child_is_silent_still_wakes_the_poll_loop_and_returns_
         false,
         Some(&path),
         None,
-        Some(30_000), // hang_ms: far longer than our 3s deadline below
+        Some(120_000), // hang_ms: far longer than our 30s deadline below
     );
-    let deadline_bounds = bounds(Duration::from_secs(3), 1024 * 1024, 1024 * 1024);
+    let deadline_bounds = bounds(Duration::from_secs(30), 1024 * 1024, 1024 * 1024);
     let spec = spec(scenario, deadline_bounds);
     let source = CancellationSource::default();
     let token = source.token();
 
     let path_for_thread = path.clone();
-    let start = std::time::Instant::now();
     let canceller = std::thread::spawn(move || {
         assert!(
-            wait_for_file(&path_for_thread, Duration::from_secs(2)),
+            wait_for_file(&path_for_thread, Duration::from_secs(30)),
             "fixture never wrote its report"
         );
+        let cancelled_at = std::time::Instant::now();
         source.cancel();
+        cancelled_at
     });
     let error = run(spec, &token, &mut noop).unwrap_err();
-    canceller.join().unwrap();
-    let elapsed = start.elapsed();
+    let returned_at = std::time::Instant::now();
+    // Measured from the cancel itself, not the fixture's spawn, against a
+    // deadline three times longer than the bound: only a missed wake-up fails.
+    let elapsed = returned_at.duration_since(canceller.join().unwrap());
 
     assert!(matches!(error, SupervisorError::Cancelled { .. }));
     assert!(
-        elapsed < Duration::from_secs(1),
-        "cancellation while idle must wake the poll loop promptly (well under the 3s deadline), took {elapsed:?}"
+        elapsed < Duration::from_secs(10),
+        "cancellation while idle must wake the poll loop promptly (well under the 30s deadline), took {elapsed:?}"
     );
 
     let report = read_report(&path);
@@ -222,7 +225,8 @@ fn deadline_exceeded_kills_the_child_and_reports_timeout() {
     let error = run(spec, &source.token(), &mut noop).unwrap_err();
     let elapsed = start.elapsed();
     assert!(matches!(error, SupervisorError::Timeout { .. }));
-    assert!(elapsed < Duration::from_secs(5), "took {elapsed:?}");
+    // The child would hang for 60 s; only the 150 ms deadline ends it this soon.
+    assert!(elapsed < Duration::from_secs(30), "took {elapsed:?}");
     assert_process_gone(read_report(&path).pid, "deadline cleanup");
 }
 
@@ -311,7 +315,7 @@ fn a_descendant_retaining_the_inherited_pipe_does_not_hang_the_supervisor() {
     // EOF", the supervisor would block on stdout forever waiting for a
     // close that only the descendant's own exit would produce.
     let scenario = fixture_backend::scenario_full(&[], &[], 0, false, Some(&path), Some(60_000));
-    let bounds = bounds(Duration::from_secs(5), 1024 * 1024, 1024 * 1024);
+    let bounds = bounds(Duration::from_secs(30), 1024 * 1024, 1024 * 1024);
     let spec = spec(scenario, bounds);
     let source = CancellationSource::default();
     let start = std::time::Instant::now();
@@ -319,8 +323,8 @@ fn a_descendant_retaining_the_inherited_pipe_does_not_hang_the_supervisor() {
     let elapsed = start.elapsed();
     assert_eq!(outcome.exit_code, 0);
     assert!(
-        elapsed < Duration::from_secs(5),
-        "must not wait for the descendant's own EOF, took {elapsed:?}"
+        elapsed < Duration::from_secs(20),
+        "must not wait for the descendant's own EOF (60 s), took {elapsed:?}"
     );
 
     let report = read_report(&path);
@@ -350,7 +354,8 @@ fn broken_stdin_delivery_is_reported_without_hanging() {
     let start = std::time::Instant::now();
     let error = run(spec, &source.token(), &mut noop).unwrap_err();
     assert!(matches!(error, SupervisorError::IncompleteInput { .. }));
-    assert!(start.elapsed() < Duration::from_secs(5));
+    // Hang guard only: waiting out the 5 s deadline would report Timeout instead.
+    assert!(start.elapsed() < Duration::from_secs(30));
 }
 
 #[test]
@@ -578,7 +583,7 @@ fn a_panicking_consumer_still_gets_the_child_cleaned_up() {
     // output, and the consumer only panics once a record arrives, so the
     // report must exist by the time the panic can have happened.
     assert!(
-        wait_for_file(&path, Duration::from_secs(2)),
+        wait_for_file(&path, Duration::from_secs(30)),
         "fixture never wrote its report before the consumer could have panicked"
     );
     let report = read_report(&path);
@@ -673,7 +678,7 @@ fn cancelled_token_wins_even_before_its_notifier_runs() {
     });
     let signal_path = path.clone();
     let canceller = std::thread::spawn(move || {
-        assert!(wait_for_file(&signal_path, Duration::from_secs(2)));
+        assert!(wait_for_file(&signal_path, Duration::from_secs(30)));
         source.cancel();
     });
     let scenario =
@@ -765,7 +770,7 @@ fn cancellation_and_deadline_stop_continuous_writers_with_bounded_diagnostics() 
             let handshake = path.clone();
             let canceller = cancel.then(|| {
                 std::thread::spawn(move || {
-                    assert!(wait_for_file(&handshake, Duration::from_secs(2)));
+                    assert!(wait_for_file(&handshake, Duration::from_secs(30)));
                     source.cancel();
                 })
             });
@@ -793,7 +798,8 @@ fn cancellation_and_deadline_stop_continuous_writers_with_bounded_diagnostics() 
                 ),
                 "{error}"
             );
-            assert!(start.elapsed() < Duration::from_secs(2));
+            // The writer never stops on its own; this is a hang guard, not a latency bound.
+            assert!(start.elapsed() < Duration::from_secs(30));
             assert!(error.diagnostics().stdout().len() <= 64 * 1024 * 1024);
             assert!(error.diagnostics().stderr().len() <= 64 * 1024 * 1024);
             assert_process_gone(read_report(&path).pid, "continuous writer");

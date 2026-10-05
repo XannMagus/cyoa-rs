@@ -382,7 +382,7 @@ fn sigint_alone_cancels_idle_generation_before_any_fallback_command() {
         app.line("1");
         let report = fixture.request();
         app.signal();
-        let deadline = Instant::now() + Duration::from_secs(2);
+        let deadline = Instant::now() + Duration::from_secs(10);
         let cancelled = loop {
             app.drain();
             if app.stderr().contains("Generation cancelled after cleanup") {
@@ -516,7 +516,7 @@ fn full_undrained_stderr_does_not_block_error_exit() {
         .stderr(Stdio::from(writer))
         .spawn()
         .unwrap();
-    let deadline = Instant::now() + Duration::from_secs(2);
+    let deadline = Instant::now() + Duration::from_secs(10);
     let status = loop {
         if let Some(status) = child.try_wait().unwrap() {
             break Some(status);

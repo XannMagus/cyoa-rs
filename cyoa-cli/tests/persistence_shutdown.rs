@@ -179,7 +179,8 @@ fn bounded_silent_storage_keeps_input_responsive_and_reaps_current_and_final_hel
         let begin = Instant::now();
         let error =
             headless::run(&mut session, &mut input, &mut vec![], &mut control, false).unwrap_err();
-        assert!(begin.elapsed() < Duration::from_secs(3));
+        // Hang guard: silent helpers end only through the 250 ms deadline.
+        assert!(begin.elapsed() < Duration::from_secs(30));
         assert_eq!(
             session.shutdown(),
             if ending == 3 {
@@ -364,7 +365,7 @@ fn blocked_storage_and_faulted_output_sinks_preserve_canonical_state_and_reap_he
             let mut input = TurnThenQuit {
                 root: root.path().into(),
                 sent: false,
-                deadline: Instant::now() + Duration::from_secs(3),
+                deadline: Instant::now() + Duration::from_secs(30),
             };
             let mut story = ControlledSink {
                 mode: if story_fault { mode } else { SinkMode::Healthy },
@@ -384,7 +385,9 @@ fn blocked_storage_and_faulted_output_sinks_preserve_canonical_state_and_reap_he
             let error = headless::run(&mut session, &mut input, &mut story, &mut control, false)
                 .unwrap_err();
             assert!(
-                begin.elapsed() < Duration::from_secs(3),
+                // Two 250 ms helper deadlines, far below the 30 s input watchdog an
+                // extended deadline would run into.
+                begin.elapsed() < Duration::from_secs(10),
                 "sink failure must not extend storage deadlines"
             );
             let canonical = session.controller().game().unwrap();

@@ -111,7 +111,7 @@ fn runtime(
     )
 }
 fn settle(runtime: &mut Runtime) {
-    let deadline = Instant::now() + Duration::from_secs(5);
+    let deadline = Instant::now() + Duration::from_secs(30);
     while matches!(
         runtime.controller().phase(),
         Phase::Running | Phase::Cancelling | Phase::Closing

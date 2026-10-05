@@ -402,7 +402,7 @@ fn cancellation_and_output_cap_preserve_state_context_and_explicit_retry() {
     let token = source.token();
     let report = fixture.report_path();
     let canceller = std::thread::spawn(move || {
-        let deadline = Instant::now() + Duration::from_secs(3);
+        let deadline = Instant::now() + Duration::from_secs(30);
         while !report.exists() {
             if Instant::now() >= deadline {
                 source.cancel();

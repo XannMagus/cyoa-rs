@@ -91,7 +91,7 @@ impl Repo {
         if let Some((started, release)) = disk.wait_write.take() {
             drop(disk);
             started.store(true, Ordering::SeqCst);
-            let deadline = Instant::now() + Duration::from_secs(3);
+            let deadline = Instant::now() + Duration::from_secs(30);
             while !release.load(Ordering::SeqCst) {
                 assert!(Instant::now() < deadline, "write release watchdog");
                 std::thread::sleep(Duration::from_millis(1));
@@ -164,7 +164,7 @@ impl GameRepository for Repo {
         let wait = self.disk.lock().unwrap().wait_load.take();
         if let Some(started) = wait {
             started.store(true, Ordering::SeqCst);
-            let deadline = Instant::now() + Duration::from_secs(3);
+            let deadline = Instant::now() + Duration::from_secs(30);
             while !token.is_cancelled() {
                 assert!(Instant::now() < deadline, "load cancellation watchdog");
                 std::thread::sleep(Duration::from_millis(1));
@@ -267,7 +267,7 @@ fn session(
     )
 }
 fn settle(s: &mut Session) -> Vec<PersistenceEvent> {
-    let deadline = Instant::now() + Duration::from_secs(3);
+    let deadline = Instant::now() + Duration::from_secs(30);
     let mut events = vec![];
     loop {
         events.extend(s.poll());
@@ -525,7 +525,7 @@ fn source_mismatch_preserves_session_and_backup_recovery_creates_instead_of_repl
     assert_eq!(calls.load(Ordering::SeqCst), 0);
 }
 fn wait_started(flag: &AtomicBool) {
-    let deadline = Instant::now() + Duration::from_secs(3);
+    let deadline = Instant::now() + Duration::from_secs(30);
     while !flag.load(Ordering::SeqCst) {
         assert!(Instant::now() < deadline);
         std::thread::sleep(Duration::from_millis(1));
@@ -540,7 +540,7 @@ fn quit_during_write_finishes_current_revision_once_without_duplicate_backup_rot
     let release = Arc::new(AtomicBool::new(false));
     disk.lock().unwrap().wait_write = Some((started.clone(), release.clone()));
     s.dispatch(Intent::Turn(TurnDirection::Continue)).unwrap();
-    let deadline = Instant::now() + Duration::from_secs(3);
+    let deadline = Instant::now() + Duration::from_secs(30);
     while !s.storage_busy() {
         s.poll();
         assert!(Instant::now() < deadline);
@@ -673,7 +673,7 @@ fn queued_generation_panic_remains_an_exit_failure_after_quit_and_successful_sav
     );
     bound(&mut s);
     s.dispatch(Intent::Turn(TurnDirection::Continue)).unwrap();
-    let deadline = Instant::now() + Duration::from_secs(3);
+    let deadline = Instant::now() + Duration::from_secs(30);
     while calls.load(Ordering::SeqCst) == 0 {
         assert!(Instant::now() < deadline);
         std::thread::sleep(Duration::from_millis(1));

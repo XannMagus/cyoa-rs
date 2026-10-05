@@ -77,7 +77,7 @@ impl<G: StoryGenerator> StoryGenerator for Gate<G> {
     }
 }
 fn settle<G: StoryGenerator + Send + 'static>(runtime: &mut SessionRuntime<G>) {
-    let deadline = Instant::now() + Duration::from_secs(5);
+    let deadline = Instant::now() + Duration::from_secs(30);
     while matches!(
         runtime.controller().phase(),
         Phase::Running | Phase::Cancelling | Phase::Closing
@@ -237,7 +237,7 @@ fn cancelled_consumed_demo_passages_preserve_disk_and_retry_all_five_with_persis
         },
     );
     fn finish(session: &mut dyn HeadlessSession) {
-        let deadline = Instant::now() + Duration::from_secs(5);
+        let deadline = Instant::now() + Duration::from_secs(30);
         while session.storage_busy()
             || matches!(
                 session.controller().phase(),

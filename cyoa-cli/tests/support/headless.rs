@@ -114,7 +114,7 @@ impl Fixture {
         App::spawn(command, read_stdout)
     }
     pub(crate) fn request(&self) -> Value {
-        let deadline = Instant::now() + Duration::from_secs(4);
+        let deadline = Instant::now() + Duration::from_secs(30);
         while !self.report_path().exists() {
             assert!(Instant::now() < deadline, "fixture request not launched");
             thread::sleep(Duration::from_millis(5));
@@ -212,7 +212,7 @@ impl App {
         self.err.len()
     }
     pub(crate) fn wait(&mut self, start: usize, needle: &str) {
-        let deadline = Instant::now() + Duration::from_secs(6);
+        let deadline = Instant::now() + Duration::from_secs(30);
         loop {
             self.drain();
             if String::from_utf8_lossy(&self.err[start..]).contains(needle) {
@@ -250,7 +250,7 @@ impl App {
         .unwrap();
     }
     pub(crate) fn finish(&mut self) -> ExitStatus {
-        let deadline = Instant::now() + Duration::from_secs(6);
+        let deadline = Instant::now() + Duration::from_secs(30);
         loop {
             self.drain();
             if let Some(status) = self.child.try_wait().unwrap() {

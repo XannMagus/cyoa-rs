@@ -155,7 +155,7 @@ impl Fixture {
         }
     }
     fn wait_started(&self) {
-        let deadline = Instant::now() + Duration::from_secs(5);
+        let deadline = Instant::now() + Duration::from_secs(30);
         while !self.report().exists() {
             assert!(Instant::now() < deadline, "child start watchdog");
             thread::sleep(Duration::from_millis(1));
@@ -186,7 +186,7 @@ impl Fixture {
 }
 type Runtime = SessionRuntime<GenerationEngine<Peer>>;
 fn settle(runtime: &mut Runtime) {
-    let deadline = Instant::now() + Duration::from_secs(5);
+    let deadline = Instant::now() + Duration::from_secs(30);
     while matches!(
         runtime.controller().phase(),
         Phase::Running | Phase::Cancelling | Phase::Closing
@@ -330,7 +330,7 @@ fn both_joined_adapter_successes_are_rejected_if_cancel_wins_acceptance() {
                     .unwrap(),
             )
             .unwrap();
-        let deadline = Instant::now() + Duration::from_secs(5);
+        let deadline = Instant::now() + Duration::from_secs(30);
         let done = loop {
             let terminal = runner.poll().into_iter().find_map(|event| {
                 if let WorkerEvent::Finished(c) = event {

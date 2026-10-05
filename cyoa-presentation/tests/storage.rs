@@ -88,7 +88,7 @@ impl GameRepository for Fake {
     }
 }
 fn wait(flag: &AtomicBool) {
-    let end = Instant::now() + Duration::from_secs(2);
+    let end = Instant::now() + Duration::from_secs(30);
     while !flag.load(Ordering::SeqCst) {
         assert!(Instant::now() < end);
         std::thread::sleep(Duration::from_millis(1));
@@ -112,9 +112,13 @@ fn polling_is_nonblocking_preparation_precedes_completion_and_close_joins_cancel
         )
         .unwrap();
     wait(&started);
-    let begin = Instant::now();
     let events = runner.poll();
-    assert!(begin.elapsed() < Duration::from_millis(100));
+    // The fake blocks until cancelled, so a poll that joined the live worker
+    // could never return: returning while the job is unfinished proves it.
+    assert!(
+        !done.load(Ordering::SeqCst),
+        "poll returned only after the job"
+    );
     assert!(
         matches!(&events[..],[StorageEvent::Prepared{key:k,pending:p}]if *k==key()&&*p==pending())
     );
@@ -130,7 +134,7 @@ fn polling_is_nonblocking_preparation_precedes_completion_and_close_joins_cancel
             .is_err()
     );
     runner.close();
-    let end = Instant::now() + Duration::from_secs(2);
+    let end = Instant::now() + Duration::from_secs(30);
     loop {
         if let Some(StorageEvent::Finished {
             key: k,
@@ -165,7 +169,7 @@ fn worker_panics_distinguish_unprepared_from_uncertain_writes_and_retain_identit
             )
             .unwrap();
         wait(&started);
-        let end = Instant::now() + Duration::from_secs(2);
+        let end = Instant::now() + Duration::from_secs(30);
         let mut prepared = false;
         loop {
             let events = runner.poll();

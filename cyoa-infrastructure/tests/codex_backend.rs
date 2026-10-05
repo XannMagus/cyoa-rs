@@ -270,7 +270,7 @@ fn silent_cancellation_uses_a_child_handshake_and_pre_cancel_launches_nothing() 
     let token = source.token();
     let report = fixture.report();
     let canceller = std::thread::spawn(move || {
-        let deadline = Instant::now() + Duration::from_secs(2);
+        let deadline = Instant::now() + Duration::from_secs(30);
         while !report.exists() {
             if Instant::now() >= deadline {
                 source.cancel();

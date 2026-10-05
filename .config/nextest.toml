@@ -2,6 +2,9 @@
 # Report the entire suite; retries must not hide intermittent failures.
 retries = 0
 fail-fast = false
+# A hang is a failure, not a stalled CI job. No test is expected to run longer
+# than a few seconds, so this terminates only genuinely stuck tests.
+slow-timeout = { period = "30s", terminate-after = 4 }
 
 [profile.domain-mutations]
 # Pure domain tests normally finish in milliseconds. Mutated loops must be bounded.

@@ -110,7 +110,7 @@ fn fake(
     )
 }
 fn finish(runner: &mut WorkerRunner<Fake>) -> WorkerEvent {
-    let deadline = Instant::now() + Duration::from_secs(5);
+    let deadline = Instant::now() + Duration::from_secs(30);
     loop {
         for e in runner.poll() {
             if !matches!(e, WorkerEvent::Progress { .. }) {
@@ -122,7 +122,7 @@ fn finish(runner: &mut WorkerRunner<Fake>) -> WorkerEvent {
     }
 }
 fn settle(runtime: &mut SessionRuntime<Fake>) {
-    let deadline = Instant::now() + Duration::from_secs(5);
+    let deadline = Instant::now() + Duration::from_secs(30);
     while matches!(
         runtime.controller().phase(),
         Phase::Running | Phase::Cancelling | Phase::Closing
@@ -218,7 +218,7 @@ fn paused_progress_consumer_cannot_block_completion_or_exceed_budget() {
     // All callbacks finish before the consumer begins polling.
     assert_eq!(started.recv_timeout(Duration::from_secs(5)).unwrap(), 101);
     let mut incomplete = false;
-    let deadline = Instant::now() + Duration::from_secs(5);
+    let deadline = Instant::now() + Duration::from_secs(30);
     loop {
         let events = runner.poll();
         let mut done = false;

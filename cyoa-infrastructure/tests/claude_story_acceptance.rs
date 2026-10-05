@@ -532,7 +532,7 @@ fn cancellation_and_output_cap_preserve_state_context_and_explicit_retry() {
     let token = source.token();
     let report = fixture.report_path();
     let canceller = std::thread::spawn(move || {
-        let deadline = Instant::now() + Duration::from_secs(3);
+        let deadline = Instant::now() + Duration::from_secs(30);
         while !report.exists() {
             if Instant::now() >= deadline {
                 source.cancel();
@@ -568,7 +568,7 @@ fn cancellation_and_output_cap_preserve_state_context_and_explicit_retry() {
     fixture.scenario(
         &transcript(&turn(2), "completed"),
         0,
-        json!({"hang_after_output_ms":10000}),
+        json!({"hang_after_output_ms":60000}),
     );
     let source = CancellationSource::default();
     let started = Instant::now();
@@ -585,7 +585,8 @@ fn cancellation_and_output_cap_preserve_state_context_and_explicit_retry() {
         )
         .unwrap_err();
     assert_eq!(error.kind(), FailureKind::Cancelled);
-    assert!(started.elapsed() < Duration::from_secs(5));
+    // The child would keep running for 60 s; only a kill returns this soon.
+    assert!(started.elapsed() < Duration::from_secs(20));
     assert_eq!(game, before);
     assert!(!previews.is_empty());
     assert!("Voyage: the ship sailed.".starts_with(&previews.concat()));

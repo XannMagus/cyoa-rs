@@ -144,7 +144,8 @@ fn trickling_reader_cannot_extend_final_drain_indefinitely() {
         headless::run(&mut runtime, &mut input, &mut vec![], &mut control, true).unwrap_err();
     assert_eq!(error.kind(), io::ErrorKind::TimedOut);
     assert!(error.to_string().contains("did not drain on exit"));
-    assert!(start.elapsed() < Duration::from_secs(2));
+    // The TimedOut error already proves the drain deadline fired; hang guard only.
+    assert!(start.elapsed() < Duration::from_secs(30));
     assert_eq!(runtime.controller().phase(), Phase::Closed);
 }
 struct Silent<G> {
@@ -158,7 +159,7 @@ impl<G: StoryGenerator> StoryGenerator for Silent<G> {
         brief: &Brief,
         cancel: &CancellationToken,
     ) -> Result<Generated<WorldOutline>, GenerationFailure> {
-        let deadline = Instant::now() + Duration::from_secs(3);
+        let deadline = Instant::now() + Duration::from_secs(30);
         self.started.store(true, Ordering::SeqCst);
         while !cancel.is_cancelled() {
             assert!(Instant::now() < deadline, "cancellation watchdog");
@@ -199,7 +200,7 @@ fn cancellation_and_quit_join_active_worker_while_control_output_is_blocked() {
         runtime
             .dispatch(Intent::SubmitBrief(Brief::new("harbour").unwrap()))
             .unwrap();
-        let deadline = Instant::now() + Duration::from_secs(2);
+        let deadline = Instant::now() + Duration::from_secs(30);
         while !started.load(Ordering::SeqCst) {
             assert!(Instant::now() < deadline);
             thread::sleep(Duration::from_millis(1));
@@ -223,7 +224,8 @@ fn cancellation_and_quit_join_active_worker_while_control_output_is_blocked() {
         assert_eq!(runtime.controller().phase(), Phase::Closed);
         assert!(runtime.controller().game().is_none());
         assert!(
-            start.elapsed() < Duration::from_millis(500),
+            // Half the 10 s stall: only waiting out the stalled sink crosses this.
+            start.elapsed() < Duration::from_secs(5),
             "output stall delayed cancellation/join"
         );
     }
@@ -359,7 +361,7 @@ fn initially_full_real_story_pipe_drains_exact_committed_narrative_on_exit() {
     let (mut story, reader, filled) = full_pipe_with_delayed_reader();
     let mut runtime = runtime(demo::harbour_v1().unwrap());
     fn settle(runtime: &mut dyn HeadlessSession) {
-        let deadline = Instant::now() + Duration::from_secs(2);
+        let deadline = Instant::now() + Duration::from_secs(30);
         while runtime.controller().phase() == Phase::Running {
             runtime.poll();
             assert!(Instant::now() < deadline);

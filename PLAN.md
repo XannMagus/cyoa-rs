@@ -1183,6 +1183,15 @@ prompt diff in review**.
 Ship `cyoa play --demo` on the replay backend: TUI development without burning quota or
 waiting 30 seconds per iteration.
 
+Timing in tests (2026-10-05 review): assert logical progress, not latency. "This
+call never blocks" is proven by a call that returns while the work it must not
+wait for is still provably blocked. A comparative bound ("killed, not awaited")
+stays at most a third to half of a deliberately long slow alternative, at least
+10 s and measured from the triggering event. Watchdogs that only bound a broken
+test use 30 s, and the nextest `workspace` profile terminates a stuck test after
+two minutes. Timing that only reflects scheduler luck under load made the gate
+intermittent.
+
 ## Build order
 
 **Phase 0 — engine, no I/O.** Types + serde + `Limits` + prompts TOML + minijinja + schema
