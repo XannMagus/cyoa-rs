@@ -548,4 +548,31 @@ mod tests {
         assert_eq!(links(&target), 1);
         assert!(!temp_name.exists());
     }
+    #[test]
+    fn writes_sweep_only_their_own_slots_orphaned_temps_under_the_lock() {
+        let root = tempfile::tempdir().unwrap();
+        let token = CancellationSource::default().token();
+        let mut repo = LocalRepository::new(root.path().into()).unwrap();
+        let receipt = repo.create(snapshot(), &token).unwrap();
+        let other = repo.create(snapshot(), &token).unwrap();
+        let saves = root.path().join("saves");
+        let own = saves.join(format!("{}abc123", temp_prefix(&receipt.metadata.id)));
+        let foreign = saves.join(format!("{}def456", temp_prefix(&other.metadata.id)));
+        let unrelated = saves.join(".cyoa-unrelated");
+        for path in [&own, &foreign, &unrelated] {
+            std::fs::write(path, b"left behind by a killed helper").unwrap();
+        }
+        repo.replace(
+            SaveTarget {
+                id: receipt.metadata.id.clone(),
+                expected_stamp: receipt.stamp,
+            },
+            snapshot(),
+            &token,
+        )
+        .unwrap();
+        assert!(!own.exists(), "this slot's orphan is swept");
+        assert!(foreign.exists(), "another slot's temp may be a live write");
+        assert!(unrelated.exists(), "unrecognized names are never removed");
+    }
 }

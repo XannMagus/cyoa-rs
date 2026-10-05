@@ -132,4 +132,9 @@ impl Directory {
     pub fn names(&self) -> io::Result<fs::ReadDir> {
         fs::read_dir(&self.path)
     }
+    /// Unlinks one directory entry relative to the owned fd; never follows a
+    /// symlink and never removes a directory.
+    pub fn remove(&self, name: &str) -> io::Result<()> {
+        Ok(rustix::fs::unlinkat(&self.file, name, AtFlags::empty())?)
+    }
 }

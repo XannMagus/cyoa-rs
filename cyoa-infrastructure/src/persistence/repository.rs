@@ -306,6 +306,7 @@ mod linux {
                 .map_err(|e| decode_failure(op, e))?;
             let dir = self.directory(attempt.previous_stamp().is_none(), op)?;
             let _lock = Self::lock(&dir, attempt.target(), op)?;
+            sweep_orphaned_temps(&dir, attempt.target());
             let primary = name(attempt.target(), SaveCopy::Primary);
             let backup = name(attempt.target(), SaveCopy::Backup);
             dir.checked_optional(&backup)
@@ -352,11 +353,11 @@ mod linux {
                 }
                 _ => return Err(conflict(op)),
             };
-            let mut new = self.temp(&dir, attempt.bytes(), false, op)?;
+            let mut new = self.temp(&dir, attempt.target(), attempt.bytes(), false, op)?;
             let write_result = (|| {
                 Self::admitted(cancel, op)?;
                 if let Some(old) = &old {
-                    let mut tmp = self.temp(&dir, old, true, op)?;
+                    let mut tmp = self.temp(&dir, attempt.target(), old, true, op)?;
                     let result = (|| {
                         self.ops
                             .check(Point::BackupPersist)
@@ -420,13 +421,14 @@ mod linux {
         fn temp(
             &mut self,
             dir: &Directory,
+            id: &SaveId,
             bytes: &[u8],
             backup: bool,
             op: StorageOperation,
         ) -> Result<Option<tempfile::NamedTempFile>, StorageFailure> {
             let mut temp = Some(
                 tempfile::Builder::new()
-                    .prefix(".cyoa-")
+                    .prefix(&temp_prefix(id))
                     .permissions(std::fs::Permissions::from_mode(0o600))
                     .tempfile_in(&dir.path)
                     .map_err(|e| io_failure(op, StorageStage::Write, e))?,
@@ -553,6 +555,26 @@ mod linux {
             id.as_str(),
             if copy == SaveCopy::Backup { ".bak" } else { "" }
         )
+    }
+    /// Temps carry their slot ID (IDs never contain `.`), so a slot's leftovers
+    /// can be told apart from another slot's live writes.
+    fn temp_prefix(id: &SaveId) -> String {
+        format!(".cyoa-{}.", id.as_str())
+    }
+    /// Removes this slot's temps left behind by a killed helper. Only the
+    /// holder of the slot lock writes the slot's temps, so under the lock every
+    /// match is an orphan. Best effort: leftovers are inert, unreferenced
+    /// files and must never block a save.
+    fn sweep_orphaned_temps(dir: &Directory, id: &SaveId) {
+        let prefix = temp_prefix(id);
+        let Ok(entries) = dir.names() else { return };
+        for entry in entries.flatten() {
+            if let Some(name) = entry.file_name().to_str()
+                && name.starts_with(&prefix)
+            {
+                let _ = dir.remove(name);
+            }
+        }
     }
     fn occupied(dir: &Directory, id: &SaveId) -> io::Result<bool> {
         for suffix in [".json", ".json.bak", ".assets"] {

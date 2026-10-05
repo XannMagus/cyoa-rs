@@ -470,7 +470,9 @@ Every save file is published by exactly one rename and so keeps one link: first
 create uses `RENAME_NOREPLACE`, and only where the filesystem rejects that flag
 does it fall back to a plain rename after the in-lock occupancy recheck. Never a
 hard-link fallback, which could leave a two-link primary that loading rejects
-(2026-10-05 review).
+(2026-10-05 review). Temps are named `.cyoa-<save-id>.*`; each write sweeps its
+own slot's leftovers under the slot lock (only the lock holder writes that slot's
+temps), best effort, never another slot's and never an unrecognized name.
 Acceptance: scripted lifecycle/cancellation/state-unchanged-on-error tests, frozen
 save migrations, original-limit round trips, synthetic UI-event/cache tests, and
 export fixtures. PLAN retains the full build order and acceptance scenarios.
