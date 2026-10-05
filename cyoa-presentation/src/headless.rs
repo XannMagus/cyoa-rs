@@ -758,15 +758,15 @@ pub fn render_saved_game(stored: &StoredGame, out: &mut dyn Write) -> io::Result
         stored.metadata.id.as_str(),
         stored.copy,
         stored.metadata.revision.get(),
-        stored.snapshot.source
+        stored.snapshot.source()
     )?;
     writeln!(
         out,
         "Title: {}\nTurns: {}\nActive limits: {:?}\nOriginal limits: {:?}",
-        display_text(stored.snapshot.game.world().outline().title().as_str()),
-        stored.snapshot.game.turns().len(),
-        stored.snapshot.game.limits(),
-        stored.snapshot.game.original_limits()
+        display_text(stored.snapshot.game().world().outline().title().as_str()),
+        stored.snapshot.game().turns().len(),
+        stored.snapshot.game().limits(),
+        stored.snapshot.game().original_limits()
     )?;
     for field in &stored.unrecognized_fields {
         writeln!(

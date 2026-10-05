@@ -304,14 +304,14 @@ fn coordinator_rewind_load_and_quit_persist_through_shipped_helpers() {
     .unwrap();
     let initial = snapshot();
     let runtime = SessionRuntime::new(
-        SessionController::from_game(initial.game.clone()),
+        SessionController::from_game(initial.game().clone()),
         StoryUseCases::new(cyoa_infrastructure::generation::demo::harbour_v1().unwrap()),
         PreviewLimit::default(),
     );
     let mut s = PersistedSession::new(
         runtime,
         StorageRunner::new(move || SupervisedRepository::new(config.clone())),
-        initial.source,
+        initial.source(),
     );
     macro_rules! settle {
         () => {{
@@ -347,12 +347,12 @@ fn coordinator_rewind_load_and_quit_persist_through_shipped_helpers() {
         .unwrap();
     settle!();
     let rewound = s.controller().game().unwrap().clone();
-    assert_eq!(rewound.turns().len(), initial.game.turns().len() - 1);
+    assert_eq!(rewound.turns().len(), initial.game().turns().len() - 1);
     assert_eq!(
         codec::decode(&fs::read(&path).unwrap(), &id, SaveCopy::Primary)
             .unwrap()
             .snapshot
-            .game,
+            .into_game(),
         rewound
     );
     assert_eq!(fs::read(path.with_extension("json.bak")).unwrap(), first);
@@ -374,7 +374,7 @@ fn coordinator_rewind_load_and_quit_persist_through_shipped_helpers() {
         codec::decode(&fs::read(path).unwrap(), &id, SaveCopy::Primary)
             .unwrap()
             .snapshot
-            .game,
+            .into_game(),
         rewound
     );
 }

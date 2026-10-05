@@ -160,14 +160,14 @@ fn bounded_silent_storage_keeps_input_responsive_and_reaps_current_and_final_hel
             );
         let initial = snapshot();
         let runtime = SessionRuntime::new(
-            SessionController::from_game(initial.game.clone()),
+            SessionController::from_game(initial.game().clone()),
             StoryUseCases::new(demo::harbour_v1().unwrap()),
             PreviewLimit::default(),
         );
         let mut session = PersistedSession::new(
             runtime,
             StorageRunner::new(move || SupervisedRepository::new(config.clone())),
-            initial.source,
+            initial.source(),
         );
         let mut input = ClosingInput {
             root: root.path().into(),
@@ -189,7 +189,7 @@ fn bounded_silent_storage_keeps_input_responsive_and_reaps_current_and_final_hel
             }
         );
         assert_eq!(session.durability(), Durability::Uncertain);
-        assert_eq!(session.controller().game(), Some(&initial.game));
+        assert_eq!(session.controller().game(), Some(initial.game()));
         if ending == 3 {
             assert_eq!(error.kind(), io::ErrorKind::InvalidData);
         } else {
@@ -255,14 +255,14 @@ fn input_and_output_errors_still_save_last_canonical_story_and_remain_errors() {
         )
         .unwrap();
         let runtime = SessionRuntime::new(
-            SessionController::from_game(initial.game.clone()),
+            SessionController::from_game(initial.game().clone()),
             StoryUseCases::new(demo::harbour_v1().unwrap()),
             PreviewLimit::default(),
         );
         let mut session = PersistedSession::new(
             runtime,
             StorageRunner::new(move || SupervisedRepository::new(config.clone())),
-            initial.source,
+            initial.source(),
         );
         let mut control = vec![];
         let mut broken = Broken { writes: 0 };
@@ -324,11 +324,12 @@ fn blocked_storage_and_faulted_output_sinks_preserve_canonical_state_and_reap_he
                     )
                     .unwrap(),
                 );
-            let mut initial = snapshot();
-            initial
-                .game
-                .rewind(cyoa_core::game::TurnCount::new(1).unwrap())
+            let initial = snapshot();
+            let source = initial.source();
+            let mut game = initial.into_game();
+            game.rewind(cyoa_core::game::TurnCount::new(1).unwrap())
                 .unwrap();
+            let initial = SaveSnapshot::new(game, source).unwrap();
             let token = cyoa_application::cancellation::CancellationSource::default().token();
             let mut local = LocalRepository::new(root.path().into()).unwrap();
             let receipt = local
@@ -350,14 +351,14 @@ fn blocked_storage_and_faulted_output_sinks_preserve_canonical_state_and_reap_he
                 )
                 .unwrap();
             let runtime = SessionRuntime::new(
-                SessionController::from_game(initial.game.clone()),
+                SessionController::from_game(initial.game().clone()),
                 StoryUseCases::new(demo::harbour_v1().unwrap()),
                 PreviewLimit::default(),
             );
             let mut session = PersistedSession::new(
                 runtime,
                 StorageRunner::new(move || SupervisedRepository::new(config.clone())),
-                initial.source,
+                initial.source(),
             );
             session.admit_loaded(loaded).unwrap();
             let mut input = TurnThenQuit {
@@ -392,7 +393,7 @@ fn blocked_storage_and_faulted_output_sinks_preserve_canonical_state_and_reap_he
                 5,
                 "accepted passage must remain canonical after output/storage failure"
             );
-            assert_eq!(&canonical.turns()[..4], initial.game.turns());
+            assert_eq!(&canonical.turns()[..4], initial.game().turns());
             assert_eq!(
                 canonical.turns()[4].turn().narrative().as_str(),
                 "Rewritten: the ship stayed."

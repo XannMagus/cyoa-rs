@@ -82,3 +82,14 @@ impl StoryGenerator for HarbourDemo {
         self.engine.turn(state, direction, cancel, on_narrative)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use cyoa_application::persistence::DemoScenarioId;
+
+    #[test]
+    fn bundled_harbour_script_length_is_the_scenarios_declared_passages() {
+        let demo = super::harbour_v1().unwrap();
+        assert_eq!(demo.turns.len(), DemoScenarioId::HarbourV1.passages().get());
+    }
+}

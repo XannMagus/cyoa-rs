@@ -200,7 +200,7 @@ mod linux {
                     .collect::<String>();
                 let id = SaveId::new(format!(
                     "{}-{suffix}",
-                    slug(snapshot.game.world().outline().title().as_str())
+                    slug(snapshot.game().world().outline().title().as_str())
                 ))
                 .expect("generated grammar");
                 let _lock = Self::lock(&dir, &id, op)?;
@@ -712,10 +712,10 @@ mod linux {
                     Err(_) => SaveListingStatus::Unreadable,
                     Ok(_lock) => match self.read(&dir, &id, SaveCopy::Primary, op) {
                         Ok(g) => SaveListingStatus::Valid {
-                            title: g.snapshot.game.world().outline().title().as_str().into(),
+                            title: g.snapshot.game().world().outline().title().as_str().into(),
                             saved_at: g.metadata.saved_at,
-                            turn_count: g.snapshot.game.turns().len(),
-                            source: g.snapshot.source,
+                            turn_count: g.snapshot.game().turns().len(),
+                            source: g.snapshot.source(),
                         },
                         Err(e) => match e.kind {
                             StorageFailureKind::FutureVersion { found, .. } => {

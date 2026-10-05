@@ -1,4 +1,4 @@
-use cyoa_application::persistence::{SaveCopy, SaveId};
+use cyoa_application::persistence::{SaveCopy, SaveId, SaveSnapshot};
 use cyoa_core::{summary::UpcomingEventsUpdate, turn::QuickActionKind};
 use cyoa_infrastructure::{
     generation::templates::GenerationTemplates,
@@ -65,10 +65,10 @@ fn optional_omissions_nulls_and_empty_replacements_keep_distinct_meanings() {
         SaveCopy::Primary,
     )
     .unwrap();
-    assert!(minimal.snapshot.game.turns().is_empty());
-    assert!(minimal.snapshot.game.world().cast().npcs().is_empty());
-    assert_eq!(minimal.snapshot.game.style(), &Default::default());
-    assert_eq!(minimal.snapshot.game.selected_world().position().get(), 1);
+    assert!(minimal.snapshot.game().turns().is_empty());
+    assert!(minimal.snapshot.game().world().cast().npcs().is_empty());
+    assert_eq!(minimal.snapshot.game().style(), &Default::default());
+    assert_eq!(minimal.snapshot.game().selected_world().position().get(), 1);
     let mut value = full();
     for record in value["game"]["turns"].as_array_mut().unwrap() {
         record.as_object_mut().unwrap().remove("provenance");
@@ -90,7 +90,7 @@ fn optional_omissions_nulls_and_empty_replacements_keep_distinct_meanings() {
         .unwrap()
         .remove("upcoming_events");
     let loaded = read(&value);
-    let turns = loaded.snapshot.game.turns();
+    let turns = loaded.snapshot.game().turns();
     assert!(matches!(
         turns[0].turn().summary_update().upcoming_events,
         UpcomingEventsUpdate::Keep
@@ -210,11 +210,11 @@ fn valid_authoritative_snapshots_and_unknown_style_keys_are_preserved_without_de
         .push(delta);
     let stored = read(&value);
     assert_eq!(
-        stored.snapshot.game.turns()[0].summary().world().as_str(),
+        stored.snapshot.game().turns()[0].summary().world().as_str(),
         "Edited memory independent of the proposal"
     );
     assert_eq!(
-        stored.snapshot.game.turns()[0]
+        stored.snapshot.game().turns()[0]
             .summary()
             .characters()
             .iter()
@@ -224,7 +224,7 @@ fn valid_authoritative_snapshots_and_unknown_style_keys_are_preserved_without_de
             .as_str(),
         "Durable renamed protagonist"
     );
-    let game = &stored.snapshot.game;
+    let game = stored.snapshot.game();
     assert_eq!(game.style().pace.as_ref().unwrap().as_str(), "unknown-pace");
     let templates = GenerationTemplates::bundled().unwrap();
     let unknown = templates.turn_request(game, None, false).unwrap();
@@ -256,7 +256,7 @@ fn stored_unicode_matching_preserves_sharp_s_distinctions_and_rejects_lowercase_
         json!([{"text":"Straße"},{"text":"STRASSE"}]);
     let loaded = read(&value);
     assert_eq!(
-        loaded.snapshot.game.turns()[0]
+        loaded.snapshot.game().turns()[0]
             .turn()
             .quick_actions()
             .as_slice()
@@ -264,7 +264,7 @@ fn stored_unicode_matching_preserves_sharp_s_distinctions_and_rejects_lowercase_
         2
     );
     assert_eq!(
-        loaded.snapshot.game.turns()[0]
+        loaded.snapshot.game().turns()[0]
             .summary()
             .major_events()
             .events()
@@ -289,7 +289,7 @@ fn supported_demo_source_roundtrips_and_rejects_impossible_passage_counts() {
     value["source"] = json!({"kind":"demo","scenario":"harbour-v1"});
     let loaded = read(&value);
     assert_eq!(
-        loaded.snapshot.source,
+        loaded.snapshot.source(),
         cyoa_application::persistence::StorySource::Demo {
             scenario: cyoa_application::persistence::DemoScenarioId::HarbourV1
         }
@@ -311,9 +311,15 @@ fn supported_demo_source_roundtrips_and_rejects_impossible_passage_counts() {
         .is_err()
     );
     value["source"] = json!({"kind":"live"});
-    let mut live = read(&value);
-    live.snapshot.source = loaded.snapshot.source;
-    assert!(encode(&live.snapshot, &live.metadata).is_err());
+    let live = read(&value);
+    // Such a snapshot can no longer be built, so encode never sees one.
+    assert_eq!(
+        SaveSnapshot::new(live.snapshot.into_game(), loaded.snapshot.source()).unwrap_err(),
+        cyoa_application::persistence::DemoTooLong {
+            scenario: cyoa_application::persistence::DemoScenarioId::HarbourV1,
+            turns: 6,
+        }
+    );
 }
 
 #[test]
@@ -325,7 +331,7 @@ fn audit_strings_including_empty_whitespace_crlf_and_unicode_roundtrip_without_n
         let loaded = read(&value);
         let encoded = encode(&loaded.snapshot, &loaded.metadata).unwrap();
         let again = decode(&encoded, &id(), SaveCopy::Primary).unwrap();
-        let record = &again.snapshot.game.turns()[0];
+        let record = &again.snapshot.game().turns()[0];
         assert_eq!(record.raw_response().as_str().as_bytes(), audit.as_bytes());
         let trace = record.prompt_trace().unwrap();
         assert_eq!(trace.instructions.as_str().as_bytes(), audit.as_bytes());

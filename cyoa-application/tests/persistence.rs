@@ -30,10 +30,7 @@ fn stored() -> StoredGame {
         Limits::default(),
     );
     StoredGame {
-        snapshot: SaveSnapshot {
-            game,
-            source: StorySource::Live,
-        },
+        snapshot: SaveSnapshot::new(game, StorySource::Live).unwrap(),
         metadata: SaveMetadata {
             id: id(),
             revision: SaveRevision::new(1).unwrap(),
@@ -420,9 +417,9 @@ fn explicit_restore_policy_and_read_only_queries_do_not_write_or_rebind_the_disk
         )
         .unwrap();
     assert!(narrowed.changed_by_restore);
-    assert_eq!(narrowed.stored.snapshot.game.limits(), limits);
+    assert_eq!(narrowed.stored.snapshot.game().limits(), limits);
     assert_eq!(
-        narrowed.stored.snapshot.game.original_limits(),
+        narrowed.stored.snapshot.game().original_limits(),
         Limits::default()
     );
     assert_eq!(narrowed.stored.stamp, stored().stamp);
@@ -497,4 +494,18 @@ fn writes_forward_the_callers_own_preparation_sink_to_the_repository() {
         .unwrap();
     // The repository published through a clone; the caller's handle observes it.
     assert_eq!(caller.pending(), Some(pending()));
+}
+#[test]
+fn demo_sources_admit_at_most_their_scenarios_passages_and_live_admits_any() {
+    let demo = StorySource::Demo {
+        scenario: DemoScenarioId::HarbourV1,
+    };
+    let passages = DemoScenarioId::HarbourV1.passages().get();
+    assert_eq!(passages, 5);
+    assert!((0..=passages).all(|turns| demo.admits(turns)));
+    assert!(!demo.admits(passages + 1));
+    assert!(StorySource::Live.admits(usize::MAX));
+    let game = stored().snapshot.into_game();
+    let snapshot = SaveSnapshot::new(game.clone(), demo).unwrap();
+    assert_eq!((snapshot.game(), snapshot.source()), (&game, demo));
 }

@@ -100,7 +100,7 @@ fn repeated_codec_restore_cycles_rebind_every_snapshot_without_resurrecting_even
  {
     let bytes = include_bytes!("fixtures/saves/v1-full-story.json");
     let current = load(bytes, RestoreLimits::Current(narrowed()));
-    let game = &current.stored.snapshot.game;
+    let game = current.stored.snapshot.game();
     let creation = game.original_limits();
     assert!(current.changed_by_restore);
     assert_eq!(creation.max_major_events.get(), 4);
@@ -136,13 +136,13 @@ fn repeated_codec_restore_cycles_rebind_every_snapshot_without_resurrecting_even
     assert!(!unchanged.changed_by_restore);
     let original = load(&bytes, RestoreLimits::Original);
     assert!(original.changed_by_restore);
-    assert_eq!(original.stored.snapshot.game.original_limits(), creation);
-    assert_eq!(original.stored.snapshot.game.limits(), creation);
-    assert_eq!(snapshots(&original.stored.snapshot.game), snapshots(game));
+    assert_eq!(original.stored.snapshot.game().original_limits(), creation);
+    assert_eq!(original.stored.snapshot.game().limits(), creation);
+    assert_eq!(snapshots(original.stored.snapshot.game()), snapshots(game));
     let bytes = encode(&original.stored.snapshot, &original.stored.metadata).unwrap();
     let again = load(&bytes, RestoreLimits::Original);
     assert!(!again.changed_by_restore);
-    let mut restored = again.stored.snapshot.game;
+    let mut restored = again.stored.snapshot.into_game();
     restored.rewind(TurnCount::new(2).unwrap()).unwrap();
     assert_eq!(
         restored
@@ -211,7 +211,7 @@ fn zero_turn_restore_uses_selected_cap_and_preserves_established_single_playable
     fixture["game"]["character_index"] = 0.into();
     let bytes = serde_json::to_vec(&fixture).unwrap();
     let loaded = load(&bytes, RestoreLimits::Current(narrowed()));
-    let game = &loaded.stored.snapshot.game;
+    let game = loaded.stored.snapshot.game();
     assert_eq!(game.current_summary().major_events().limit().get(), 1);
     assert_eq!(game.protagonist().description().as_str(), "A mason");
     let encoded = encode(&loaded.stored.snapshot, &loaded.stored.metadata).unwrap();
@@ -220,7 +220,7 @@ fn zero_turn_restore_uses_selected_cap_and_preserves_established_single_playable
         restored
             .stored
             .snapshot
-            .game
+            .game()
             .current_summary()
             .major_events()
             .limit()
@@ -231,7 +231,7 @@ fn zero_turn_restore_uses_selected_cap_and_preserves_established_single_playable
         restored
             .stored
             .snapshot
-            .game
+            .game()
             .world()
             .cast()
             .playable()

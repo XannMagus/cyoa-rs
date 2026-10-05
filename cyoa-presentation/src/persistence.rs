@@ -46,6 +46,8 @@ pub enum CoordinationError {
     NoGame,
     #[error("storage request counter exhausted")]
     Exhausted,
+    #[error(transparent)]
+    Source(#[from] DemoTooLong),
 }
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum Effect {
@@ -269,10 +271,7 @@ where
         {
             SaveGame::Reconcile(self.retry_write.as_ref().unwrap().pending.clone())
         } else {
-            let snapshot = SaveSnapshot {
-                game: game.clone(),
-                source: self.source,
-            };
+            let snapshot = SaveSnapshot::new(game.clone(), self.source)?;
             match (&self.binding, copy) {
                 (SaveBinding::Bound { id, stamp, .. }, false) => SaveGame::Replace {
                     target: SaveTarget {
@@ -333,16 +332,16 @@ pub fn validate_loaded_source(
     loaded: &LoadedGame,
     source: StorySource,
 ) -> Result<(), StorageFailure> {
-    if loaded.stored.snapshot.source == source
-        && (source == StorySource::Live || loaded.stored.snapshot.game.turns().len() <= 5)
-    {
+    // A loaded snapshot already fits its own source (SaveSnapshot::new), so only
+    // the session's source remains to compare.
+    if loaded.stored.snapshot.source() == source {
         return Ok(());
     }
     Err(StorageFailure {
         operation: StorageOperation::Load,
         stage: StorageStage::Admission,
         kind: StorageFailureKind::Unsupported,
-        message: "save source does not match this session, or demo exceeds five turns".into(),
+        message: "save source does not match this session".into(),
         visibility: WriteVisibility::Unchanged,
         pending: None,
         cleanup_errors: Box::default(),
@@ -355,21 +354,25 @@ where
     F: Fn() -> R + Send + Sync + 'static,
 {
     fn install_loaded(&mut self, loaded: LoadedGame) -> Result<(), CoordinationError> {
-        let backup = loaded.stored.copy == SaveCopy::Backup;
-        self.runtime.replace_game(loaded.stored.snapshot.game)?;
+        let LoadedGame {
+            stored,
+            changed_by_restore,
+        } = loaded;
+        let backup = stored.copy == SaveCopy::Backup;
+        self.runtime.replace_game(stored.snapshot.into_game())?;
         self.binding = if backup {
             SaveBinding::Unbound
         } else {
             SaveBinding::Bound {
-                id: loaded.stored.metadata.id,
-                stamp: loaded.stored.stamp,
-                disk_revision: loaded.stored.metadata.revision,
+                id: stored.metadata.id,
+                stamp: stored.stamp,
+                disk_revision: stored.metadata.revision,
             }
         };
         self.retry_write = None;
         self.storage_failure = None;
         self.deferred_opening = false;
-        self.durability = if backup || loaded.changed_by_restore {
+        self.durability = if backup || changed_by_restore {
             Durability::Dirty
         } else {
             Durability::Clean

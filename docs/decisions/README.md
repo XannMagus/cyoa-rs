@@ -499,6 +499,10 @@ hard-link fallback, which could leave a two-link primary that loading rejects
 (2026-10-05 review). Temps are named `.cyoa-<save-id>.*`; each write sweeps its
 own slot's leftovers under the slot lock (only the lock holder writes that slot's
 temps), best effort, never another slot's and never an unrecognized name.
+A demo snapshot never exceeds its scenario: `DemoScenarioId::passages` owns the
+length (harbour-v1: five), and `SaveSnapshot::new` is the only constructor, so the
+codec, the session and a startup load cannot hold an oversized demo snapshot. The
+limit had been the literal 5 in both the codec and presentation (2026-10-05 review).
 Acceptance: scripted lifecycle/cancellation/state-unchanged-on-error tests, frozen
 save migrations, original-limit round trips, synthetic UI-event/cache tests, and
 export fixtures. PLAN retains the full build order and acceptance scenarios.

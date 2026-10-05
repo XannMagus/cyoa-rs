@@ -101,9 +101,10 @@ pub fn decode(
             "metadata count differs from turn log",
         ));
     }
-    validate_source(source, game.turns().len())?;
+    let snapshot = SaveSnapshot::new(game, source)
+        .map_err(|e| SaveCodecError::invalid("source", e.to_string()))?;
     Ok(StoredGame {
-        snapshot: SaveSnapshot { game, source },
+        snapshot,
         metadata: SaveMetadata {
             id,
             revision,
@@ -123,7 +124,6 @@ fn encode_bounded(
     metadata: &SaveMetadata,
     bound: usize,
 ) -> Result<Vec<u8>, SaveCodecError> {
-    validate_source(snapshot.source, snapshot.game.turns().len())?;
     let timestamp = OffsetDateTime::from_unix_timestamp(metadata.saved_at.unix_seconds())
         .and_then(|t| t.replace_nanosecond(metadata.saved_at.nanoseconds()))
         .map_err(|e| SaveCodecError::invalid("saved_at", e.to_string()))?;
@@ -135,18 +135,18 @@ fn encode_bounded(
         version: migrations::CURRENT,
         id: metadata.id.as_str().into(),
         revision: metadata.revision.get(),
-        title: snapshot.game.world().outline().title().as_str().into(),
+        title: snapshot.game().world().outline().title().as_str().into(),
         saved_at: timestamp
             .format(&description)
             .map_err(|e| SaveCodecError::invalid("saved_at", e.to_string()))?,
-        turn_count: snapshot.game.turns().len() as u64,
-        source: snapshot.source.into(),
-        game: GameSaveV1::from(&snapshot.game),
+        turn_count: snapshot.game().turns().len() as u64,
+        source: snapshot.source().into(),
+        game: GameSaveV1::from(snapshot.game()),
     };
     // In-memory games may contain explicitly restored snapshots. Check the same
     // lossless aggregate constraints before producing a document we cannot read.
-    let checked = GameSaveV1::from(&snapshot.game).into_domain()?;
-    if checked != snapshot.game {
+    let checked = GameSaveV1::from(snapshot.game()).into_domain()?;
+    if checked != *snapshot.game() {
         return Err(SaveCodecError::invalid(
             "game",
             "save would change stored state",
@@ -168,15 +168,6 @@ fn encode_bounded(
         .write_all(b"\n")
         .map_err(|_| SaveCodecError::too_large(writer.attempted))?;
     Ok(writer.bytes)
-}
-fn validate_source(source: StorySource, turns: usize) -> Result<(), SaveCodecError> {
-    if matches!(source, StorySource::Demo { .. }) && turns > 5 {
-        return Err(SaveCodecError::invalid(
-            "source",
-            "harbour-v1 has only five passages",
-        ));
-    }
-    Ok(())
 }
 pub fn stamp(bytes: &[u8]) -> ContentStamp {
     ContentStamp::new(Sha256::digest(bytes).into())

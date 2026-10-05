@@ -11,15 +11,14 @@ use std::{
 use support::*;
 fn snapshot(source: StorySource) -> SaveSnapshot {
     let id = SaveId::new("harbour-0123456789abcdef0123456789abcdef").unwrap();
-    let mut snapshot = codec::decode(
+    let snapshot = codec::decode(
         include_bytes!("../../cyoa-infrastructure/tests/fixtures/saves/v1-minimal.json"),
         &id,
         SaveCopy::Primary,
     )
     .unwrap()
     .snapshot;
-    snapshot.source = source;
-    snapshot
+    SaveSnapshot::new(snapshot.into_game(), source).unwrap()
 }
 fn create(root: &Path, snapshot: SaveSnapshot) -> SaveReceipt {
     LocalRepository::new(root.into())
@@ -149,7 +148,7 @@ fn zero_turn_resume_waits_for_explicit_opening_and_rewind_persists_before_next_r
         SaveCopy::Primary,
     )
     .unwrap();
-    assert!(stored.snapshot.game.turns().is_empty());
+    assert!(stored.snapshot.game().turns().is_empty());
     app.command("", "[committed turn 1]");
     app.command("/quit", "Session closed");
     assert!(app.finish().success());
@@ -251,8 +250,8 @@ fn both_fixture_backends_restart_from_disk_and_live_saves_are_vendor_neutral() {
                 &CancellationSource::default().token(),
             )
             .unwrap();
-        assert_eq!(original.snapshot.source, StorySource::Live);
-        assert_eq!(original.snapshot.game.turns().len(), 1);
+        assert_eq!(original.snapshot.source(), StorySource::Live);
+        assert_eq!(original.snapshot.game().turns().len(), 1);
         // Resume with the peer backend, not the one that created the save.
         let peer = Fixture::new(!claude);
         peer.set(&data["turns"][1], 0, false, None);
@@ -294,12 +293,15 @@ fn both_fixture_backends_restart_from_disk_and_live_saves_are_vendor_neutral() {
                 &CancellationSource::default().token(),
             )
             .unwrap();
-        assert_eq!(stored.snapshot.game.turns().len(), 2);
+        assert_eq!(stored.snapshot.game().turns().len(), 2);
         assert_eq!(
-            stored.snapshot.game.turns()[0],
-            original.snapshot.game.turns()[0]
+            stored.snapshot.game().turns()[0],
+            original.snapshot.game().turns()[0]
         );
-        assert_eq!(stored.snapshot.game.world(), original.snapshot.game.world());
+        assert_eq!(
+            stored.snapshot.game().world(),
+            original.snapshot.game().world()
+        );
     }
 }
 
@@ -370,11 +372,11 @@ fn startup_policy_changes_persist_after_auth_and_failed_auth_never_rewrites_a_sa
                 SaveCopy::Primary,
             )
             .unwrap();
-            assert_eq!(loaded.snapshot.game.limits().max_major_events.get(), cap);
+            assert_eq!(loaded.snapshot.game().limits().max_major_events.get(), cap);
             assert_eq!(
                 loaded
                     .snapshot
-                    .game
+                    .game()
                     .original_limits()
                     .max_major_events
                     .get(),
@@ -438,7 +440,7 @@ fn in_session_load_keeps_failed_edit_buffers_and_save_copy_switches_slots_only_a
             .load(&receipt.metadata.id, SaveCopy::Primary, &token)
             .unwrap()
             .snapshot
-            .game
+            .game()
             .turns()
             .len(),
         0
@@ -448,7 +450,7 @@ fn in_session_load_keeps_failed_edit_buffers_and_save_copy_switches_slots_only_a
             .load(&copy_id, SaveCopy::Primary, &token)
             .unwrap()
             .snapshot
-            .game
+            .game()
             .turns()
             .len(),
         1

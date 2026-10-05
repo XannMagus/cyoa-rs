@@ -67,9 +67,9 @@ fn harbour_restart_rewind_and_exhaustion_preserve_fixed_passages_without_vendor_
             &CancellationSource::default().token(),
         )
         .unwrap();
-    assert_eq!(stored.snapshot.game.turns().len(), 5);
+    assert_eq!(stored.snapshot.game().turns().len(), 5);
     assert_eq!(
-        stored.snapshot.source,
+        stored.snapshot.source(),
         StorySource::Demo {
             scenario: DemoScenarioId::HarbourV1
         }

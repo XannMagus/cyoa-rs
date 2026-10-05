@@ -1,7 +1,10 @@
 //! Persistence commands, queries and inward-owned repository contract.
 //! JSON, paths, clocks and filesystem effects belong to infrastructure.
 use crate::cancellation::CancellationToken;
-use cyoa_core::{game::GameState, limits::RestoreLimits};
+use cyoa_core::{
+    game::{GameState, TurnCount},
+    limits::RestoreLimits,
+};
 use thiserror::Error;
 
 pub const MAX_SAVE_BYTES: usize = 64 * 1024 * 1024;
@@ -104,15 +107,68 @@ impl SavedAt {
 pub enum DemoScenarioId {
     HarbourV1,
 }
+impl DemoScenarioId {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::HarbourV1 => "harbour-v1",
+        }
+    }
+    /// The scripted scenario's fixed length; a demo game never holds more turns.
+    pub fn passages(self) -> TurnCount {
+        match self {
+            Self::HarbourV1 => TurnCount::new(5).expect("nonzero literal"),
+        }
+    }
+}
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum StorySource {
     Live,
     Demo { scenario: DemoScenarioId },
 }
+impl StorySource {
+    /// Whether a game with this many turns can come from this source.
+    pub fn admits(self, turns: usize) -> bool {
+        match self {
+            Self::Live => true,
+            Self::Demo { scenario } => turns <= scenario.passages().get(),
+        }
+    }
+}
+#[derive(Debug, Clone, Copy, PartialEq, Eq, thiserror::Error)]
+#[error("{scenario} has only {passages} passages, not {turns}", scenario = .scenario.as_str(), passages = .scenario.passages().get())]
+pub struct DemoTooLong {
+    pub scenario: DemoScenarioId,
+    pub turns: usize,
+}
+/// A game paired with the source it was played from. Construction checks that
+/// the source could have produced the game: a demo snapshot never exceeds its
+/// scenario's passages.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SaveSnapshot {
-    pub game: GameState,
-    pub source: StorySource,
+    game: GameState,
+    source: StorySource,
+}
+impl SaveSnapshot {
+    pub fn new(game: GameState, source: StorySource) -> Result<Self, DemoTooLong> {
+        match source {
+            StorySource::Demo { scenario } if !source.admits(game.turns().len()) => {
+                Err(DemoTooLong {
+                    scenario,
+                    turns: game.turns().len(),
+                })
+            }
+            _ => Ok(Self { game, source }),
+        }
+    }
+    pub fn game(&self) -> &GameState {
+        &self.game
+    }
+    pub fn source(&self) -> StorySource {
+        self.source
+    }
+    pub fn into_game(self) -> GameState {
+        self.game
+    }
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SaveTarget {
@@ -408,7 +464,7 @@ impl<R: GameRepository> PersistenceUseCases<R> {
         check_cancelled(cancel, StorageOperation::Load)?;
         let mut stored = self.repository.load(&command.id, command.copy, cancel)?;
         check_cancelled(cancel, StorageOperation::Load)?;
-        let old = &stored.snapshot.game;
+        let old = stored.snapshot.game();
         let restored = GameState::restore(
             old.brief().clone(),
             old.selected_world().clone(),
@@ -419,7 +475,19 @@ impl<R: GameRepository> PersistenceUseCases<R> {
         );
         let changed_by_restore = restored != *old;
         check_cancelled(cancel, StorageOperation::Load)?;
-        stored.snapshot.game = restored;
+        // Restoring never changes the turn log, so the source still admits it.
+        stored.snapshot =
+            SaveSnapshot::new(restored, stored.snapshot.source()).map_err(|e| StorageFailure {
+                operation: StorageOperation::Load,
+                stage: StorageStage::Decode,
+                kind: StorageFailureKind::Corrupt {
+                    location: "source".into(),
+                },
+                message: e.to_string().into(),
+                visibility: WriteVisibility::Unchanged,
+                pending: None,
+                cleanup_errors: Box::default(),
+            })?;
         Ok(LoadedGame {
             stored,
             changed_by_restore,

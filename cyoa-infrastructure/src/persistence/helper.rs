@@ -722,7 +722,7 @@ impl GameRepository for SupervisedRepository {
                 .iter()
                 .map(|b| format!("{b:02x}"))
                 .collect::<String>();
-            let title = snapshot.game.world().outline().title().as_str();
+            let title = snapshot.game().world().outline().title().as_str();
             let mut slug = String::new();
             for c in title.chars() {
                 if c.is_ascii_alphanumeric() {

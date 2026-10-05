@@ -1312,7 +1312,8 @@
           "late_read_cancellation_rejects_results_but_never_hides_a_durable_write_receipt",
           "checked_persistence_values_reject_invalid_names_counters_pages_and_bounds",
           "explicit_restore_policy_and_read_only_queries_do_not_write_or_rebind_the_disk_stamp",
-          "explicit_storage_commands_make_exactly_one_call_each_and_return_observed_receipts"
+          "explicit_storage_commands_make_exactly_one_call_each_and_return_observed_receipts",
+          "demo_sources_admit_at_most_their_scenarios_passages_and_live_admits_any"
         ]
       },
       {
@@ -1371,7 +1372,8 @@
           "persistence::repository::linux::tests::unsupported_noreplace_publishes_by_rename_with_exactly_one_link",
           "persistence::repository::linux::tests::occupied_noreplace_target_is_never_replaced_and_the_temp_is_retained",
           "persistence::repository::linux::tests::noreplace_publish_moves_the_temp_without_leaving_its_name",
-          "persistence::repository::linux::tests::writes_sweep_only_their_own_slots_orphaned_temps_under_the_lock"
+          "persistence::repository::linux::tests::writes_sweep_only_their_own_slots_orphaned_temps_under_the_lock",
+          "generation::demo::tests::bundled_harbour_script_length_is_the_scenarios_declared_passages"
         ]
       },
       {

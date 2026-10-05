@@ -97,10 +97,7 @@ fn frozen_full_story_roundtrip_preserves_complete_state_exact_audit_and_next_rew
                 .unwrap_err();
             assert_eq!(error.kind(), FailureKind::Transport);
             assert_eq!(game, before);
-            let snapshot = SaveSnapshot {
-                game: game.clone(),
-                source: StorySource::Live,
-            };
+            let snapshot = SaveSnapshot::new(game.clone(), StorySource::Live).unwrap();
             let metadata = SaveMetadata {
                 id: id(),
                 revision: SaveRevision::new(1).unwrap(),
@@ -194,7 +191,8 @@ fn frozen_full_story_roundtrip_preserves_complete_state_exact_audit_and_next_rew
     )
     .unwrap();
     assert_eq!(
-        game, frozen.snapshot.game,
+        game,
+        *frozen.snapshot.game(),
         "independent frozen full-story fixture differs from actual generated story"
     );
     assert_eq!(events(&game), ["C", "D", "E", "F"]);
@@ -213,11 +211,11 @@ fn frozen_full_story_roundtrip_preserves_complete_state_exact_audit_and_next_rew
     assert_eq!(loaded.metadata, frozen.metadata);
     assert_eq!(loaded.stamp, stamp(&bytes));
     assert_eq!(loaded.copy, SaveCopy::Backup);
-    for (record, raw) in loaded.snapshot.game.turns().iter().zip(raws) {
+    for (record, raw) in loaded.snapshot.game().turns().iter().zip(raws) {
         assert_eq!(record.raw_response().as_str().as_bytes(), raw.as_bytes());
     }
     assert_eq!(
-        loaded.snapshot.game.turns()[2]
+        loaded.snapshot.game().turns()[2]
             .prompt_trace()
             .unwrap()
             .prompt
@@ -225,9 +223,14 @@ fn frozen_full_story_roundtrip_preserves_complete_state_exact_audit_and_next_rew
             .as_bytes(),
         b"\r\nPrompt \"quoted\"\r\n"
     );
-    assert!(loaded.snapshot.game.turns()[0].provenance().cost.is_none());
+    assert!(
+        loaded.snapshot.game().turns()[0]
+            .provenance()
+            .cost
+            .is_none()
+    );
     assert_eq!(
-        loaded.snapshot.game.turns()[1]
+        loaded.snapshot.game().turns()[1]
             .provenance()
             .cost
             .as_ref()
@@ -260,14 +263,11 @@ fn frozen_full_story_roundtrip_preserves_complete_state_exact_audit_and_next_rew
         disk_game.snapshot, frozen.snapshot,
         "complete story disk reconstruction must retain all fields"
     );
-    let mut restored = disk_game.snapshot.game;
+    let mut restored = disk_game.snapshot.into_game();
     cases
         .rewind(&mut restored, TurnCount::new(3).unwrap())
         .unwrap();
-    let rewound = SaveSnapshot {
-        game: restored.clone(),
-        source: StorySource::Live,
-    };
+    let rewound = SaveSnapshot::new(restored.clone(), StorySource::Live).unwrap();
     let receipt = repository
         .replace(
             SaveTarget {
@@ -288,7 +288,7 @@ fn frozen_full_story_roundtrip_preserves_complete_state_exact_audit_and_next_rew
         .load(&receipt.metadata.id, SaveCopy::Primary, &token)
         .unwrap();
     assert_eq!(reloaded.snapshot, rewound);
-    restored = reloaded.snapshot.game;
+    restored = reloaded.snapshot.into_game();
     assert_eq!(events(&restored), ["A", "B", "C"]);
     assert_eq!(
         restored
@@ -338,10 +338,7 @@ fn frozen_full_story_roundtrip_preserves_complete_state_exact_audit_and_next_rew
         .unwrap();
     assert_eq!(events(&restored), ["A", "B", "C", "F"]);
     let before_continuation = std::fs::read(&primary).unwrap();
-    let continued = SaveSnapshot {
-        game: restored.clone(),
-        source: StorySource::Live,
-    };
+    let continued = SaveSnapshot::new(restored.clone(), StorySource::Live).unwrap();
     let receipt = repository
         .replace(
             SaveTarget {
@@ -393,7 +390,7 @@ fn zero_turn_selected_second_playable_roundtrip_restores_one_opening_request() {
     let mut game = decode(&bytes, &id(), SaveCopy::Primary)
         .unwrap()
         .snapshot
-        .game;
+        .into_game();
     assert_eq!(game.protagonist().description().as_str(), "A mason");
     assert!(game.turns().is_empty());
     let mut cases = StoryUseCases::new(GenerationEngine::new(

@@ -72,7 +72,7 @@ impl Repo {
         operation: StorageOperation,
     ) -> Result<SaveReceipt, StorageFailure> {
         let mut disk = self.disk.lock().unwrap();
-        disk.writes.push((kind, snapshot.game.turns().len()));
+        disk.writes.push((kind, snapshot.game().turns().len()));
         let revision = disk
             .saved
             .as_ref()
@@ -146,7 +146,7 @@ impl GameRepository for Repo {
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         let mut disk = self.disk.lock().unwrap();
-        let count = disk.pending_snapshot.as_ref().unwrap().game.turns().len();
+        let count = disk.pending_snapshot.as_ref().unwrap().game().turns().len();
         disk.writes.push(("reconcile", count));
         let saved = disk.saved.as_ref().unwrap();
         assert_eq!(saved.stamp, p.intended_stamp());
@@ -451,7 +451,7 @@ fn rewind_and_changed_policy_load_save_canonical_snapshots_before_generation() {
             .as_ref()
             .unwrap()
             .snapshot
-            .game
+            .game()
             .turns()
             .is_empty()
     );
@@ -475,7 +475,7 @@ fn rewind_and_changed_policy_load_save_canonical_snapshots_before_generation() {
             .as_ref()
             .unwrap()
             .snapshot
-            .game
+            .game()
             .limits(),
         limits
     );
@@ -484,6 +484,12 @@ fn rewind_and_changed_policy_load_save_canonical_snapshots_before_generation() {
     settle(&mut s);
     assert_eq!(calls.load(Ordering::SeqCst), 1);
 }
+/// Re-label the stored save with another source, as a tampered or foreign file would be.
+fn retag(disk: &Arc<Mutex<Disk>>, source: StorySource) {
+    let mut disk = disk.lock().unwrap();
+    let saved = disk.saved.as_mut().unwrap();
+    saved.snapshot = SaveSnapshot::new(saved.snapshot.game().clone(), source).unwrap();
+}
 #[test]
 fn source_mismatch_preserves_session_and_backup_recovery_creates_instead_of_replacing() {
     let disk = Arc::new(Mutex::new(Disk::default()));
@@ -491,9 +497,12 @@ fn source_mismatch_preserves_session_and_backup_recovery_creates_instead_of_repl
     bound(&mut s);
     let before = s.controller().stage().clone();
     let binding = s.binding().clone();
-    disk.lock().unwrap().saved.as_mut().unwrap().snapshot.source = StorySource::Demo {
-        scenario: DemoScenarioId::HarbourV1,
-    };
+    retag(
+        &disk,
+        StorySource::Demo {
+            scenario: DemoScenarioId::HarbourV1,
+        },
+    );
     s.load(LoadGame {
         id: id(),
         copy: SaveCopy::Primary,
@@ -504,7 +513,7 @@ fn source_mismatch_preserves_session_and_backup_recovery_creates_instead_of_repl
     assert_eq!(s.controller().stage(), &before);
     assert_eq!(s.binding(), &binding);
     assert_eq!(disk.lock().unwrap().writes.len(), 1);
-    disk.lock().unwrap().saved.as_mut().unwrap().snapshot.source = StorySource::Live;
+    retag(&disk, StorySource::Live);
     s.load(LoadGame {
         id: id(),
         copy: SaveCopy::Backup,

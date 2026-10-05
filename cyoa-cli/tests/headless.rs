@@ -65,7 +65,7 @@ fn saved_canonical(app: &App) -> cyoa_application::persistence::StoredGame {
     let stored = repo
         .load(&page.entries[0].id, SaveCopy::Primary, &token)
         .unwrap();
-    assert_eq!(stored.snapshot.source, StorySource::Live);
+    assert_eq!(stored.snapshot.source(), StorySource::Live);
     stored
 }
 
@@ -156,10 +156,10 @@ fn both_shipped_backend_commands_play_retry_and_inspect_canonical_story() {
                 &token,
             )
             .unwrap();
-        assert_eq!(stored.snapshot.game.turns().len(), 5);
+        assert_eq!(stored.snapshot.game().turns().len(), 5);
         for (record, expected) in stored
             .snapshot
-            .game
+            .game()
             .turns()
             .iter()
             .zip(data["turns"].as_array().unwrap())
@@ -177,7 +177,7 @@ fn both_shipped_backend_commands_play_retry_and_inspect_canonical_story() {
         assert_eq!(
             stored
                 .snapshot
-                .game
+                .game()
                 .current_chapter()
                 .unwrap()
                 .title()
@@ -239,13 +239,13 @@ fn idle_output_cancellation_eof_and_quit_join_real_children() {
             assert_gone(&report);
             let saved = saved_canonical(&app);
             assert_eq!(
-                saved.snapshot.game.turns().len(),
+                saved.snapshot.game().turns().len(),
                 usize::from(ending == "cancel"),
                 "cancelled candidate must never reach the final save"
             );
             if ending == "cancel" {
                 assert_eq!(
-                    saved.snapshot.game.turns()[0].raw_response().as_str(),
+                    saved.snapshot.game().turns()[0].raw_response().as_str(),
                     data["turns"][0].to_string()
                 );
             }
@@ -319,8 +319,8 @@ fn broken_stdout_closes_worker_and_reports_io_failure() {
         assert!(app.stderr().contains("Broken pipe"));
         assert_gone(&report);
         let saved = saved_canonical(&app);
-        assert!(saved.snapshot.game.turns().len() <= 1);
-        if let Some(turn) = saved.snapshot.game.turns().first() {
+        assert!(saved.snapshot.game().turns().len() <= 1);
+        if let Some(turn) = saved.snapshot.game().turns().first() {
             assert_eq!(
                 turn.raw_response().as_str(),
                 data["turns"][0].to_string(),
@@ -419,7 +419,7 @@ fn invalid_utf8_input_closes_active_worker_without_committing() {
     assert_gone(&report);
     assert!(!app.stderr().contains("[committed turn"));
     assert!(
-        saved_canonical(&app).snapshot.game.turns().is_empty(),
+        saved_canonical(&app).snapshot.game().turns().is_empty(),
         "input failure must retain the selected zero-turn save after joining generation"
     );
 }

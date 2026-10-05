@@ -212,7 +212,7 @@ fn cancelled_consumed_demo_passages_preserve_disk_and_retry_all_five_with_persis
     )
     .unwrap()
     .snapshot
-    .game;
+    .into_game();
     let (consumed_tx, consumed_rx) = mpsc::channel();
     let (release_tx, release_rx) = mpsc::channel();
     let runtime = SessionRuntime::new(
@@ -290,11 +290,11 @@ fn cancelled_consumed_demo_passages_preserve_disk_and_retry_all_five_with_persis
         release_tx.send(()).unwrap();
         finish(&mut session);
         let stored = reader.load(&id, SaveCopy::Primary, &token).unwrap();
-        assert_eq!(stored.snapshot.game.turns().len(), index + 1);
+        assert_eq!(stored.snapshot.game().turns().len(), index + 1);
         assert_eq!(
             stored
                 .snapshot
-                .game
+                .game()
                 .turns()
                 .last()
                 .unwrap()
@@ -304,6 +304,6 @@ fn cancelled_consumed_demo_passages_preserve_disk_and_retry_all_five_with_persis
             *narrative,
             "persistent demo replay drift"
         );
-        assert_eq!(&stored.snapshot.game, session.controller().game().unwrap());
+        assert_eq!(stored.snapshot.game(), session.controller().game().unwrap());
     }
 }

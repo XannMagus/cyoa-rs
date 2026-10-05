@@ -359,7 +359,10 @@ fn disk_restore_cycles_preserve_original_limits_and_every_narrowed_snapshot() {
         .unwrap();
     assert!(loaded.changed_by_restore);
     let narrowed = loaded.stored.snapshot;
-    assert_eq!(narrowed.game.world().cast(), snapshot().game.world().cast());
+    assert_eq!(
+        narrowed.game().world().cast(),
+        snapshot().game().world().cast()
+    );
     let saved = cases
         .save_game(
             SaveGame::Replace {
@@ -384,19 +387,20 @@ fn disk_restore_cycles_preserve_original_limits_and_every_narrowed_snapshot() {
         )
         .unwrap()
         .stored
-        .snapshot;
+        .snapshot
+        .into_game();
     assert_eq!(
-        original.game.original_limits(),
-        snapshot().game.original_limits()
+        original.original_limits(),
+        snapshot().game().original_limits()
     );
-    for (before, after) in narrowed.game.turns().iter().zip(original.game.turns()) {
+    for (before, after) in narrowed.game().turns().iter().zip(original.turns()) {
         assert_eq!(
             before.summary().major_events().events(),
             after.summary().major_events().events()
         );
         assert_eq!(after.summary().major_events().limit().get(), 4);
     }
-    original.game.rewind(TurnCount::new(1).unwrap()).unwrap();
+    original.rewind(TurnCount::new(1).unwrap()).unwrap();
     let final_receipt = cases
         .save_game(
             SaveGame::Replace {
@@ -404,7 +408,7 @@ fn disk_restore_cycles_preserve_original_limits_and_every_narrowed_snapshot() {
                     id: saved.metadata.id.clone(),
                     expected_stamp: saved.stamp,
                 },
-                snapshot: original.clone(),
+                snapshot: SaveSnapshot::new(original.clone(), StorySource::Live).unwrap(),
             },
             &PreparedWriteEvidence::default(),
             &token,
@@ -419,7 +423,10 @@ fn disk_restore_cycles_preserve_original_limits_and_every_narrowed_snapshot() {
             &token,
         )
         .unwrap();
-    assert_eq!(inspected.snapshot, original);
+    assert_eq!(
+        inspected.snapshot,
+        SaveSnapshot::new(original, StorySource::Live).unwrap()
+    );
     // Each policy must also reach an actual generation after disk restoration,
     // then persist its accepted snapshot before the next policy is applied.
     use cyoa_application::generation::{StoryUseCases, TurnDirection};
@@ -458,15 +465,16 @@ fn disk_restore_cycles_preserve_original_limits_and_every_narrowed_snapshot() {
             )
             .unwrap()
             .stored
-            .snapshot;
-        assert_eq!(restored.game.world().cast(), snapshot().game.world().cast());
+            .snapshot
+            .into_game();
+        assert_eq!(restored.world().cast(), snapshot().game().world().cast());
         assert_eq!(
-            restored.game.original_limits(),
-            snapshot().game.original_limits()
+            restored.original_limits(),
+            snapshot().game().original_limits()
         );
         let request = GenerationTemplates::bundled()
             .unwrap()
-            .turn_request(&restored.game, None, false)
+            .turn_request(&restored, None, false)
             .unwrap();
         assert!(
             request
@@ -475,16 +483,10 @@ fn disk_restore_cycles_preserve_original_limits_and_every_narrowed_snapshot() {
                 .contains(&format!("at most {cap} major events"))
         );
         generation
-            .take_turn(
-                &mut restored.game,
-                TurnDirection::Continue,
-                &token,
-                &mut |_| {},
-            )
+            .take_turn(&mut restored, TurnDirection::Continue, &token, &mut |_| {})
             .unwrap();
         assert_eq!(
             restored
-                .game
                 .current_summary()
                 .major_events()
                 .events()
@@ -493,7 +495,7 @@ fn disk_restore_cycles_preserve_original_limits_and_every_narrowed_snapshot() {
                 .collect::<Vec<_>>(),
             expected_events
         );
-        for record in restored.game.turns() {
+        for record in restored.turns() {
             assert_eq!(record.summary().major_events().limit().get(), cap);
         }
         receipt = cases
@@ -503,7 +505,7 @@ fn disk_restore_cycles_preserve_original_limits_and_every_narrowed_snapshot() {
                         id: receipt.metadata.id.clone(),
                         expected_stamp: receipt.stamp,
                     },
-                    snapshot: restored.clone(),
+                    snapshot: SaveSnapshot::new(restored.clone(), StorySource::Live).unwrap(),
                 },
                 &PreparedWriteEvidence::default(),
                 &token,
@@ -519,7 +521,8 @@ fn disk_restore_cycles_preserve_original_limits_and_every_narrowed_snapshot() {
             )
             .unwrap();
         assert_eq!(
-            stored.snapshot, restored,
+            stored.snapshot,
+            SaveSnapshot::new(restored.clone(), StorySource::Live).unwrap(),
             "each disk policy continuation retains all canonical fields"
         );
     }
@@ -543,8 +546,8 @@ fn hostile_unicode_titles_never_become_paths_and_retitle_preserves_the_slot_id()
         text::WorldTitle,
         world::{World, WorldOutline},
     };
-    fn retitle(mut snapshot: SaveSnapshot, title: &str) -> SaveSnapshot {
-        let game = &snapshot.game;
+    fn retitle(snapshot: SaveSnapshot, title: &str) -> SaveSnapshot {
+        let game = snapshot.game();
         let world = World::new(
             WorldOutline::new(
                 WorldTitle::new(title).unwrap(),
@@ -554,7 +557,7 @@ fn hostile_unicode_titles_never_become_paths_and_retitle_preserves_the_slot_id()
         )
         .select(game.selected_world().position())
         .unwrap();
-        snapshot.game = GameState::restore(
+        let game = GameState::restore(
             game.brief().clone(),
             world,
             game.style().clone(),
@@ -562,7 +565,7 @@ fn hostile_unicode_titles_never_become_paths_and_retitle_preserves_the_slot_id()
             RestoreLimits::Current(game.limits()),
             game.turns().to_vec(),
         );
-        snapshot
+        SaveSnapshot::new(game, snapshot.source()).unwrap()
     }
     let root = tempfile::tempdir().unwrap();
     let mut repo = LocalRepository::new(root.path().into()).unwrap();
