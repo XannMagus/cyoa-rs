@@ -1,0 +1,24 @@
+   Compiling cyoa-infrastructure v0.1.0 (/home/xann/cyoa-rs/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.25s
+     Running tests/review_boundary_probes.rs (target/debug/deps/review_boundary_probes-74c55b097fed9985)
+
+running 2 tests
+
+thread 'review_claude_duplicate_auth_method_must_be_rejected' (74) panicked at cyoa-infrastructure/tests/review_boundary_probes.rs:44:5:
+conflicting Claude auth methods were accepted
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test review_claude_duplicate_auth_method_must_be_rejected ... FAILED
+
+thread 'review_codex_duplicate_terminal_type_must_be_rejected' (75) panicked at cyoa-infrastructure/tests/review_boundary_probes.rs:31:5:
+ambiguous Codex failure was accepted; emissions=1
+test review_codex_duplicate_terminal_type_must_be_rejected ... FAILED
+
+failures:
+
+failures:
+    review_claude_duplicate_auth_method_must_be_rejected
+    review_codex_duplicate_terminal_type_must_be_rejected
+
+test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+error: test failed, to rerun pass `-p cyoa-infrastructure --test review_boundary_probes`

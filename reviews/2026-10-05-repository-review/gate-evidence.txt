@@ -1,0 +1,55 @@
+Workspace dependency boundaries verified.
+     Summary [   3.316s] 428 tests run: 428 passed, 0 skipped
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+test cyoa-core/src/summary.rs - summary::StorySummary (line 113) - compile fail ... ok
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+Detected mutation: name-only-deduplication (generation_use_cases/scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls)
+Detected mutation: duplicate-opening-request (generation_use_cases/scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls)
+Detected mutation: default-instead-of-active-limits (generation_use_cases/restored_limits_reach_captured_prompt_schema_and_committed_memory)
+Detected mutation: commit-before-reporting-failure (phase_zero_acceptance/full_story_preserves_contracts_through_failure_retry_cancellation_and_rewind)
+Detected mutation: capture-past-limit (process_supervisor/captured_output_never_exceeds_either_configured_bound)
+Detected mutation: accept-incomplete-input (process_supervisor/incomplete_request_delivery_cannot_report_success)
+Detected mutation: ignore-cancelled-token (process_supervisor/cancelled_token_wins_even_before_its_notifier_runs)
+Detected mutation: accept-failed-process (process_supervisor/failure_after_a_candidate_record_still_reports_nonzero_exit_not_success)
+Detected mutation: swallow-reader-error (lib/backends::process::unix_impl::fault_tests::fatal_read_error_is_not_treated_as_would_block)
+Detected mutation: disable-cancellation-wake (lib/backends::process::unix_impl::fault_tests::self_pipe_wakes_a_long_poll_without_removing_token_checks)
+Detected mutation: discard-cleanup-cause (lib/backends::process::unix_impl::fault_tests::cleanup_failures_preserve_the_initiating_error)
+Detected mutation: accept-ineligible-message (codex_backend/ineligible_message_is_rejected_after_cleanup)
+Detected mutation: accept-missing-terminal (codex_backend/candidate_without_terminal_is_rejected_after_cleanup)
+Detected mutation: accept-conflicting-terminal (codex_backend/conflicting_terminal_is_rejected_after_cleanup)
+Detected mutation: adapt-shared-schema (lib/generation::schema::tests::shared_turn_schema_keeps_optional_character_updates)
+Detected mutation: adapt-peer-schema (lib/generation::backend_compat::claude_cli::tests::adapt_schema_strips_the_root_schema_key_and_nothing_else)
+Detected mutation: discard-candidate-evidence (codex_backend/application_receives_complete_candidate_and_diagnostics_on_adapter_timeout)
+Detected mutation: discard-diagnostic-evidence (codex_backend/application_receives_complete_candidate_and_diagnostics_on_adapter_timeout)
+Detected mutation: forward-uncorrelated-preview (lib/backends::claude_cli::protocol::tests::frozen_completed_variants_emit_expected_previews_payload_usage_and_provenance)
+Detected mutation: share-block-indices-across-messages (lib/backends::claude_cli::protocol::tests::frozen_completed_variants_emit_expected_previews_payload_usage_and_provenance)
+Detected mutation: ignore-is-error-result (claude_backend/is_error_result_is_rejected_after_cleanup)
+Detected mutation: accept-stream-without-result (claude_backend/stream_without_a_result_is_rejected_after_cleanup)
+Detected mutation: accept-duplicate-result (claude_backend/duplicate_result_is_rejected_after_cleanup)
+Detected mutation: reserialize-structured-output (lib/backends::claude_cli::protocol::tests::result_payload_is_the_exact_span_not_a_reserialization)
+Detected mutation: result-overrides-process-failure (claude_backend/result_cannot_override_nonzero_exit_and_previews_are_tentative_evidence)
+Detected mutation: accept-api-key-auth (claude_backend/preflight_rejects_non_subscription_unknown_and_conflicting_auth_without_generation)
+Detected mutation: discard-claude-candidate-evidence (claude_backend/application_receives_candidate_and_diagnostics_on_adapter_timeout)
+Detected mutation: discard-claude-diagnostic-evidence (claude_backend/application_receives_candidate_and_diagnostics_on_adapter_timeout)
+Detected mutation: leak-advisor-into-shared-instructions (claude_story_acceptance/composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context)
+Detected mutation: drop-candidate-on-malformed-metadata (claude_backend/malformed_result_metadata_keeps_the_candidate_visible_to_the_application)
+Detected mutation: accept-last-duplicate-field (claude_backend/ambiguous_control_fields_cannot_authorize_success_at_the_real_boundary)
+Detected mutation: accept-stale-worker-result (session/stale_and_duplicate_completions_never_replace_current_state)
+Detected mutation: accept-cancelled-worker-success (controller_backends/both_joined_adapter_successes_are_rejected_if_cancel_wins_acceptance)
+Detected mutation: commit-worker-turn-twice (session/stale_and_duplicate_completions_never_replace_current_state)
+Detected mutation: ignore-headless-interrupt (headless/sigint_alone_cancels_idle_generation_before_any_fallback_command)
+Detected mutation: block-final-error-report (headless/full_undrained_stderr_does_not_block_error_exit)
+Detected mutation: advance-demo-on-cancel (demo_retry/cancellation_after_demo_consumption_retries_each_stage_and_preserves_all_passages)
+Detected mutation: accept-stale-storage-receipt (lib/persistence::tests::stale_duplicate_or_wrong_revision_storage_receipts_never_clean_or_rebind)
+Detected mutation: autosave-unaccepted-generation (persistence/cancelled_generation_never_autosaves_a_rejected_turn)
+Detected mutation: rotate-corrupt-primary (filesystem_repository/corrupt_primary_never_rotates_over_a_good_backup_and_recovery_creates_a_new_slot)
+Detected mutation: mark-post-rename-failure-clean (persistence/uncertain_write_and_worker_panic_reconcile_same_attempt_without_a_new_slot)
+Detected mutation: retry-generation-on-save-failure (persistence/failed_autosave_keeps_accepted_turn_and_storage_retry_never_regenerates)
+All required behavioral mutations detected.
+Found 179 mutants to test
+179 mutants tested in 54s: 100 caught, 79 unviable
+Caught mutations with per-test nontermination failures: 2 (included in cargo-mutants caught count).
+Domain mutation gate passed. Unviable mutants are not test detections; review limits remain documented.
+Project contracts verified. Pending feature obligations remain listed in docs/decisions.
