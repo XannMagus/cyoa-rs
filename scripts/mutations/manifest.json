@@ -367,12 +367,12 @@
     "failure_contains": "save failure must never retry inference"
   },
   {
-    "id": "accept-duplicate-codex-control-key",
+    "id": "accept-codex-duplicate-control",
     "decision": "BACKENDS-001",
     "package": "cyoa-infrastructure",
     "target": "codex_backend",
-    "test": "duplicated_terminal_type_cannot_authorize_success_at_the_real_boundary",
+    "test": "duplicate_control_keys_reject_without_emission_and_preserve_prior_candidate",
     "file": "cyoa-infrastructure/src/backends/codex_cli/protocol.rs",
-    "failure_contains": "protocol acceptance regression"
+    "failure_contains": "ambiguous Codex control record was accepted"
   }
 ]

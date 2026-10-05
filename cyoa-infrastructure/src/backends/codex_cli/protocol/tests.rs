@@ -359,31 +359,36 @@ fn live_tool_canary_is_unsupported_even_though_the_cli_exited_successfully() {
 fn duplicated_control_keys_reject_the_record_instead_of_picking_one() {
     let success = String::from_utf8(fixture("success.jsonl")).unwrap();
     let records: Vec<&str> = success.lines().collect();
-    for (index, duplicated, retained) in [
+    for (index, duplicated, location, retained) in [
         (
             0,
             r#"{"type":"thread.started","thread_id":"a","thread_id":"b"}"#,
+            "$",
             false,
         ),
         (
             2,
             r#"{"type":"item.completed","item":{"id":"i","type":"agent_message","text":"{}","text":"{\"x\":1}"}}"#,
+            "$.item",
             false,
         ),
         (
             2,
             r#"{"type":"item.completed","item":{"id":"i","type":"agent_message","text":"{}"},"item":{"id":"j","type":"agent_message","text":"{}"}}"#,
+            "$",
             false,
         ),
         // The last occurrence would have read as a successful completion.
         (
             3,
             r#"{"type":"turn.failed","type":"turn.completed","usage":{"input_tokens":1,"output_tokens":1}}"#,
+            "$",
             true,
         ),
         (
             3,
             r#"{"type":"turn.completed","usage":{"output_tokens":5,"output_tokens":9}}"#,
+            "$.usage",
             true,
         ),
     ] {
@@ -397,7 +402,7 @@ fn duplicated_control_keys_reject_the_record_instead_of_picking_one() {
             "{duplicated}"
         );
         assert_eq!(failure.error.record, index + 1, "{duplicated}");
-        assert_eq!(failure.error.location, "$", "{duplicated}");
+        assert_eq!(failure.error.location, location, "{duplicated}");
         assert_eq!(
             failure.candidate.map(|c| c.payload),
             retained.then(payload),
@@ -415,4 +420,20 @@ fn duplicated_payload_keys_are_invalid_payload_with_the_candidate_retained() {
     assert_eq!(failure.error.kind, ErrorKind::InvalidPayload);
     assert_eq!(failure.error.location, "$.item.text");
     assert_eq!(failure.candidate.map(|c| c.payload).as_deref(), Some(text));
+}
+
+#[test]
+fn duplicates_outside_control_objects_are_tolerated_for_minor_cli_evolution() {
+    // Unknown metadata may change across minor CLI versions; only the control
+    // objects this profile interprets (record, item, error, usage) are strict.
+    let mut records: Vec<String> = events().iter().map(ToString::to_string).collect();
+    records[1] = r#"{"type":"turn.started","meta":{"trace":"a","trace":"b"}}"#.into();
+    records[2] = records[2].replacen(
+        "\"item\":{",
+        "\"extra\":{\"x\":1,\"x\":2},\"item\":{\"note\":{\"k\":1,\"k\":2},",
+        1,
+    );
+    let bytes = records.join("\n").into_bytes();
+    let completion = decode(&bytes).unwrap();
+    assert_eq!(completion.candidate.payload, payload());
 }

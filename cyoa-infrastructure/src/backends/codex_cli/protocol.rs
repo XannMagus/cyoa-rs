@@ -2,7 +2,7 @@
 //! success: the parent adapter must still reconcile the supervisor's outcome.
 
 use crate::backend::{TokenUsage, normalize_input_tokens};
-use crate::json::{StrictJsonError, strict_value};
+use crate::json::{duplicate_key_location, strict_value};
 
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 #[error("Codex record {record} at {location}: {kind:?}")]
@@ -192,17 +192,15 @@ fn string_field<'a>(
 fn parse_event(bytes: &[u8], record: usize) -> Result<Event, ProtocolError> {
     let text =
         std::str::from_utf8(bytes).map_err(|_| error(record, "$", ErrorKind::InvalidUtf8))?;
-    // A duplicated control key (`type`, `item`, `error`, ...) makes the record
-    // ambiguous: reject it rather than letting the last occurrence decide.
-    let value = strict_value(text.as_bytes()).map_err(|fault| {
-        let kind = match fault {
-            StrictJsonError::DuplicateKey(_) => ErrorKind::DuplicateField,
-            StrictJsonError::Syntax(_) => ErrorKind::InvalidJson,
-        };
-        error(record, "$", kind)
-    })?;
+    let value: serde_json::Value =
+        serde_json::from_str(text).map_err(|_| error(record, "$", ErrorKind::InvalidJson))?;
     if !value.is_object() {
         return Err(error(record, "$", ErrorKind::InvalidField));
+    }
+    // A duplicated control key makes the record ambiguous: reject it rather than
+    // letting the last occurrence decide. Only the control objects are strict.
+    if let Some(location) = duplicate_key_location(text, is_control_object) {
+        return Err(error(record, &location, ErrorKind::DuplicateField));
     }
     let kind = string_field(&value, "type", record, "$.type", true)?;
     match kind {
@@ -242,6 +240,20 @@ fn parse_event(bytes: &[u8], record: usize) -> Result<Event, ProtocolError> {
         }
         _ => Err(error(record, "$.type", ErrorKind::Unsupported)),
     }
+}
+
+/// Control objects this profile interprets: the record itself and its `item`,
+/// `error` and `usage` objects. The model payload is an opaque `item.text` string
+/// (checked strictly when parsed as the payload), and other metadata subtrees may
+/// evolve across minor CLI versions without breaking the adapter.
+fn is_control_object(path: &[String]) -> bool {
+    matches!(
+        path.iter()
+            .map(String::as_str)
+            .collect::<Vec<_>>()
+            .as_slice(),
+        [] | ["item"] | ["error"] | ["usage"]
+    )
 }
 
 // Malformed/missing counts are unknown independently. Auxiliary counts are not

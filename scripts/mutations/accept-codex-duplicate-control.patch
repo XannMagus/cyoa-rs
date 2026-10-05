@@ -1,0 +1,11 @@
+--- a/cyoa-infrastructure/src/backends/codex_cli/protocol.rs
++++ b/cyoa-infrastructure/src/backends/codex_cli/protocol.rs
+@@ -199,7 +199,7 @@
+     }
+     // A duplicated control key makes the record ambiguous: reject it rather than
+     // letting the last occurrence decide. Only the control objects are strict.
+-    if let Some(location) = duplicate_key_location(text, is_control_object) {
++    if let Some(location) = None::<String> {
+         return Err(error(record, &location, ErrorKind::DuplicateField));
+     }
+     let kind = string_field(&value, "type", record, "$.type", true)?;

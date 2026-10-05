@@ -551,15 +551,20 @@ protects it at the real-child boundary.
 
 Duplicate keys, both backends (user decision, 2026-10-05): the 2026-10-05 review
 found Codex still parsing each JSONL record into `serde_json::Value`, so
-`{"type":"turn.failed","type":"turn.completed"}` read as success. Codex records
-are now parsed strictly (`DuplicateField`, location `$`, candidate retained when one
-already exists) inside the Codex adapter, and a duplicated payload key is
+`{"type":"turn.failed","type":"turn.completed"}` read as success. Strict where it is
+vital, tolerant elsewhere (user decision, 2026-10-06): duplicate keys reject a Codex
+record (`DuplicateField`, located at `$`, `$.item`, `$.error` or `$.usage`, any
+earlier candidate retained) only inside the control objects the profile
+interprets: the record and its `item`, `error` and `usage` objects. Duplicates in
+other metadata are tolerated, so minor CLI versions can add fields without
+breaking the adapter. A duplicated key in the model payload itself is
 `InvalidPayload`. Payload ambiguity is not vendor-specific, so the shared
 `GenerationResponse::from_json` also rejects duplicate keys for every backend,
 scripted and demo transports included. One shared strict parser
 (`cyoa-infrastructure/src/json.rs`) serves the adapters and the save codec.
-Claude's scoped record check is unchanged: model-authored message content stays
-tolerated there. Mutation `accept-duplicate-codex-control-key` protects the Codex
+Codex and Claude both use the scoped `json::duplicate_key_location` check with their
+own control-object predicate. Claude's model-authored message content stays
+tolerated. Astra's mutation `accept-codex-duplicate-control` protects the Codex
 record path at the real-child boundary.
 
 ### PRODUCT-001 Standalone TUI, persistence, export, and image boundary

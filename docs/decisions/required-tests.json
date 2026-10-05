@@ -894,6 +894,13 @@
         "tests": [
           "storage_failures_derive_replacement_stamps_from_their_own_write"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_backend",
+        "tests": [
+          "duplicate_control_keys_reject_without_emission_and_preserve_prior_candidate"
+        ]
       }
     ]
   },
@@ -1049,7 +1056,8 @@
           "backends::claude_cli::protocol::tests::malformed_terminal_metadata_keeps_the_exact_candidate_span",
           "backends::claude_cli::protocol::tests::duplicate_control_fields_make_a_record_ambiguous_and_are_rejected",
           "backends::codex_cli::protocol::tests::duplicated_control_keys_reject_the_record_instead_of_picking_one",
-          "backends::codex_cli::protocol::tests::duplicated_payload_keys_are_invalid_payload_with_the_candidate_retained"
+          "backends::codex_cli::protocol::tests::duplicated_payload_keys_are_invalid_payload_with_the_candidate_retained",
+          "backends::codex_cli::protocol::tests::duplicates_outside_control_objects_are_tolerated_for_minor_cli_evolution"
         ]
       },
       {
@@ -1183,6 +1191,13 @@
           "bounded_silent_storage_keeps_input_responsive_and_reaps_current_and_final_helpers",
           "input_and_output_errors_still_save_last_canonical_story_and_remain_errors",
           "blocked_storage_and_faulted_output_sinks_preserve_canonical_state_and_reap_helpers"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_backend",
+        "tests": [
+          "duplicate_control_keys_reject_without_emission_and_preserve_prior_candidate"
         ]
       }
     ]

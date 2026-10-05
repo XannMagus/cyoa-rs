@@ -165,24 +165,37 @@ impl<'de> Visitor<'de> for Unique<'_> {
 /// A syntactically valid span can still be ambiguous: two equal keys in one
 /// object mean different consumers read different values (`serde_json::Value`
 /// silently keeps the last). Reject, never pick. Only objects selected by
-/// `in_scope` (by key path) are checked; other subtrees are skipped unexamined.
-/// Excessive nesting also fails here and is likewise not valid.
+/// `in_scope` (by key path) are checked; other subtrees are skipped unexamined,
+/// so vendors can evolve metadata outside the control objects a protocol relies
+/// on. Excessive nesting or invalid syntax also fails here and is not valid.
 pub(crate) fn has_duplicate_keys_in(span: &str, in_scope: fn(&[String]) -> bool) -> bool {
-    struct Unique {
+    duplicate_key_location(span, in_scope).is_some()
+}
+
+/// Like [`has_duplicate_keys_in`], naming where the span is ambiguous: the
+/// object holding the duplicate (`$`, `$.item`, ...), or `$` for a span that is
+/// not valid JSON at all.
+pub(crate) fn duplicate_key_location(
+    span: &str,
+    in_scope: fn(&[String]) -> bool,
+) -> Option<String> {
+    struct Scoped<'a> {
         path: Vec<String>,
         in_scope: fn(&[String]) -> bool,
+        found: &'a Cell<Option<String>>,
     }
-    impl Unique {
-        fn child(&self, key: &str) -> Unique {
+    impl Scoped<'_> {
+        fn child(&self, key: &str) -> Self {
             let mut path = self.path.clone();
             path.push(key.to_owned());
-            Unique {
+            Scoped {
                 path,
                 in_scope: self.in_scope,
+                found: self.found,
             }
         }
     }
-    impl<'de> DeserializeSeed<'de> for Unique {
+    impl<'de> DeserializeSeed<'de> for Scoped<'_> {
         type Value = ();
         fn deserialize<D: de::Deserializer<'de>>(self, d: D) -> Result<(), D::Error> {
             if (self.in_scope)(&self.path) {
@@ -192,9 +205,9 @@ pub(crate) fn has_duplicate_keys_in(span: &str, in_scope: fn(&[String]) -> bool)
             }
         }
     }
-    impl<'de> Visitor<'de> for Unique {
+    impl<'de> Visitor<'de> for Scoped<'_> {
         type Value = ();
-        fn expecting(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        fn expecting(&self, f: &mut fmt::Formatter) -> fmt::Result {
             f.write_str("any JSON value")
         }
         fn visit_bool<E>(self, _: bool) -> Result<(), E> {
@@ -224,6 +237,11 @@ pub(crate) fn has_duplicate_keys_in(span: &str, in_scope: fn(&[String]) -> bool)
             while let Some(key) = map.next_key::<String>()? {
                 let child = self.child(&key);
                 if !seen.insert(key) {
+                    let location = std::iter::once("$")
+                        .chain(self.path.iter().map(String::as_str))
+                        .collect::<Vec<_>>()
+                        .join(".");
+                    self.found.set(Some(location));
                     return Err(de::Error::custom("duplicate key"));
                 }
                 map.next_value_seed(child)?;
@@ -231,13 +249,18 @@ pub(crate) fn has_duplicate_keys_in(span: &str, in_scope: fn(&[String]) -> bool)
             Ok(())
         }
     }
+    let found = Cell::new(None);
     let mut deserializer = serde_json::Deserializer::from_str(span);
-    Unique {
+    let checked = Scoped {
         path: vec![],
         in_scope,
+        found: &found,
     }
-    .deserialize(&mut deserializer)
-    .is_err()
+    .deserialize(&mut deserializer);
+    match checked {
+        Ok(()) => None,
+        Err(_) => Some(found.take().unwrap_or_else(|| "$".into())),
+    }
 }
 
 #[cfg(test)]
