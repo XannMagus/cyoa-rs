@@ -1,0 +1,7 @@
+--- a/cyoa-infrastructure/src/backends/claude_cli/adapter.rs
++++ b/cyoa-infrastructure/src/backends/claude_cli/adapter.rs
+@@ -113,3 +113,3 @@
+-    let Ok(status) = serde_json::from_slice::<AuthStatus>(diagnostics.stdout()) else {
++    let Ok(status) = serde_json::from_slice::<Value>(diagnostics.stdout()).and_then(serde_json::from_value::<AuthStatus>) else {
+         return false;
+     };

@@ -97,12 +97,22 @@ impl Backend for ClaudeCliBackend {
 /// Only the confirmed subscription shape passes: unknown, missing or conflicting
 /// fields fail closed. Other fields (identity, directories) are ignored here.
 fn subscription_auth(diagnostics: &TransportDiagnostics) -> bool {
-    let Ok(status) = serde_json::from_slice::<Value>(diagnostics.stdout()) else {
+    // Derived struct deserialization rejects repeated known fields (including
+    // equal values), unlike Value's last-wins map. Unknown identity/configuration
+    // fields remain tolerated, as in the confirmed auth-status profile.
+    #[derive(serde::Deserialize)]
+    struct AuthStatus {
+        #[serde(rename = "loggedIn")]
+        logged_in: bool,
+        #[serde(rename = "authMethod")]
+        auth_method: String,
+        #[serde(rename = "apiProvider")]
+        api_provider: String,
+    }
+    let Ok(status) = serde_json::from_slice::<AuthStatus>(diagnostics.stdout()) else {
         return false;
     };
-    status.get("loggedIn").and_then(Value::as_bool) == Some(true)
-        && status.get("authMethod").and_then(Value::as_str) == Some("claude.ai")
-        && status.get("apiProvider").and_then(Value::as_str) == Some("firstParty")
+    status.logged_in && status.auth_method == "claude.ai" && status.api_provider == "firstParty"
 }
 
 fn reconcile(

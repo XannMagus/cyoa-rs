@@ -1,10 +1,10 @@
 --- a/cyoa-infrastructure/src/backends/claude_cli/adapter.rs
 +++ b/cyoa-infrastructure/src/backends/claude_cli/adapter.rs
-@@ -101,7 +101,6 @@ fn subscription_auth(diagnostics: &TransportDiagnostics) -> bool {
+@@ -114,6 +114,6 @@ fn subscription_auth(diagnostics: &TransportDiagnostics) -> bool {
          return false;
      };
-     status.get("loggedIn").and_then(Value::as_bool) == Some(true)
--        && status.get("authMethod").and_then(Value::as_str) == Some("claude.ai")
-         && status.get("apiProvider").and_then(Value::as_str) == Some("firstParty")
+-    status.logged_in && status.auth_method == "claude.ai" && status.api_provider == "firstParty"
++    status.logged_in && status.api_provider == "firstParty"
  }
  
+ fn reconcile(

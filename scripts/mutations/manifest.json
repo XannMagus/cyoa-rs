@@ -374,5 +374,14 @@
     "test": "duplicate_control_keys_reject_without_emission_and_preserve_prior_candidate",
     "file": "cyoa-infrastructure/src/backends/codex_cli/protocol.rs",
     "failure_contains": "ambiguous Codex control record was accepted"
+  },
+  {
+    "id": "accept-claude-duplicate-auth",
+    "decision": "BACKENDS-001",
+    "package": "cyoa-infrastructure",
+    "target": "claude_backend",
+    "test": "duplicate_auth_keys_fail_closed_before_generation_and_retain_status",
+    "file": "cyoa-infrastructure/src/backends/claude_cli/adapter.rs",
+    "failure_contains": "ambiguous Claude authentication was accepted"
   }
 ]
