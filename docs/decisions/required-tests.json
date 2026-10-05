@@ -901,6 +901,13 @@
         "tests": [
           "duplicate_control_keys_reject_without_emission_and_preserve_prior_candidate"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "claude_backend",
+        "tests": [
+          "duplicate_auth_keys_fail_closed_before_generation_and_retain_status"
+        ]
       }
     ]
   },
@@ -1198,6 +1205,13 @@
         "target": "codex_backend",
         "tests": [
           "duplicate_control_keys_reject_without_emission_and_preserve_prior_candidate"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "claude_backend",
+        "tests": [
+          "duplicate_auth_keys_fail_closed_before_generation_and_retain_status"
         ]
       }
     ]

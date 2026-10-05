@@ -18,6 +18,35 @@ use std::{
 
 const STATUS: &str = r#"{"loggedIn":true,"authMethod":"claude.ai","apiProvider":"firstParty","subscriptionType":"team","email":"someone@example.invalid"}"#;
 
+#[test]
+fn duplicate_auth_keys_fail_closed_before_generation_and_retain_status() {
+    for status in [
+        r#"{"loggedIn":true,"authMethod":"api_key","authMethod":"claude.ai","apiProvider":"firstParty"}"#,
+        r#"{"loggedIn":true,"authMethod":"claude.ai","authMethod":"claude.ai","apiProvider":"firstParty"}"#,
+        r#"{"loggedIn":false,"loggedIn":true,"authMethod":"claude.ai","apiProvider":"firstParty"}"#,
+        r#"{"loggedIn":true,"loggedIn":true,"authMethod":"claude.ai","apiProvider":"firstParty"}"#,
+        r#"{"loggedIn":true,"authMethod":"claude.ai","apiProvider":"bedrock","apiProvider":"firstParty"}"#,
+        r#"{"loggedIn":true,"authMethod":"claude.ai","apiProvider":"firstParty","apiProvider":"firstParty"}"#,
+        r#"{"loggedIn":true,"authMethod":"claude.ai","\u0061uthMethod":"claude.ai","apiProvider":"firstParty"}"#,
+    ] {
+        let fixture = Fixture::new(&[], 0);
+        fixture.update("auth_status", json!(status));
+        let result = ClaudeCliBackend::connect(
+            fixture.config.clone(),
+            &CancellationSource::default().token(),
+        );
+        assert_eq!(fixture.launches(), ["auth"]);
+        assert!(!fixture.report().exists());
+        assert!(
+            result.is_err(),
+            "ambiguous Claude authentication was accepted: {status}"
+        );
+        let error = result.unwrap_err();
+        assert!(matches!(error, BackendError::Unavailable { .. }));
+        assert_eq!(evidence(&error).1.stdout(), status.as_bytes());
+    }
+}
+
 struct Fixture {
     home: tempfile::TempDir,
     config: ClaudeInvocationConfig,
