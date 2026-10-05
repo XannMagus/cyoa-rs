@@ -647,7 +647,9 @@
           "backends::codex_cli::tests::failed_schema_write_is_located_and_workspace_drop_cleans_up",
           "backends::codex_cli::tests::public_generation_preparation_uses_one_rendered_request_for_prompt_and_schema",
           "backends::claude_cli::tests::invalid_model_home_config_dir_and_search_path_values_are_rejected",
-          "backends::claude_cli::tests::preparation_never_launches_the_selected_executable"
+          "backends::claude_cli::tests::preparation_never_launches_the_selected_executable",
+          "persistence::repository::linux::tests::writes_publish_the_prepared_attempt_before_their_first_disk_mutation",
+          "persistence::repository::linux::tests::writes_rejected_at_admission_publish_nothing"
         ]
       },
       {
@@ -704,7 +706,8 @@
           "late_read_cancellation_rejects_results_but_never_hides_a_durable_write_receipt",
           "checked_persistence_values_reject_invalid_names_counters_pages_and_bounds",
           "explicit_restore_policy_and_read_only_queries_do_not_write_or_rebind_the_disk_stamp",
-          "explicit_storage_commands_make_exactly_one_call_each_and_return_observed_receipts"
+          "explicit_storage_commands_make_exactly_one_call_each_and_return_observed_receipts",
+          "writes_forward_the_callers_own_preparation_sink_to_the_repository"
         ]
       },
       {

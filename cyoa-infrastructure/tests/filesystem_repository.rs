@@ -33,7 +33,9 @@ fn missing_and_unsafe_storage_paths_are_errors_without_following_links() {
     fs::create_dir(root.path().join("data")).unwrap();
     symlink(root.path(), root.path().join("data/saves")).unwrap();
     assert_eq!(
-        repo.create(snapshot(), &token).unwrap_err().visibility,
+        repo.create(snapshot(), &PreparedWriteEvidence::default(), &token)
+            .unwrap_err()
+            .visibility,
         WriteVisibility::Unchanged
     );
     assert_eq!(fs::read_dir(root.path()).unwrap().count(), 1);
@@ -44,7 +46,9 @@ fn atomic_create_replace_and_independent_writer_conflict_preserve_exact_backup()
     let root = tempfile::tempdir().unwrap();
     let mut repo = LocalRepository::new(root.path().join("data")).unwrap();
     let token = CancellationSource::default().token();
-    let first = repo.create(snapshot(), &token).unwrap();
+    let first = repo
+        .create(snapshot(), &PreparedWriteEvidence::default(), &token)
+        .unwrap();
     let dir = root.path().join("data/saves");
     let primary = dir.join(format!("{}.json", first.metadata.id.as_str()));
     let backup = dir.join(format!("{}.json.bak", first.metadata.id.as_str()));
@@ -70,7 +74,14 @@ fn atomic_create_replace_and_independent_writer_conflict_preserve_exact_backup()
         id: first.metadata.id.clone(),
         expected_stamp: first.stamp,
     };
-    let second = repo.replace(target, snapshot(), &token).unwrap();
+    let second = repo
+        .replace(
+            target,
+            snapshot(),
+            &PreparedWriteEvidence::default(),
+            &token,
+        )
+        .unwrap();
     assert_eq!(second.metadata.revision.get(), 2);
     assert_eq!(fs::read(&backup).unwrap(), old);
     assert_eq!(
@@ -81,6 +92,7 @@ fn atomic_create_replace_and_independent_writer_conflict_preserve_exact_backup()
                     expected_stamp: stale.stamp
                 },
                 snapshot(),
+                &PreparedWriteEvidence::default(),
                 &token
             )
             .unwrap_err()
@@ -111,13 +123,16 @@ fn corrupt_primary_never_rotates_over_a_good_backup_and_recovery_creates_a_new_s
     let root = tempfile::tempdir().unwrap();
     let mut repo = LocalRepository::new(root.path().to_path_buf()).unwrap();
     let token = CancellationSource::default().token();
-    let first = repo.create(snapshot(), &token).unwrap();
+    let first = repo
+        .create(snapshot(), &PreparedWriteEvidence::default(), &token)
+        .unwrap();
     repo.replace(
         SaveTarget {
             id: first.metadata.id.clone(),
             expected_stamp: first.stamp,
         },
         snapshot(),
+        &PreparedWriteEvidence::default(),
         &token,
     )
     .unwrap();
@@ -135,6 +150,7 @@ fn corrupt_primary_never_rotates_over_a_good_backup_and_recovery_creates_a_new_s
                 expected_stamp: codec::stamp(b"corrupt"),
             },
             snapshot(),
+            &PreparedWriteEvidence::default(),
             &token,
         )
         .unwrap_err();
@@ -147,7 +163,13 @@ fn corrupt_primary_never_rotates_over_a_good_backup_and_recovery_creates_a_new_s
     let recovered = repo
         .load(&first.metadata.id, SaveCopy::Backup, &token)
         .unwrap();
-    let receipt = repo.create(recovered.snapshot, &token).unwrap();
+    let receipt = repo
+        .create(
+            recovered.snapshot,
+            &PreparedWriteEvidence::default(),
+            &token,
+        )
+        .unwrap();
     assert_ne!(receipt.metadata.id, first.metadata.id);
     assert_eq!(fs::read(&path).unwrap(), b"corrupt");
     fs::remove_file(&path).unwrap();
@@ -168,7 +190,9 @@ fn locks_survive_primary_replacement_and_hostile_entries_are_never_followed() {
     let root = tempfile::tempdir().unwrap();
     let mut repo = LocalRepository::new(root.path().into()).unwrap();
     let token = CancellationSource::default().token();
-    let receipt = repo.create(snapshot(), &token).unwrap();
+    let receipt = repo
+        .create(snapshot(), &PreparedWriteEvidence::default(), &token)
+        .unwrap();
     let dir = root.path().join("saves");
     let primary = dir.join(format!("{}.json", receipt.metadata.id.as_str()));
     let lock = dir.join(format!("{}.lock", receipt.metadata.id.as_str()));
@@ -199,6 +223,7 @@ fn locks_survive_primary_replacement_and_hostile_entries_are_never_followed() {
             expected_stamp: receipt.stamp,
         },
         snapshot(),
+        &PreparedWriteEvidence::default(),
         &token,
     )
     .unwrap();
@@ -236,6 +261,7 @@ fn locks_survive_primary_replacement_and_hostile_entries_are_never_followed() {
                     expected_stamp: codec::stamp(&bytes)
                 },
                 snapshot(),
+                &PreparedWriteEvidence::default(),
                 &token
             )
             .is_err()
@@ -264,7 +290,8 @@ fn listing_pages_report_corrupt_future_and_backup_only_without_rewriting_documen
     let mut repo = LocalRepository::new(root.path().into()).unwrap();
     let token = CancellationSource::default().token();
     for _ in 0..3 {
-        repo.create(snapshot(), &token).unwrap();
+        repo.create(snapshot(), &PreparedWriteEvidence::default(), &token)
+            .unwrap();
     }
     let rows = repo
         .list(SavePage::new(None, 100).unwrap(), &token)
@@ -308,7 +335,11 @@ fn disk_restore_cycles_preserve_original_limits_and_every_narrowed_snapshot() {
     let mut cases = PersistenceUseCases::new(repo);
     let token = CancellationSource::default().token();
     let receipt = cases
-        .save_game(SaveGame::Create(snapshot()), &token)
+        .save_game(
+            SaveGame::Create(snapshot()),
+            &PreparedWriteEvidence::default(),
+            &token,
+        )
         .unwrap();
     let current = Limits {
         max_major_events: MajorEventLimit::new(1).unwrap(),
@@ -338,6 +369,7 @@ fn disk_restore_cycles_preserve_original_limits_and_every_narrowed_snapshot() {
                 },
                 snapshot: narrowed.clone(),
             },
+            &PreparedWriteEvidence::default(),
             &token,
         )
         .unwrap();
@@ -374,6 +406,7 @@ fn disk_restore_cycles_preserve_original_limits_and_every_narrowed_snapshot() {
                 },
                 snapshot: original.clone(),
             },
+            &PreparedWriteEvidence::default(),
             &token,
         )
         .unwrap();
@@ -472,6 +505,7 @@ fn disk_restore_cycles_preserve_original_limits_and_every_narrowed_snapshot() {
                     },
                     snapshot: restored.clone(),
                 },
+                &PreparedWriteEvidence::default(),
                 &token,
             )
             .unwrap();
@@ -534,7 +568,9 @@ fn hostile_unicode_titles_never_become_paths_and_retitle_preserves_the_slot_id()
     let mut repo = LocalRepository::new(root.path().into()).unwrap();
     let token = CancellationSource::default().token();
     let hostile = retitle(snapshot(), "../../ 霧 🔥 / Story!?");
-    let first = repo.create(hostile.clone(), &token).unwrap();
+    let first = repo
+        .create(hostile.clone(), &PreparedWriteEvidence::default(), &token)
+        .unwrap();
     assert!(first.metadata.id.as_str().starts_with("story-"));
     assert_eq!(
         repo.load(&first.metadata.id, SaveCopy::Primary, &token)
@@ -550,6 +586,7 @@ fn hostile_unicode_titles_never_become_paths_and_retitle_preserves_the_slot_id()
                 expected_stamp: first.stamp,
             },
             changed,
+            &PreparedWriteEvidence::default(),
             &token,
         )
         .unwrap();

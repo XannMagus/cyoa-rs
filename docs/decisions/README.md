@@ -152,6 +152,16 @@ read-only views. No message bus, event sourcing, or duplicate types by conventio
 No concrete adapter types in use-case signatures. New use cases need port-based
 tests; the original Python module layout and old two-crate plan are not precedent.
 
+Port obligations live in port signatures (2026-10-05 review): `GameRepository`
+writes take the caller's `PreparedWriteEvidence` sink and must publish the exact
+`PendingWrite` before their first disk mutation. It had been injected through
+repository constructors, which made presentation's factory generics depend on one
+adapter's crash-recovery needs and let a repository silently skip publication.
+Factories now build repositories with no evidence argument; the runner passes a
+fresh sink per request and keeps its own clone. Port-level tests cover sink
+forwarding (application), publication before the first mutation, and none on
+admission rejection (local repository).
+
 ### ARCH-002 Domain types establish invariants
 
 **Partial: constructors, generation mappings and save-boundary reconstruction

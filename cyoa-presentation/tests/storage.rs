@@ -21,7 +21,6 @@ fn key() -> StorageKey {
     }
 }
 struct Fake {
-    evidence: PreparedWriteEvidence,
     mode: u8,
     started: Arc<AtomicBool>,
     done: Arc<AtomicBool>,
@@ -33,6 +32,7 @@ impl GameRepository for Fake {
     fn create(
         &mut self,
         _: SaveSnapshot,
+        _: &PreparedWriteEvidence,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         unreachable!()
@@ -41,6 +41,7 @@ impl GameRepository for Fake {
         &mut self,
         _: SaveTarget,
         _: SaveSnapshot,
+        _: &PreparedWriteEvidence,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         unreachable!()
@@ -48,10 +49,11 @@ impl GameRepository for Fake {
     fn reconcile(
         &mut self,
         attempt: PendingWrite,
+        prepared: &PreparedWriteEvidence,
         token: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         if self.mode != 2 {
-            self.evidence.publish(attempt.clone());
+            prepared.publish(attempt.clone());
         }
         self.started.store(true, Ordering::SeqCst);
         if self.mode > 0 {
@@ -98,8 +100,7 @@ fn polling_is_nonblocking_preparation_precedes_completion_and_close_joins_cancel
     let done = Arc::new(AtomicBool::new(false));
     let start = started.clone();
     let finish = done.clone();
-    let mut runner = StorageRunner::new(move |evidence| Fake {
-        evidence,
+    let mut runner = StorageRunner::new(move || Fake {
         mode: 0,
         started: start.clone(),
         done: finish.clone(),
@@ -152,8 +153,7 @@ fn worker_panics_distinguish_unprepared_from_uncertain_writes_and_retain_identit
     for mode in [1, 2] {
         let started = Arc::new(AtomicBool::new(false));
         let start = started.clone();
-        let mut runner = StorageRunner::new(move |evidence| Fake {
-            evidence,
+        let mut runner = StorageRunner::new(move || Fake {
             mode,
             started: start.clone(),
             done: Arc::new(AtomicBool::new(false)),
@@ -211,8 +211,7 @@ fn dropping_runner_cancels_and_joins_without_leaving_storage_work_detached() {
     let done = Arc::new(AtomicBool::new(false));
     let start = started.clone();
     let finish = done.clone();
-    let mut runner = StorageRunner::new(move |evidence| Fake {
-        evidence,
+    let mut runner = StorageRunner::new(move || Fake {
         mode: 0,
         started: start.clone(),
         done: finish.clone(),

@@ -38,7 +38,6 @@ struct Disk {
 }
 struct Repo {
     disk: Arc<Mutex<Disk>>,
-    evidence: PreparedWriteEvidence,
 }
 fn id() -> SaveId {
     SaveId::new("harbour-0123456789abcdef0123456789abcdef").unwrap()
@@ -68,6 +67,7 @@ impl Repo {
     fn write(
         &mut self,
         snapshot: SaveSnapshot,
+        prepared: &PreparedWriteEvidence,
         kind: &'static str,
         operation: StorageOperation,
     ) -> Result<SaveReceipt, StorageFailure> {
@@ -85,7 +85,7 @@ impl Repo {
             b"opaque".to_vec(),
         )
         .unwrap();
-        self.evidence.publish(pending.clone());
+        prepared.publish(pending.clone());
         disk.pending_snapshot = Some(snapshot.clone());
         let mode = disk.modes.pop_front().unwrap_or(Mode::Success);
         if let Some((started, release)) = disk.wait_write.take() {
@@ -125,21 +125,24 @@ impl GameRepository for Repo {
     fn create(
         &mut self,
         s: SaveSnapshot,
+        prepared: &PreparedWriteEvidence,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
-        self.write(s, "create", StorageOperation::Create)
+        self.write(s, prepared, "create", StorageOperation::Create)
     }
     fn replace(
         &mut self,
         _: SaveTarget,
         s: SaveSnapshot,
+        prepared: &PreparedWriteEvidence,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
-        self.write(s, "replace", StorageOperation::Replace)
+        self.write(s, prepared, "replace", StorageOperation::Replace)
     }
     fn reconcile(
         &mut self,
         p: PendingWrite,
+        _: &PreparedWriteEvidence,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         let mut disk = self.disk.lock().unwrap();
@@ -241,8 +244,7 @@ impl StoryGenerator for Generator {
         }
     }
 }
-type Session =
-    PersistedSession<Generator, Repo, Box<dyn Fn(PreparedWriteEvidence) -> Repo + Send + Sync>>;
+type Session = PersistedSession<Generator, Repo, Box<dyn Fn() -> Repo + Send + Sync>>;
 fn session(
     controller: SessionController,
     disk: Arc<Mutex<Disk>>,
@@ -257,11 +259,8 @@ fn session(
         }),
         PreviewLimit::default(),
     );
-    let factory: Box<dyn Fn(PreparedWriteEvidence) -> Repo + Send + Sync> =
-        Box::new(move |evidence| Repo {
-            disk: disk.clone(),
-            evidence,
-        });
+    let factory: Box<dyn Fn() -> Repo + Send + Sync> =
+        Box::new(move || Repo { disk: disk.clone() });
     (
         PersistedSession::new(runtime, StorageRunner::new(factory), StorySource::Live),
         calls,

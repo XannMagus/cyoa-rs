@@ -306,21 +306,30 @@ pub struct SavePageResult {
     pub next: Option<SaveId>,
 }
 
+/// Storage port. Every write receives the caller's [`PreparedWriteEvidence`]:
+/// an implementation must publish the exact [`PendingWrite`] to it before its
+/// first disk mutation, so a caller whose worker unwinds or is lost can still
+/// reconcile what may have become visible. Publishing again for the same
+/// attempt is allowed; a write that never prepares (for example, rejected at
+/// admission) publishes nothing.
 pub trait GameRepository {
     fn create(
         &mut self,
         snapshot: SaveSnapshot,
+        prepared: &PreparedWriteEvidence,
         cancel: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure>;
     fn replace(
         &mut self,
         target: SaveTarget,
         snapshot: SaveSnapshot,
+        prepared: &PreparedWriteEvidence,
         cancel: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure>;
     fn reconcile(
         &mut self,
         attempt: PendingWrite,
+        prepared: &PreparedWriteEvidence,
         cancel: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure>;
     fn load(
@@ -372,6 +381,7 @@ impl<R: GameRepository> PersistenceUseCases<R> {
     pub fn save_game(
         &mut self,
         command: SaveGame,
+        prepared: &PreparedWriteEvidence,
         cancel: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         let operation = match &command {
@@ -383,11 +393,11 @@ impl<R: GameRepository> PersistenceUseCases<R> {
         // A durable write is an observed effect: do not erase a receipt because
         // cancellation arrived after the repository completed it.
         match command {
-            SaveGame::Create(snapshot) => self.repository.create(snapshot, cancel),
+            SaveGame::Create(snapshot) => self.repository.create(snapshot, prepared, cancel),
             SaveGame::Replace { target, snapshot } => {
-                self.repository.replace(target, snapshot, cancel)
+                self.repository.replace(target, snapshot, prepared, cancel)
             }
-            SaveGame::Reconcile(attempt) => self.repository.reconcile(attempt, cancel),
+            SaveGame::Reconcile(attempt) => self.repository.reconcile(attempt, prepared, cancel),
         }
     }
     pub fn load_game(
@@ -447,8 +457,9 @@ fn check_cancelled(
     }
 }
 
-/// Request-scoped preparation evidence, published before a storage helper can
-/// mutate disk. Retained by the caller even when the worker unwinds.
+/// Request-scoped preparation evidence: the caller keeps one clone and passes the
+/// other to a [`GameRepository`] write, which publishes before mutating disk.
+/// The caller's clone survives even when the worker running the write unwinds.
 #[derive(Clone, Default)]
 pub struct PreparedWriteEvidence(std::sync::Arc<std::sync::Mutex<Option<PendingWrite>>>);
 impl PreparedWriteEvidence {

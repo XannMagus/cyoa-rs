@@ -231,7 +231,7 @@ fn cancelled_consumed_demo_passages_preserve_disk_and_retry_all_five_with_persis
     .unwrap();
     let mut session = PersistedSession::new(
         runtime,
-        StorageRunner::new(move |evidence| SupervisedRepository::new(config.clone(), evidence)),
+        StorageRunner::new(move || SupervisedRepository::new(config.clone())),
         StorySource::Demo {
             scenario: DemoScenarioId::HarbourV1,
         },

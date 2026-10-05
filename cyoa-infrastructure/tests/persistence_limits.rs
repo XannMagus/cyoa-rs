@@ -30,6 +30,7 @@ impl GameRepository for ReadRepository {
     fn create(
         &mut self,
         _: SaveSnapshot,
+        _: &PreparedWriteEvidence,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         panic!("load policy must not write automatically")
@@ -38,6 +39,7 @@ impl GameRepository for ReadRepository {
         &mut self,
         _: SaveTarget,
         _: SaveSnapshot,
+        _: &PreparedWriteEvidence,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         panic!("load policy must not write automatically")
@@ -45,6 +47,7 @@ impl GameRepository for ReadRepository {
     fn reconcile(
         &mut self,
         _: PendingWrite,
+        _: &PreparedWriteEvidence,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         panic!("unexpected reconcile")

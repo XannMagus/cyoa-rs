@@ -81,6 +81,7 @@ impl GameRepository for FakeRepository {
     fn create(
         &mut self,
         s: SaveSnapshot,
+        _: &PreparedWriteEvidence,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         assert_eq!(s, self.loaded.snapshot);
@@ -91,6 +92,7 @@ impl GameRepository for FakeRepository {
         &mut self,
         t: SaveTarget,
         s: SaveSnapshot,
+        _: &PreparedWriteEvidence,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         assert_eq!(s, self.loaded.snapshot);
@@ -102,10 +104,12 @@ impl GameRepository for FakeRepository {
     fn reconcile(
         &mut self,
         t: PendingWrite,
+        prepared: &PreparedWriteEvidence,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         assert_eq!(t.target(), &id());
         assert_eq!(t.bytes(), b"prepared");
+        prepared.publish(t.clone());
         self.call(StorageOperation::Reconcile)?;
         Ok(self.receipt())
     }
@@ -177,6 +181,7 @@ fn repository_failures_are_preserved_without_retry_or_changing_the_owned_snapsho
                 },
                 snapshot: before.snapshot.clone(),
             },
+            &PreparedWriteEvidence::default(),
             &token,
         )
         .unwrap_err();
@@ -241,7 +246,10 @@ fn pre_cancelled_commands_and_queries_never_call_the_repository() {
         SaveGame::Reconcile(pending()),
     ] {
         assert_eq!(
-            cases.save_game(cmd, &token).unwrap_err().kind,
+            cases
+                .save_game(cmd, &PreparedWriteEvidence::default(), &token)
+                .unwrap_err()
+                .kind,
             StorageFailureKind::Cancelled
         );
     }
@@ -335,7 +343,11 @@ fn late_read_cancellation_rejects_results_but_never_hides_a_durable_write_receip
             ),
             _ => assert_eq!(
                 cases
-                    .save_game(SaveGame::Create(stored().snapshot), &token)
+                    .save_game(
+                        SaveGame::Create(stored().snapshot),
+                        &PreparedWriteEvidence::default(),
+                        &token
+                    )
                     .unwrap()
                     .stamp,
                 stored().stamp
@@ -460,7 +472,9 @@ fn explicit_storage_commands_make_exactly_one_call_each_and_return_observed_rece
         },
         SaveGame::Reconcile(pending()),
     ] {
-        let receipt = cases.save_game(cmd, &token).unwrap();
+        let receipt = cases
+            .save_game(cmd, &PreparedWriteEvidence::default(), &token)
+            .unwrap();
         assert_eq!(receipt.metadata, stored().metadata);
         assert_eq!(receipt.stamp, stored().stamp);
     }
@@ -472,4 +486,15 @@ fn explicit_storage_commands_make_exactly_one_call_each_and_return_observed_rece
             StorageOperation::Reconcile
         ]
     );
+}
+#[test]
+fn writes_forward_the_callers_own_preparation_sink_to_the_repository() {
+    let mut cases = PersistenceUseCases::new(FakeRepository::new());
+    let token = CancellationSource::default().token();
+    let caller = PreparedWriteEvidence::default();
+    cases
+        .save_game(SaveGame::Reconcile(pending()), &caller.clone(), &token)
+        .unwrap();
+    // The repository published through a clone; the caller's handle observes it.
+    assert_eq!(caller.pending(), Some(pending()));
 }

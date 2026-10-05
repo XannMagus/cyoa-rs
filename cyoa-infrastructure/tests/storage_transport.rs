@@ -73,19 +73,16 @@ fn silent_helper_cancellation_and_timeout_reap_children_and_keep_prepared_identi
         let token = source.token();
         let evidence = PreparedWriteEvidence::default();
         let retained = evidence.clone();
-        let mut repo = SupervisedRepository::new(
-            config(
-                root.path(),
-                if cancel {
-                    Duration::from_secs(5)
-                } else {
-                    Duration::from_millis(250)
-                },
-                160 * 1024 * 1024,
-            ),
-            evidence,
-        );
-        let worker = std::thread::spawn(move || repo.create(snapshot(), &token));
+        let mut repo = SupervisedRepository::new(config(
+            root.path(),
+            if cancel {
+                Duration::from_secs(5)
+            } else {
+                Duration::from_millis(250)
+            },
+            160 * 1024 * 1024,
+        ));
+        let worker = std::thread::spawn(move || repo.create(snapshot(), &evidence, &token));
         let pid = wait(root.path());
         let pending = retained
             .pending()
@@ -131,20 +128,17 @@ fn lost_invalid_multiple_or_capped_replies_never_authorize_success_and_reconcile
         )
         .unwrap();
         let evidence = PreparedWriteEvidence::default();
-        let mut repo = SupervisedRepository::new(
-            config(
-                root.path(),
-                Duration::from_secs(5),
-                if mode == "capped" {
-                    20
-                } else {
-                    160 * 1024 * 1024
-                },
-            ),
-            evidence.clone(),
-        );
+        let mut repo = SupervisedRepository::new(config(
+            root.path(),
+            Duration::from_secs(5),
+            if mode == "capped" {
+                20
+            } else {
+                160 * 1024 * 1024
+            },
+        ));
         let token = CancellationSource::default().token();
-        let error = repo.create(snapshot(), &token).unwrap_err();
+        let error = repo.create(snapshot(), &evidence, &token).unwrap_err();
         assert_eq!(error.visibility, WriteVisibility::Unknown, "{mode}");
         let pending = error.pending.unwrap();
         assert_eq!(evidence.pending().as_ref(), Some(pending.as_ref()));
@@ -155,7 +149,9 @@ fn lost_invalid_multiple_or_capped_replies_never_authorize_success_and_reconcile
             "Apply\n"
         );
         let mut local = LocalRepository::new(root.path().into()).unwrap();
-        let receipt = local.reconcile(*pending.clone(), &token).unwrap();
+        let receipt = local
+            .reconcile(*pending.clone(), &evidence, &token)
+            .unwrap();
         assert_eq!(receipt.stamp, pending.intended_stamp());
         assert_eq!(&receipt.metadata.id, pending.target());
         assert_eq!(receipt.metadata.revision.get(), 1);
@@ -182,12 +178,13 @@ fn preparation_exhausting_the_total_deadline_launches_no_helper_or_disk_write() 
     let root = tempfile::tempdir().unwrap();
     fs::write(root.path().join(".fixture-mode"), "silent").unwrap();
     let evidence = PreparedWriteEvidence::default();
-    let mut repo = SupervisedRepository::new(
-        config(root.path(), Duration::from_nanos(1), 160 * 1024 * 1024),
-        evidence.clone(),
-    );
+    let mut repo = SupervisedRepository::new(config(
+        root.path(),
+        Duration::from_nanos(1),
+        160 * 1024 * 1024,
+    ));
     let token = CancellationSource::default().token();
-    let error = repo.create(snapshot(), &token).unwrap_err();
+    let error = repo.create(snapshot(), &evidence, &token).unwrap_err();
     assert_eq!(error.kind, StorageFailureKind::Timeout);
     assert_eq!(error.visibility, WriteVisibility::Unchanged);
     assert_eq!(error.pending.as_deref(), evidence.pending().as_ref());
@@ -200,12 +197,13 @@ fn replacement_prepares_with_one_read_child_and_dispatches_one_mutating_child() 
     let root = tempfile::tempdir().unwrap();
     fs::write(root.path().join(".fixture-mode"), "normal").unwrap();
     let evidence = PreparedWriteEvidence::default();
-    let mut repo = SupervisedRepository::new(
-        config(root.path(), Duration::from_secs(5), 160 * 1024 * 1024),
-        evidence.clone(),
-    );
+    let mut repo = SupervisedRepository::new(config(
+        root.path(),
+        Duration::from_secs(5),
+        160 * 1024 * 1024,
+    ));
     let token = CancellationSource::default().token();
-    let first = repo.create(snapshot(), &token).unwrap();
+    let first = repo.create(snapshot(), &evidence, &token).unwrap();
     fs::write(root.path().join(".fixture-requests"), "").unwrap();
     let second = repo
         .replace(
@@ -214,6 +212,7 @@ fn replacement_prepares_with_one_read_child_and_dispatches_one_mutating_child() 
                 expected_stamp: first.stamp,
             },
             snapshot(),
+            &evidence,
             &token,
         )
         .unwrap();
@@ -238,6 +237,7 @@ fn replacement_prepares_with_one_read_child_and_dispatches_one_mutating_child() 
                 expected_stamp: first.stamp,
             },
             snapshot(),
+            &evidence,
             &token,
         )
         .unwrap_err();

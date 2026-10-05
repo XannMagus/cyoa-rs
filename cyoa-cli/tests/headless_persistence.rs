@@ -24,7 +24,11 @@ fn snapshot(source: StorySource) -> SaveSnapshot {
 fn create(root: &Path, snapshot: SaveSnapshot) -> SaveReceipt {
     LocalRepository::new(root.into())
         .unwrap()
-        .create(snapshot, &CancellationSource::default().token())
+        .create(
+            snapshot,
+            &PreparedWriteEvidence::default(),
+            &CancellationSource::default().token(),
+        )
         .unwrap()
 }
 fn path(root: &Path, id: &SaveId) -> std::path::PathBuf {

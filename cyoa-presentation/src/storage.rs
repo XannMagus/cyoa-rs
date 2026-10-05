@@ -61,12 +61,13 @@ enum State {
     Faulted,
     Closed,
 }
-/// The factory constructs the inward repository on the worker. It receives an
-/// evidence channel the repository publishes before dispatching any write helper.
+/// The factory constructs the inward repository on the worker. Each write gets a
+/// fresh preparation sink through the port; the runner keeps its own clone, so a
+/// prepared write survives a worker that unwinds.
 pub struct StorageRunner<R, F>
 where
     R: GameRepository + Send + 'static,
-    F: Fn(PreparedWriteEvidence) -> R + Send + Sync + 'static,
+    F: Fn() -> R + Send + Sync + 'static,
 {
     factory: Arc<F>,
     state: State,
@@ -75,7 +76,7 @@ where
 impl<R, F> StorageRunner<R, F>
 where
     R: GameRepository + Send + 'static,
-    F: Fn(PreparedWriteEvidence) -> R + Send + Sync + 'static,
+    F: Fn() -> R + Send + Sync + 'static,
 {
     pub fn new(factory: F) -> Self {
         Self {
@@ -123,11 +124,11 @@ where
         let evidence = PreparedWriteEvidence::default();
         let publisher = evidence.clone();
         let job = Box::new(move || {
-            let mut cases = PersistenceUseCases::new(factory(publisher));
+            let mut cases = PersistenceUseCases::new(factory());
             match intent {
-                StorageIntent::Save(command) => {
-                    cases.save_game(*command, &token).map(StorageOutcome::Saved)
-                }
+                StorageIntent::Save(command) => cases
+                    .save_game(*command, &publisher, &token)
+                    .map(StorageOutcome::Saved),
                 StorageIntent::Load(command) => cases
                     .load_game(command, &token)
                     .map(|v| StorageOutcome::Loaded(Box::new(v))),
@@ -218,7 +219,7 @@ where
 impl<R, F> Drop for StorageRunner<R, F>
 where
     R: GameRepository + Send + 'static,
-    F: Fn(PreparedWriteEvidence) -> R + Send + Sync + 'static,
+    F: Fn() -> R + Send + Sync + 'static,
 {
     fn drop(&mut self) {
         if let State::Running { source, handle, .. } =
@@ -238,6 +239,7 @@ mod tests {
         fn create(
             &mut self,
             _: SaveSnapshot,
+            _: &PreparedWriteEvidence,
             _: &cyoa_application::cancellation::CancellationToken,
         ) -> Result<SaveReceipt, StorageFailure> {
             unreachable!()
@@ -246,6 +248,7 @@ mod tests {
             &mut self,
             _: SaveTarget,
             _: SaveSnapshot,
+            _: &PreparedWriteEvidence,
             _: &cyoa_application::cancellation::CancellationToken,
         ) -> Result<SaveReceipt, StorageFailure> {
             unreachable!()
@@ -253,6 +256,7 @@ mod tests {
         fn reconcile(
             &mut self,
             _: PendingWrite,
+            _: &PreparedWriteEvidence,
             _: &cyoa_application::cancellation::CancellationToken,
         ) -> Result<SaveReceipt, StorageFailure> {
             unreachable!()
@@ -281,7 +285,7 @@ mod tests {
         use std::sync::atomic::{AtomicUsize, Ordering};
         let calls = Arc::new(AtomicUsize::new(0));
         let observed = calls.clone();
-        let mut runner = StorageRunner::new(move |_| {
+        let mut runner = StorageRunner::new(move || {
             observed.fetch_add(1, Ordering::SeqCst);
             Empty
         });

@@ -82,7 +82,7 @@ pub struct PersistedSession<G, R, F>
 where
     G: StoryGenerator + Send + 'static,
     R: GameRepository + Send + 'static,
-    F: Fn(PreparedWriteEvidence) -> R + Send + Sync + 'static,
+    F: Fn() -> R + Send + Sync + 'static,
 {
     runtime: SessionRuntime<G>,
     storage: StorageRunner<R, F>,
@@ -104,7 +104,7 @@ impl<G, R, F> PersistedSession<G, R, F>
 where
     G: StoryGenerator + Send + 'static,
     R: GameRepository + Send + 'static,
-    F: Fn(PreparedWriteEvidence) -> R + Send + Sync + 'static,
+    F: Fn() -> R + Send + Sync + 'static,
 {
     pub fn new(
         runtime: SessionRuntime<G>,
@@ -352,7 +352,7 @@ impl<G, R, F> PersistedSession<G, R, F>
 where
     G: StoryGenerator + Send + 'static,
     R: GameRepository + Send + 'static,
-    F: Fn(PreparedWriteEvidence) -> R + Send + Sync + 'static,
+    F: Fn() -> R + Send + Sync + 'static,
 {
     fn install_loaded(&mut self, loaded: LoadedGame) -> Result<(), CoordinationError> {
         let backup = loaded.stored.copy == SaveCopy::Backup;
@@ -594,7 +594,7 @@ impl<G, R, F> HeadlessSession for PersistedSession<G, R, F>
 where
     G: StoryGenerator + Send + 'static,
     R: GameRepository + Send + 'static,
-    F: Fn(PreparedWriteEvidence) -> R + Send + Sync + 'static,
+    F: Fn() -> R + Send + Sync + 'static,
 {
     fn controller(&self) -> &SessionController {
         self.controller()

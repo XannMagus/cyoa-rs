@@ -52,9 +52,7 @@ fn runtime<G: StoryGenerator + Send + 'static>(
 ) -> PersistedSession<
     G,
     cyoa_infrastructure::persistence::helper::SupervisedRepository,
-    impl Fn(
-        cyoa_application::persistence::PreparedWriteEvidence,
-    ) -> cyoa_infrastructure::persistence::helper::SupervisedRepository,
+    impl Fn() -> cyoa_infrastructure::persistence::helper::SupervisedRepository,
 > {
     let runtime = SessionRuntime::new(
         SessionController::new(Limits::default(), StoryStyle::default()),
@@ -69,12 +67,9 @@ fn runtime<G: StoryGenerator + Send + 'static>(
     .unwrap();
     PersistedSession::new(
         runtime,
-        StorageRunner::new(move |evidence| {
+        StorageRunner::new(move || {
             let _keep_root_alive = &root;
-            cyoa_infrastructure::persistence::helper::SupervisedRepository::new(
-                config.clone(),
-                evidence,
-            )
+            cyoa_infrastructure::persistence::helper::SupervisedRepository::new(config.clone())
         }),
         cyoa_application::persistence::StorySource::Demo {
             scenario: cyoa_application::persistence::DemoScenarioId::HarbourV1,

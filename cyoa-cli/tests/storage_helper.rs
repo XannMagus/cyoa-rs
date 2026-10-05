@@ -25,9 +25,9 @@ fn internal_helper_runs_storage_before_clap_or_auth_and_preserves_exact_document
         root.path().join("data"),
     )
     .unwrap();
-    let mut repo = SupervisedRepository::new(config.clone(), evidence.clone());
+    let mut repo = SupervisedRepository::new(config.clone());
     let token = CancellationSource::default().token();
-    let receipt = repo.create(snapshot(), &token).unwrap();
+    let receipt = repo.create(snapshot(), &evidence, &token).unwrap();
     assert_eq!(evidence.pending().unwrap().intended_stamp(), receipt.stamp);
     let bytes = fs::read(
         root.path()
@@ -36,15 +36,20 @@ fn internal_helper_runs_storage_before_clap_or_auth_and_preserves_exact_document
     )
     .unwrap();
     assert_eq!(codec::stamp(&bytes), receipt.stamp);
-    let mut reader = SupervisedRepository::new(config.clone(), PreparedWriteEvidence::default());
+    let mut reader = SupervisedRepository::new(config.clone());
     let loaded = reader
         .load(&receipt.metadata.id, SaveCopy::Primary, &token)
         .unwrap();
     assert_eq!(loaded.snapshot, snapshot());
     assert_eq!(loaded.stamp, receipt.stamp);
     let pending = evidence.pending().unwrap();
-    assert_eq!(reader.reconcile(pending, &token).unwrap(), receipt);
-    let mut writer = SupervisedRepository::new(config.clone(), PreparedWriteEvidence::default());
+    assert_eq!(
+        reader
+            .reconcile(pending, &PreparedWriteEvidence::default(), &token)
+            .unwrap(),
+        receipt
+    );
+    let mut writer = SupervisedRepository::new(config.clone());
     let second = writer
         .replace(
             SaveTarget {
@@ -52,6 +57,7 @@ fn internal_helper_runs_storage_before_clap_or_auth_and_preserves_exact_document
                 expected_stamp: receipt.stamp,
             },
             snapshot(),
+            &PreparedWriteEvidence::default(),
             &token,
         )
         .unwrap();
@@ -71,6 +77,7 @@ fn internal_helper_runs_storage_before_clap_or_auth_and_preserves_exact_document
                     expected_stamp: receipt.stamp
                 },
                 snapshot(),
+                &PreparedWriteEvidence::default(),
                 &token
             )
             .unwrap_err()
@@ -93,17 +100,22 @@ fn unavailable_or_precancelled_helpers_cannot_report_durable_success() {
     let evidence = PreparedWriteEvidence::default();
     let mut repo = SupervisedRepository::new(
         HelperConfig::new(root.path().join("missing"), root.path().into()).unwrap(),
-        evidence.clone(),
     );
     let source = CancellationSource::default();
     source.cancel();
     assert_eq!(
-        repo.create(snapshot(), &source.token()).unwrap_err().kind,
+        repo.create(snapshot(), &evidence, &source.token())
+            .unwrap_err()
+            .kind,
         StorageFailureKind::Cancelled
     );
     assert!(evidence.pending().is_none());
     let error = repo
-        .create(snapshot(), &CancellationSource::default().token())
+        .create(
+            snapshot(),
+            &evidence,
+            &CancellationSource::default().token(),
+        )
         .unwrap_err();
     assert_eq!(error.visibility, WriteVisibility::Unchanged);
     assert!(error.pending.is_some());
@@ -122,8 +134,7 @@ fn presentation_storage_runner_drives_shipped_helpers_off_the_event_loop() {
         root.path().into(),
     )
     .unwrap();
-    let mut runner =
-        StorageRunner::new(move |evidence| SupervisedRepository::new(config.clone(), evidence));
+    let mut runner = StorageRunner::new(move || SupervisedRepository::new(config.clone()));
     let key = StorageKey {
         id: StorageRequestId::new(1).unwrap(),
         revision: SessionController::new(Limits::default(), StoryStyle::default()).revision(),
@@ -214,8 +225,7 @@ fn closing_or_dropping_storage_runner_reaps_a_real_silent_helper() {
         let root = tempfile::tempdir().unwrap();
         fs::write(root.path().join(".fixture-mode"), "silent").unwrap();
         let config = HelperConfig::new(executable.clone(), root.path().into()).unwrap();
-        let mut runner =
-            StorageRunner::new(move |evidence| SupervisedRepository::new(config.clone(), evidence));
+        let mut runner = StorageRunner::new(move || SupervisedRepository::new(config.clone()));
         let key = StorageKey {
             id: StorageRequestId::new(1).unwrap(),
             revision: SessionController::new(Limits::default(), StoryStyle::default()).revision(),
@@ -300,7 +310,7 @@ fn coordinator_rewind_load_and_quit_persist_through_shipped_helpers() {
     );
     let mut s = PersistedSession::new(
         runtime,
-        StorageRunner::new(move |evidence| SupervisedRepository::new(config.clone(), evidence)),
+        StorageRunner::new(move || SupervisedRepository::new(config.clone())),
         initial.source,
     );
     macro_rules! settle {

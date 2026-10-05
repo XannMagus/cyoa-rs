@@ -119,18 +119,25 @@ filesystem handles or presentation types cross this port.
 
 ```rust
 trait GameRepository {
-    fn create(&mut self, snapshot: SaveSnapshot, cancel: &CancellationToken)
-        -> Result<SaveReceipt, StorageFailure>;
-    fn replace(&mut self, target: SaveTarget, snapshot: SaveSnapshot,
+    fn create(&mut self, snapshot: SaveSnapshot, prepared: &PreparedWriteEvidence,
         cancel: &CancellationToken) -> Result<SaveReceipt, StorageFailure>;
-    fn reconcile(&mut self, attempt: PendingWrite, cancel: &CancellationToken)
+    fn replace(&mut self, target: SaveTarget, snapshot: SaveSnapshot,
+        prepared: &PreparedWriteEvidence, cancel: &CancellationToken)
         -> Result<SaveReceipt, StorageFailure>;
+    fn reconcile(&mut self, attempt: PendingWrite, prepared: &PreparedWriteEvidence,
+        cancel: &CancellationToken) -> Result<SaveReceipt, StorageFailure>;
     fn load(&mut self, id: &SaveId, copy: SaveCopy, cancel: &CancellationToken)
         -> Result<StoredGame, StorageFailure>;
     fn list(&mut self, page: SavePage, cancel: &CancellationToken)
         -> Result<SavePageResult, StorageFailure>;
 }
 ```
+
+Every write receives the caller's request-scoped `PreparedWriteEvidence` sink and
+must publish the exact `PendingWrite` to it before its first disk mutation, so the
+caller can reconcile after a worker unwinds. The sink is part of the port signature,
+not repository construction state (2026-10-05 review: it had been an undocumented
+constructor-injected channel). Admission rejection publishes nothing.
 
 `SaveSnapshot { game: GameState, source: StorySource }` is an owned canonical
 snapshot, not a schema DTO. `StorySource = Live | Demo { scenario: DemoScenarioId }`;

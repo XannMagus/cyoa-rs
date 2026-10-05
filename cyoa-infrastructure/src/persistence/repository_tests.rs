@@ -66,7 +66,7 @@ mod tests {
             let root = tempfile::tempdir().unwrap();
             let token = CancellationSource::default().token();
             let mut repo = LocalRepository::new(root.path().into()).unwrap();
-            let receipt = repo.create(snapshot(), &token).unwrap();
+            let receipt = repo.create(snapshot(), &PreparedWriteEvidence::default(), &token).unwrap();
             let primary = root
                 .path()
                 .join("saves")
@@ -109,7 +109,7 @@ mod tests {
                 assert_eq!(std::fs::read(&backup).unwrap(), old);
             }
             repo.ops = ops(None).0;
-            let reconciled = repo.reconcile(pending.clone(), &token).unwrap();
+            let reconciled = repo.reconcile(pending.clone(), &PreparedWriteEvidence::default(), &token).unwrap();
             assert_eq!(reconciled.stamp, pending.intended_stamp());
             assert_eq!(std::fs::read(&backup).unwrap(), old);
             assert_eq!(std::fs::read(&primary).unwrap(), pending.bytes());
@@ -136,7 +136,7 @@ mod tests {
             .unwrap_err();
         assert!(matches!(error.visibility, WriteVisibility::Replaced { .. }));
         repo.ops = ops(None).0;
-        let receipt = repo.reconcile(pending.clone(), &token).unwrap();
+        let receipt = repo.reconcile(pending.clone(), &PreparedWriteEvidence::default(), &token).unwrap();
         assert_eq!(&receipt.metadata.id, pending.target());
         assert_eq!(receipt.metadata.revision.get(), 1);
         assert!(
@@ -161,7 +161,7 @@ mod tests {
         )
         .unwrap();
         assert_eq!(
-            repo.reconcile(pending, &token).unwrap_err().kind,
+            repo.reconcile(pending, &PreparedWriteEvidence::default(), &token).unwrap_err().kind,
             StorageFailureKind::Conflict
         );
     }
@@ -172,9 +172,9 @@ mod tests {
         let mut repo = LocalRepository::new(root.path().into()).unwrap();
         let (o, seen) = ops(None);
         repo.ops = o;
-        let first = repo.create(snapshot(), &token).unwrap();
+        let first = repo.create(snapshot(), &PreparedWriteEvidence::default(), &token).unwrap();
         assert_eq!(
-            repo.create(snapshot(), &token).unwrap_err().kind,
+            repo.create(snapshot(), &PreparedWriteEvidence::default(), &token).unwrap_err().kind,
             StorageFailureKind::Conflict
         );
         seen.lock().unwrap().clear();
@@ -185,6 +185,7 @@ mod tests {
                     expected_stamp: first.stamp,
                 },
                 snapshot(),
+                &PreparedWriteEvidence::default(),
                 &token,
             )
             .unwrap();
@@ -204,7 +205,7 @@ mod tests {
             random: None,
         });
         assert_eq!(
-            repo.create(snapshot(), &token).unwrap_err().stage,
+            repo.create(snapshot(), &PreparedWriteEvidence::default(), &token).unwrap_err().stage,
             StorageStage::Prepare
         );
         let path = root
@@ -223,6 +224,7 @@ mod tests {
                     expected_stamp: codec::stamp(&bytes)
                 },
                 snapshot(),
+                &PreparedWriteEvidence::default(),
                 &token
             )
             .unwrap_err()
@@ -235,7 +237,7 @@ mod tests {
         let root = tempfile::tempdir().unwrap();
         let token = CancellationSource::default().token();
         let mut repo = LocalRepository::new(root.path().into()).unwrap();
-        let receipt = repo.create(snapshot(), &token).unwrap();
+        let receipt = repo.create(snapshot(), &PreparedWriteEvidence::default(), &token).unwrap();
         for point in [Point::Read, Point::Encode] {
             repo.ops = ops(Some(point)).0;
             let error = repo
@@ -245,6 +247,7 @@ mod tests {
                         expected_stamp: receipt.stamp,
                     },
                     snapshot(),
+                    &PreparedWriteEvidence::default(),
                     &token,
                 )
                 .unwrap_err();
@@ -347,7 +350,7 @@ mod tests {
                         None,
                     )
                 } else {
-                    let first = repo.create(snapshot(), &token).unwrap();
+                    let first = repo.create(snapshot(), &PreparedWriteEvidence::default(), &token).unwrap();
                     let second = repo
                         .replace(
                             SaveTarget {
@@ -355,6 +358,7 @@ mod tests {
                                 expected_stamp: first.stamp,
                             },
                             snapshot(),
+                            &PreparedWriteEvidence::default(),
                             &token,
                         )
                         .unwrap();
@@ -445,9 +449,9 @@ mod tests {
                     assert!(!backup.exists());
                 }
                 let mut fresh = LocalRepository::new(root.path().join("data")).unwrap();
-                let receipt = fresh.reconcile(pending.clone(), &token).unwrap();
+                let receipt = fresh.reconcile(pending.clone(), &PreparedWriteEvidence::default(), &token).unwrap();
                 assert_eq!(receipt.stamp, pending.intended_stamp());
-                let again = fresh.reconcile(pending.clone(), &token).unwrap();
+                let again = fresh.reconcile(pending.clone(), &PreparedWriteEvidence::default(), &token).unwrap();
                 assert_eq!(receipt, again);
                 assert_eq!(
                     fresh
@@ -553,8 +557,8 @@ mod tests {
         let root = tempfile::tempdir().unwrap();
         let token = CancellationSource::default().token();
         let mut repo = LocalRepository::new(root.path().into()).unwrap();
-        let receipt = repo.create(snapshot(), &token).unwrap();
-        let other = repo.create(snapshot(), &token).unwrap();
+        let receipt = repo.create(snapshot(), &PreparedWriteEvidence::default(), &token).unwrap();
+        let other = repo.create(snapshot(), &PreparedWriteEvidence::default(), &token).unwrap();
         let saves = root.path().join("saves");
         let own = saves.join(format!("{}abc123", temp_prefix(&receipt.metadata.id)));
         let foreign = saves.join(format!("{}def456", temp_prefix(&other.metadata.id)));
@@ -568,11 +572,54 @@ mod tests {
                 expected_stamp: receipt.stamp,
             },
             snapshot(),
+            &PreparedWriteEvidence::default(),
             &token,
         )
         .unwrap();
         assert!(!own.exists(), "this slot's orphan is swept");
         assert!(foreign.exists(), "another slot's temp may be a live write");
         assert!(unrelated.exists(), "unrecognized names are never removed");
+    }
+    #[test]
+    fn writes_publish_the_prepared_attempt_before_their_first_disk_mutation() {
+        // The first mutating step fails, so nothing reached disk; the caller's
+        // sink must already hold the exact attempt the port contract promises.
+        for operation in [StorageOperation::Create, StorageOperation::Replace] {
+            let root = tempfile::tempdir().unwrap();
+            let token = CancellationSource::default().token();
+            let mut repo = LocalRepository::new(root.path().into()).unwrap();
+            let existing = repo
+                .create(snapshot(), &PreparedWriteEvidence::default(), &token)
+                .unwrap();
+            repo.ops = ops(Some(Point::NewWrite)).0;
+            let sink = PreparedWriteEvidence::default();
+            let error = match operation {
+                StorageOperation::Create => repo.create(snapshot(), &sink, &token),
+                _ => repo.replace(
+                    SaveTarget {
+                        id: existing.metadata.id.clone(),
+                        expected_stamp: existing.stamp,
+                    },
+                    snapshot(),
+                    &sink,
+                    &token,
+                ),
+            }
+            .unwrap_err();
+            assert_eq!(error.visibility, WriteVisibility::Unchanged, "{operation:?}");
+            let published = sink.pending().expect("published before mutating");
+            assert_eq!(error.pending.as_deref(), Some(&published), "{operation:?}");
+        }
+    }
+    #[test]
+    fn writes_rejected_at_admission_publish_nothing() {
+        let root = tempfile::tempdir().unwrap();
+        let mut repo = LocalRepository::new(root.path().into()).unwrap();
+        let source = CancellationSource::default();
+        source.cancel();
+        let sink = PreparedWriteEvidence::default();
+        let error = repo.create(snapshot(), &sink, &source.token()).unwrap_err();
+        assert_eq!(error.kind, StorageFailureKind::Cancelled);
+        assert!(sink.pending().is_none());
     }
 }

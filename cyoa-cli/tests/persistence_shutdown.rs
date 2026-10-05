@@ -166,7 +166,7 @@ fn bounded_silent_storage_keeps_input_responsive_and_reaps_current_and_final_hel
         );
         let mut session = PersistedSession::new(
             runtime,
-            StorageRunner::new(move |evidence| SupervisedRepository::new(config.clone(), evidence)),
+            StorageRunner::new(move || SupervisedRepository::new(config.clone())),
             initial.source,
         );
         let mut input = ClosingInput {
@@ -261,7 +261,7 @@ fn input_and_output_errors_still_save_last_canonical_story_and_remain_errors() {
         );
         let mut session = PersistedSession::new(
             runtime,
-            StorageRunner::new(move |evidence| SupervisedRepository::new(config.clone(), evidence)),
+            StorageRunner::new(move || SupervisedRepository::new(config.clone())),
             initial.source,
         );
         let mut control = vec![];
@@ -331,7 +331,9 @@ fn blocked_storage_and_faulted_output_sinks_preserve_canonical_state_and_reap_he
                 .unwrap();
             let token = cyoa_application::cancellation::CancellationSource::default().token();
             let mut local = LocalRepository::new(root.path().into()).unwrap();
-            let receipt = local.create(initial.clone(), &token).unwrap();
+            let receipt = local
+                .create(initial.clone(), &PreparedWriteEvidence::default(), &token)
+                .unwrap();
             let primary = root
                 .path()
                 .join("saves")
@@ -354,9 +356,7 @@ fn blocked_storage_and_faulted_output_sinks_preserve_canonical_state_and_reap_he
             );
             let mut session = PersistedSession::new(
                 runtime,
-                StorageRunner::new(move |evidence| {
-                    SupervisedRepository::new(config.clone(), evidence)
-                }),
+                StorageRunner::new(move || SupervisedRepository::new(config.clone())),
                 initial.source,
             );
             session.admit_loaded(loaded).unwrap();

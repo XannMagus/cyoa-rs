@@ -240,7 +240,13 @@ fn frozen_full_story_roundtrip_preserves_complete_state_exact_audit_and_next_rew
     // The frozen fixture remains the independent oracle for every game field.
     let root = tempfile::tempdir().unwrap();
     let mut repository = LocalRepository::new(root.path().into()).unwrap();
-    let receipt = repository.create(loaded.snapshot.clone(), &token).unwrap();
+    let receipt = repository
+        .create(
+            loaded.snapshot.clone(),
+            &PreparedWriteEvidence::default(),
+            &token,
+        )
+        .unwrap();
     let primary = root
         .path()
         .join("saves")
@@ -269,6 +275,7 @@ fn frozen_full_story_roundtrip_preserves_complete_state_exact_audit_and_next_rew
                 expected_stamp: receipt.stamp,
             },
             rewound.clone(),
+            &PreparedWriteEvidence::default(),
             &token,
         )
         .unwrap();
@@ -342,6 +349,7 @@ fn frozen_full_story_roundtrip_preserves_complete_state_exact_audit_and_next_rew
                 expected_stamp: receipt.stamp,
             },
             continued.clone(),
+            &PreparedWriteEvidence::default(),
             &token,
         )
         .unwrap();

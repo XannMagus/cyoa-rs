@@ -48,7 +48,6 @@ impl HelperConfig {
 }
 pub struct SupervisedRepository {
     config: HelperConfig,
-    evidence: PreparedWriteEvidence,
     preparation: Box<dyn Preparation>,
 }
 trait Preparation: Send {
@@ -68,10 +67,9 @@ impl Preparation for SystemPreparation {
     }
 }
 impl SupervisedRepository {
-    pub fn new(config: HelperConfig, evidence: PreparedWriteEvidence) -> Self {
+    pub fn new(config: HelperConfig) -> Self {
         Self {
             config,
-            evidence,
             preparation: Box::new(SystemPreparation),
         }
     }
@@ -615,12 +613,13 @@ impl SupervisedRepository {
     fn apply(
         &self,
         pending: PendingWrite,
+        prepared: &PreparedWriteEvidence,
         op: StorageOperation,
         cancel: &CancellationToken,
         started: Instant,
     ) -> Result<SaveReceipt, StorageFailure> {
-        // The owning runner has this evidence before any mutating child exists.
-        self.evidence.publish(pending.clone());
+        // The caller has this evidence before any mutating child exists.
+        prepared.publish(pending.clone());
         let result = (|| {
             let document = String::from_utf8(pending.bytes().to_vec())
                 .map_err(|e| boundary(op, e.to_string()))?;
@@ -708,6 +707,7 @@ impl GameRepository for SupervisedRepository {
     fn create(
         &mut self,
         snapshot: SaveSnapshot,
+        prepared: &PreparedWriteEvidence,
         cancel: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         let op = StorageOperation::Create;
@@ -738,7 +738,7 @@ impl GameRepository for SupervisedRepository {
             let slug = if slug.is_empty() { "story" } else { slug };
             let id = SaveId::new(format!("{slug}-{suffix}")).expect("generated grammar");
             let pending = self.prepare(&snapshot, id, None, SaveRevision::new(1).unwrap(), op)?;
-            match self.apply(pending, op, cancel, started) {
+            match self.apply(pending, prepared, op, cancel, started) {
                 Err(e)
                     if e.kind == StorageFailureKind::Conflict
                         && e.visibility == WriteVisibility::Unchanged =>
@@ -754,6 +754,7 @@ impl GameRepository for SupervisedRepository {
         &mut self,
         target: SaveTarget,
         snapshot: SaveSnapshot,
+        prepared: &PreparedWriteEvidence,
         cancel: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         let op = StorageOperation::Replace;
@@ -780,15 +781,22 @@ impl GameRepository for SupervisedRepository {
             error
         })?;
         let pending = self.prepare(&snapshot, target.id, Some(old.stamp), revision, op)?;
-        self.apply(pending, op, cancel, started)
+        self.apply(pending, prepared, op, cancel, started)
     }
     fn reconcile(
         &mut self,
         pending: PendingWrite,
+        prepared: &PreparedWriteEvidence,
         cancel: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         check(cancel, StorageOperation::Reconcile)?;
-        self.apply(pending, StorageOperation::Reconcile, cancel, Instant::now())
+        self.apply(
+            pending,
+            prepared,
+            StorageOperation::Reconcile,
+            cancel,
+            Instant::now(),
+        )
     }
     fn load(
         &mut self,
@@ -963,11 +971,14 @@ mod tests {
             let mut repo = SupervisedRepository::new(
                 HelperConfig::new(root.path().join("absent-helper"), root.path().join("data"))
                     .unwrap(),
-                evidence.clone(),
             );
             repo.preparation = Box::new(BrokenPreparation { entropy });
             let error = repo
-                .create(snapshot.clone(), &CancellationSource::default().token())
+                .create(
+                    snapshot.clone(),
+                    &evidence,
+                    &CancellationSource::default().token(),
+                )
                 .unwrap_err();
             assert_eq!(error.kind, StorageFailureKind::Io);
             assert_eq!(error.stage, StorageStage::Prepare);

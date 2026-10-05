@@ -615,25 +615,31 @@ mod linux {
         fn create(
             &mut self,
             snapshot: SaveSnapshot,
+            prepared: &PreparedWriteEvidence,
             cancel: &CancellationToken,
         ) -> Result<SaveReceipt, StorageFailure> {
             let pending = self.prepare_create(&snapshot, cancel)?;
+            prepared.publish(pending.clone());
             self.execute_pending(pending, cancel, StorageOperation::Create)
         }
         fn replace(
             &mut self,
             target: SaveTarget,
             snapshot: SaveSnapshot,
+            prepared: &PreparedWriteEvidence,
             cancel: &CancellationToken,
         ) -> Result<SaveReceipt, StorageFailure> {
             let pending = self.prepare_replace(&target, &snapshot, cancel)?;
+            prepared.publish(pending.clone());
             self.execute_pending(pending, cancel, StorageOperation::Replace)
         }
         fn reconcile(
             &mut self,
             attempt: PendingWrite,
+            prepared: &PreparedWriteEvidence,
             cancel: &CancellationToken,
         ) -> Result<SaveReceipt, StorageFailure> {
+            prepared.publish(attempt.clone());
             self.execute_pending(attempt, cancel, StorageOperation::Reconcile)
         }
         fn load(
@@ -757,6 +763,7 @@ impl GameRepository for LocalRepository {
     fn create(
         &mut self,
         _: SaveSnapshot,
+        _: &PreparedWriteEvidence,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         Err(unsupported(StorageOperation::Create))
@@ -765,6 +772,7 @@ impl GameRepository for LocalRepository {
         &mut self,
         _: SaveTarget,
         _: SaveSnapshot,
+        _: &PreparedWriteEvidence,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         Err(unsupported(StorageOperation::Replace))
@@ -772,6 +780,7 @@ impl GameRepository for LocalRepository {
     fn reconcile(
         &mut self,
         _: PendingWrite,
+        _: &PreparedWriteEvidence,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         Err(unsupported(StorageOperation::Reconcile))

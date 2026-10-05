@@ -47,6 +47,7 @@ impl GameRepository for Repository {
     fn create(
         &mut self,
         _: SaveSnapshot,
+        _: &PreparedWriteEvidence,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         Ok(receipt())
@@ -55,6 +56,7 @@ impl GameRepository for Repository {
         &mut self,
         _: SaveTarget,
         _: SaveSnapshot,
+        _: &PreparedWriteEvidence,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         Ok(receipt())
@@ -62,6 +64,7 @@ impl GameRepository for Repository {
     fn reconcile(
         &mut self,
         _: PendingWrite,
+        _: &PreparedWriteEvidence,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         Ok(receipt())
@@ -92,15 +95,14 @@ fn receipt() -> SaveReceipt {
         stamp: ContentStamp::new([1; 32]),
     }
 }
-fn session() -> PersistedSession<Generator, Repository, impl Fn(PreparedWriteEvidence) -> Repository>
-{
+fn session() -> PersistedSession<Generator, Repository, impl Fn() -> Repository> {
     PersistedSession::new(
         SessionRuntime::new(
             SessionController::from_game(support::game()),
             StoryUseCases::new(Generator),
             crate::worker::PreviewLimit::default(),
         ),
-        StorageRunner::new(|_| Repository),
+        StorageRunner::new(|| Repository),
         StorySource::Live,
     )
 }

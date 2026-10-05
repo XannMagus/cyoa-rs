@@ -79,11 +79,8 @@ fn execute() -> Result<(), Box<dyn std::error::Error>> {
             Command::List(options) => {
                 let page = SavePage::new(options.after, options.limit)?;
                 let result = connect(move |token| {
-                    PersistenceUseCases::new(SupervisedRepository::new(
-                        helper,
-                        PreparedWriteEvidence::default(),
-                    ))
-                    .list_saves(ListSaves { page }, token)
+                    PersistenceUseCases::new(SupervisedRepository::new(helper))
+                        .list_saves(ListSaves { page }, token)
                 })?;
                 return query_output(|out| {
                     cyoa_presentation::headless::render_listing(&result, out)
@@ -91,11 +88,7 @@ fn execute() -> Result<(), Box<dyn std::error::Error>> {
             }
             Command::Inspect(options) => {
                 let stored = connect(move |token| {
-                    PersistenceUseCases::new(SupervisedRepository::new(
-                        helper,
-                        PreparedWriteEvidence::default(),
-                    ))
-                    .inspect_save(
+                    PersistenceUseCases::new(SupervisedRepository::new(helper)).inspect_save(
                         InspectSave {
                             id: options.id,
                             copy: if options.backup {
@@ -135,11 +128,8 @@ fn execute() -> Result<(), Box<dyn std::error::Error>> {
                     .policy(),
             };
             let loaded = connect(move |token| {
-                PersistenceUseCases::new(SupervisedRepository::new(
-                    config,
-                    PreparedWriteEvidence::default(),
-                ))
-                .load_game(command, token)
+                PersistenceUseCases::new(SupervisedRepository::new(config))
+                    .load_game(command, token)
             })?;
             validate_loaded_source(&loaded, source)?;
             Some(loaded)
@@ -265,7 +255,7 @@ fn play<G: StoryGenerator + Send + 'static>(
     let mut control = cyoa_presentation::terminal::Flags::new(io::stderr())?;
     let mut runtime = PersistedSession::new(
         runtime,
-        StorageRunner::new(move |evidence| SupervisedRepository::new(helper.clone(), evidence)),
+        StorageRunner::new(move || SupervisedRepository::new(helper.clone())),
         source,
     );
     if let Some(loaded) = loaded {

@@ -92,7 +92,11 @@ fn unknown_scenario_future_version_source_mismatch_and_excess_demo_turns_fail_be
     .unwrap()
     .snapshot;
     let receipt = repo
-        .create(original_snapshot, &CancellationSource::default().token())
+        .create(
+            original_snapshot,
+            &PreparedWriteEvidence::default(),
+            &CancellationSource::default().token(),
+        )
         .unwrap();
     let path = root
         .path()
