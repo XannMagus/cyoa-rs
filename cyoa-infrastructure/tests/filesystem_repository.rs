@@ -35,7 +35,7 @@ fn missing_and_unsafe_storage_paths_are_errors_without_following_links() {
     assert_eq!(
         repo.create(snapshot(), &PreparedWriteEvidence::default(), &token)
             .unwrap_err()
-            .visibility,
+            .visibility(),
         WriteVisibility::Unchanged
     );
     assert_eq!(fs::read_dir(root.path()).unwrap().count(), 1);
@@ -96,7 +96,7 @@ fn atomic_create_replace_and_independent_writer_conflict_preserve_exact_backup()
                 &token
             )
             .unwrap_err()
-            .kind,
+            .kind(),
         StorageFailureKind::Conflict
     );
     assert_eq!(
@@ -160,7 +160,7 @@ fn corrupt_primary_never_rotates_over_a_good_backup_and_recovery_creates_a_new_s
             &token,
         )
         .unwrap_err();
-    assert!(matches!(error.kind, StorageFailureKind::Corrupt { .. }));
+    assert!(matches!(error.kind(), StorageFailureKind::Corrupt { .. }));
     assert_eq!(
         fs::read(&backup).unwrap(),
         good,
@@ -211,7 +211,7 @@ fn locks_survive_primary_replacement_and_hostile_entries_are_never_followed() {
     assert_eq!(
         repo.load(&receipt.metadata.id, SaveCopy::Primary, &token)
             .unwrap_err()
-            .kind,
+            .kind(),
         StorageFailureKind::Busy
     );
     assert_eq!(

@@ -553,7 +553,11 @@ fn diagnostics(runtime: &dyn HeadlessSession, control: &mut dyn Write) -> io::Re
         writeln!(
             control,
             "Storage failure: operation={:?} stage={:?} kind={:?} visibility={:?}: {}",
-            error.operation, error.stage, error.kind, error.visibility, error
+            error.operation(),
+            error.stage(),
+            error.kind(),
+            error.visibility(),
+            error
         )?;
     }
     let failure = match runtime.controller().failure() {
@@ -688,11 +692,11 @@ fn storage_event(
             writeln!(
                 control,
                 "Storage failed: {error}; visibility={:?}; durability={:?}.",
-                error.visibility,
+                error.visibility(),
                 runtime.durability()
             )?;
             if matches!(
-                error.operation,
+                error.operation(),
                 StorageOperation::Create | StorageOperation::Replace | StorageOperation::Reconcile
             ) {
                 writeln!(
@@ -700,7 +704,7 @@ fn storage_event(
                     "Canonical story remains in memory; save failed; use /save. The in-memory revision may be lost on exit."
                 )?;
             }
-            if error.operation == StorageOperation::Load {
+            if error.operation() == StorageOperation::Load {
                 writeln!(
                     control,
                     "Primary loads never fall back automatically. To inspect or recover a backup, use --backup explicitly."

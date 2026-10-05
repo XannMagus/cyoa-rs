@@ -29,15 +29,7 @@ fn failure(
     kind: StorageFailureKind,
     message: impl Into<String>,
 ) -> StorageFailure {
-    StorageFailure {
-        operation: op,
-        stage,
-        kind,
-        message: message.into().into(),
-        visibility: WriteVisibility::Unchanged,
-        pending: None,
-        cleanup_errors: Box::default(),
-    }
+    StorageFailure::new(op, stage, kind, message.into())
 }
 fn io_failure(op: StorageOperation, stage: StorageStage, e: io::Error) -> StorageFailure {
     let kind = match e.kind() {
@@ -228,11 +220,12 @@ mod linux {
             let _lock = Self::lock(&dir, &target.id, op)?;
             let old = self
                 .read(&dir, &target.id, SaveCopy::Primary, op)
-                .map_err(|mut e| {
-                    if e.kind == StorageFailureKind::NotFound {
-                        e.kind = StorageFailureKind::Conflict;
+                .map_err(|e| {
+                    if e.kind() == StorageFailureKind::NotFound {
+                        e.with_kind(StorageFailureKind::Conflict)
+                    } else {
+                        e
                     }
-                    e
                 })?;
             if old.stamp != target.expected_stamp {
                 return Err(conflict(op));
@@ -285,10 +278,11 @@ mod linux {
         ) -> Result<SaveReceipt, StorageFailure> {
             let mut visibility = WriteVisibility::Unchanged;
             let result = self.apply(&attempt, cancel, op, &mut visibility);
-            result.map_err(|mut e| {
-                e.visibility = visibility;
-                e.pending = Some(Box::new(attempt));
-                e
+            // `apply` only ever records the attempt's own stamp as replaced.
+            result.map_err(|e| match visibility {
+                WriteVisibility::Replaced { .. } => e.replaced(attempt),
+                WriteVisibility::Unknown => e.visibility_unknown().prepared(attempt),
+                WriteVisibility::Unchanged => e.prepared(attempt),
             })
         }
         fn apply(
@@ -534,7 +528,7 @@ mod linux {
         match cleanup {
             Ok(()) => result,
             Err(e) => {
-                let mut failure = match result {
+                let failure = match result {
                     Err(e) => e,
                     Ok(_) => io_failure(
                         op,
@@ -542,10 +536,7 @@ mod linux {
                         io::Error::other("save cleanup failed"),
                     ),
                 };
-                let mut errors = failure.cleanup_errors.into_vec();
-                errors.push(e.to_string());
-                failure.cleanup_errors = errors.into();
-                Err(failure)
+                Err(failure.with_cleanup_errors([e.to_string()]))
             }
         }
     }
@@ -665,7 +656,7 @@ mod linux {
             Self::admitted(cancel, op)?;
             let dir = match self.directory(false, op) {
                 Ok(d) => d,
-                Err(e) if e.kind == StorageFailureKind::NotFound => {
+                Err(e) if e.kind() == StorageFailureKind::NotFound => {
                     return Ok(SavePageResult {
                         entries: vec![],
                         next: None,
@@ -708,7 +699,7 @@ mod linux {
                 Self::admitted(cancel, op)?;
                 // Both copies are read under the slot lock, as every other read is.
                 let status = match Self::lock(&dir, &id, op) {
-                    Err(e) if e.kind == StorageFailureKind::Busy => SaveListingStatus::Busy,
+                    Err(e) if e.kind() == StorageFailureKind::Busy => SaveListingStatus::Busy,
                     Err(_) => SaveListingStatus::Unreadable,
                     Ok(_lock) => {
                         let backup = if dir.open_file(&name(&id, SaveCopy::Backup), false).is_ok() {
@@ -723,7 +714,7 @@ mod linux {
                                 turns: SavedTurnCount::new(g.snapshot.game().turns().len()),
                                 source: g.snapshot.source(),
                             }),
-                            Err(e) => match e.kind {
+                            Err(e) => match e.kind() {
                                 StorageFailureKind::FutureVersion { found, .. } => {
                                     PrimaryCopy::FutureVersion { version: found }
                                 }

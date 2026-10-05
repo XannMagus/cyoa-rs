@@ -93,15 +93,15 @@ fn silent_helper_cancellation_and_timeout_reap_children_and_keep_prepared_identi
         }
         let error = worker.join().unwrap().unwrap_err();
         assert_eq!(
-            error.kind,
+            error.kind(),
             if cancel {
                 StorageFailureKind::Cancelled
             } else {
                 StorageFailureKind::Timeout
             }
         );
-        assert_eq!(error.visibility, WriteVisibility::Unknown);
-        assert_eq!(error.pending.as_deref(), Some(&pending));
+        assert_eq!(error.visibility(), WriteVisibility::Unknown);
+        assert_eq!(error.pending(), Some(&pending));
         // Hang guard: the silent helper never answers, so only cancellation or
         // the 250 ms deadline can end this call.
         assert!(start.elapsed() < Duration::from_secs(30));
@@ -141,9 +141,9 @@ fn lost_invalid_multiple_or_capped_replies_never_authorize_success_and_reconcile
         ));
         let token = CancellationSource::default().token();
         let error = repo.create(snapshot(), &evidence, &token).unwrap_err();
-        assert_eq!(error.visibility, WriteVisibility::Unknown, "{mode}");
-        let pending = error.pending.unwrap();
-        assert_eq!(evidence.pending().as_ref(), Some(pending.as_ref()));
+        assert_eq!(error.visibility(), WriteVisibility::Unknown, "{mode}");
+        let pending = error.pending().unwrap().clone();
+        assert_eq!(evidence.pending().as_ref(), Some(&pending));
         gone(wait(root.path()));
         isolated_and_cleaned(root.path());
         assert_eq!(
@@ -151,9 +151,7 @@ fn lost_invalid_multiple_or_capped_replies_never_authorize_success_and_reconcile
             "Apply\n"
         );
         let mut local = LocalRepository::new(root.path().into()).unwrap();
-        let receipt = local
-            .reconcile(*pending.clone(), &evidence, &token)
-            .unwrap();
+        let receipt = local.reconcile(pending.clone(), &evidence, &token).unwrap();
         assert_eq!(receipt.stamp, pending.intended_stamp());
         assert_eq!(&receipt.metadata.id, pending.target());
         assert_eq!(receipt.metadata.revision.get(), 1);
@@ -187,9 +185,9 @@ fn preparation_exhausting_the_total_deadline_launches_no_helper_or_disk_write() 
     ));
     let token = CancellationSource::default().token();
     let error = repo.create(snapshot(), &evidence, &token).unwrap_err();
-    assert_eq!(error.kind, StorageFailureKind::Timeout);
-    assert_eq!(error.visibility, WriteVisibility::Unchanged);
-    assert_eq!(error.pending.as_deref(), evidence.pending().as_ref());
+    assert_eq!(error.kind(), StorageFailureKind::Timeout);
+    assert_eq!(error.visibility(), WriteVisibility::Unchanged);
+    assert_eq!(error.pending(), evidence.pending().as_ref());
     assert!(!root.path().join(".fixture-ready").exists());
     assert!(!root.path().join("saves").exists());
 }
@@ -243,8 +241,8 @@ fn replacement_prepares_with_one_read_child_and_dispatches_one_mutating_child() 
             &token,
         )
         .unwrap_err();
-    assert_eq!(error.kind, StorageFailureKind::Conflict);
-    assert_eq!(error.visibility, WriteVisibility::Unchanged);
+    assert_eq!(error.kind(), StorageFailureKind::Conflict);
+    assert_eq!(error.visibility(), WriteVisibility::Unchanged);
     assert_eq!(
         fs::read_to_string(root.path().join(".fixture-requests")).unwrap(),
         "Read\n"

@@ -219,6 +219,15 @@ backup, so the former `BackupOnly` status can no longer contradict a separate
 `backup_available` flag. The helper's own copies of the demo length and the
 supported version now use `StorySource::admits` and `migrations::CURRENT`, and a
 zero version on the helper wire is a `WorkerFault`.
+
+`StorageFailure` has private fields (user decision, 2026-10-05). It is built with
+`new`, adjusted through consuming `with_*` methods, and read through accessors.
+`Replaced` visibility comes only from `replaced(pending)`, which takes the stamp
+from that write, or from `observed_replacement(receipt)` for a receipt with no
+write in hand. Attaching a different write to a replaced failure makes its
+outcome `Unknown`. The helper resolves a reply's claimed replacement against its
+own attempt when decoding, so a mismatched stamp never becomes a
+`StorageFailure` at all.
 `cyoa-infrastructure`'s `generation::wire` now maps calibre-shaped request/response
 DTOs into these domain types, colocated per struct (the `clocker` `TimeLogEntryDTO`
 pattern): blank wire strings map to `None`, `upcoming_events`' null-vs-empty

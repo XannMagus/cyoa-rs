@@ -206,15 +206,12 @@ where
         });
         let operation = intent.operation();
         if let Err(error) = self.storage.start(key, intent) {
-            let failure = StorageFailure {
+            let failure = StorageFailure::new(
                 operation,
-                stage: StorageStage::Worker,
-                kind: StorageFailureKind::WorkerFault,
-                message: error.to_string().into(),
-                visibility: WriteVisibility::Unchanged,
-                pending: None,
-                cleanup_errors: Box::default(),
-            };
+                StorageStage::Worker,
+                StorageFailureKind::WorkerFault,
+                error.to_string(),
+            );
             let events = self.accept_storage(StorageEvent::Finished {
                 key,
                 result: Err(failure),
@@ -337,15 +334,12 @@ pub fn validate_loaded_source(
     if loaded.stored.snapshot.source() == source {
         return Ok(());
     }
-    Err(StorageFailure {
-        operation: StorageOperation::Load,
-        stage: StorageStage::Admission,
-        kind: StorageFailureKind::Unsupported,
-        message: "save source does not match this session".into(),
-        visibility: WriteVisibility::Unchanged,
-        pending: None,
-        cleanup_errors: Box::default(),
-    })
+    Err(StorageFailure::new(
+        StorageOperation::Load,
+        StorageStage::Admission,
+        StorageFailureKind::Unsupported,
+        "save source does not match this session",
+    ))
 }
 impl<G, R, F> PersistedSession<G, R, F>
 where
@@ -438,18 +432,15 @@ where
                 match result {
                     Err(failure) => self.storage_failure = Some(failure.clone()),
                     Ok(StorageOutcome::Saved(receipt)) => {
-                        self.storage_failure = Some(StorageFailure {
-                            operation: StorageOperation::Replace,
-                            stage: StorageStage::Worker,
-                            kind: StorageFailureKind::Conflict,
-                            message: "stale storage receipt ignored; its physical write may exist"
-                                .into(),
-                            visibility: WriteVisibility::Replaced {
-                                stamp: receipt.stamp,
-                            },
-                            pending: None,
-                            cleanup_errors: Box::default(),
-                        });
+                        self.storage_failure = Some(
+                            StorageFailure::new(
+                                StorageOperation::Replace,
+                                StorageStage::Worker,
+                                StorageFailureKind::Conflict,
+                                "stale storage receipt ignored; its physical write may exist",
+                            )
+                            .observed_replacement(receipt),
+                        );
                     }
                     _ => (),
                 }
@@ -515,7 +506,8 @@ where
                     Ok(_) => vec![PersistenceEvent::Ignored],
                     Err(mut failure) => {
                         if running.effect == Effect::Save {
-                            self.durability = if failure.visibility == WriteVisibility::Unchanged {
+                            self.durability = if failure.visibility() == WriteVisibility::Unchanged
+                            {
                                 if running.prior_durability == Durability::Uncertain {
                                     Durability::Uncertain
                                 } else {
@@ -524,19 +516,17 @@ where
                             } else {
                                 Durability::Uncertain
                             };
-                            if failure.pending.is_none() {
-                                failure.pending = running.pending.map(Box::new);
+                            if failure.pending().is_none()
+                                && let Some(pending) = running.pending
+                            {
+                                failure = failure.prepared(pending);
                             }
-                            if failure.visibility != WriteVisibility::Unchanged {
+                            if failure.visibility() != WriteVisibility::Unchanged {
                                 self.retry_write =
-                                    failure
-                                        .pending
-                                        .as_deref()
-                                        .cloned()
-                                        .map(|pending| RetryWrite {
-                                            revision: key.revision,
-                                            pending,
-                                        });
+                                    failure.pending().cloned().map(|pending| RetryWrite {
+                                        revision: key.revision,
+                                        pending,
+                                    });
                             }
                         }
                         self.storage_failure = Some(failure.clone());

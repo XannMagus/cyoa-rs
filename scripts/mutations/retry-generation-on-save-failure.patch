@@ -1,15 +1,10 @@
-diff --git a/cyoa-presentation/src/persistence.rs b/cyoa-presentation/src/persistence.rs
 --- a/cyoa-presentation/src/persistence.rs
 +++ b/cyoa-presentation/src/persistence.rs
-@@ -510,8 +510,9 @@
-                         vec![PersistenceEvent::Listed(page)]
-                     }
+@@ -506,6 +506,7 @@
                      Ok(_) => vec![PersistenceEvent::Ignored],
--                    Err(mut failure) => {
--                        if running.effect == Effect::Save {
-+                    Err(mut failure) => {
-+                        if running.effect == Effect::Save {
+                     Err(mut failure) => {
+                         if running.effect == Effect::Save {
 +                            let _ = self.runtime.dispatch(Intent::Turn(TurnDirection::Continue));
-                             self.durability = if failure.visibility == WriteVisibility::Unchanged {
+                             self.durability = if failure.visibility() == WriteVisibility::Unchanged
+                             {
                                  if running.prior_durability == Durability::Uncertain {
-                                     Durability::Uncertain

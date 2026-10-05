@@ -81,7 +81,7 @@ fn internal_helper_runs_storage_before_clap_or_auth_and_preserves_exact_document
                 &token
             )
             .unwrap_err()
-            .kind,
+            .kind(),
         StorageFailureKind::Conflict
     );
     assert_eq!(
@@ -106,7 +106,7 @@ fn unavailable_or_precancelled_helpers_cannot_report_durable_success() {
     assert_eq!(
         repo.create(snapshot(), &evidence, &source.token())
             .unwrap_err()
-            .kind,
+            .kind(),
         StorageFailureKind::Cancelled
     );
     assert!(evidence.pending().is_none());
@@ -117,8 +117,8 @@ fn unavailable_or_precancelled_helpers_cannot_report_durable_success() {
             &CancellationSource::default().token(),
         )
         .unwrap_err();
-    assert_eq!(error.visibility, WriteVisibility::Unchanged);
-    assert!(error.pending.is_some());
+    assert_eq!(error.visibility(), WriteVisibility::Unchanged);
+    assert!(error.pending().is_some());
     assert!(evidence.pending().is_some());
     assert!(!root.path().join("saves").exists());
 }
@@ -263,9 +263,9 @@ fn closing_or_dropping_storage_runner_reaps_a_real_silent_helper() {
                     result: Err(error), ..
                 }) = runner.poll().pop()
                 {
-                    assert_eq!(error.kind, StorageFailureKind::Cancelled);
-                    assert_eq!(error.visibility, WriteVisibility::Unknown);
-                    assert!(error.pending.is_some());
+                    assert_eq!(error.kind(), StorageFailureKind::Cancelled);
+                    assert_eq!(error.visibility(), WriteVisibility::Unknown);
+                    assert!(error.pending().is_some());
                     break;
                 }
                 assert!(Instant::now() < deadline);

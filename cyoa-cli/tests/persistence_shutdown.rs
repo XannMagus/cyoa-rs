@@ -217,7 +217,7 @@ fn bounded_silent_storage_keeps_input_responsive_and_reaps_current_and_final_hel
             );
         }
         assert!(!root.path().join("saves").exists());
-        assert!(session.storage_failure().unwrap().pending.is_some());
+        assert!(session.storage_failure().unwrap().pending().is_some());
     }
 }
 struct ErrorInput;
@@ -402,7 +402,7 @@ fn blocked_storage_and_faulted_output_sinks_preserve_canonical_state_and_reap_he
                 "Rewritten: the ship stayed."
             );
             assert_eq!(session.durability(), Durability::Uncertain);
-            assert!(session.storage_failure().unwrap().pending.is_some());
+            assert!(session.storage_failure().unwrap().pending().is_some());
             assert_eq!(
                 fs::read(&primary).unwrap(),
                 original_bytes,

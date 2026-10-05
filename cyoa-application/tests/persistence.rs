@@ -140,17 +140,15 @@ impl GameRepository for FakeRepository {
     }
 }
 fn failure() -> StorageFailure {
-    StorageFailure {
-        operation: StorageOperation::Replace,
-        stage: StorageStage::Sync,
-        kind: StorageFailureKind::Io,
-        message: "directory sync failed".into(),
-        visibility: WriteVisibility::Replaced {
-            stamp: ContentStamp::new([2; 32]),
-        },
-        pending: Some(Box::new(pending())),
-        cleanup_errors: vec!["cleanup failed".into()].into_boxed_slice(),
-    }
+    // `replaced` takes the stamp ([2; 32]) from the pending write itself.
+    StorageFailure::new(
+        StorageOperation::Replace,
+        StorageStage::Sync,
+        StorageFailureKind::Io,
+        "directory sync failed",
+    )
+    .replaced(pending())
+    .with_cleanup_errors(["cleanup failed".to_string()])
 }
 fn pending() -> PendingWrite {
     PendingWrite::new(
@@ -245,7 +243,7 @@ fn pre_cancelled_commands_and_queries_never_call_the_repository() {
             cases
                 .save_game(cmd, &PreparedWriteEvidence::default(), &token)
                 .unwrap_err()
-                .kind,
+                .kind(),
             StorageFailureKind::Cancelled
         );
     }
@@ -309,7 +307,7 @@ fn late_read_cancellation_rejects_results_but_never_hides_a_durable_write_receip
                         &token
                     )
                     .unwrap_err()
-                    .kind,
+                    .kind(),
                 StorageFailureKind::Cancelled
             ),
             StorageOperation::Inspect => assert_eq!(
@@ -322,7 +320,7 @@ fn late_read_cancellation_rejects_results_but_never_hides_a_durable_write_receip
                         &token
                     )
                     .unwrap_err()
-                    .kind,
+                    .kind(),
                 StorageFailureKind::Cancelled
             ),
             StorageOperation::List => assert_eq!(
@@ -334,7 +332,7 @@ fn late_read_cancellation_rejects_results_but_never_hides_a_durable_write_receip
                         &token
                     )
                     .unwrap_err()
-                    .kind,
+                    .kind(),
                 StorageFailureKind::Cancelled
             ),
             _ => assert_eq!(
@@ -507,4 +505,63 @@ fn demo_sources_admit_at_most_their_scenarios_passages_and_live_admits_any() {
     let game = stored().snapshot.into_game();
     let snapshot = SaveSnapshot::new(game.clone(), demo).unwrap();
     assert_eq!((snapshot.game(), snapshot.source()), (&game, demo));
+}
+#[test]
+fn storage_failures_derive_replacement_stamps_from_their_own_write() {
+    let base = || {
+        StorageFailure::new(
+            StorageOperation::Replace,
+            StorageStage::Replace,
+            StorageFailureKind::Io,
+            "rename failed",
+        )
+    };
+    assert_eq!(base().visibility(), WriteVisibility::Unchanged);
+    assert!(base().pending().is_none());
+    let replaced = base().replaced(pending());
+    assert_eq!(
+        replaced.visibility(),
+        WriteVisibility::Replaced {
+            stamp: pending().intended_stamp()
+        }
+    );
+    assert_eq!(replaced.pending(), Some(&pending()));
+    // Re-attaching the same write keeps the claim; a different one cannot inherit it.
+    assert_eq!(replaced.clone().prepared(pending()), replaced);
+    let other = PendingWrite::new(
+        id(),
+        Some(ContentStamp::new([1; 32])),
+        ContentStamp::new([9; 32]),
+        b"other".to_vec(),
+    )
+    .unwrap();
+    let mixed = replaced.prepared(other.clone());
+    assert_eq!(mixed.visibility(), WriteVisibility::Unknown);
+    assert_eq!(mixed.pending(), Some(&other));
+    let prepared = base().prepared(pending());
+    assert_eq!(prepared.visibility(), WriteVisibility::Unchanged);
+    let receipt = stored();
+    let observed = base().observed_replacement(&SaveReceipt {
+        metadata: receipt.metadata,
+        stamp: receipt.stamp,
+    });
+    assert_eq!(
+        observed.visibility(),
+        WriteVisibility::Replaced {
+            stamp: receipt.stamp
+        }
+    );
+    assert!(observed.pending().is_none());
+    let cleaned = base()
+        .with_cleanup_errors(["first".to_string()])
+        .with_cleanup_errors(["second".to_string()]);
+    assert_eq!(cleaned.cleanup_errors(), ["first", "second"]);
+    assert_eq!(
+        cleaned
+            .with_kind(StorageFailureKind::Conflict)
+            .with_stage(StorageStage::Prepare)
+            .with_operation(StorageOperation::Create)
+            .into_pending(),
+        None
+    );
 }

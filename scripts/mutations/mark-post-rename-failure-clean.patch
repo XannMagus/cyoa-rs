@@ -1,16 +1,11 @@
-diff --git a/cyoa-presentation/src/persistence.rs b/cyoa-presentation/src/persistence.rs
 --- a/cyoa-presentation/src/persistence.rs
 +++ b/cyoa-presentation/src/persistence.rs
-@@ -518,9 +518,9 @@
-                                 } else {
+@@ -514,7 +514,7 @@
                                      Durability::Dirty
                                  }
--                            } else {
+                             } else {
 -                                Durability::Uncertain
--                            };
-+                            } else {
 +                                Durability::Clean
-+                            };
-                             if failure.pending.is_none() {
-                                 failure.pending = running.pending.map(Box::new);
-                             }
+                             };
+                             if failure.pending().is_none()
+                                 && let Some(pending) = running.pending

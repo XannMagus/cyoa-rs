@@ -176,37 +176,42 @@ struct FailureWire {
 impl From<StorageFailure> for FailureWire {
     fn from(v: StorageFailure) -> Self {
         Self {
-            operation: v.operation.into(),
-            stage: v.stage.into(),
-            kind: v.kind.into(),
-            message: v.message.into(),
-            visibility: match v.visibility {
+            operation: v.operation().into(),
+            stage: v.stage().into(),
+            kind: v.kind().into(),
+            message: v.message().into(),
+            visibility: match v.visibility() {
                 WriteVisibility::Unchanged => VisibilityWire::Unchanged,
                 WriteVisibility::Replaced { stamp } => VisibilityWire::Replaced {
                     stamp: *stamp.bytes(),
                 },
                 WriteVisibility::Unknown => VisibilityWire::Unknown,
             },
-            cleanup_errors: v.cleanup_errors.into_vec(),
+            cleanup_errors: v.cleanup_errors().to_vec(),
         }
     }
 }
-impl From<FailureWire> for StorageFailure {
-    fn from(v: FailureWire) -> Self {
-        Self {
-            operation: v.operation.into(),
-            stage: v.stage.into(),
-            kind: v.kind.into(),
-            message: v.message.into(),
-            visibility: match v.visibility {
-                VisibilityWire::Unchanged => WriteVisibility::Unchanged,
-                VisibilityWire::Replaced { stamp } => WriteVisibility::Replaced {
-                    stamp: ContentStamp::new(stamp),
-                },
-                VisibilityWire::Unknown => WriteVisibility::Unknown,
-            },
-            pending: None,
-            cleanup_errors: v.cleanup_errors.into(),
+impl FailureWire {
+    /// Rebuilds the helper's failure for the parent's own `attempt`. A claimed
+    /// replacement must name exactly that attempt's stamp; anything else, or a
+    /// replacement or unknown outcome without an attempt, is `None`.
+    fn into_failure(self, attempt: Option<&PendingWrite>) -> Option<StorageFailure> {
+        let failure = StorageFailure::new(
+            self.operation.into(),
+            self.stage.into(),
+            self.kind.into(),
+            self.message,
+        )
+        .with_cleanup_errors(self.cleanup_errors);
+        match (self.visibility, attempt) {
+            (VisibilityWire::Unchanged, _) => Some(failure),
+            (VisibilityWire::Replaced { stamp }, Some(attempt))
+                if ContentStamp::new(stamp) == attempt.intended_stamp() =>
+            {
+                Some(failure.replaced(attempt.clone()))
+            }
+            (VisibilityWire::Unknown, Some(_)) => Some(failure.visibility_unknown()),
+            _ => None,
         }
     }
 }
@@ -317,21 +322,17 @@ impl From<SaveListing> for RowWire {
     }
 }
 fn boundary(op: StorageOperation, message: impl Into<String>) -> StorageFailure {
-    StorageFailure {
-        operation: op,
-        stage: StorageStage::Worker,
-        kind: StorageFailureKind::WorkerFault,
-        message: message.into().into(),
-        visibility: WriteVisibility::Unchanged,
-        pending: None,
-        cleanup_errors: Box::default(),
-    }
+    StorageFailure::new(
+        op,
+        StorageStage::Worker,
+        StorageFailureKind::WorkerFault,
+        message.into(),
+    )
 }
 fn preparation_failure(op: StorageOperation, error: io::Error) -> StorageFailure {
-    let mut failure = boundary(op, error.to_string());
-    failure.stage = StorageStage::Prepare;
-    failure.kind = StorageFailureKind::Io;
-    failure
+    boundary(op, error.to_string())
+        .with_stage(StorageStage::Prepare)
+        .with_kind(StorageFailureKind::Io)
 }
 fn check(cancel: &CancellationToken, op: StorageOperation) -> Result<(), StorageFailure> {
     if cancel.is_cancelled() {
@@ -479,12 +480,11 @@ fn execute(request: Request) -> Result<OutputWire, StorageFailure> {
 }
 #[cfg(not(target_os = "linux"))]
 fn execute(_: Request) -> Result<OutputWire, StorageFailure> {
-    let mut e = boundary(
+    Err(boundary(
         StorageOperation::Load,
         "storage helper supported on Linux only",
-    );
-    e.kind = StorageFailureKind::Unsupported;
-    Err(e)
+    )
+    .with_kind(StorageFailureKind::Unsupported))
 }
 
 impl SupervisedRepository {
@@ -510,9 +510,8 @@ impl SupervisedRepository {
             .checked_sub(started.elapsed())
             .filter(|d| !d.is_zero())
             .ok_or_else(|| {
-                let mut e = boundary(op, "storage operation deadline expired before dispatch");
-                e.kind = StorageFailureKind::Timeout;
-                e
+                boundary(op, "storage operation deadline expired before dispatch")
+                    .with_kind(StorageFailureKind::Timeout)
             })?;
         let bounds = ProcessBounds::new(
             remaining,
@@ -541,60 +540,50 @@ impl SupervisedRepository {
                 }
             },
         );
-        let mut apply_transport_error = |error: SupervisorError| {
-            let unlaunched = !launched(&error);
-            let mut failure = boundary(op, error.to_string());
-            failure.kind = transport_kind(&error);
-            if let SupervisorError::Cleanup { failures, .. } = &error {
-                failure.cleanup_errors = failures.iter().map(ToString::to_string).collect();
+        // A mutating request that reached a helper may have changed disk.
+        let unknown_if_writing = |failure: StorageFailure| {
+            if pending.is_some() {
+                failure.visibility_unknown()
+            } else {
+                failure
             }
-            if pending.is_some() && !unlaunched {
-                failure.visibility = WriteVisibility::Unknown;
-            }
-            failure
         };
-        let outcome = result.map_err(&mut apply_transport_error)?;
-        let reply: Reply = parse(outcome.diagnostics.stdout()).map_err(|e| {
-            let mut error = boundary(op, e.to_string());
-            if pending.is_some() {
-                error.visibility = WriteVisibility::Unknown;
+        let apply_transport_error = |error: SupervisorError| {
+            let unlaunched = !launched(&error);
+            let mut failure = boundary(op, error.to_string()).with_kind(transport_kind(&error));
+            if let SupervisorError::Cleanup { failures, .. } = &error {
+                failure = failure.with_cleanup_errors(failures.iter().map(ToString::to_string));
             }
-            error
-        })?;
+            if unlaunched {
+                failure
+            } else {
+                unknown_if_writing(failure)
+            }
+        };
+        let outcome = result.map_err(apply_transport_error)?;
+        let reply: Reply = parse(outcome.diagnostics.stdout())
+            .map_err(|e| unknown_if_writing(boundary(op, e.to_string())))?;
         if started.elapsed() >= self.config.bounds.deadline() {
-            let mut error = boundary(
-                op,
-                "storage operation deadline expired while decoding reply",
-            );
-            error.kind = StorageFailureKind::Timeout;
-            if pending.is_some() {
-                error.visibility = WriteVisibility::Unknown;
-            }
-            return Err(error);
+            return Err(unknown_if_writing(
+                boundary(
+                    op,
+                    "storage operation deadline expired while decoding reply",
+                )
+                .with_kind(StorageFailureKind::Timeout),
+            ));
         }
         if reply.version != 1 {
-            let mut error = boundary(op, "unsupported helper reply version");
-            if pending.is_some() {
-                error.visibility = WriteVisibility::Unknown;
-            }
-            return Err(error);
+            return Err(unknown_if_writing(boundary(
+                op,
+                "unsupported helper reply version",
+            )));
         }
-        reply.result.map_err(|e| {
-            let mut error: StorageFailure = e.into();
-            let invalid_visibility = match (&error.visibility, pending) {
-                (WriteVisibility::Replaced { stamp }, Some(attempt)) => {
-                    *stamp != attempt.intended_stamp()
-                }
-                (WriteVisibility::Replaced { .. } | WriteVisibility::Unknown, None) => true,
-                _ => false,
-            };
-            if error.operation != op || invalid_visibility {
-                error = boundary(op, "helper error operation or visibility mismatch");
-                if pending.is_some() {
-                    error.visibility = WriteVisibility::Unknown;
-                }
-            }
-            error
+        reply.result.map_err(|e| match e.into_failure(pending) {
+            Some(error) if error.operation() == op => error,
+            _ => unknown_if_writing(boundary(
+                op,
+                "helper error operation or visibility mismatch",
+            )),
         })
     }
     fn prepare(
@@ -617,11 +606,7 @@ impl SupervisedRepository {
                 saved_at,
             },
         )
-        .map_err(|e| {
-            let mut error = super::repository::decode_failure(op, e);
-            error.stage = StorageStage::Prepare;
-            error
-        })?;
+        .map_err(|e| super::repository::decode_failure(op, e).with_stage(StorageStage::Prepare))?;
         PendingWrite::new(id, previous, codec::stamp(&bytes), bytes)
             .map_err(|e| boundary(op, e.to_string()))
     }
@@ -672,17 +657,11 @@ impl SupervisedRepository {
                         stamp: intended.stamp,
                     })
                 }
-                _ => {
-                    let mut e = boundary(op, "helper receipt does not match prepared write");
-                    e.visibility = WriteVisibility::Unknown;
-                    Err(e)
-                }
+                _ => Err(boundary(op, "helper receipt does not match prepared write")
+                    .visibility_unknown()),
             }
         })();
-        result.map_err(|mut e| {
-            e.pending = Some(Box::new(pending));
-            e
-        })
+        result.map_err(|e| e.prepared(pending))
     }
     fn read(
         &self,
@@ -707,10 +686,11 @@ impl SupervisedRepository {
                     .map_err(|e| super::repository::decode_failure(op, e))?;
                 check(cancel, op)?;
                 if started.elapsed() >= self.config.bounds.deadline() {
-                    let mut error =
-                        boundary(op, "storage operation deadline expired while decoding save");
-                    error.kind = StorageFailureKind::Timeout;
-                    return Err(error);
+                    return Err(boundary(
+                        op,
+                        "storage operation deadline expired while decoding save",
+                    )
+                    .with_kind(StorageFailureKind::Timeout));
                 }
                 Ok(stored)
             }
@@ -755,8 +735,8 @@ impl GameRepository for SupervisedRepository {
             let pending = self.prepare(&snapshot, id, None, SaveRevision::new(1).unwrap(), op)?;
             match self.apply(pending, prepared, op, cancel, started) {
                 Err(e)
-                    if e.kind == StorageFailureKind::Conflict
-                        && e.visibility == WriteVisibility::Unchanged =>
+                    if e.kind() == StorageFailureKind::Conflict
+                        && e.visibility() == WriteVisibility::Unchanged =>
                 {
                     continue;
                 }
@@ -777,23 +757,22 @@ impl GameRepository for SupervisedRepository {
         check(cancel, op)?;
         let old = self
             .read(&target.id, SaveCopy::Primary, cancel, started)
-            .map_err(|mut e| {
-                e.operation = op;
-                if e.kind == StorageFailureKind::NotFound {
-                    e.kind = StorageFailureKind::Conflict;
+            .map_err(|e| {
+                let e = e.with_operation(op);
+                if e.kind() == StorageFailureKind::NotFound {
+                    e.with_kind(StorageFailureKind::Conflict)
+                } else {
+                    e
                 }
-                e
             })?;
         if old.stamp != target.expected_stamp {
-            let mut e = boundary(op, "save changed; create a save copy");
-            e.kind = StorageFailureKind::Conflict;
-            return Err(e);
+            return Err(boundary(op, "save changed; create a save copy")
+                .with_kind(StorageFailureKind::Conflict));
         }
         let revision = old.metadata.revision.next().map_err(|e| {
-            let mut error = boundary(op, e.to_string());
-            error.kind = StorageFailureKind::Conflict;
-            error.stage = StorageStage::Prepare;
-            error
+            boundary(op, e.to_string())
+                .with_kind(StorageFailureKind::Conflict)
+                .with_stage(StorageStage::Prepare)
         })?;
         let pending = self.prepare(&snapshot, target.id, Some(old.stamp), revision, op)?;
         self.apply(pending, prepared, op, cancel, started)
@@ -1022,13 +1001,13 @@ mod tests {
                     &CancellationSource::default().token(),
                 )
                 .unwrap_err();
-            assert_eq!(error.kind, StorageFailureKind::Io);
-            assert_eq!(error.stage, StorageStage::Prepare);
-            assert_eq!(error.visibility, WriteVisibility::Unchanged);
-            assert!(error.pending.is_none());
+            assert_eq!(error.kind(), StorageFailureKind::Io);
+            assert_eq!(error.stage(), StorageStage::Prepare);
+            assert_eq!(error.visibility(), WriteVisibility::Unchanged);
+            assert!(error.pending().is_none());
             assert!(evidence.pending().is_none());
             assert_eq!(
-                &*error.message,
+                error.message(),
                 if entropy {
                     "entropy unavailable"
                 } else {

@@ -246,7 +246,7 @@ impl PendingWrite {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Error)]
 #[error("prepared save bytes must be nonempty and within the save size bound")]
 pub struct InvalidPendingWrite;
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum WriteVisibility {
     Unchanged,
     Replaced { stamp: ContentStamp },
@@ -294,28 +294,123 @@ pub enum StorageFailureKind {
     Timeout,
     WorkerFault,
 }
+/// A failed storage operation. Fields are private so a failure is built through
+/// constructors: `Replaced` visibility only comes from [`StorageFailure::replaced`],
+/// which takes the stamp from the pending write itself, so the two cannot disagree.
 #[derive(Debug, Clone, PartialEq, Eq, Error)]
 #[error("{message}")]
 pub struct StorageFailure {
-    pub operation: StorageOperation,
-    pub stage: StorageStage,
-    pub kind: StorageFailureKind,
-    pub message: Box<str>,
-    pub visibility: WriteVisibility,
-    pub pending: Option<Box<PendingWrite>>,
-    pub cleanup_errors: Box<[String]>,
+    operation: StorageOperation,
+    stage: StorageStage,
+    kind: StorageFailureKind,
+    message: Box<str>,
+    visibility: WriteVisibility,
+    pending: Option<Box<PendingWrite>>,
+    cleanup_errors: Box<[String]>,
 }
 impl StorageFailure {
-    pub fn cancelled(operation: StorageOperation) -> Self {
+    /// A failure that changed nothing and has no prepared write attached.
+    pub fn new(
+        operation: StorageOperation,
+        stage: StorageStage,
+        kind: StorageFailureKind,
+        message: impl Into<Box<str>>,
+    ) -> Self {
         Self {
             operation,
-            stage: StorageStage::Admission,
-            kind: StorageFailureKind::Cancelled,
-            message: "storage operation cancelled".into(),
+            stage,
+            kind,
+            message: message.into(),
             visibility: WriteVisibility::Unchanged,
             pending: None,
             cleanup_errors: Box::default(),
         }
+    }
+    pub fn cancelled(operation: StorageOperation) -> Self {
+        Self::new(
+            operation,
+            StorageStage::Admission,
+            StorageFailureKind::Cancelled,
+            "storage operation cancelled",
+        )
+    }
+    pub fn with_operation(mut self, operation: StorageOperation) -> Self {
+        self.operation = operation;
+        self
+    }
+    pub fn with_stage(mut self, stage: StorageStage) -> Self {
+        self.stage = stage;
+        self
+    }
+    pub fn with_kind(mut self, kind: StorageFailureKind) -> Self {
+        self.kind = kind;
+        self
+    }
+    pub fn with_cleanup_errors(mut self, errors: impl IntoIterator<Item = String>) -> Self {
+        self.cleanup_errors = self
+            .cleanup_errors
+            .into_vec()
+            .into_iter()
+            .chain(errors)
+            .collect();
+        self
+    }
+    /// Attaches the prepared write without claiming anything became visible. If a
+    /// different write was already recorded as replaced, this attempt's outcome is
+    /// unknown rather than silently inheriting that claim.
+    pub fn prepared(mut self, pending: PendingWrite) -> Self {
+        if matches!(self.visibility, WriteVisibility::Replaced { stamp } if stamp != pending.intended_stamp())
+        {
+            self.visibility = WriteVisibility::Unknown;
+        }
+        self.pending = Some(Box::new(pending));
+        self
+    }
+    /// A durable write confirmed by its receipt, with no prepared write in hand
+    /// (for example, a receipt that arrived for a request no longer current).
+    pub fn observed_replacement(mut self, receipt: &SaveReceipt) -> Self {
+        self.visibility = WriteVisibility::Replaced {
+            stamp: receipt.stamp,
+        };
+        self.pending = None;
+        self
+    }
+    /// The prepared write is now the primary on disk.
+    pub fn replaced(mut self, pending: PendingWrite) -> Self {
+        self.visibility = WriteVisibility::Replaced {
+            stamp: pending.intended_stamp(),
+        };
+        self.pending = Some(Box::new(pending));
+        self
+    }
+    /// Whether anything became visible cannot be established.
+    pub fn visibility_unknown(mut self) -> Self {
+        self.visibility = WriteVisibility::Unknown;
+        self
+    }
+    pub fn operation(&self) -> StorageOperation {
+        self.operation
+    }
+    pub fn stage(&self) -> StorageStage {
+        self.stage
+    }
+    pub fn kind(&self) -> StorageFailureKind {
+        self.kind.clone()
+    }
+    pub fn message(&self) -> &str {
+        &self.message
+    }
+    pub fn visibility(&self) -> WriteVisibility {
+        self.visibility
+    }
+    pub fn pending(&self) -> Option<&PendingWrite> {
+        self.pending.as_deref()
+    }
+    pub fn into_pending(self) -> Option<PendingWrite> {
+        self.pending.map(|pending| *pending)
+    }
+    pub fn cleanup_errors(&self) -> &[String] {
+        &self.cleanup_errors
     }
 }
 /// A save file format version; always positive.
@@ -544,16 +639,15 @@ impl<R: GameRepository> PersistenceUseCases<R> {
         let changed_by_restore = restored.limits() != stored_limits;
         check_cancelled(cancel, StorageOperation::Load)?;
         // Restoring never changes the turn log, so the source still admits it.
-        let snapshot = SaveSnapshot::new(restored, source).map_err(|e| StorageFailure {
-            operation: StorageOperation::Load,
-            stage: StorageStage::Decode,
-            kind: StorageFailureKind::Corrupt {
-                location: "source".into(),
-            },
-            message: e.to_string().into(),
-            visibility: WriteVisibility::Unchanged,
-            pending: None,
-            cleanup_errors: Box::default(),
+        let snapshot = SaveSnapshot::new(restored, source).map_err(|e| {
+            StorageFailure::new(
+                StorageOperation::Load,
+                StorageStage::Decode,
+                StorageFailureKind::Corrupt {
+                    location: "source".into(),
+                },
+                e.to_string(),
+            )
         })?;
         Ok(LoadedGame {
             stored: StoredGame {

@@ -53,15 +53,12 @@ fn receipt(revision: u64) -> SaveReceipt {
     }
 }
 fn storage_error(operation: StorageOperation) -> StorageFailure {
-    StorageFailure {
+    StorageFailure::new(
         operation,
-        stage: StorageStage::Write,
-        kind: StorageFailureKind::Io,
-        message: "controlled write failure".into(),
-        visibility: WriteVisibility::Unchanged,
-        pending: None,
-        cleanup_errors: Box::default(),
-    }
+        StorageStage::Write,
+        StorageFailureKind::Io,
+        "controlled write failure",
+    )
 }
 impl Repo {
     fn write(
@@ -110,12 +107,9 @@ impl Repo {
         });
         drop(disk);
         match mode {
-            Mode::Unknown => {
-                let mut error = storage_error(operation);
-                error.visibility = WriteVisibility::Unknown;
-                error.pending = Some(Box::new(pending));
-                Err(error)
-            }
+            Mode::Unknown => Err(storage_error(operation)
+                .visibility_unknown()
+                .prepared(pending)),
             Mode::Panic => panic!("controlled panic after prepared write"),
             _ => Ok(receipt),
         }
@@ -343,7 +337,7 @@ fn uncertain_write_and_worker_panic_reconcile_same_attempt_without_a_new_slot() 
             Durability::Uncertain,
             "post-replacement failure must never be marked clean"
         );
-        assert!(s.storage_failure().unwrap().pending.is_some());
+        assert!(s.storage_failure().unwrap().pending().is_some());
         let intended = disk.lock().unwrap().saved.clone().unwrap();
         s.save(false).unwrap();
         settle(&mut s);

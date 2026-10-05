@@ -886,6 +886,13 @@
           "additive_source_fields_are_reported_for_both_source_variants",
           "valid_authoritative_snapshots_and_unknown_style_keys_are_preserved_without_delta_replay"
         ]
+      },
+      {
+        "package": "cyoa-application",
+        "target": "persistence",
+        "tests": [
+          "storage_failures_derive_replacement_stamps_from_their_own_write"
+        ]
       }
     ]
   },

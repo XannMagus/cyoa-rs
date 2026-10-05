@@ -203,7 +203,19 @@ where
                 events.push(StorageEvent::Prepared { key, pending });
             }
             let panicked = result.is_err();
-            let result=result.unwrap_or_else(|_|{let pending=evidence.pending();Err(StorageFailure{operation,stage:StorageStage::Worker,kind:StorageFailureKind::WorkerFault,message:"storage worker panicked; use retained preparation to reconcile with a fresh runner".into(),visibility:if pending.is_some(){WriteVisibility::Unknown}else{WriteVisibility::Unchanged},pending:pending.map(Box::new),cleanup_errors:Box::default()})});
+            let result = result.unwrap_or_else(|_| {
+                let failure = StorageFailure::new(
+                    operation,
+                    StorageStage::Worker,
+                    StorageFailureKind::WorkerFault,
+                    "storage worker panicked; use retained preparation to reconcile with a fresh runner",
+                );
+                // A worker that unwound after preparing may have changed disk.
+                Err(match evidence.pending() {
+                    Some(pending) => failure.visibility_unknown().prepared(pending),
+                    None => failure,
+                })
+            });
             self.state = if self.closing {
                 State::Closed
             } else if panicked {

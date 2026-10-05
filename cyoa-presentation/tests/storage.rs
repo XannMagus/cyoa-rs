@@ -63,10 +63,9 @@ impl GameRepository for Fake {
             std::thread::sleep(Duration::from_millis(1));
         }
         self.done.store(true, Ordering::SeqCst);
-        let mut error = cancelled(StorageOperation::Reconcile);
-        error.visibility = WriteVisibility::Unknown;
-        error.pending = Some(Box::new(attempt));
-        Err(error)
+        Err(cancelled(StorageOperation::Reconcile)
+            .visibility_unknown()
+            .prepared(attempt))
     }
     fn load(
         &mut self,
@@ -142,8 +141,8 @@ fn polling_is_nonblocking_preparation_precedes_completion_and_close_joins_cancel
         }) = runner.poll().pop()
         {
             assert_eq!(k, key());
-            assert_eq!(error.kind, StorageFailureKind::Cancelled);
-            assert_eq!(error.pending.as_deref(), Some(&pending()));
+            assert_eq!(error.kind(), StorageFailureKind::Cancelled);
+            assert_eq!(error.pending(), Some(&pending()));
             break;
         }
         assert!(Instant::now() < end);
@@ -182,9 +181,9 @@ fn worker_panics_distinguish_unprepared_from_uncertain_writes_and_retain_identit
                     StorageEvent::Finished {
                         result: Err(error), ..
                     } => {
-                        assert_eq!(error.kind, StorageFailureKind::WorkerFault);
+                        assert_eq!(error.kind(), StorageFailureKind::WorkerFault);
                         assert_eq!(
-                            error.visibility,
+                            error.visibility(),
                             if mode == 1 {
                                 WriteVisibility::Unknown
                             } else {
@@ -192,7 +191,7 @@ fn worker_panics_distinguish_unprepared_from_uncertain_writes_and_retain_identit
                             }
                         );
                         assert_eq!(prepared, mode == 1);
-                        assert_eq!(error.pending.is_some(), mode == 1);
+                        assert_eq!(error.pending().is_some(), mode == 1);
                         assert!(!runner.is_ready());
                         runner.close();
                         assert!(runner.is_closed());

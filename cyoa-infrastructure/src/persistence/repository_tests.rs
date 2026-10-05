@@ -90,12 +90,12 @@ mod tests {
             let error = repo
                 .execute_pending(pending.clone(), &token, StorageOperation::Replace)
                 .unwrap_err();
-            assert_eq!(error.pending.as_deref(), Some(&pending), "{point:?}");
+            assert_eq!(error.pending(), Some(&pending), "{point:?}");
             let after = std::fs::read(&primary).unwrap();
             if matches!(point, Point::FinalSync | Point::Cleanup) {
                 assert_eq!(after, pending.bytes(), "{point:?}");
                 assert_eq!(
-                    error.visibility,
+                    error.visibility(),
                     WriteVisibility::Replaced {
                         stamp: pending.intended_stamp()
                     }
@@ -103,7 +103,7 @@ mod tests {
                 assert_eq!(std::fs::read(&backup).unwrap(), old);
             } else {
                 assert_eq!(after, old, "{point:?}");
-                assert_eq!(error.visibility, WriteVisibility::Unchanged);
+                assert_eq!(error.visibility(), WriteVisibility::Unchanged);
             }
             if backup.exists() {
                 assert_eq!(std::fs::read(&backup).unwrap(), old);
@@ -134,7 +134,7 @@ mod tests {
         let error = repo
             .execute_pending(pending.clone(), &token, StorageOperation::Create)
             .unwrap_err();
-        assert!(matches!(error.visibility, WriteVisibility::Replaced { .. }));
+        assert!(matches!(error.visibility(), WriteVisibility::Replaced { .. }));
         repo.ops = ops(None).0;
         let receipt = repo.reconcile(pending.clone(), &PreparedWriteEvidence::default(), &token).unwrap();
         assert_eq!(&receipt.metadata.id, pending.target());
@@ -161,7 +161,7 @@ mod tests {
         )
         .unwrap();
         assert_eq!(
-            repo.reconcile(pending, &PreparedWriteEvidence::default(), &token).unwrap_err().kind,
+            repo.reconcile(pending, &PreparedWriteEvidence::default(), &token).unwrap_err().kind(),
             StorageFailureKind::Conflict
         );
     }
@@ -174,7 +174,7 @@ mod tests {
         repo.ops = o;
         let first = repo.create(snapshot(), &PreparedWriteEvidence::default(), &token).unwrap();
         assert_eq!(
-            repo.create(snapshot(), &PreparedWriteEvidence::default(), &token).unwrap_err().kind,
+            repo.create(snapshot(), &PreparedWriteEvidence::default(), &token).unwrap_err().kind(),
             StorageFailureKind::Conflict
         );
         seen.lock().unwrap().clear();
@@ -205,7 +205,7 @@ mod tests {
             random: None,
         });
         assert_eq!(
-            repo.create(snapshot(), &PreparedWriteEvidence::default(), &token).unwrap_err().stage,
+            repo.create(snapshot(), &PreparedWriteEvidence::default(), &token).unwrap_err().stage(),
             StorageStage::Prepare
         );
         let path = root
@@ -228,7 +228,7 @@ mod tests {
                 &token
             )
             .unwrap_err()
-            .kind,
+            .kind(),
             StorageFailureKind::Conflict
         );
     }
@@ -251,9 +251,9 @@ mod tests {
                     &token,
                 )
                 .unwrap_err();
-            assert_eq!(error.visibility, WriteVisibility::Unchanged);
-            assert!(error.pending.is_none());
-            assert!(error.message.contains(&format!("{point:?}")));
+            assert_eq!(error.visibility(), WriteVisibility::Unchanged);
+            assert!(error.pending().is_none());
+            assert!(error.message().contains(&format!("{point:?}")));
         }
         let error = failure(
             StorageOperation::Replace,
@@ -267,8 +267,8 @@ mod tests {
             StorageOperation::Replace,
         )
         .unwrap_err();
-        assert_eq!(&*result.message, "original");
-        assert_eq!(&*result.cleanup_errors, ["cleanup"]);
+        assert_eq!(result.message(), "original");
+        assert_eq!(result.cleanup_errors(), ["cleanup"]);
     }
 
     struct BarrierOps {
@@ -415,7 +415,7 @@ mod tests {
                 assert_eq!(
                     repo.load(pending.target(), SaveCopy::Primary, &token)
                         .unwrap_err()
-                        .kind,
+                        .kind(),
                     StorageFailureKind::Busy
                 );
                 let pid = rustix::process::Pid::from_raw(child.id() as i32).unwrap();
@@ -606,9 +606,9 @@ mod tests {
                 ),
             }
             .unwrap_err();
-            assert_eq!(error.visibility, WriteVisibility::Unchanged, "{operation:?}");
+            assert_eq!(error.visibility(), WriteVisibility::Unchanged, "{operation:?}");
             let published = sink.pending().expect("published before mutating");
-            assert_eq!(error.pending.as_deref(), Some(&published), "{operation:?}");
+            assert_eq!(error.pending(), Some(&published), "{operation:?}");
         }
     }
     #[test]
@@ -619,7 +619,7 @@ mod tests {
         source.cancel();
         let sink = PreparedWriteEvidence::default();
         let error = repo.create(snapshot(), &sink, &source.token()).unwrap_err();
-        assert_eq!(error.kind, StorageFailureKind::Cancelled);
+        assert_eq!(error.kind(), StorageFailureKind::Cancelled);
         assert!(sink.pending().is_none());
     }
 }
