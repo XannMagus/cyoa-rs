@@ -868,7 +868,8 @@
           "invalid_json_utf8_and_duplicate_keys_are_never_last_key_wins",
           "stored_history_cannot_be_normalized_capped_or_reidentified",
           "required_fields_and_known_field_types_cannot_hide_behind_defaults",
-          "size_depth_overflow_and_nested_duplicate_keys_are_bounded_errors"
+          "size_depth_overflow_and_nested_duplicate_keys_are_bounded_errors",
+          "cast_and_stored_character_ids_are_required_fields_not_failing_defaults"
         ]
       },
       {

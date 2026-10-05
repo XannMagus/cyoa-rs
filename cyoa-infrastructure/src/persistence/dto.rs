@@ -240,7 +240,7 @@ impl GameSaveV1 {
 struct WorldSave {
     title: String,
     world_description: String,
-    #[serde(default)]
+    // Required: an empty or missing cast can never restore (`WorldCast::restore`).
     characters: Vec<PlayerSave>,
     #[serde(default)]
     npcs: Vec<NpcSave>,
@@ -408,7 +408,7 @@ struct CharacterSave {
     relationships: String,
     #[serde(default)]
     current_state: String,
-    #[serde(default)]
+    // Required: v1 always writes IDs, and an empty one never validates.
     id: String,
 }
 #[derive(Serialize, Deserialize)]

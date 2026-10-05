@@ -293,3 +293,34 @@ fn size_depth_overflow_and_nested_duplicate_keys_are_bounded_errors() {
         reject(&value, "platform integer overflow");
     }
 }
+#[test]
+fn cast_and_stored_character_ids_are_required_fields_not_failing_defaults() {
+    // Both used to default to empty and then fail later validation; v1 always
+    // writes them, so a missing one is reported as the missing field itself.
+    for path in [
+        "/game/world/characters",
+        "/game/turns/0/summary/characters/0/id",
+    ] {
+        let (parent, key) = path.rsplit_once('/').unwrap();
+        let mut value = full();
+        value
+            .pointer_mut(parent)
+            .unwrap()
+            .as_object_mut()
+            .unwrap()
+            .remove(key)
+            .unwrap();
+        let error = decode(
+            &serde_json::to_vec(&value).unwrap(),
+            &id(),
+            SaveCopy::Primary,
+        )
+        .unwrap_err()
+        .to_string();
+        let field = key.trim_start_matches('/');
+        assert!(
+            error.contains(&format!("missing field `{field}`")),
+            "{path}: {error}"
+        );
+    }
+}

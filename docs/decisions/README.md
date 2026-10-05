@@ -874,6 +874,11 @@ chains test dispatch mechanics without inventing legacy format support. UTC
 metadata uses checked millisecond precision (finer clock precision rounds down);
 write revision and exact-byte SHA-256 stamps establish ordering/conflict evidence,
 not the clock. Files are bounded to 64 MiB including their final newline.
+A serde default is allowed only where the defaulted value can be valid (user
+decision, 2026-10-05): the world cast (`characters`) and stored character `id`
+are required fields, because an empty cast or ID never reconstructs. Their
+earlier defaults advertised a tolerance that always failed later, and they are
+now reported as the missing field itself.
 
 Registered round trips use independent minimal/full/additive fixtures and actual
 scripted generation through failure, cancellation, rewind and the next request.
