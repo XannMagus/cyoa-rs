@@ -753,6 +753,14 @@
         "tests": [
           "persistence::repository::linux::tests::default_data_location_honors_absolute_xdg_and_rejects_relative_locations"
         ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "commands",
+        "tests": [
+          "parsed_options_translate_into_application_commands_without_panicking",
+          "inconsistent_play_options_are_usage_errors_not_panics"
+        ]
       }
     ]
   },
@@ -1279,7 +1287,8 @@
           "headless::output::tests::partial_writes_and_backpressure_retain_exact_unicode_bytes_once",
           "headless::output::tests::permanent_stall_and_trickling_progress_have_distinct_clock_behavior",
           "headless::output::tests::queue_overflow_write_zero_and_broken_pipe_are_explicit_errors",
-          "headless::output::tests::continuously_writable_output_and_interrupted_calls_have_finite_pump_budgets"
+          "headless::output::tests::continuously_writable_output_and_interrupted_calls_have_finite_pump_budgets",
+          "terminal::tests::interruptible_jobs_return_values_and_name_their_operation_in_failures"
         ]
       },
       {

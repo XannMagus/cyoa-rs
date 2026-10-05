@@ -29,6 +29,9 @@ use std::{
 pub struct CodexExecutable(ResolvedExecutable);
 
 impl CodexExecutable {
+    /// The executable looked up on the selected PATH when none is configured.
+    pub const DEFAULT_NAME: &'static str = "codex";
+
     /// Resolve a configured executable against a selected PATH and base
     /// directory before any request changes the child's working directory.
     /// Empty PATH entries mean the base directory, as in Unix PATH lookup.
@@ -105,6 +108,10 @@ pub struct CodexInvocationConfig {
 }
 
 impl CodexInvocationConfig {
+    /// The environment variable naming Codex's auth/config directory, used
+    /// when no explicit directory is configured, and set for the child.
+    pub const CONFIG_DIR_VARIABLE: &'static str = "CODEX_HOME";
+
     /// Finite transport controls only; does not expose arbitrary CLI options.
     pub fn with_bounds(mut self, bounds: ProcessBounds) -> Self {
         self.bounds = bounds;
@@ -120,7 +127,7 @@ impl CodexInvocationConfig {
         validate_path("HOME", &home, true)?;
         validate_os_value("PATH", &selected_path)?;
         if let Some(codex_home) = &codex_home {
-            validate_path("CODEX_HOME", codex_home, true)?;
+            validate_path(Self::CONFIG_DIR_VARIABLE, codex_home, true)?;
         }
         Ok(Self {
             executable,
@@ -245,7 +252,10 @@ fn explicit_environment(config: &CodexInvocationConfig) -> EnvPolicy {
         .set("HOME", config.home.as_os_str().to_owned())
         .set("PATH", config.selected_path.clone());
     match &config.codex_home {
-        Some(path) => environment.set("CODEX_HOME", path.as_os_str().to_owned()),
+        Some(path) => environment.set(
+            CodexInvocationConfig::CONFIG_DIR_VARIABLE,
+            path.as_os_str().to_owned(),
+        ),
         None => environment,
     }
 }

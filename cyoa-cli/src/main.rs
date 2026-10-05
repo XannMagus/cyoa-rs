@@ -1,5 +1,4 @@
 use cyoa_application::{
-    cancellation::CancellationSource,
     generation::{StoryGenerator, StoryUseCases},
     persistence::*,
 };
@@ -17,7 +16,7 @@ use cyoa_infrastructure::{
     },
 };
 use cyoa_presentation::{
-    commands::{BackendChoice, Cli, Command, PlayOptions},
+    commands::{BackendChoice, Cli, Command, PlayOptions, PlaySource},
     persistence::{PersistedSession, validate_loaded_source},
     runtime::SessionRuntime,
     session::SessionController,
@@ -74,31 +73,23 @@ fn execute() -> Result<(), Box<dyn std::error::Error>> {
     }
     #[cfg(target_os = "linux")]
     {
+        use cyoa_presentation::terminal::run_interruptible;
         let helper = HelperConfig::new(std::env::current_exe()?, data_directory(cli.data_dir)?)?;
+        let repository = |helper| PersistenceUseCases::new(SupervisedRepository::new(helper));
         let options = match cli.command {
             Command::List(options) => {
-                let page = SavePage::new(options.after, options.limit)?;
-                let result = connect(move |token| {
-                    PersistenceUseCases::new(SupervisedRepository::new(helper))
-                        .list_saves(ListSaves { page }, token)
+                let query = options.query()?;
+                let result = run_interruptible("save listing", move |token| {
+                    repository(helper).list_saves(query, token)
                 })?;
                 return query_output(|out| {
                     cyoa_presentation::headless::render_listing(&result, out)
                 });
             }
             Command::Inspect(options) => {
-                let stored = connect(move |token| {
-                    PersistenceUseCases::new(SupervisedRepository::new(helper)).inspect_save(
-                        InspectSave {
-                            id: options.id,
-                            copy: if options.backup {
-                                SaveCopy::Backup
-                            } else {
-                                SaveCopy::Primary
-                            },
-                        },
-                        token,
-                    )
+                let query = options.query();
+                let stored = run_interruptible("save inspection", move |token| {
+                    repository(helper).inspect_save(query, token)
                 })?;
                 return query_output(|out| {
                     cyoa_presentation::headless::render_saved_game(&stored, out)
@@ -106,117 +97,85 @@ fn execute() -> Result<(), Box<dyn std::error::Error>> {
             }
             Command::Play(options) => options,
         };
-        let source = if options.demo {
-            StorySource::Demo {
-                scenario: DemoScenarioId::HarbourV1,
+        let play_source = options.source()?;
+        let source = play_source.story_source();
+        let loaded = match options.load()? {
+            Some(command) => {
+                let config = helper.clone();
+                let loaded = run_interruptible("startup load", move |token| {
+                    repository(config).load_game(command, token)
+                })?;
+                validate_loaded_source(&loaded, source)?;
+                Some(loaded)
             }
-        } else {
-            StorySource::Live
-        };
-        let loaded = if let Some(id) = options.load.clone() {
-            let config = helper.clone();
-            let command = LoadGame {
-                id,
-                copy: if options.backup {
-                    SaveCopy::Backup
-                } else {
-                    SaveCopy::Primary
-                },
-                limits: options
-                    .limits
-                    .expect("Clap requires explicit restore policy")
-                    .policy(),
-            };
-            let loaded = connect(move |token| {
-                PersistenceUseCases::new(SupervisedRepository::new(config))
-                    .load_game(command, token)
-            })?;
-            validate_loaded_source(&loaded, source)?;
-            Some(loaded)
-        } else {
-            None
+            None => None,
         };
         // Auth preflight precedes the UI. No background stdin reader is spawned.
-        if options.demo {
-            play(demo::harbour_v1()?, source, helper, loaded)
-        } else {
-            let selected_path = std::env::var_os("PATH").unwrap_or_default();
-            let home = options
-                .home
-                .clone()
-                .or_else(|| std::env::var_os("HOME").map(PathBuf::from))
-                .ok_or("HOME is unset; provide --home")?;
-            let base = std::env::current_dir()?;
-            match options.backend.expect("Clap requires exactly one source") {
-                BackendChoice::Codex => {
-                    let executable = CodexExecutable::resolve(
-                        options.executable.as_deref().unwrap_or(OsStr::new("codex")),
-                        &selected_path,
-                        &base,
-                    )?;
-                    let config = CodexInvocationConfig::new(
-                        executable,
-                        home,
-                        selected_path,
-                        config_dir(&options, "CODEX_HOME"),
-                        options.model.map(CodexModel::new).transpose()?,
-                    )?;
-                    play_backend(
-                        connect(move |token| CodexCliBackend::connect(config, token))?,
-                        helper,
-                        loaded,
-                    )
-                }
-                BackendChoice::Claude => {
-                    let executable = ClaudeExecutable::resolve(
-                        options
-                            .executable
-                            .as_deref()
-                            .unwrap_or(OsStr::new("claude")),
-                        &selected_path,
-                        &base,
-                    )?;
-                    let config = ClaudeInvocationConfig::new(
-                        executable,
-                        home,
-                        selected_path,
-                        config_dir(&options, "CLAUDE_CONFIG_DIR"),
-                        options.model.map(ClaudeModel::new).transpose()?,
-                    )?;
-                    play_backend(
-                        connect(move |token| ClaudeCliBackend::connect(config, token))?,
-                        helper,
-                        loaded,
-                    )
-                }
-            }
+        match play_source {
+            PlaySource::Demo => play(demo::harbour_v1()?, source, helper, loaded),
+            PlaySource::Backend(backend) => play_live(backend, &options, helper, loaded),
         }
     }
 }
 #[cfg(target_os = "linux")]
-fn connect<T: Send, E: std::error::Error + Send + 'static>(
-    job: impl FnOnce(&cyoa_application::cancellation::CancellationToken) -> Result<T, E> + Send,
-) -> Result<T, Box<dyn std::error::Error>> {
-    let interrupt = cyoa_presentation::terminal::InterruptFlag::new()?;
-    let source = CancellationSource::default();
-    let token = source.token();
-    // Auth precedes the UI, but SIGINT still cancels and joins its child.
-    std::thread::scope(|scope| {
-        let worker = scope.spawn(|| job(&token));
-        while !worker.is_finished() {
-            if interrupt.take() {
-                source.cancel();
-            }
-            std::thread::sleep(std::time::Duration::from_millis(10));
+fn play_live(
+    backend: BackendChoice,
+    options: &PlayOptions,
+    helper: HelperConfig,
+    loaded: Option<LoadedGame>,
+) -> Result<(), Box<dyn std::error::Error>> {
+    use cyoa_presentation::terminal::run_interruptible;
+    let selected_path = std::env::var_os("PATH").unwrap_or_default();
+    let home = options
+        .home
+        .clone()
+        .or_else(|| std::env::var_os("HOME").map(PathBuf::from))
+        .ok_or("HOME is unset; provide --home")?;
+    let base = std::env::current_dir()?;
+    let executable =
+        |default: &'static str| options.executable.clone().unwrap_or_else(|| default.into());
+    match backend {
+        BackendChoice::Codex => {
+            let config = CodexInvocationConfig::new(
+                CodexExecutable::resolve(
+                    &executable(CodexExecutable::DEFAULT_NAME),
+                    &selected_path,
+                    &base,
+                )?,
+                home,
+                selected_path,
+                config_dir(options, CodexInvocationConfig::CONFIG_DIR_VARIABLE),
+                options.model.clone().map(CodexModel::new).transpose()?,
+            )?;
+            play_backend(
+                run_interruptible("authentication", move |token| {
+                    CodexCliBackend::connect(config, token)
+                })?,
+                helper,
+                loaded,
+            )
         }
-        let backend = worker
-            .join()
-            .map_err(|_| io::Error::other("authentication worker panicked"))??;
-        if interrupt.take() || token.is_cancelled() {
-            return Err(io::Error::other("authentication cancelled after cleanup").into());
+        BackendChoice::Claude => {
+            let config = ClaudeInvocationConfig::new(
+                ClaudeExecutable::resolve(
+                    &executable(ClaudeExecutable::DEFAULT_NAME),
+                    &selected_path,
+                    &base,
+                )?,
+                home,
+                selected_path,
+                config_dir(options, ClaudeInvocationConfig::CONFIG_DIR_VARIABLE),
+                options.model.clone().map(ClaudeModel::new).transpose()?,
+            )?;
+            play_backend(
+                run_interruptible("authentication", move |token| {
+                    ClaudeCliBackend::connect(config, token)
+                })?,
+                helper,
+                loaded,
+            )
         }
-        Ok(backend)
-    })
+    }
 }
 fn config_dir(options: &PlayOptions, variable: &str) -> Option<PathBuf> {
     options

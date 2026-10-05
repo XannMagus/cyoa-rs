@@ -31,6 +31,9 @@ use std::{
 pub struct ClaudeExecutable(ResolvedExecutable);
 
 impl ClaudeExecutable {
+    /// The executable looked up on the selected PATH when none is configured.
+    pub const DEFAULT_NAME: &'static str = "claude";
+
     /// Resolve against a selected PATH and base directory before the request
     /// workspace becomes the child's cwd; see `ResolvedExecutable::resolve`.
     pub fn resolve(
@@ -112,6 +115,10 @@ pub struct ClaudeInvocationConfig {
 }
 
 impl ClaudeInvocationConfig {
+    /// The environment variable naming Claude's auth/config directory, used
+    /// when no explicit directory is configured, and set for the child.
+    pub const CONFIG_DIR_VARIABLE: &'static str = "CLAUDE_CONFIG_DIR";
+
     pub fn new(
         executable: ClaudeExecutable,
         home: PathBuf,
@@ -122,7 +129,7 @@ impl ClaudeInvocationConfig {
         executable::validate_path("HOME", &home, true)?;
         executable::validate_os_value("PATH", &selected_path)?;
         if let Some(config_dir) = &config_dir {
-            executable::validate_path("CLAUDE_CONFIG_DIR", config_dir, true)?;
+            executable::validate_path(Self::CONFIG_DIR_VARIABLE, config_dir, true)?;
         }
         Ok(Self {
             executable,
@@ -273,7 +280,10 @@ fn explicit_environment(config: &ClaudeInvocationConfig) -> EnvPolicy {
         .set("HOME", config.home.as_os_str().to_owned())
         .set("PATH", config.selected_path.clone());
     match &config.config_dir {
-        Some(path) => environment.set("CLAUDE_CONFIG_DIR", path.as_os_str().to_owned()),
+        Some(path) => environment.set(
+            ClaudeInvocationConfig::CONFIG_DIR_VARIABLE,
+            path.as_os_str().to_owned(),
+        ),
         None => environment,
     }
 }

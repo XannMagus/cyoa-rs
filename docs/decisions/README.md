@@ -163,6 +163,14 @@ fresh sink per request and keeps its own clone. Port-level tests cover sink
 forwarding (application), publication before the first mutation, and none on
 admission rejection (local repository).
 
+`main.rs` is composition only (2026-10-05 review): presentation option types build
+application commands (`ListOptions::query`, `InspectOptions::query`,
+`PlayOptions::{source, load}`) and report constraint drift as `UsageError`, not a
+panic. The interruptible pre-UI job loop lives in `presentation::terminal` and
+names its operation in failures; it had reported "authentication" for list,
+inspect and load. Each backend config owns its config-directory variable and
+default executable name.
+
 ### ARCH-002 Domain types establish invariants
 
 **Partial: constructors, generation mappings and save-boundary reconstruction

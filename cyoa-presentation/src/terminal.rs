@@ -68,6 +68,36 @@ mod linux {
             signal_hook::low_level::unregister(self.registration);
         }
     }
+    /// Runs one blocking pre-UI job (auth check, save listing, startup load) on
+    /// a scoped thread. SIGINT cancels it, and the job is always joined, so its
+    /// children are cleaned up before this returns. `operation` names the job in
+    /// errors.
+    pub fn run_interruptible<T: Send, E: std::error::Error + Send + 'static>(
+        operation: &str,
+        job: impl FnOnce(&cyoa_application::cancellation::CancellationToken) -> Result<T, E> + Send,
+    ) -> Result<T, Box<dyn std::error::Error>> {
+        let interrupt = InterruptFlag::new()?;
+        let source = cyoa_application::cancellation::CancellationSource::default();
+        let token = source.token();
+        std::thread::scope(|scope| {
+            let worker = scope.spawn(|| job(&token));
+            while !worker.is_finished() {
+                if interrupt.take() {
+                    source.cancel();
+                }
+                std::thread::sleep(Duration::from_millis(10));
+            }
+            let value = worker
+                .join()
+                .map_err(|_| io::Error::other(format!("{operation} worker panicked")))??;
+            if interrupt.take() || token.is_cancelled() {
+                return Err(
+                    io::Error::other(format!("{operation} cancelled after cleanup")).into(),
+                );
+            }
+            Ok(value)
+        })
+    }
     pub struct TerminalInput {
         stdin: Flags<io::Stdin>,
         bytes: Vec<u8>,
@@ -149,7 +179,7 @@ mod linux {
     }
 }
 #[cfg(target_os = "linux")]
-pub use linux::{Flags, InterruptFlag, TerminalInput};
+pub use linux::{Flags, InterruptFlag, TerminalInput, run_interruptible};
 
 /// Keep unsupported hosts explicit rather than installing a blocking reader.
 #[cfg(not(target_os = "linux"))]
@@ -158,4 +188,32 @@ pub fn unsupported() -> io::Error {
         io::ErrorKind::Unsupported,
         "headless terminal I/O currently supports Linux only",
     )
+}
+
+#[cfg(all(test, target_os = "linux"))]
+mod tests {
+    use super::run_interruptible;
+    use std::io;
+
+    #[test]
+    fn interruptible_jobs_return_values_and_name_their_operation_in_failures() {
+        assert_eq!(
+            run_interruptible("save listing", |_| Ok::<_, io::Error>(7)).unwrap(),
+            7
+        );
+        let error = run_interruptible("save listing", |_| {
+            Err::<(), _>(io::Error::other("helper failed"))
+        })
+        .unwrap_err();
+        assert_eq!(
+            error.to_string(),
+            "helper failed",
+            "the job's own error is kept"
+        );
+        let panicked = run_interruptible("startup load", |_| -> Result<(), io::Error> {
+            panic!("simulated worker fault")
+        })
+        .unwrap_err();
+        assert_eq!(panicked.to_string(), "startup load worker panicked");
+    }
 }

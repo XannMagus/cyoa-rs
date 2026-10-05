@@ -1,6 +1,9 @@
 //! CLI intent only; the composition root selects concrete adapters.
 use clap::{Args, Parser, Subcommand, ValueEnum};
-use cyoa_application::persistence::{LoadGame, SaveCopy, SaveId, SavePage};
+use cyoa_application::persistence::{
+    DemoScenarioId, InspectSave, InvalidSavePage, ListSaves, LoadGame, SaveCopy, SaveId, SavePage,
+    StorySource,
+};
 use cyoa_core::{
     game::TurnCount,
     limits::{Limits, RestoreLimits},
@@ -69,7 +72,7 @@ impl LimitsChoice {
         }
     }
 }
-#[derive(Debug, Clone, Copy, ValueEnum)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum)]
 pub enum BackendChoice {
     Claude,
     Codex,
@@ -103,6 +106,72 @@ pub struct PlayOptions {
     pub limits: Option<LimitsChoice>,
     #[arg(long, requires = "load")]
     pub backup: bool,
+}
+
+/// A combination Clap's declared constraints should have rejected. Returned
+/// instead of panicking, so a constraint drift is a usage error, not a crash.
+#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
+#[error("{0}")]
+pub struct UsageError(&'static str);
+
+/// Where play takes its story from: the credential-free demo or one backend.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum PlaySource {
+    Demo,
+    Backend(BackendChoice),
+}
+impl PlaySource {
+    pub fn story_source(self) -> StorySource {
+        match self {
+            Self::Demo => StorySource::Demo {
+                scenario: DemoScenarioId::HarbourV1,
+            },
+            Self::Backend(_) => StorySource::Live,
+        }
+    }
+}
+fn copy(backup: bool) -> SaveCopy {
+    if backup {
+        SaveCopy::Backup
+    } else {
+        SaveCopy::Primary
+    }
+}
+impl ListOptions {
+    pub fn query(&self) -> Result<ListSaves, InvalidSavePage> {
+        Ok(ListSaves {
+            page: SavePage::new(self.after.clone(), self.limit)?,
+        })
+    }
+}
+impl InspectOptions {
+    pub fn query(self) -> InspectSave {
+        InspectSave {
+            id: self.id,
+            copy: copy(self.backup),
+        }
+    }
+}
+impl PlayOptions {
+    pub fn source(&self) -> Result<PlaySource, UsageError> {
+        match (self.demo, self.backend) {
+            (true, None) => Ok(PlaySource::Demo),
+            (false, Some(backend)) => Ok(PlaySource::Backend(backend)),
+            _ => Err(UsageError("choose exactly one of --backend and --demo")),
+        }
+    }
+    /// The explicit startup load, if one was requested.
+    pub fn load(&self) -> Result<Option<LoadGame>, UsageError> {
+        match (&self.load, self.limits) {
+            (None, None) => Ok(None),
+            (Some(id), Some(limits)) => Ok(Some(LoadGame {
+                id: id.clone(),
+                copy: copy(self.backup),
+                limits: limits.policy(),
+            })),
+            _ => Err(UsageError("--load and --limits must be given together")),
+        }
+    }
 }
 
 pub enum PersistenceCommand {
@@ -157,11 +226,7 @@ pub fn persistence_command(line: &str) -> Option<Result<PersistenceCommand, Stri
             .map(|v| {
                 PersistenceCommand::Load(LoadGame {
                     id: v.id,
-                    copy: if v.backup {
-                        SaveCopy::Backup
-                    } else {
-                        SaveCopy::Primary
-                    },
+                    copy: copy(v.backup),
                     limits: v.limits.policy(),
                 })
             })
