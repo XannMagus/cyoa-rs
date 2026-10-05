@@ -68,7 +68,7 @@ impl StoryGenerator for Fake {
                 Err(GenerationFailure::new(
                     FailureKind::Cancelled,
                     "cancelled",
-                    failure().raw_response().clone(),
+                    failure().raw_response().cloned(),
                     failure().diagnostics().clone(),
                 ))
             }

@@ -415,7 +415,10 @@ fn complete_only_cancellation_and_timeout_keep_explicit_candidate_without_previe
                     &CancellationSource::default().token(),
                 )
                 .unwrap_err();
-            assert_eq!(failure.raw_response().as_str(), raw);
+            assert_eq!(
+                failure.raw_response().expect("backend response").as_str(),
+                raw
+            );
             assert_eq!(failure.diagnostics(), &diagnostics);
             assert_eq!(
                 failure.kind(),

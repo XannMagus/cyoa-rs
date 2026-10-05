@@ -509,7 +509,7 @@ fn application_receives_complete_candidate_and_diagnostics_on_adapter_timeout() 
     assert_eq!(error.kind(), FailureKind::Timeout);
     fixture.assert_cleanup();
     assert_eq!(
-        error.raw_response().as_str(),
+        error.raw_response().expect("backend response").as_str(),
         payload(),
         "candidate evidence regression"
     );

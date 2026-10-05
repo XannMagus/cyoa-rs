@@ -30,7 +30,10 @@ fn failed_and_cancelled_results_preserve_state_and_exact_evidence() {
     let Some(Failure::Generation(f)) = s.failure() else {
         panic!("failure evidence absent")
     };
-    assert_eq!(f.raw_response().as_str(), "candidate é\r\n");
+    assert_eq!(
+        f.raw_response().expect("backend response").as_str(),
+        "candidate é\r\n"
+    );
     assert_eq!(f.diagnostics().stdout(), [255, 13, 10]);
     let retry = s.retry().unwrap();
     assert_ne!(r.key().id(), retry.key().id());

@@ -61,25 +61,22 @@ fn cancelled_commands_make_no_backend_calls_and_preserve_state() {
     let error = failed.failure;
     assert_eq!(error.kind(), FailureKind::Cancelled);
     assert_eq!(game, before);
-    assert_eq!(
-        use_cases
-            .generate_outline(game.brief(), &source.token())
-            .unwrap_err()
-            .kind(),
-        FailureKind::Cancelled
-    );
-    assert_eq!(
-        use_cases
-            .generate_world(
-                game.brief(),
-                game.world().outline().clone(),
-                &game.limits(),
-                &source.token()
-            )
-            .unwrap_err()
-            .kind(),
-        FailureKind::Cancelled
-    );
+    let outline = use_cases
+        .generate_outline(game.brief(), &source.token())
+        .unwrap_err();
+    let world = use_cases
+        .generate_world(
+            game.brief(),
+            game.world().outline().clone(),
+            &game.limits(),
+            &source.token(),
+        )
+        .unwrap_err();
+    for failure in [&error, &outline, &world] {
+        assert_eq!(failure.kind(), FailureKind::Cancelled);
+        // No call was dispatched: no response, never an empty-string stand-in.
+        assert!(failure.raw_response().is_none());
+    }
     assert!(
         use_cases
             .into_generator()
@@ -138,7 +135,10 @@ fn failed_turns_preserve_diagnostics_state_and_single_attempt() {
         game = failed.state;
         let error = failed.failure;
         assert_eq!(error.kind(), kind);
-        assert_eq!(error.raw_response().as_str(), raw);
+        assert_eq!(
+            error.raw_response().expect("backend response").as_str(),
+            raw
+        );
         assert_eq!(game, before);
         assert_eq!(
             use_cases.into_generator().into_backend().requests().len(),
@@ -156,7 +156,10 @@ fn invalid_outline_and_insufficient_cast_are_returned_with_raw_output() {
         .generate_outline(game.brief(), &source.token())
         .unwrap_err();
     assert_eq!(error.kind(), FailureKind::InvalidResponse);
-    assert_eq!(error.raw_response().as_str(), raw);
+    assert_eq!(
+        error.raw_response().expect("backend response").as_str(),
+        raw
+    );
     let error = use_cases
         .generate_world(
             game.brief(),
@@ -167,7 +170,7 @@ fn invalid_outline_and_insufficient_cast_are_returned_with_raw_output() {
         .unwrap_err();
     assert_eq!(error.kind(), FailureKind::InvalidResponse);
     assert_eq!(
-        error.raw_response().as_str(),
+        error.raw_response().expect("backend response").as_str(),
         "{\"characters\":[],\"npcs\":[]}"
     );
     assert_eq!(
@@ -364,7 +367,7 @@ fn preview_then_transport_failure_leaves_state_untouched() {
     let error = failed.failure;
     assert_eq!(preview, "Visible preview");
     assert_eq!(
-        error.raw_response().as_str(),
+        error.raw_response().expect("backend response").as_str(),
         "{\"narrative\":\"Visible preview"
     );
     assert_eq!(game, before);
@@ -504,8 +507,15 @@ fn cancelling_after_a_streamed_preview_preserves_state_and_partial_diagnostics()
     assert_eq!(error.kind(), FailureKind::Cancelled);
     assert!(!preview.is_empty());
     assert!("The lantern flickered.".starts_with(&preview));
-    assert!(raw.starts_with(error.raw_response().as_str()));
-    assert!(error.raw_response().as_str().len() < raw.len());
+    assert!(raw.starts_with(error.raw_response().expect("backend response").as_str()));
+    assert!(
+        error
+            .raw_response()
+            .expect("backend response")
+            .as_str()
+            .len()
+            < raw.len()
+    );
     assert_eq!(game, before);
     assert_eq!(
         use_cases.into_generator().into_backend().requests().len(),
@@ -620,7 +630,10 @@ fn validation_failures_retain_transport_diagnostics_for_every_request_kind() {
             }
         };
         assert_eq!(error.kind(), FailureKind::InvalidResponse);
-        assert_eq!(error.raw_response().as_str(), raw);
+        assert_eq!(
+            error.raw_response().expect("backend response").as_str(),
+            raw
+        );
         assert_eq!(error.diagnostics().stdout(), b"events");
         assert_eq!(error.diagnostics().stderr(), b"warning\xff");
         assert_eq!(state, before);
@@ -727,7 +740,10 @@ fn application_cancellation_after_generation_preserves_evidence() {
             }
         };
         assert_eq!(error.kind(), FailureKind::Cancelled);
-        assert_eq!(error.raw_response().as_str(), raw);
+        assert_eq!(
+            error.raw_response().expect("backend response").as_str(),
+            raw
+        );
         assert_eq!(error.diagnostics().stderr(), b"warning");
         assert_eq!(state, before);
     }

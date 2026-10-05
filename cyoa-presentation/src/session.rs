@@ -595,7 +595,7 @@ mod tests {
         let failure = GenerationFailure::new(
             cyoa_application::generation::FailureKind::InvalidResponse,
             "bad",
-            cyoa_core::text::RawResponse::new(""),
+            Some(cyoa_core::text::RawResponse::new("")),
             cyoa_application::diagnostics::TransportDiagnostics::empty(),
         );
         assert_eq!(

@@ -157,7 +157,11 @@ fn full_story_preserves_contracts_through_failure_retry_cancellation_and_rewind(
     let error = failed.failure;
     assert_eq!(error.kind(), FailureKind::Transport);
     assert_eq!(
-        error.raw_response().as_str().as_bytes(),
+        error
+            .raw_response()
+            .expect("backend response")
+            .as_str()
+            .as_bytes(),
         malformed.as_bytes()
     );
     assert_eq!(preview, "Broken preview 🎭");
@@ -184,8 +188,15 @@ fn full_story_preserves_contracts_through_failure_retry_cancellation_and_rewind(
     let error = failed.failure;
     assert_eq!(error.kind(), FailureKind::Cancelled);
     assert!(!preview.is_empty());
-    assert!(turns[3].starts_with(error.raw_response().as_str()));
-    assert!(error.raw_response().as_str().len() < turns[3].len());
+    assert!(turns[3].starts_with(error.raw_response().expect("backend response").as_str()));
+    assert!(
+        error
+            .raw_response()
+            .expect("backend response")
+            .as_str()
+            .len()
+            < turns[3].len()
+    );
     assert_eq!(game, before_cancel);
     game = advance(&mut cases, game);
     assert_eq!(game.turns().len(), 4);

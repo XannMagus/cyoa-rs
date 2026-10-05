@@ -67,7 +67,7 @@ pub fn failure() -> GenerationFailure {
     GenerationFailure::new(
         FailureKind::InvalidResponse,
         "bad response",
-        RawResponse::new("candidate é\r\n"),
+        Some(RawResponse::new("candidate é\r\n")),
         cyoa_application::diagnostics::TransportDiagnostics::new(vec![255, 13, 10], vec![254]),
     )
 }

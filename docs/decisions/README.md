@@ -71,6 +71,13 @@ whitespace-only input, CRLF, and Unicode. No blanket String-wrapper normalizatio
 Raw diagnostics are not proof of a valid StoryTurn. Evidence: `5050fb4`; the
 restoration tests also preserve audit records through state reconstruction.
 
+A `GenerationFailure`'s response is `Option<RawResponse>` (2026-10-05 review): `None`
+when no backend call was made (cancellation before dispatch, template rendering
+failure), and `Some` with exactly what was received after a call, an empty string
+included. The empty string was previously a sentinel for "no call", which made it
+indistinguishable from an empty backend body. `/diagnostics` prints
+`Candidate: none (no backend call was made)` for `None`.
+
 The payload and its transport diagnostics are separate concerns. `TransportDiagnostics`
 (`cyoa-application::diagnostics`) is a byte-backed (not `String`-backed) type retaining a
 subprocess's captured stdout/stderr separately, because a diagnostic stream may

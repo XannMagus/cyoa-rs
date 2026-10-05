@@ -307,7 +307,10 @@ fn late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once(
         let error = failed.failure;
         assert_eq!(error.kind(), kind);
         assert_eq!(game, before);
-        assert_eq!(error.raw_response().as_str(), raw);
+        assert_eq!(
+            error.raw_response().expect("backend response").as_str(),
+            raw
+        );
         // Invalid domain text may be previewed, but never becomes a committed turn.
         if kind != FailureKind::InvalidResponse {
             assert!(preview.is_empty());
@@ -358,7 +361,10 @@ fn real_workspace_cleanup_failure_preserves_the_game_and_candidate() {
     assert_eq!(game, before);
     assert_eq!(error.kind(), FailureKind::Transport);
     assert!(error.to_string().contains("WorkspaceCleanup"));
-    assert_eq!(error.raw_response().as_str(), raw);
+    assert_eq!(
+        error.raw_response().expect("backend response").as_str(),
+        raw
+    );
     assert_eq!(error.diagnostics().stdout(), transcript(&raw, "completed"));
     assert_eq!(error.diagnostics().stderr(), STDERR);
     fixture.capture(true);
@@ -397,7 +403,7 @@ fn cancellation_and_output_cap_preserve_state_context_and_explicit_retry() {
     canceller.join().unwrap();
     assert_eq!(error.kind(), FailureKind::Cancelled);
     assert_eq!(game, before);
-    assert_eq!(error.raw_response().as_str(), "");
+    assert_eq!(error.raw_response().expect("backend response").as_str(), "");
     fixture.capture(false);
     fixture.assert_calls(4);
     game = advance(&mut fixture, &mut cases, game, 1, TurnDirection::Continue);
@@ -420,7 +426,10 @@ fn cancellation_and_output_cap_preserve_state_context_and_explicit_retry() {
     assert_eq!(error.kind(), FailureKind::Cancelled);
     assert_eq!(game, before);
     assert_eq!(previews, ["Voyage: the ship sailed."]);
-    assert_eq!(error.raw_response().as_str(), turn(2));
+    assert_eq!(
+        error.raw_response().expect("backend response").as_str(),
+        turn(2)
+    );
     assert_eq!(
         error.diagnostics().stdout(),
         transcript(&turn(2), "completed")

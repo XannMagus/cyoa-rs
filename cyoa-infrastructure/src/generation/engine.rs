@@ -68,7 +68,7 @@ impl<B: Backend> GenerationEngine<B> {
             } => GenerationFailure::new(
                 FailureKind::Unavailable,
                 message,
-                RawResponse::new(fragments),
+                Some(RawResponse::new(fragments)),
                 diagnostics,
             ),
             BackendError::Timeout {
@@ -77,7 +77,7 @@ impl<B: Backend> GenerationEngine<B> {
             } => GenerationFailure::new(
                 FailureKind::Timeout,
                 "generation timed out",
-                RawResponse::new(raw_response.unwrap_or(fragments)),
+                Some(RawResponse::new(raw_response.unwrap_or(fragments))),
                 diagnostics,
             ),
             BackendError::Generation {
@@ -87,7 +87,7 @@ impl<B: Backend> GenerationEngine<B> {
             } => GenerationFailure::new(
                 FailureKind::Transport,
                 message,
-                RawResponse::new(raw_response),
+                Some(RawResponse::new(raw_response)),
                 diagnostics,
             ),
             BackendError::Transport {
@@ -98,7 +98,7 @@ impl<B: Backend> GenerationEngine<B> {
             } => GenerationFailure::new(
                 FailureKind::Transport,
                 message,
-                RawResponse::new(raw_response),
+                Some(RawResponse::new(raw_response)),
                 *diagnostics,
             ),
         })?;
@@ -115,7 +115,7 @@ fn cancelled(raw: impl Into<String>, diagnostics: TransportDiagnostics) -> Gener
     GenerationFailure::new(
         FailureKind::Cancelled,
         "generation cancelled",
-        RawResponse::new(raw),
+        Some(RawResponse::new(raw)),
         diagnostics,
     )
 }
@@ -123,7 +123,8 @@ fn configuration(error: RenderError) -> GenerationFailure {
     GenerationFailure::new(
         FailureKind::Configuration,
         error.to_string(),
-        RawResponse::new(""),
+        // Rendering failed before dispatch: there is no backend response.
+        None,
         TransportDiagnostics::empty(),
     )
 }
@@ -131,7 +132,7 @@ fn invalid(error: impl std::fmt::Display, response: &GenerationResponse) -> Gene
     GenerationFailure::new(
         FailureKind::InvalidResponse,
         error.to_string(),
-        RawResponse::new(response.raw_response()),
+        Some(RawResponse::new(response.raw_response())),
         response.diagnostics().clone(),
     )
 }

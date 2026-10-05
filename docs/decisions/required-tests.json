@@ -180,7 +180,8 @@
         "tests": [
           "validation_failures_retain_transport_diagnostics_for_every_request_kind",
           "application_cancellation_after_generation_preserves_evidence",
-          "successful_generation_preserves_observed_provenance_and_diagnostics"
+          "successful_generation_preserves_observed_provenance_and_diagnostics",
+          "cancelled_commands_make_no_backend_calls_and_preserve_state"
         ]
       },
       {

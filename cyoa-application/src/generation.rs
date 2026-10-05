@@ -25,14 +25,16 @@ pub enum FailureKind {
 pub struct GenerationFailure {
     kind: FailureKind,
     message: String,
-    raw_response: RawResponse,
+    /// What the backend returned, exactly; `None` when no backend call was made
+    /// (for example, cancelled before dispatch), never an empty-string stand-in.
+    raw_response: Option<RawResponse>,
     diagnostics: TransportDiagnostics,
 }
 impl GenerationFailure {
     pub fn new(
         kind: FailureKind,
         message: impl Into<String>,
-        raw_response: RawResponse,
+        raw_response: Option<RawResponse>,
         diagnostics: TransportDiagnostics,
     ) -> Self {
         Self {
@@ -45,8 +47,8 @@ impl GenerationFailure {
     pub fn kind(&self) -> FailureKind {
         self.kind
     }
-    pub fn raw_response(&self) -> &RawResponse {
-        &self.raw_response
+    pub fn raw_response(&self) -> Option<&RawResponse> {
+        self.raw_response.as_ref()
     }
     pub fn diagnostics(&self) -> &TransportDiagnostics {
         &self.diagnostics
@@ -89,7 +91,7 @@ impl<T> Generated<T> {
             Err(GenerationFailure::new(
                 FailureKind::Cancelled,
                 "generation cancelled",
-                self.raw_response.clone(),
+                Some(self.raw_response.clone()),
                 self.diagnostics.clone(),
             ))
         } else {
@@ -147,7 +149,7 @@ impl<G: StoryGenerator> StoryUseCases<G> {
         brief: &Brief,
         cancel: &CancellationToken,
     ) -> Result<Generated<WorldOutline>, GenerationFailure> {
-        check_cancelled(cancel, RawResponse::new(""))?;
+        check_cancelled(cancel)?;
         let generated = self.generator.outline(brief, cancel)?;
         generated.check_cancelled(cancel)?;
         Ok(generated)
@@ -159,7 +161,7 @@ impl<G: StoryGenerator> StoryUseCases<G> {
         limits: &Limits,
         cancel: &CancellationToken,
     ) -> Result<World, GenerationFailure> {
-        check_cancelled(cancel, RawResponse::new(""))?;
+        check_cancelled(cancel)?;
         let generated = self.generator.cast(brief, &outline, limits, cancel)?;
         generated.check_cancelled(cancel)?;
         Ok(World::new(outline, generated.into_parts().0))
@@ -173,7 +175,7 @@ impl<G: StoryGenerator> StoryUseCases<G> {
         cancel: &CancellationToken,
         on_narrative: &mut dyn FnMut(&str),
     ) -> Result<GameState, Box<TurnFailure>> {
-        let generated = match check_cancelled(cancel, RawResponse::new(""))
+        let generated = match check_cancelled(cancel)
             .and_then(|()| {
                 self.generator
                     .turn(&state, &direction, cancel, on_narrative)
@@ -204,15 +206,13 @@ pub struct TurnFailure {
     #[source]
     pub failure: GenerationFailure,
 }
-fn check_cancelled(
-    cancel: &CancellationToken,
-    raw_response: RawResponse,
-) -> Result<(), GenerationFailure> {
+/// Cancellation before dispatch: no backend call was made, so there is no response.
+fn check_cancelled(cancel: &CancellationToken) -> Result<(), GenerationFailure> {
     if cancel.is_cancelled() {
         Err(GenerationFailure::new(
             FailureKind::Cancelled,
             "generation cancelled",
-            raw_response,
+            None,
             TransportDiagnostics::empty(),
         ))
     } else {

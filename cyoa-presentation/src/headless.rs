@@ -563,10 +563,13 @@ fn diagnostics(runtime: &dyn HeadlessSession, control: &mut dyn Write) -> io::Re
     if let Some(e) = failure {
         // Debug string display escapes control characters. The retained values
         // remain byte-exact; lossy transport display is only a terminal view.
+        match e.raw_response() {
+            Some(raw) => writeln!(control, "Candidate: {:?}", raw.as_str())?,
+            None => writeln!(control, "Candidate: none (no backend call was made)")?,
+        }
         writeln!(
             control,
-            "Candidate: {:?}\nTransport stdout (lossy display): {:?}\nTransport stderr (lossy display): {:?}",
-            e.raw_response().as_str(),
+            "Transport stdout (lossy display): {:?}\nTransport stderr (lossy display): {:?}",
             e.diagnostics().stdout_lossy(),
             e.diagnostics().stderr_lossy()
         )?;

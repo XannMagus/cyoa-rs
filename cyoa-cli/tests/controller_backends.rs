@@ -252,7 +252,10 @@ fn both_adapters_preserve_controller_state_through_failure_cancel_retry_and_quit
         let Some(Failure::Generation(error)) = runtime.controller().failure() else {
             panic!("candidate failure absent")
         };
-        assert_eq!(error.raw_response().as_str(), data["turns"][1].to_string());
+        assert_eq!(
+            error.raw_response().expect("backend response").as_str(),
+            data["turns"][1].to_string()
+        );
         assert_eq!(error.diagnostics().stderr(), [255, 13, 10]);
         fixture.set(&data["turns"][1], 0, false);
         runtime.dispatch(Intent::Retry).unwrap();

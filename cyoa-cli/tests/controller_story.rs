@@ -227,7 +227,10 @@ fn complete_controller_story_preserves_context_retry_identity_chapters_and_rewin
         panic!("expected failure")
     };
     assert_eq!(error.kind(), FailureKind::Transport);
-    assert_eq!(error.raw_response().as_str(), malformed);
+    assert_eq!(
+        error.raw_response().expect("backend response").as_str(),
+        malformed
+    );
     dispatch(&mut runtime, Intent::Retry);
     assert_eq!(
         runtime
