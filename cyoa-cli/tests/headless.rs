@@ -486,6 +486,52 @@ fn command_surface_rejects_demo_vendor_settings_and_unimplemented_ui() {
 }
 
 #[test]
+fn input_line_bound_ignores_read_ahead_and_rejects_oversized_lines() {
+    // Regular files make read-ahead deterministic, including trailing commands.
+    for (length, newline, valid) in [
+        (65_530, true, true),
+        (65_535, true, true),
+        (65_536, true, false),
+        (65_536, false, true),
+        (65_537, false, false),
+    ] {
+        let data = tempfile::tempdir().unwrap();
+        let input = data.path().join("input");
+        let mut bytes = b"/help\n".to_vec();
+        // A padded command avoids generation while exercising the byte limit.
+        bytes.extend_from_slice(b"/help");
+        bytes.resize(bytes.len() + length - 5, b' ');
+        if newline {
+            bytes.extend_from_slice(b"\n/inspect\n/quit\n");
+        }
+        std::fs::write(&input, bytes).unwrap();
+        let output = Command::new(env!("CARGO_BIN_EXE_cyoa"))
+            .args(["play", "--headless", "--demo"])
+            .arg("--data-dir")
+            .arg(data.path())
+            .stdin(std::fs::File::open(input).unwrap())
+            .output()
+            .unwrap();
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        assert_eq!(
+            output.status.success(),
+            valid,
+            "input line bound must ignore read-ahead: length={length} newline={newline}: {stderr}"
+        );
+        if valid {
+            assert_eq!(stderr.matches("Commands: /help").count(), 2);
+            assert!(stderr.contains("Session closed"));
+            if newline {
+                assert!(stderr.contains("Inspection: phase=Ready revision=0"));
+            }
+        } else {
+            assert!(stderr.contains("input line exceeds 64 KiB"));
+            assert_eq!(stderr.matches("Commands: /help").count(), 1);
+        }
+    }
+}
+
+#[test]
 fn full_undrained_stderr_does_not_block_error_exit() {
     let data = tempfile::tempdir().unwrap();
     use rustix::{
