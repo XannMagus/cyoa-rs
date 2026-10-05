@@ -515,8 +515,10 @@ cyoa-cli/            executable composition root
 ```
 
 `scripts/check_architecture.sh` (Bash + `jq`) checks workspace dependency direction in CI,
-including dev/build dependencies, and rejects direct terminal/JSON dependencies
-in domain and application. Infrastructure and presentation may depend on application
+including dev/build dependencies. Domain and application external crates are an
+explicit allowlist (today `indexmap`/`thiserror` and `thiserror`), so any new one is
+a deliberate decision. It also rejects vendor names in code (not comments) of the
+shared generation modules (ARCH-003). Infrastructure and presentation may depend on application
 and domain, but not on each other. Only the composition root imports both. The old
 generic JSON `Backend` lives in infrastructure; domain-facing generation ports and
 CQRS use cases will be introduced alongside the game types, not fabricated before

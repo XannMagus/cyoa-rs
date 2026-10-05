@@ -144,7 +144,8 @@ Presentation drives application; infrastructure implements inward-owned ports;
 main wires concrete adapters. Application must not import concrete infrastructure
 or presentation. No vendor/terminal/serialization DTOs inside domain entities.
 The Bash architecture check covers workspace normal/dev/build dependencies and
-specified outer-layer dependencies. It does not prove absence of filesystem or
+allowlists domain/application external crates (2026-10-05: previously a denylist
+that would have admitted `serde`, `tempfile` or terminal crates). It does not prove absence of filesystem or
 process calls through std; those require code review.
 
 Use lightweight CQRS as use cases arrive: commands change state, queries expose
@@ -285,6 +286,13 @@ dynamic/plugin-style backend registry (discover and (de)activate adapters at
 runtime) was considered and deliberately deferred: with only two backends,
 one `pub mod` line per backend is simpler than the complexity is worth;
 revisit only if a third backend joins.
+
+Placement is checked mechanically (2026-10-05): `scripts/check_architecture.sh`
+fails when a vendor name appears in code of the shared modules (domain,
+application, `backend.rs`, `json.rs`, `generation/` outside each backend's own
+`backend_compat` file), and when `backend_compat/mod.rs` does more than register
+the two backends. Comments citing reference files are allowed. Before this, the
+"Enforced" status rested on behaviour tests of the current adapters only.
 
 Evidence: `backend_compat::claude_cli::adapt_schema` strips `claude -p
 --json-schema`'s rejected root `"$schema"` key (verified live,
