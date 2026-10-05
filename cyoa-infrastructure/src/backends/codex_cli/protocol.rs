@@ -2,6 +2,12 @@
 //! success: the parent adapter must still reconcile the supervisor's outcome.
 
 use crate::backend::{TokenUsage, normalize_input_tokens};
+use serde::{
+    Deserialize,
+    de::{MapAccess, Visitor},
+};
+use serde_json::value::RawValue;
+use std::collections::HashMap;
 
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 #[error("Codex record {record} at {location}: {kind:?}")]
@@ -16,6 +22,7 @@ pub(super) enum ErrorKind {
     InvalidUtf8,
     InvalidJson,
     InvalidField,
+    DuplicateField,
     Unsupported,
     Order,
     MultipleCandidates,
@@ -196,6 +203,8 @@ fn parse_event(bytes: &[u8], record: usize) -> Result<Event, ProtocolError> {
     if !value.is_object() {
         return Err(error(record, "$", ErrorKind::InvalidField));
     }
+    check_control_keys(text)
+        .map_err(|location| error(record, location, ErrorKind::DuplicateField))?;
     let kind = string_field(&value, "type", record, "$.type", true)?;
     match kind {
         "thread.started" => {
@@ -234,6 +243,50 @@ fn parse_event(bytes: &[u8], record: usize) -> Result<Event, ProtocolError> {
             Ok(Event::ErrorNotice)
         }
         _ => Err(error(record, "$.type", ErrorKind::Unsupported)),
+    }
+}
+
+/// Validate the record and its immediate control objects before interpreting any
+/// last-wins `Value`. The model's payload is an opaque `item.text` string; unknown
+/// metadata subtrees are not control objects in this frozen profile.
+fn check_control_keys(text: &str) -> Result<(), &'static str> {
+    let root: UniqueObject = serde_json::from_str(text).map_err(|_| "$")?;
+    for (key, location) in [
+        ("item", "$.item"),
+        ("error", "$.error"),
+        ("usage", "$.usage"),
+    ] {
+        if let Some(raw) = root.0.get(key)
+            && raw.get().starts_with('{')
+        {
+            serde_json::from_str::<UniqueObject>(raw.get()).map_err(|_| location)?;
+        }
+    }
+    Ok(())
+}
+
+struct UniqueObject(HashMap<String, Box<RawValue>>);
+
+impl<'de> Deserialize<'de> for UniqueObject {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        struct ObjectVisitor;
+        impl<'de> Visitor<'de> for ObjectVisitor {
+            type Value = UniqueObject;
+            fn expecting(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                f.write_str("an object with unique keys")
+            }
+            fn visit_map<A: MapAccess<'de>>(self, mut map: A) -> Result<Self::Value, A::Error> {
+                let mut fields = HashMap::new();
+                while let Some(key) = map.next_key::<String>()? {
+                    if fields.contains_key(&key) {
+                        return Err(serde::de::Error::custom("duplicate control key"));
+                    }
+                    fields.insert(key, map.next_value()?);
+                }
+                Ok(UniqueObject(fields))
+            }
+        }
+        deserializer.deserialize_map(ObjectVisitor)
     }
 }
 

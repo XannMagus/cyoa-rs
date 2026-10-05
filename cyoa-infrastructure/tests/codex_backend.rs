@@ -199,6 +199,73 @@ fn ineligible_message_is_rejected_after_cleanup() {
 }
 
 #[test]
+fn duplicate_control_keys_reject_without_emission_and_preserve_prior_candidate() {
+    let prefix = concat!(
+        "{\"type\":\"thread.started\",\"thread_id\":\"review\"}\n",
+        "{\"type\":\"turn.started\"}\n"
+    );
+    let candidate = format!(
+        "{}\n",
+        json!({"type":"item.completed","item":{"id":"m","type":"agent_message","text":payload()}})
+    );
+    for (record, prior) in [
+        (
+            r#"{"type":"turn.failed","error":{"message":"failed"},"type":"turn.completed"}"#,
+            true,
+        ),
+        (r#"{"type":"turn.completed","type":"turn.completed"}"#, true),
+        (
+            r#"{"type":"turn.completed","usage":{"input_tokens":1,"input_tokens":2}}"#,
+            true,
+        ),
+        (
+            r#"{"type":"turn.failed","error":{"message":"failed","message":"again"}}"#,
+            true,
+        ),
+        (
+            r#"{"type":"item.completed","item":{"id":"m","type":"command_execution","type":"agent_message","text":"{}"}}"#,
+            false,
+        ),
+        (
+            r#"{"type":"item.completed","item":{"id":"m","id":"m","type":"agent_message","text":"{}"}}"#,
+            false,
+        ),
+        (
+            r#"{"type":"item.completed","item":{"id":"m","type":"agent_message","text":"bad","text":"{}"}}"#,
+            false,
+        ),
+        (
+            r#"{"type":"item.completed","item":{"id":"m","type":"agent_message","\u0074ype":"agent_message","text":"{}"}}"#,
+            false,
+        ),
+    ] {
+        let stdout = format!("{prefix}{}{record}\n", if prior { &candidate } else { "" });
+        let fixture = Fixture::new(stdout.as_bytes(), 0);
+        let mut emissions = 0;
+        let result = fixture.backend().generate(
+            request(&json!({})),
+            &CancellationSource::default().token(),
+            &mut |_| emissions += 1,
+        );
+        fixture.assert_cleanup();
+        assert!(
+            result.is_err(),
+            "ambiguous Codex control record was accepted: {record}"
+        );
+        let error = result.unwrap_err();
+        assert!(matches!(error, BackendError::Generation { .. }), "{error}");
+        assert!(error.to_string().contains("DuplicateField"), "{error}");
+        assert_eq!(emissions, 0);
+        assert_eq!(
+            evidence(&error).0,
+            if prior { payload() } else { String::new() }
+        );
+        assert_eq!(evidence(&error).1.stdout(), stdout.as_bytes());
+        assert_eq!(evidence(&error).1.stderr(), b"diagnostic\xff\r\n");
+    }
+}
+
+#[test]
 fn candidate_without_terminal_is_rejected_after_cleanup() {
     assert_protocol_rejected("missing-terminal.jsonl");
 }

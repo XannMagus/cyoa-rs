@@ -365,5 +365,14 @@
     "test": "failed_autosave_keeps_accepted_turn_and_storage_retry_never_regenerates",
     "file": "cyoa-presentation/src/persistence.rs",
     "failure_contains": "save failure must never retry inference"
+  },
+  {
+    "id": "accept-codex-duplicate-control",
+    "decision": "BACKENDS-001",
+    "package": "cyoa-infrastructure",
+    "target": "codex_backend",
+    "test": "duplicate_control_keys_reject_without_emission_and_preserve_prior_candidate",
+    "file": "cyoa-infrastructure/src/backends/codex_cli/protocol.rs",
+    "failure_contains": "ambiguous Codex control record was accepted"
   }
 ]

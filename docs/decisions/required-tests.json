@@ -866,6 +866,13 @@
           "additive_source_fields_are_reported_for_both_source_variants",
           "valid_authoritative_snapshots_and_unknown_style_keys_are_preserved_without_delta_replay"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_backend",
+        "tests": [
+          "duplicate_control_keys_reject_without_emission_and_preserve_prior_candidate"
+        ]
       }
     ]
   },
@@ -1152,6 +1159,13 @@
           "bounded_silent_storage_keeps_input_responsive_and_reaps_current_and_final_helpers",
           "input_and_output_errors_still_save_last_canonical_story_and_remain_errors",
           "blocked_storage_and_faulted_output_sinks_preserve_canonical_state_and_reap_helpers"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_backend",
+        "tests": [
+          "duplicate_control_keys_reject_without_emission_and_preserve_prior_candidate"
         ]
       }
     ]

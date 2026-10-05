@@ -1,0 +1,14 @@
+--- a/cyoa-infrastructure/src/backends/codex_cli/protocol.rs
++++ b/cyoa-infrastructure/src/backends/codex_cli/protocol.rs
+@@ -203,8 +203,9 @@
+     if !value.is_object() {
+         return Err(error(record, "$", ErrorKind::InvalidField));
+     }
+-    check_control_keys(text)
+-        .map_err(|location| error(record, location, ErrorKind::DuplicateField))?;
++    if false {
++        check_control_keys(text).map_err(|location| error(record, location, ErrorKind::DuplicateField))?;
++    }
+     let kind = string_field(&value, "type", record, "$.type", true)?;
+     match kind {
+         "thread.started" => {
