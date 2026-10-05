@@ -1,0 +1,9 @@
+Autosave enabled: selection, accepted turns, rewind and quit save canonical state.
+Demo harbour-v1: five prerecorded turns; your choices do not alter the recorded fiction. Exhaustion never switches to a live backend.
+Brief: enter a nonblank adventure idea. /help lists commands.
+Commands: /help /quit /cancel /retry /inspect /diagnostics /save /save-copy /list [AFTER_ID]
+/load SAVE_ID --limits current|original [--backup]; /rewind N
+Outline: empty line accepts; /edit replaces title and description.
+Play: empty line continues; /action N selects a one-based action; /event requests an interesting event. Ordinary numbers are player text. // escapes an initial slash.
+Ctrl-C cancels generation; idle Ctrl-C and EOF exit. Selection, accepted turns and rewind autosave. During storage, help, inspection, diagnostics and quit remain available.
+cyoa: input line exceeds 64 KiB

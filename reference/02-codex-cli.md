@@ -23,6 +23,22 @@ acceptance, shared/peer schema isolation and failure evidence. The gate retains
 all eleven prior mutations ([record](../reviews/2026-09-28-codex-step6/README.md)).
 That step added no authenticated observations; step 7 below supplies the live gate.
 
+## Confirmed: outline smoke on 0.160.0, 2026-10-05
+
+The repository review ran the existing `codex_adapter_smoke` example through the
+actual adapter, bundled outline request and domain mapping. Installed CLI:
+`codex-cli 0.160.0`. Subscription preflight passed; no model override was supplied.
+The approved run accepted “The Harbour Without a Bell” in 53,476 ms, with exactly
+one complete emission byte-equal to the candidate, empty stderr, input tokens
+14,445, cached input 0 and output 795. No observed model or cost was reported.
+[Command, captures and review](../reviews/2026-10-05-repository-review/README.md#fresh-live-backend-evidence).
+
+An initial outer-sandbox attempt failed before generation during app-server
+initialization with a read-only-filesystem error; it is retained separately.
+This confirms this one outline path on 0.160.0, not full story/headless acceptance
+on that version. Tool/global instruction isolation, model overrides, cancellation
+and rate-limit questions retain their prior scope. Claude was not run live.
+
 ## Confirmed: shipped live headless gate, 0.159.3, 2026-10-02
 
 The actual `cyoa play --headless --backend codex` command passed Phase 1 item 9
@@ -229,7 +245,8 @@ transcript is an explicit unsupported-profile example despite its CLI exit 0.
 - Full account/global instruction, skill/plugin/MCP and tool isolation is **not
   verified**. The byte-limit canary covers local AGENTS.md only. Read-only does
   not disable reads/tools; rejecting their events cannot prevent earlier effects.
-- CLI versions beyond the exercised 0.157.1/0.159.3 runs, explicit model choices, longer/different-mode streaming,
+- CLI versions beyond the exercised 0.157.1/0.159.3 runs and the narrow 0.160.0
+  outline smoke above, explicit model choices, longer/different-mode streaming,
   recovery after error notices and a reliable discriminator among multiple agent
   messages remain outside this profile until independently exercised.
 - Rate-limit/unsatisfiable-schema/sandbox-denial outcomes and failure/cancellation

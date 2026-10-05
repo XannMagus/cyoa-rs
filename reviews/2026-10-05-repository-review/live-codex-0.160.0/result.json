@@ -1,0 +1,12 @@
+{
+  "accepted": true,
+  "elapsed_ms": 53476,
+  "requested_model": null,
+  "observed_model": null,
+  "emissions": 1,
+  "exact_emission": true,
+  "input_tokens": 14445,
+  "cached_input_tokens": 0,
+  "output_tokens": 795,
+  "domain_outline_valid": true
+}
