@@ -162,6 +162,23 @@ impl GameState {
         }
     }
 
+    /// Re-applies a restore policy to an already-restored game, consuming it.
+    /// A policy resolving to the active limits returns the game untouched, so a
+    /// caller can tell a rebinding by comparing `limits()` before and after.
+    pub fn with_restore_limits(self, policy: RestoreLimits) -> Self {
+        if policy.resolve(self.original_limits) == self.limits {
+            return self;
+        }
+        Self::restore(
+            self.brief,
+            self.world,
+            self.style,
+            self.original_limits,
+            policy,
+            self.turns,
+        )
+    }
+
     pub fn brief(&self) -> &Brief {
         &self.brief
     }

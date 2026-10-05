@@ -457,7 +457,8 @@
           "current_limits_apply_to_every_snapshot_and_survive_commit_and_rewind",
           "original_limits_remain_available_after_restoring_with_current_settings",
           "raising_the_limit_allows_future_events_without_recovering_discarded_ones",
-          "empty_restored_games_use_the_selected_limits_for_their_opening_summary"
+          "empty_restored_games_use_the_selected_limits_for_their_opening_summary",
+          "consuming_rebind_matches_a_full_restore_and_leaves_matching_policies_untouched"
         ]
       },
       {

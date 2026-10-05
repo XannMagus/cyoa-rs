@@ -206,3 +206,39 @@ fn empty_restored_games_use_the_selected_limits_for_their_opening_summary() {
     assert_events(&restored, &["two"], 1);
     assert_eq!(restore(&source, RestoreLimits::Original), source);
 }
+
+#[test]
+fn consuming_rebind_matches_a_full_restore_and_leaves_matching_policies_untouched() {
+    let original = Limits {
+        max_major_events: MajorEventLimit::new(4).unwrap(),
+        ..Limits::default()
+    };
+    let mut source = game(original);
+    commit_events(&mut source, &["one", "two"]);
+    commit_events(&mut source, &["three", "four"]);
+    let narrowed = Limits {
+        max_major_events: MajorEventLimit::new(1).unwrap(),
+        ..original
+    };
+    for policy in [
+        RestoreLimits::Original,
+        RestoreLimits::Current(original),
+        RestoreLimits::Current(narrowed),
+    ] {
+        assert_eq!(
+            source.clone().with_restore_limits(policy),
+            restore(&source, policy),
+            "{policy:?}"
+        );
+    }
+    // A policy that resolves to the active limits returns the same game.
+    assert_eq!(
+        source.clone().with_restore_limits(RestoreLimits::Original),
+        source
+    );
+    let rebound = source
+        .clone()
+        .with_restore_limits(RestoreLimits::Current(narrowed));
+    assert_eq!(rebound.limits(), narrowed);
+    assert_events(&rebound, &["four"], 1);
+}

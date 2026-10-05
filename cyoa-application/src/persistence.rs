@@ -462,34 +462,40 @@ impl<R: GameRepository> PersistenceUseCases<R> {
         cancel: &CancellationToken,
     ) -> Result<LoadedGame, StorageFailure> {
         check_cancelled(cancel, StorageOperation::Load)?;
-        let mut stored = self.repository.load(&command.id, command.copy, cancel)?;
+        let StoredGame {
+            snapshot,
+            metadata,
+            stamp,
+            copy,
+            unrecognized_fields,
+        } = self.repository.load(&command.id, command.copy, cancel)?;
         check_cancelled(cancel, StorageOperation::Load)?;
-        let old = stored.snapshot.game();
-        let restored = GameState::restore(
-            old.brief().clone(),
-            old.selected_world().clone(),
-            old.style().clone(),
-            old.original_limits(),
-            command.limits,
-            old.turns().to_vec(),
-        );
-        let changed_by_restore = restored != *old;
+        let source = snapshot.source();
+        let stored_limits = snapshot.game().limits();
+        // Consumed, not cloned: a 64 MiB story is rebound in place or returned as is.
+        let restored = snapshot.into_game().with_restore_limits(command.limits);
+        let changed_by_restore = restored.limits() != stored_limits;
         check_cancelled(cancel, StorageOperation::Load)?;
         // Restoring never changes the turn log, so the source still admits it.
-        stored.snapshot =
-            SaveSnapshot::new(restored, stored.snapshot.source()).map_err(|e| StorageFailure {
-                operation: StorageOperation::Load,
-                stage: StorageStage::Decode,
-                kind: StorageFailureKind::Corrupt {
-                    location: "source".into(),
-                },
-                message: e.to_string().into(),
-                visibility: WriteVisibility::Unchanged,
-                pending: None,
-                cleanup_errors: Box::default(),
-            })?;
+        let snapshot = SaveSnapshot::new(restored, source).map_err(|e| StorageFailure {
+            operation: StorageOperation::Load,
+            stage: StorageStage::Decode,
+            kind: StorageFailureKind::Corrupt {
+                location: "source".into(),
+            },
+            message: e.to_string().into(),
+            visibility: WriteVisibility::Unchanged,
+            pending: None,
+            cleanup_errors: Box::default(),
+        })?;
         Ok(LoadedGame {
-            stored,
+            stored: StoredGame {
+                snapshot,
+                metadata,
+                stamp,
+                copy,
+                unrecognized_fields,
+            },
             changed_by_restore,
         })
     }
