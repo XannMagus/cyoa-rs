@@ -10,12 +10,13 @@ or weaken a regression to make such a change pass. The required-test registry an
 `bash scripts/check_contracts.sh` guard existing coverage in CI and local work.
 The contract catalog distinguishes implemented guarantees from pending obligations.
 
-The next implementation sequence is [Phase 1: real CLI backends and headless
-play](docs/plans/phase1-headless-backends.md). It starts from the completed scripted
+The completed Phase 1 implementation sequence is [real CLI backends and headless
+play](docs/plans/phase1-headless-backends.md). It started from the completed scripted
 engine and specifies dependent commits, error/edge/nominal TDD, process cleanup,
 backend-local compatibility, headless ownership and separate live-verification gates.
 Use that document for the next phase rather than implementing historical sketches
-below literally. Its features remain planned until their acceptance evidence exists.
+below literally. Its acceptance evidence is linked below. Phase 3's TUI play
+screen over an existing save is next; phases 0–2 are complete.
 The immediate adapter slice is detailed in [the Codex adapter plan](docs/plans/phase1-codex-adapter.md),
 including evidence gates, atomic commits and cross-backend acceptance obligations.
 Steps 1–7 are complete: frozen live discovery, isolated request preparation,
@@ -225,8 +226,8 @@ authenticated, or even installed. That shapes how work on each backend proceeds:
   documentation (official CLI docs, `--help` output) rather than invented
   behavior, and mark every such assumption inline, e.g.
   `// UNVERIFIED: from OpenAI's published codex exec docs, not run live — see reference/02-codex-cli.md`.
-  Codex's flags and one authenticated cast are now confirmed; the full adapter
-  and remaining behaviors are still incomplete (see its dated reference file).
+  Both adapters and their live headless gates are now complete; each reference
+  file records the exercised versions and remaining questions separately.
 - **Each backend's `reference/0N-*-cli.md` file is the single source of truth for
   what's actually been verified**, split into a "Confirmed" section (only things
   actually run and observed against a live call) and an "Open questions" section
@@ -246,6 +247,10 @@ authenticated, or even installed. That shapes how work on each backend proceeds:
 ---
 
 ## Backend: `claude -p` (Claude Code headless mode)
+
+The invocation sketches in this section are historical discovery notes. For the
+shipped profile (including default model selection and the local advisor rule),
+use `reference/01-claude-cli.md`; its live evidence remains authoritative.
 
 **Status: verified live** against the installed `claude` binary — see
 `reference/01-claude-cli.md` for the full transcript evidence. **The flag surface
@@ -343,6 +348,11 @@ keeping only the semantic field rules. The Markdown formatting instructions
 ---
 
 ## Backend: `codex exec` (OpenAI Codex CLI headless mode)
+
+**Historical discovery section (2026-09-24–26).** The incomplete statuses and
+open questions below describe those checkpoints, not the current implementation.
+The adapter and live headless gates are complete; `reference/02-codex-cli.md`
+governs the supported invocation and remaining questions.
 
 **2026-09-26 update:** step 1 of the Codex adapter plan is complete, with a
 [frozen 0.157.1 discovery profile](reference/02-codex-cli.md) and
@@ -501,16 +511,16 @@ below (notably persistence, subprocess adapters, and JSON schemas) and the forme
 "one layer of types" rule. The original two-crate scaffold was the starting
 point, not a requirement to fit all four layers into two crates. Exact module/crate
 splits enforce these dependencies; this
-decision records architecture. The scaffold has now been split as follows; game
-logic is being ported incrementally; application use cases remain to be implemented.
+decision records architecture. The workspace now implements domain rules,
+generation/persistence use cases, both backends and Linux headless play.
 
 ### Current workspace layout
 
 ```text
-cyoa-core/            domain types and business rules (characters/summary merge implemented)
-cyoa-application/     orchestration and ports; cancellation and image port today
-cyoa-infrastructure/ external adapters; JSON transport and disabled image adapter
-cyoa-presentation/   terminal interface, depending inward on application
+cyoa-core/            domain types, summary merge, chapters, limits and rewind
+cyoa-application/     generation/persistence use cases and inward-owned ports
+cyoa-infrastructure/ CLI backends, templates, save codec, supervised atomic storage
+cyoa-presentation/   canonical session, owned workers and Linux headless interface
 cyoa-cli/            executable composition root
 ```
 
@@ -538,8 +548,8 @@ The first generation after cast selection (the opening turn) must additionally
 request a cast-identity check using `reference/prompt-additions.toml`; this adds
 instructions to an existing call, not a separate deduplication call. Preserve
 distinct namesakes and reuse established ids rather than introducing aliases as
-new characters. The prompt addition is prepared but not yet wired: the prompt
-renderer has not been implemented. It cannot guarantee semantic deduplication or
+new characters. The implemented renderer includes the addition in the existing
+opening call (PROMPTS-001). It cannot guarantee semantic deduplication or
 delete/consolidate existing cast entries with the current SummaryUpdate schema.
 An actual semantic consolidation operation would need an explicit future schema
 and domain change; do not silently treat prose or name similarity as a merge command.
@@ -557,7 +567,7 @@ required fields or the existing cast. Required world/situation validation happen
 when entering the domain, before merging.
 
 `UpcomingEventsUpdate::{Keep, Replace}` expresses nullable wire-list semantics
-inside the domain; future DTO mapping must preserve omitted/null versus empty.
+inside the domain; implemented DTO mapping preserves omitted/null versus empty.
 Optional world/name/id fields likewise represent normalized blank wire values;
 this does not change the schemas sent to the model. `MajorEventLimit` is positive
 and defaults to 30; the bounded event collection carries its limit through merges.
@@ -853,6 +863,9 @@ you enable `serde_json/preserve_order`. `narrative` must be the first property o
 is pointless — alphabetically it would be third. Enable the feature and add a test asserting
 `StoryTurn`'s first property is `narrative`.
 
+**Historical schema-boundary checkpoint (2026-09-24).** The placement and
+boundary rules below still apply; later generation orchestration is implemented.
+
 **Implemented** in `cyoa-infrastructure/src/generation/{wire,schema}.rs` (not
 `cyoa-core`: `schemars`/`toml`/`minijinja` are architecture-check-forbidden there,
 per the "Project layout" Clean Architecture decision — the generic JSON `backend.rs`
@@ -864,8 +877,8 @@ mapping into `cyoa-core` domain types, colocated per struct rather than in a sep
 parsing function — the pattern is `~/code/clocker/src/timelog/timelogentry.rs`'s
 `TimeLogEntryDTO`, adapted because `cyoa-core` can't carry `#[serde(into/from)]` itself.
 This makes `wire.rs` the Rust home of calibre's `validated_world`/
-`validated_player_characters`/`validated_npcs`/`validated_turn` — `engine.rs` (not yet
-built) only orchestrates: call the backend, feed the stream scanner, call these
+`validated_player_characters`/`validated_npcs`/`validated_turn` — `engine.rs`
+orchestrates: call the backend, feed the stream scanner, call these
 conversions, call `GameState::commit_turn`. `schema.rs` builds each schema via
 `SchemaGenerator::default()` (schemars' default settings: `$defs`/`$ref` for nested
 types, not inlined) and injects `schema_docs.toml` descriptions (minijinja-rendered
@@ -890,7 +903,7 @@ The generic functions (`world_outline_schema`, etc., in `schema.rs`) keep
 emitting the full, standards-compliant schema, `"$schema"` included.
 `generation::backend_compat::claude_cli` — its own file, a sibling of
 `schema.rs`, not a submodule nested inside it — strips the key immediately
-before a future `ClaudeCliBackend` would call `--json-schema`; only that
+before `ClaudeCliBackend` calls `--json-schema`; only that
 file knows about this quirk. Building `CodexCliBackend` means adding
 `backend_compat::codex_cli` as a new file with whatever *it* turns out to
 need, discovered the same way (a real, authenticated `codex exec` call),
@@ -1044,6 +1057,11 @@ Because we use `--json-schema`, there must be **no** "respond with only valid JS
 Do add one line: *"Emit the fields of the JSON object in the order they appear in the
 schema."* Calibre gets ordering free from Python field order; here it should be asked for.
 
+**Historical renderer checkpoint (2026-09-24).** The free-renderer and
+`startup_self_check` API descriptions below were superseded by the bundled-only
+`GenerationTemplates` instance on 2026-09-25. Loaded prompts now also include
+CHAPTER-001's retitling repairs. Arbitrary overrides remain pending PROMPTS-003.
+
 **Implemented** in `cyoa-infrastructure/src/generation/prompts.rs`, alongside
 `schema.rs` above (same crate, same layering reason). `defaults/prompts.toml`
 is the loaded, ready-to-use file (`reference/prompts.toml` stays the honest
@@ -1064,6 +1082,12 @@ over `toml::Value`, ready for `cyoa-cli`'s future `config.rs` to call once
 that exists; today's render functions always use the bundled defaults only.
 
 ## Persistence
+
+**Historical design sketch.** Phase 2 has implemented save v1, supervised Linux
+atomic storage, canonical autosave and explicit restore/recovery. The detailed
+authority is `docs/plans/phase2-persistence.md` and its S7 acceptance audit;
+the earlier absence statements and proposed file/atomic-write shapes below
+describe the pre-implementation plan, not the shipped adapter.
 
 The 2026-09-24 restore decision supersedes the earlier runtime-only limits policy:
 future save DTOs must record the game's original `Limits` alongside the game, so
@@ -1221,6 +1245,10 @@ templates, all disabled. (Define the trait in Phase 0; this is just plumbing.)
 
 ## Risks, ranked
 
+This is the original seed-plan ranking. Risk 8's unverified Codex status below
+is historical: the supported complete-only adapter and both live gates are now
+complete. The backend reference files retain current remaining questions.
+
 1. **The delta merge.** ~90 lines encoding a dozen subtle decisions. A subtle mis-port
    produces a game that works fine for ten turns and then quietly forks a character in two.
    Write the tests first; consider the differential test against a literal transcription.
@@ -1244,7 +1272,7 @@ templates, all disabled. (Define the trait in Phase 0; this is just plumbing.)
    Resolve this with a live `codex login` + test call before writing `CodexCliBackend`,
    not while writing it.
 
-## Deliverable for this session: a self-contained seed repo
+## Historical seed-session deliverable: a self-contained seed repo
 
 The implementation happens in a later session on another machine, so this session's
 output is a **seed directory that can be `git init`'d, pushed to a personal GitHub repo,
@@ -1327,7 +1355,12 @@ directory is left ready for you to do that on your own machine.
 - Re-run a saved game after adding a new optional field to confirm the
   `#[serde(default)]` forward-compatibility story actually holds.
 
-## Generation-boundary repairs (2026-09-24)
+## Historical implementation checkpoints
+
+The dated records below retain their original scope and then-pending work.
+Current completion and next-phase status are at the top of this plan and in README.
+
+### Generation-boundary repairs (2026-09-24)
 
 The generation-boundary review's R1, R2 and R4 are repaired. Cast rendering accepts
 an outline before a cast exists. Default generation preferences remain 3–5
@@ -1338,7 +1371,7 @@ The copied reference files remain historical source. Registered boundary regress
 cover construction through selection and opening prompt, limit extremes, and
 JSON retitling through commit/rewind. Application orchestration remains pending.
 
-## Validated configuration and override authorization (2026-09-25)
+### Validated configuration and override authorization (2026-09-25)
 
 Step 4 replaces the earlier `startup_self_check` and default-only free renderers
 with `GenerationTemplates`. Its public constructor validates bundled configuration;

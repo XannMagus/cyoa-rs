@@ -2,7 +2,8 @@
 
 The user's 2026-10-03 decision prioritizes independent scrutiny of domain tests:
 core invariants must not be accepted merely because a weak test passes. The
-existing 37 targeted mutations remain useful for the wider contract harness.
+handwritten targeted mutations remain useful for the wider contract harness
+(45 after the 2026-10-05 repository review repairs).
 Automated mutation generation is additionally required for the domain (TESTING-001).
 
 ## Running the gate

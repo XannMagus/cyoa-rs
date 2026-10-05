@@ -10,7 +10,7 @@ handoff" section — this project is expected to be implemented across sessions
 using different coding agents on different machines, each with its own CLI
 already authenticated.
 
-This repo contains the Rust workspace scaffold, design research, and ported
+This repo contains the implemented Phase 0–2 Rust workspace, design research, and ported
 prompt/schema reference content. No calibre checkout is needed.
 
 ## Status
@@ -44,7 +44,8 @@ See the [Phase 1 plan](docs/plans/phase1-headless-backends.md)
 and each backend reference file for the remaining work; offline transport tests
 do not establish live vendor behavior.
 
-Codex adapter **step 2 is implemented**: isolated schema adaptation and owned,
+The following adapter steps are completed implementation history, with evidence
+scoped to each checkpoint. Codex adapter **step 2 is implemented**: isolated schema adaptation and owned,
 offline invocation preparation, with [review repairs and evidence](reviews/2026-09-26-codex-step2/review-and-repairs.md).
 **Step 3 is implemented offline**: a private Codex event state machine validates
 the frozen complete-only profile and retains exact candidate evidence on failure.
@@ -62,14 +63,15 @@ isolation and failure evidence ([record](reviews/2026-09-28-codex-step6/README.m
 cancellation with observed PID/workspace cleanup and unchanged game state
 ([evidence](reviews/2026-10-02-codex-step7/README.md)). The
 [Claude adapter slice](docs/plans/phase1-claude-adapter.md) is complete on the same
-terms. Next is the [presentation/headless handoff](docs/plans/phase1-presentation-handoff.md),
-with an independent live headless gate per backend. The
+terms. The [presentation/headless handoff](docs/plans/phase1-presentation-handoff.md)
+and independent live headless gate per backend are also complete. The
 [controller/worker slice](docs/plans/phase1-controller-and-worker.md) is now
 implemented offline: canonical session ownership, typed request IDs/revisions,
 stale/cancelled-result rejection, bounded progress, thread join and explicit retry.
 The complete story and both actual adapters are exercised through controlled child
 fixtures. Linux headless play and the credential-free demo are implemented;
-the gate now runs 42 mutations, including persistence, final error-report backpressure and
+the gate now runs 45 mutations, including persistence, backend ambiguity, input bounds,
+final error-report backpressure and
 demo cancellation/retry regressions ([repair evidence](reviews/2026-10-03-headless-repairs/README.md)).
 TUI and export remain pending. Phase 2 persistence is described below.
 
@@ -168,7 +170,9 @@ and a disagreeing final passage is printed as a correction. Ctrl-C during
 generation cancels and joins the worker; idle Ctrl-C, `/quit` and EOF exit. Input
 while busy is rejected except the control/query commands. Scripts must wait for
 stage prompts rather than queue an entire game; EOF during generation cancels it.
-Input lines are UTF-8, bounded to 64 KiB. A closed or stalled output pipe is an I/O
+Input lines are UTF-8, bounded to 64 KiB including CR/LF delimiters when present;
+buffered bytes from later lines do not count against the current line.
+A closed or stalled output pipe is an I/O
 error and closes the session instead of blocking cancellation.
 
 Choose exactly one backend or demo. Optional `--executable`, `--home`,
@@ -209,7 +213,7 @@ claims and inward dependencies, then runs workspace runtime tests with Nextest
 and doctests (including compile-fail examples) with Cargo. The `workspace`
 Nextest profile disables retries and runs the complete suite even after a failure.
 Pinned tool versions are checked before starting the gate. It also
-copies the current source to a temporary directory and verifies that 42 deliberate
+copies the current source to a temporary directory and verifies that 45 deliberate
 regressions fail their exact registered behavioral tests. Compiler failures and
 missing tests do not count as detected regressions. The isolated build uses cached
 Cargo dependencies after Clippy; the first mutation build costs additional time.

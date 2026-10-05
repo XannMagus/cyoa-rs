@@ -1,0 +1,9 @@
+   Compiling cyoa-presentation v0.1.0 (/tmp/tmp.C0ElapA73O/work/cyoa-presentation)
+   Compiling cyoa-cli v0.1.0 (/tmp/tmp.C0ElapA73O/work/cyoa-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.47s
+     Running tests/headless.rs (/tmp/tmp.C0ElapA73O/target/debug/deps/headless-4005e788edfc1c99)
+
+running 1 test
+test input_line_bound_ignores_read_ahead_and_rejects_oversized_lines ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 14 filtered out; finished in 0.14s

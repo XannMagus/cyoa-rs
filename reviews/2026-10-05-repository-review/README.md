@@ -4,7 +4,9 @@ Reviewed baseline: `e29dce1c2438c8623e405d6c9c341c5f628bfc65`, initially clean.
 Scope: implementation against PLAN, current project contracts and required-test
 registry, README progress claims, Phase 0 acceptance and Phase 2 S7 evidence.
 This is a review, not a repair: production code, regression expectations and
-decision coverage states are unchanged. Three reproduced findings remain open.
+decision coverage states were unchanged by the review. Three findings were open
+at that baseline; the subsequent [repair record](repairs.md) records their fixes
+and verification. The findings and original probes below remain historical evidence.
 
 ## Findings
 

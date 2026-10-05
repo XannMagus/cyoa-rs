@@ -1,0 +1,34 @@
+   Compiling cyoa-infrastructure v0.1.0 (/tmp/tmp.C0ElapA73O/work/cyoa-infrastructure)
+warning: field `auth_method` is never read
+   --> cyoa-infrastructure/src/backends/claude_cli/adapter.rs:108:9
+    |
+104 |     struct AuthStatus {
+    |            ---------- field in this struct
+...
+108 |         auth_method: String,
+    |         ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `cyoa-infrastructure` (lib) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.83s
+     Running tests/claude_backend.rs (/tmp/tmp.C0ElapA73O/target/debug/deps/claude_backend-baf05eeafc9c1416)
+
+running 1 test
+test preflight_rejects_non_subscription_unknown_and_conflicting_auth_without_generation ... FAILED
+
+failures:
+
+---- preflight_rejects_non_subscription_unknown_and_conflicting_auth_without_generation stdout ----
+
+thread 'preflight_rejects_non_subscription_unknown_and_conflicting_auth_without_generation' (42341) panicked at cyoa-infrastructure/tests/claude_backend.rs:330:10:
+auth acceptance regression: {"loggedIn":true,"authMethod":"api_key","apiProvider":"firstParty"}: ClaudeCliBackend { config: ClaudeInvocationConfig { executable: ClaudeExecutable(ResolvedExecutable("/tmp/tmp.C0ElapA73O/target/debug/subprocess_fixture")), home: "/tmp/.tmprjf3ao", selected_path: "/bin", config_dir: Some("/tmp/.tmprjf3ao/auth"), model: None, bounds: ProcessBounds { deadline: 3s, max_stdout_bytes: MaxStdoutBytes(1048576), max_stderr_bytes: MaxStderrBytes(4096) } } }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    preflight_rejects_non_subscription_unknown_and_conflicting_auth_without_generation
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 21 filtered out; finished in 0.06s
+
+error: test failed, to rerun pass `-p cyoa-infrastructure --test claude_backend`

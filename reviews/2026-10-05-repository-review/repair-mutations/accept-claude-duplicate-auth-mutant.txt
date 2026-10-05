@@ -1,0 +1,22 @@
+   Compiling cyoa-infrastructure v0.1.0 (/tmp/tmp.C0ElapA73O/work/cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.22s
+     Running tests/claude_backend.rs (/tmp/tmp.C0ElapA73O/target/debug/deps/claude_backend-baf05eeafc9c1416)
+
+running 1 test
+test duplicate_auth_keys_fail_closed_before_generation_and_retain_status ... FAILED
+
+failures:
+
+---- duplicate_auth_keys_fail_closed_before_generation_and_retain_status stdout ----
+
+thread 'duplicate_auth_keys_fail_closed_before_generation_and_retain_status' (65304) panicked at cyoa-infrastructure/tests/claude_backend.rs:40:9:
+ambiguous Claude authentication was accepted: {"loggedIn":true,"authMethod":"api_key","authMethod":"claude.ai","apiProvider":"firstParty"}
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    duplicate_auth_keys_fail_closed_before_generation_and_retain_status
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 21 filtered out; finished in 0.03s
+
+error: test failed, to rerun pass `-p cyoa-infrastructure --test claude_backend`
