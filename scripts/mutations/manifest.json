@@ -365,5 +365,14 @@
     "test": "failed_autosave_keeps_accepted_turn_and_storage_retry_never_regenerates",
     "file": "cyoa-presentation/src/persistence.rs",
     "failure_contains": "save failure must never retry inference"
+  },
+  {
+    "id": "accept-duplicate-codex-control-key",
+    "decision": "BACKENDS-001",
+    "package": "cyoa-infrastructure",
+    "target": "codex_backend",
+    "test": "duplicated_terminal_type_cannot_authorize_success_at_the_real_boundary",
+    "file": "cyoa-infrastructure/src/backends/codex_cli/protocol.rs",
+    "failure_contains": "protocol acceptance regression"
   }
 ]

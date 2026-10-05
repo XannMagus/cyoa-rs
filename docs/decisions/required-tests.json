@@ -163,7 +163,8 @@
           "crlf_in_diagnostics_is_preserved_without_normalization",
           "non_utf8_stderr_diagnostics_survive_the_process_boundary_and_lossy_display_does_not_panic",
           "fixture_round_trips_quotes_newlines_and_unicode_through_a_real_process_boundary",
-          "fixture_reports_the_exact_argv_and_stdin_prompt_bytes_it_received"
+          "fixture_reports_the_exact_argv_and_stdin_prompt_bytes_it_received",
+          "duplicated_payload_keys_are_rejected_with_the_exact_payload_retained"
         ]
       },
       {
@@ -194,7 +195,9 @@
         "target": "lib",
         "tests": [
           "backends::codex_cli::tests::prepared_request_owns_schema_stdin_environment_and_workspace_until_transfer_drop",
-          "generation::backend_compat::codex_cli::tests::framing_matches_the_committed_discovery_capture_byte_for_byte"
+          "generation::backend_compat::codex_cli::tests::framing_matches_the_committed_discovery_capture_byte_for_byte",
+          "json::tests::duplicate_keys_are_rejected_at_any_depth_and_never_resolved",
+          "json::tests::syntax_errors_stay_distinct_from_duplicates"
         ]
       },
       {
@@ -993,7 +996,8 @@
           "failed_auth_exit_is_unavailable_even_with_a_success_looking_status_on_stdout",
           "ineligible_message_is_rejected_after_cleanup",
           "candidate_without_terminal_is_rejected_after_cleanup",
-          "conflicting_terminal_is_rejected_after_cleanup"
+          "conflicting_terminal_is_rejected_after_cleanup",
+          "duplicated_terminal_type_cannot_authorize_success_at_the_real_boundary"
         ]
       },
       {
@@ -1018,7 +1022,9 @@
           "backends::claude_cli::protocol::tests::frozen_completed_variants_emit_expected_previews_payload_usage_and_provenance",
           "backends::claude_cli::protocol::tests::live_failure_captures_are_rejected_at_the_expected_record",
           "backends::claude_cli::protocol::tests::malformed_terminal_metadata_keeps_the_exact_candidate_span",
-          "backends::claude_cli::protocol::tests::duplicate_control_fields_make_a_record_ambiguous_and_are_rejected"
+          "backends::claude_cli::protocol::tests::duplicate_control_fields_make_a_record_ambiguous_and_are_rejected",
+          "backends::codex_cli::protocol::tests::duplicated_control_keys_reject_the_record_instead_of_picking_one",
+          "backends::codex_cli::protocol::tests::duplicated_payload_keys_are_invalid_payload_with_the_candidate_retained"
         ]
       },
       {

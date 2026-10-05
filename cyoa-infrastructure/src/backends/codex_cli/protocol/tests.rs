@@ -356,3 +356,65 @@ fn live_tool_canary_is_unsupported_even_though_the_cli_exited_successfully() {
         "commentary evidence survives tool rejection"
     );
 }
+
+#[test]
+fn duplicated_control_keys_reject_the_record_instead_of_picking_one() {
+    let success = String::from_utf8(fixture("success.jsonl")).unwrap();
+    let records: Vec<&str> = success.lines().collect();
+    for (index, duplicated, retained) in [
+        (
+            0,
+            r#"{"type":"thread.started","thread_id":"a","thread_id":"b"}"#,
+            false,
+        ),
+        (
+            2,
+            r#"{"type":"item.completed","item":{"id":"i","type":"agent_message","text":"{}","text":"{\"x\":1}"}}"#,
+            false,
+        ),
+        (
+            2,
+            r#"{"type":"item.completed","item":{"id":"i","type":"agent_message","text":"{}"},"item":{"id":"j","type":"agent_message","text":"{}"}}"#,
+            false,
+        ),
+        // The last occurrence would have read as a successful completion.
+        (
+            3,
+            r#"{"type":"turn.failed","type":"turn.completed","usage":{"input_tokens":1,"output_tokens":1}}"#,
+            true,
+        ),
+        (
+            3,
+            r#"{"type":"turn.completed","usage":{"output_tokens":5,"output_tokens":9}}"#,
+            true,
+        ),
+    ] {
+        let mut input = records.clone();
+        input[index] = duplicated;
+        let bytes = input.join("\n").into_bytes();
+        let failure = decode(&bytes).unwrap_err();
+        assert_eq!(
+            failure.error.kind,
+            ErrorKind::DuplicateField,
+            "{duplicated}"
+        );
+        assert_eq!(failure.error.record, index + 1, "{duplicated}");
+        assert_eq!(failure.error.location, "$", "{duplicated}");
+        assert_eq!(
+            failure.candidate.map(|c| c.payload),
+            retained.then(payload),
+            "{duplicated}"
+        );
+    }
+}
+
+#[test]
+fn duplicated_payload_keys_are_invalid_payload_with_the_candidate_retained() {
+    let text = r#"{"title":"Harbour","title":"Elsewhere","world_description":"x"}"#;
+    let mut input = events();
+    input[2]["item"]["text"] = json!(text);
+    let failure = decode(&transcript(input)).unwrap_err();
+    assert_eq!(failure.error.kind, ErrorKind::InvalidPayload);
+    assert_eq!(failure.error.location, "$.item.text");
+    assert_eq!(failure.candidate.map(|c| c.payload).as_deref(), Some(text));
+}

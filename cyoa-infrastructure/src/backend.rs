@@ -38,13 +38,17 @@ pub struct GenerationResponse {
 }
 
 impl GenerationResponse {
+    /// Duplicate object keys are rejected, never resolved: whichever backend
+    /// produced the payload, a repeated field would otherwise silently pick
+    /// one model answer over another.
     pub fn from_json(raw_response: String, usage: TokenUsage) -> Result<Self, BackendError> {
-        let value =
-            serde_json::from_str(&raw_response).map_err(|error| BackendError::Generation {
+        let value = crate::json::strict_value(raw_response.as_bytes()).map_err(|error| {
+            BackendError::Generation {
                 message: format!("invalid structured response: {error}"),
                 raw_response: raw_response.clone(),
                 diagnostics: TransportDiagnostics::empty(),
-            })?;
+            }
+        })?;
         Ok(Self {
             value,
             raw_response,

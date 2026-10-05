@@ -2,6 +2,7 @@
 //! success: the parent adapter must still reconcile the supervisor's outcome.
 
 use crate::backend::{TokenUsage, normalize_input_tokens};
+use crate::json::{StrictJsonError, strict_value};
 
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 #[error("Codex record {record} at {location}: {kind:?}")]
@@ -15,6 +16,7 @@ pub(super) struct ProtocolError {
 pub(super) enum ErrorKind {
     InvalidUtf8,
     InvalidJson,
+    DuplicateField,
     InvalidField,
     Unsupported,
     Order,
@@ -121,9 +123,9 @@ impl Protocol {
         match self.state {
             State::Completed(completion) => {
                 // Delay syntax validation until the transcript is complete:
-                // commentary followed by JSON is ambiguous, not a repair path.
-                if serde_json::from_str::<serde_json::Value>(&completion.candidate.payload).is_err()
-                {
+                // commentary followed by JSON is ambiguous, not a repair path,
+                // and so is a payload whose duplicated key would pick a value.
+                if strict_value(completion.candidate.payload.as_bytes()).is_err() {
                     return Err(Failure {
                         error: error(
                             completion.candidate.record,
@@ -191,8 +193,15 @@ fn string_field<'a>(
 fn parse_event(bytes: &[u8], record: usize) -> Result<Event, ProtocolError> {
     let text =
         std::str::from_utf8(bytes).map_err(|_| error(record, "$", ErrorKind::InvalidUtf8))?;
-    let value: serde_json::Value =
-        serde_json::from_str(text).map_err(|_| error(record, "$", ErrorKind::InvalidJson))?;
+    // A duplicated control key (`type`, `item`, `error`, ...) makes the record
+    // ambiguous: reject it rather than letting the last occurrence decide.
+    let value = strict_value(text.as_bytes()).map_err(|fault| {
+        let kind = match fault {
+            StrictJsonError::DuplicateKey(_) => ErrorKind::DuplicateField,
+            StrictJsonError::Syntax(_) => ErrorKind::InvalidJson,
+        };
+        error(record, "$", kind)
+    })?;
     if !value.is_object() {
         return Err(error(record, "$", ErrorKind::InvalidField));
     }

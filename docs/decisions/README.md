@@ -443,6 +443,19 @@ is not control data and stays tolerated, and `structured_output` keeps its own
 a control field is duplicated. A thirty-first mutation (`accept-last-duplicate-field`)
 protects it at the real-child boundary.
 
+Duplicate keys, both backends (user decision, 2026-10-05): the 2026-10-05 review
+found Codex still parsing each JSONL record into `serde_json::Value`, so
+`{"type":"turn.failed","type":"turn.completed"}` read as success. Codex records
+are now parsed strictly (`DuplicateField`, location `$`, candidate retained when one
+already exists) inside the Codex adapter, and a duplicated payload key is
+`InvalidPayload`. Payload ambiguity is not vendor-specific, so the shared
+`GenerationResponse::from_json` also rejects duplicate keys for every backend,
+scripted and demo transports included. One shared strict parser
+(`cyoa-infrastructure/src/json.rs`) serves the adapters and the save codec.
+Claude's scoped record check is unchanged: model-authored message content stays
+tolerated there. Mutation `accept-duplicate-codex-control-key` protects the Codex
+record path at the real-child boundary.
+
 ### PRODUCT-001 Standalone TUI, persistence, export, and image boundary
 
 **Partial: terminal-independent controller/worker, Linux headless/demo and

@@ -81,6 +81,26 @@ fn malformed_response_is_an_error_with_original_diagnostics() {
 }
 
 #[test]
+fn duplicated_payload_keys_are_rejected_with_the_exact_payload_retained() {
+    for raw in [
+        r#"{"narrative":"first","narrative":"second"}"#,
+        r#"{"summary_update":{"current_situation":"a","current_situation":"b"}}"#,
+    ] {
+        match GenerationResponse::from_json(raw.into(), TokenUsage::default()).unwrap_err() {
+            BackendError::Generation {
+                message,
+                raw_response,
+                ..
+            } => {
+                assert_eq!(raw_response, raw);
+                assert!(message.contains("duplicate object key"), "{message}");
+            }
+            other => panic!("unexpected error: {other}"),
+        }
+    }
+}
+
+#[test]
 fn cached_tokens_cannot_exceed_total_but_unknown_is_not_zero() {
     assert!(InputTokens::new(5, Some(6)).is_err());
     assert_eq!(InputTokens::new(5, Some(5)).unwrap().cached(), Some(5));

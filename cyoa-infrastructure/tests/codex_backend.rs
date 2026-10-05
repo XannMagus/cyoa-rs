@@ -172,7 +172,10 @@ fn protocol_rejection_and_missing_completion_keep_candidate_without_emission() {
 // Cleanup is checked before the behavioral assertion so a surviving protocol
 // mutant cannot hide a leaked child or workspace behind an early panic.
 fn assert_protocol_rejected(name: &str) {
-    let fixture = Fixture::new(&capture(name), 0);
+    assert_transcript_rejected(name, &capture(name));
+}
+fn assert_transcript_rejected(name: &str, transcript: &[u8]) {
+    let fixture = Fixture::new(transcript, 0);
     let mut seen = 0;
     let result = fixture.backend().generate(
         request(&json!({})),
@@ -191,6 +194,15 @@ fn assert_protocol_rejected(name: &str) {
         "protocol acceptance regression: {name}: {result:?}"
     );
     assert_eq!(seen, 0);
+}
+
+#[test]
+fn duplicated_terminal_type_cannot_authorize_success_at_the_real_boundary() {
+    // The last `type` reads as a successful completion; the first is a failure.
+    let success = String::from_utf8(capture("success.jsonl")).unwrap();
+    let mut records: Vec<&str> = success.lines().collect();
+    records[3] = r#"{"type":"turn.failed","type":"turn.completed","usage":{"input_tokens":1,"output_tokens":1}}"#;
+    assert_transcript_rejected("duplicated terminal type", records.join("\n").as_bytes());
 }
 
 #[test]
