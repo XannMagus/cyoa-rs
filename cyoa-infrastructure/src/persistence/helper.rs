@@ -355,7 +355,7 @@ fn parse<T: serde::de::DeserializeOwned>(bytes: &[u8]) -> io::Result<T> {
     if bytes.len() > MAX_HELPER_BYTES {
         return Err(io::Error::other("helper document exceeds 160 MiB"));
     }
-    let value = codec::unique_value(bytes).map_err(io::Error::other)?;
+    let value = crate::json::strict_value(bytes).map_err(io::Error::other)?;
     serde_json::from_value(value).map_err(io::Error::other)
 }
 struct Limited {

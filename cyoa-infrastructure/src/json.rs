@@ -1,0 +1,152 @@
+//! Strict JSON parsing shared by adapters and the save codec.
+//!
+//! `serde_json::Value` silently keeps the last of two equal object keys, so a
+//! document can mean different things to different consumers. Strict parsing
+//! rejects every duplicate key, in every object, instead of picking one.
+//! Nesting stays bounded by serde_json's own recursion limit, which reports a
+//! syntax error long before the stack is at risk.
+
+use std::cell::Cell;
+use std::fmt;
+
+use serde::de::{self, DeserializeSeed, MapAccess, SeqAccess, Visitor};
+use serde_json::Value;
+
+#[derive(Debug, thiserror::Error)]
+pub(crate) enum StrictJsonError {
+    #[error(transparent)]
+    Syntax(serde_json::Error),
+    #[error("duplicate object key {0:?}")]
+    DuplicateKey(String),
+}
+
+/// Parses one complete JSON document, rejecting duplicate keys anywhere.
+pub(crate) fn strict_value(bytes: &[u8]) -> Result<Value, StrictJsonError> {
+    let duplicate = Cell::new(None);
+    let mut deserializer = serde_json::Deserializer::from_slice(bytes);
+    let parsed = Strict(&duplicate)
+        .deserialize(&mut deserializer)
+        .and_then(|value| deserializer.end().map(|()| value));
+    parsed.map_err(|error| match duplicate.take() {
+        Some(key) => StrictJsonError::DuplicateKey(key),
+        None => StrictJsonError::Syntax(error),
+    })
+}
+
+/// The first duplicate key is recorded out of band, so callers can tell it
+/// from a syntax error without parsing error messages.
+#[derive(Clone, Copy)]
+struct Strict<'a>(&'a Cell<Option<String>>);
+impl<'de> DeserializeSeed<'de> for Strict<'_> {
+    type Value = Value;
+    fn deserialize<D: de::Deserializer<'de>>(self, d: D) -> Result<Value, D::Error> {
+        d.deserialize_any(self)
+    }
+}
+impl<'de> Visitor<'de> for Strict<'_> {
+    type Value = Value;
+    fn expecting(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        f.write_str("JSON with unique object keys")
+    }
+    fn visit_bool<E: de::Error>(self, v: bool) -> Result<Value, E> {
+        Ok(v.into())
+    }
+    fn visit_i64<E: de::Error>(self, v: i64) -> Result<Value, E> {
+        Ok(v.into())
+    }
+    fn visit_u64<E: de::Error>(self, v: u64) -> Result<Value, E> {
+        Ok(v.into())
+    }
+    fn visit_f64<E: de::Error>(self, v: f64) -> Result<Value, E> {
+        serde_json::Number::from_f64(v)
+            .map(Value::Number)
+            .ok_or_else(|| E::custom("nonfinite number"))
+    }
+    fn visit_str<E: de::Error>(self, v: &str) -> Result<Value, E> {
+        Ok(v.into())
+    }
+    fn visit_string<E: de::Error>(self, v: String) -> Result<Value, E> {
+        Ok(v.into())
+    }
+    fn visit_unit<E: de::Error>(self) -> Result<Value, E> {
+        Ok(Value::Null)
+    }
+    fn visit_none<E: de::Error>(self) -> Result<Value, E> {
+        Ok(Value::Null)
+    }
+    fn visit_seq<A: SeqAccess<'de>>(self, mut a: A) -> Result<Value, A::Error> {
+        let mut values = vec![];
+        while let Some(value) = a.next_element_seed(self)? {
+            values.push(value);
+        }
+        Ok(Value::Array(values))
+    }
+    fn visit_map<A: MapAccess<'de>>(self, mut a: A) -> Result<Value, A::Error> {
+        let mut values = serde_json::Map::new();
+        while let Some(key) = a.next_key::<String>()? {
+            if values.contains_key(&key) {
+                let error = de::Error::custom(format!("duplicate object key {key:?}"));
+                self.0.set(Some(key));
+                return Err(error);
+            }
+            let value = a.next_value_seed(self)?;
+            values.insert(key, value);
+        }
+        Ok(Value::Object(values))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn duplicate_keys_are_rejected_at_any_depth_and_never_resolved() {
+        for document in [
+            r#"{"type":"turn.failed","type":"turn.completed"}"#,
+            r#"{"item":{"text":"a","text":"b"}}"#,
+            r#"[{"ok":1},{"x":{"y":[{"k":1,"k":1}]}}]"#,
+        ] {
+            assert!(
+                matches!(
+                    strict_value(document.as_bytes()),
+                    Err(StrictJsonError::DuplicateKey(_))
+                ),
+                "{document}"
+            );
+        }
+    }
+
+    #[test]
+    fn syntax_errors_stay_distinct_from_duplicates() {
+        for document in ["{", r#"{"a":1} trailing"#, "", r#"{"a":1,}"#] {
+            assert!(
+                matches!(
+                    strict_value(document.as_bytes()),
+                    Err(StrictJsonError::Syntax(_))
+                ),
+                "{document:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn unique_documents_parse_identically_to_serde_json() {
+        let document = r#"{"a":[1,2.5,"x",null,true,{"b":{}}],"c":"é"}"#;
+        assert_eq!(
+            strict_value(document.as_bytes()).unwrap(),
+            serde_json::from_str::<Value>(document).unwrap()
+        );
+    }
+
+    #[test]
+    fn excessive_nesting_is_a_bounded_syntax_error() {
+        let deep = "[".repeat(100_000) + &"]".repeat(100_000);
+        assert!(matches!(
+            strict_value(deep.as_bytes()),
+            Err(StrictJsonError::Syntax(_))
+        ));
+        let modest = "[".repeat(64) + &"]".repeat(64);
+        assert!(strict_value(modest.as_bytes()).is_ok());
+    }
+}

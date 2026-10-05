@@ -4,13 +4,8 @@ use super::{
     migrations,
 };
 use cyoa_application::persistence::*;
-use serde::de::{self, DeserializeSeed, MapAccess, SeqAccess, Visitor};
-use serde_json::Value;
 use sha2::{Digest, Sha256};
-use std::{
-    fmt,
-    io::{self, Write},
-};
+use std::io::{self, Write};
 use time::{OffsetDateTime, UtcOffset, format_description::well_known::Rfc3339};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -66,7 +61,8 @@ pub fn decode(
     if bytes.len() > MAX_SAVE_BYTES {
         return Err(SaveCodecError::too_large(bytes.len()));
     }
-    let value = unique_value(bytes).map_err(|e| SaveCodecError::invalid("$", e.to_string()))?;
+    let value = crate::json::strict_value(bytes)
+        .map_err(|e| SaveCodecError::invalid("$", e.to_string()))?;
     let value = migrations::upgrade(value)?;
     let mut unrecognized_fields = SourceSave::unrecognized_fields(&value);
     let envelope: SaveEnvelopeV1 =
@@ -117,13 +113,6 @@ pub fn decode(
         copy,
         unrecognized_fields,
     })
-}
-
-pub(super) fn unique_value(bytes: &[u8]) -> Result<Value, serde_json::Error> {
-    let mut deserializer = serde_json::Deserializer::from_slice(bytes);
-    let value = UniqueValue { depth: 0 }.deserialize(&mut deserializer)?;
-    deserializer.end()?;
-    Ok(value)
 }
 
 pub fn encode(snapshot: &SaveSnapshot, metadata: &SaveMetadata) -> Result<Vec<u8>, SaveCodecError> {
@@ -211,75 +200,6 @@ impl Write for BoundedWriter {
     }
 }
 
-// Reject duplicate keys while traversing *all* objects, including ignored extras.
-// The parser's own recursion limit is retained in addition to the explicit bound.
-struct UniqueValue {
-    depth: usize,
-}
-impl<'de> DeserializeSeed<'de> for UniqueValue {
-    type Value = Value;
-    fn deserialize<D: de::Deserializer<'de>>(self, d: D) -> Result<Value, D::Error> {
-        if self.depth >= 128 {
-            return Err(de::Error::custom("save nesting exceeds 128"));
-        }
-        d.deserialize_any(self)
-    }
-}
-impl<'de> Visitor<'de> for UniqueValue {
-    type Value = Value;
-    fn expecting(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        f.write_str("JSON with unique object keys")
-    }
-    fn visit_bool<E: de::Error>(self, v: bool) -> Result<Value, E> {
-        Ok(v.into())
-    }
-    fn visit_i64<E: de::Error>(self, v: i64) -> Result<Value, E> {
-        Ok(v.into())
-    }
-    fn visit_u64<E: de::Error>(self, v: u64) -> Result<Value, E> {
-        Ok(v.into())
-    }
-    fn visit_f64<E: de::Error>(self, v: f64) -> Result<Value, E> {
-        serde_json::Number::from_f64(v)
-            .map(Value::Number)
-            .ok_or_else(|| E::custom("nonfinite number"))
-    }
-    fn visit_str<E: de::Error>(self, v: &str) -> Result<Value, E> {
-        Ok(v.into())
-    }
-    fn visit_string<E: de::Error>(self, v: String) -> Result<Value, E> {
-        Ok(v.into())
-    }
-    fn visit_unit<E: de::Error>(self) -> Result<Value, E> {
-        Ok(Value::Null)
-    }
-    fn visit_none<E: de::Error>(self) -> Result<Value, E> {
-        Ok(Value::Null)
-    }
-    fn visit_seq<A: SeqAccess<'de>>(self, mut a: A) -> Result<Value, A::Error> {
-        let mut values = vec![];
-        while let Some(value) = a.next_element_seed(UniqueValue {
-            depth: self.depth + 1,
-        })? {
-            values.push(value);
-        }
-        Ok(Value::Array(values))
-    }
-    fn visit_map<A: MapAccess<'de>>(self, mut a: A) -> Result<Value, A::Error> {
-        let mut values = serde_json::Map::new();
-        while let Some(key) = a.next_key::<String>()? {
-            if values.contains_key(&key) {
-                return Err(de::Error::custom(format!("duplicate object key {key:?}")));
-            }
-            let value = a.next_value_seed(UniqueValue {
-                depth: self.depth + 1,
-            })?;
-            values.insert(key, value);
-        }
-        Ok(Value::Object(values))
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -322,7 +242,7 @@ mod tests {
         ] {
             stored.metadata.saved_at = SavedAt::new(seconds, nanos).unwrap();
             let bytes = encode(&stored.snapshot, &stored.metadata).unwrap();
-            let value: Value = serde_json::from_slice(&bytes).unwrap();
+            let value: serde_json::Value = serde_json::from_slice(&bytes).unwrap();
             assert_eq!(value["saved_at"], expected);
             assert_eq!(
                 decode(&bytes, &id, SaveCopy::Primary).unwrap().metadata,
