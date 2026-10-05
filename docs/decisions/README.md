@@ -466,6 +466,11 @@ filesystem work in adapters, one generation in flight, UI-owned canonical state,
 worker progress messages, cancellable children, cached narrative wrapping. Do not
 hold a state mutex during a model call. Save atomically with backup and versioned
 migrations; Markdown/EPUB export are in v1, images are behind a disabled port in v1.
+Every save file is published by exactly one rename and so keeps one link: first
+create uses `RENAME_NOREPLACE`, and only where the filesystem rejects that flag
+does it fall back to a plain rename after the in-lock occupancy recheck. Never a
+hard-link fallback, which could leave a two-link primary that loading rejects
+(2026-10-05 review).
 Acceptance: scripted lifecycle/cancellation/state-unchanged-on-error tests, frozen
 save migrations, original-limit round trips, synthetic UI-event/cache tests, and
 export fixtures. PLAN retains the full build order and acceptance scenarios.

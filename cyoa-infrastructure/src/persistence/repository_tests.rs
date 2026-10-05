@@ -498,4 +498,54 @@ mod tests {
         }
         assert!(!root.path().join("cyoa").exists());
     }
+    fn temp_in(dir: &Path, bytes: &[u8]) -> Option<tempfile::NamedTempFile> {
+        let mut file = tempfile::Builder::new()
+            .prefix(".cyoa-")
+            .tempfile_in(dir)
+            .unwrap();
+        file.write_all(bytes).unwrap();
+        Some(file)
+    }
+    fn links(path: &Path) -> u64 {
+        use std::os::unix::fs::MetadataExt;
+        std::fs::metadata(path).unwrap().nlink()
+    }
+    #[test]
+    fn unsupported_noreplace_publishes_by_rename_with_exactly_one_link() {
+        let dir = tempfile::tempdir().unwrap();
+        let target = dir.path().join("slot.json");
+        let mut temp = temp_in(dir.path(), b"new");
+        let temp_name = temp.as_ref().unwrap().path().to_owned();
+        persist_with(&mut temp, &target, true, |_, _| {
+            Err(io::Error::from_raw_os_error(rustix::io::Errno::INVAL.raw_os_error()))
+        })
+        .unwrap();
+        assert!(temp.is_none());
+        assert_eq!(std::fs::read(&target).unwrap(), b"new");
+        assert_eq!(links(&target), 1, "a hard-link fallback would leave two");
+        assert!(!temp_name.exists());
+    }
+    #[test]
+    fn occupied_noreplace_target_is_never_replaced_and_the_temp_is_retained() {
+        let dir = tempfile::tempdir().unwrap();
+        let target = dir.path().join("slot.json");
+        std::fs::write(&target, b"existing").unwrap();
+        let mut temp = temp_in(dir.path(), b"new");
+        let error = persist_with(&mut temp, &target, true, rename_noreplace).unwrap_err();
+        assert_eq!(error.kind(), io::ErrorKind::AlreadyExists);
+        assert!(temp.as_ref().unwrap().path().exists(), "temp kept for cleanup");
+        assert_eq!(std::fs::read(&target).unwrap(), b"existing");
+        assert_eq!(links(&target), 1);
+    }
+    #[test]
+    fn noreplace_publish_moves_the_temp_without_leaving_its_name() {
+        let dir = tempfile::tempdir().unwrap();
+        let target = dir.path().join("slot.json");
+        let mut temp = temp_in(dir.path(), b"new");
+        let temp_name = temp.as_ref().unwrap().path().to_owned();
+        persist_with(&mut temp, &target, true, rename_noreplace).unwrap();
+        assert_eq!(std::fs::read(&target).unwrap(), b"new");
+        assert_eq!(links(&target), 1);
+        assert!(!temp_name.exists());
+    }
 }

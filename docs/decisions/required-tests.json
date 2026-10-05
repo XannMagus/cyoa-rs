@@ -1355,7 +1355,10 @@
           "persistence::codec::tests::bounded_writer_rejects_a_document_or_final_newline_that_exceeds_the_limit",
           "persistence::codec::tests::canonical_writer_timestamps_cover_utc_year_boundaries_and_millisecond_precision",
           "persistence::migrations::tests::synthetic_scaffold_rejects_missing_steps_and_incorrect_advancement",
-          "persistence::migrations::tests::synthetic_scaffold_runs_each_step_once_in_order_without_shipping_legacy_support"
+          "persistence::migrations::tests::synthetic_scaffold_runs_each_step_once_in_order_without_shipping_legacy_support",
+          "persistence::repository::linux::tests::unsupported_noreplace_publishes_by_rename_with_exactly_one_link",
+          "persistence::repository::linux::tests::occupied_noreplace_target_is_never_replaced_and_the_temp_is_retained",
+          "persistence::repository::linux::tests::noreplace_publish_moves_the_temp_without_leaving_its_name"
         ]
       },
       {

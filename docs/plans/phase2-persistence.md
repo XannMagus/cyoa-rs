@@ -446,10 +446,12 @@ Under the slot lock:
    fails, abort primary replacement; primary is unchanged, backup may be old or
    refreshed. It is still a valid complete document. First create has no backup.
 4. Recheck primary against expected stamp and entry policy; reject unexpected
-   change. Replace primary using the new temp's `persist`. For create use
-   `persist_noclobber` under the new slot lock and reject any existing primary,
-   backup or assets identity. The no-clobber operation may leave an extra temp
-   link on failure; do not call this a universal atomic multi-file transaction.
+   change. Replace primary using the new temp's `persist`. For create use a
+   `RENAME_NOREPLACE` rename under the new slot lock and reject any existing primary,
+   backup or assets identity; if the filesystem rejects the flag, fall back to a
+   plain rename after the in-lock recheck, never tempfile's hard-link fallback
+   (2026-10-05 review: that path could leave a two-link primary). Do not call this
+   a universal atomic multi-file transaction.
 5. Sync saves directory. Only then return durable success plus stamp/revision.
    Closing/removing temps and process/workspace cleanup are checked. A failure
    after primary rename returns Replaced (known stamp) or Unknown, never Unchanged

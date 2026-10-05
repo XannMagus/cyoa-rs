@@ -476,19 +476,53 @@ mod linux {
         path: &Path,
         noclobber: bool,
     ) -> io::Result<()> {
+        persist_with(temp, path, noclobber, rename_noreplace)
+    }
+    fn rename_noreplace(from: &Path, to: &Path) -> io::Result<()> {
+        use rustix::fs::{CWD, RenameFlags, renameat_with};
+        Ok(renameat_with(CWD, from, CWD, to, RenameFlags::NOREPLACE)?)
+    }
+    /// A save is always published by one rename, so it keeps exactly one link.
+    /// `tempfile`'s `persist_noclobber` falls back to hard-link-then-unlink when
+    /// the filesystem rejects `RENAME_NOREPLACE`, ignoring unlink errors; a crash
+    /// or failed unlink there would leave a two-link primary that `open_file`
+    /// rejects. Callers re-check slot occupancy under the slot lock immediately
+    /// before publishing, so an unsupported no-replace rename falls back to a
+    /// plain atomic rename instead.
+    fn persist_with(
+        temp: &mut Option<tempfile::NamedTempFile>,
+        path: &Path,
+        noclobber: bool,
+        noreplace: fn(&Path, &Path) -> io::Result<()>,
+    ) -> io::Result<()> {
         let file = temp.take().expect("owned temp");
-        let result = if noclobber {
-            file.persist_noclobber(path)
-        } else {
-            file.persist(path)
-        };
-        match result {
+        if noclobber {
+            match noreplace(file.path(), path) {
+                Ok(()) => {
+                    // The rename already moved the file; only forget the old name.
+                    file.into_temp_path().keep().map_err(|e| e.error)?;
+                    return Ok(());
+                }
+                Err(e) if !unsupported_noreplace(&e) => {
+                    *temp = Some(file);
+                    return Err(e);
+                }
+                Err(_) => {}
+            }
+        }
+        match file.persist(path) {
             Ok(_) => Ok(()),
             Err(e) => {
                 *temp = Some(e.file);
                 Err(e.error)
             }
         }
+    }
+    fn unsupported_noreplace(error: &io::Error) -> bool {
+        use rustix::io::Errno;
+        [Errno::INVAL, Errno::NOSYS, Errno::OPNOTSUPP]
+            .iter()
+            .any(|errno| error.raw_os_error() == Some(errno.raw_os_error()))
     }
     fn combine_cleanup<T>(
         result: Result<T, StorageFailure>,
