@@ -97,6 +97,34 @@ fn drive(
     control: &mut QueuedOutput<'_>,
     demo: bool,
 ) -> io::Result<()> {
+    announce(runtime, control, demo)?;
+    let mut view = View::default();
+    loop {
+        story.pump(Instant::now())?;
+        control.pump(Instant::now())?;
+        // Input first: a cancellation observed before acceptance wins the race.
+        let event = input.poll(Duration::from_millis(25))?;
+        handle_input(runtime, &mut view, event, control)?;
+        for event in runtime.poll() {
+            handle_event(runtime, &mut view, event, story, control)?;
+        }
+        show_preview(runtime, &mut view, story, control)?;
+        if runtime.shutdown() == Shutdown::DrainingOutput {
+            return drain_on_exit(runtime, &view, input, story, control);
+        }
+        control.flush()?;
+        story.pump(Instant::now())?;
+        control.pump(Instant::now())?;
+        if runtime.controller().phase() == Phase::Closing {
+            std::thread::sleep(Duration::from_millis(10));
+        }
+    }
+}
+fn announce(
+    runtime: &mut dyn HeadlessSession,
+    control: &mut QueuedOutput<'_>,
+    demo: bool,
+) -> io::Result<()> {
     writeln!(
         control,
         "Autosave enabled: selection, accepted turns, rewind and quit save canonical state."
@@ -119,124 +147,141 @@ fn drive(
             "Brief: enter a nonblank adventure idea. /help lists commands."
         )?;
     }
-    control.flush()?;
-    let mut view = View::default();
-    loop {
-        story.pump(Instant::now())?;
-        control.pump(Instant::now())?;
-        // Input first: a cancellation observed before acceptance wins the race.
-        match input.poll(Duration::from_millis(25))? {
-            InputEvent::Pending => (),
-            InputEvent::Eof => {
+    control.flush()
+}
+fn handle_input(
+    runtime: &mut dyn HeadlessSession,
+    view: &mut View,
+    event: InputEvent,
+    control: &mut QueuedOutput<'_>,
+) -> io::Result<()> {
+    match event {
+        InputEvent::Pending => (),
+        InputEvent::Eof => {
+            runtime.dispatch(Intent::Quit).map_err(io::Error::other)?;
+        }
+        InputEvent::Interrupt => {
+            if matches!(
+                runtime.controller().phase(),
+                Phase::Running | Phase::Cancelling
+            ) {
+                runtime.dispatch(Intent::Cancel).map_err(io::Error::other)?;
+                writeln!(control, "Cancellation requested; waiting for cleanup.")?;
+            } else {
                 runtime.dispatch(Intent::Quit).map_err(io::Error::other)?;
             }
-            InputEvent::Interrupt => {
-                if matches!(
-                    runtime.controller().phase(),
-                    Phase::Running | Phase::Cancelling
-                ) {
-                    runtime.dispatch(Intent::Cancel).map_err(io::Error::other)?;
-                    writeln!(control, "Cancellation requested; waiting for cleanup.")?;
-                } else {
-                    runtime.dispatch(Intent::Quit).map_err(io::Error::other)?;
-                }
-            }
-            InputEvent::Line(line) => view.line(runtime, &line, control)?,
         }
-        for event in runtime.poll() {
-            let PersistenceEvent::Generation { acceptance, .. } = event else {
-                if matches!(&event, PersistenceEvent::Loaded { .. }) {
-                    view.edit = Edit::None;
-                    view.printed.clear();
-                }
-                storage_event(runtime, event, control)?;
-                continue;
-            };
-            match acceptance {
-                Acceptance::Committed => view.committed(runtime, story, control)?,
-                Acceptance::Failed => {
-                    if !view.printed.is_empty() {
-                        writeln!(story)?;
-                        writeln!(control, "[tentative preview discarded; no turn committed]")?;
-                    }
-                    view.printed.clear();
-                    show_failure(runtime, control)?;
-                    if runtime.controller().phase() == Phase::Faulted {
-                        writeln!(control, "The worker is unavailable; use /quit.")?;
-                    } else {
-                        writeln!(
-                            control,
-                            "Use /retry to repeat the failed intent, or /quit. /diagnostics shows retained evidence."
-                        )?;
-                    }
-                }
-                Acceptance::Closed | Acceptance::Ignored => (),
-            }
+        InputEvent::Line(line) => view.line(runtime, &line, control)?,
+    }
+    Ok(())
+}
+fn handle_event(
+    runtime: &mut dyn HeadlessSession,
+    view: &mut View,
+    event: PersistenceEvent,
+    story: &mut QueuedOutput<'_>,
+    control: &mut QueuedOutput<'_>,
+) -> io::Result<()> {
+    let PersistenceEvent::Generation { acceptance, .. } = event else {
+        if matches!(&event, PersistenceEvent::Loaded { .. }) {
+            view.edit = Edit::None;
+            view.printed.clear();
         }
-        if runtime.controller().phase() == Phase::Running {
-            let preview = runtime.controller().preview();
-            if preview.len() > view.printed.len() {
-                if view.printed.is_empty() {
-                    writeln!(control, "[tentative preview; final validation pending]")?;
-                    control.flush()?;
-                }
-                story.write_all(&preview.as_bytes()[view.printed.len()..])?;
-                story.flush()?;
-                // The preview only grows while running: append the new tail, never recopy.
-                view.printed.push_str(&preview[view.printed.len()..]);
-            }
-        }
-        if runtime.shutdown() == Shutdown::DrainingOutput {
+        return storage_event(runtime, event, control);
+    };
+    match acceptance {
+        Acceptance::Committed => view.committed(runtime, story, control)?,
+        Acceptance::Failed => {
             if !view.printed.is_empty() {
                 writeln!(story)?;
-                writeln!(control, "[tentative preview discarded on exit]")?;
+                writeln!(control, "[tentative preview discarded; no turn committed]")?;
             }
-            writeln!(
-                control,
-                "Session closed; durability={:?}.",
-                runtime.durability()
-            )?;
-            control.flush()?;
-            // The worker is already joined. Drain queued bytes before reporting
-            // success, with an absolute bound even if a reader keeps trickling.
-            let deadline = Instant::now() + output::STALL_LIMIT;
-            let check_deadline = || {
-                if Instant::now() >= deadline {
-                    Err(io::Error::new(
-                        io::ErrorKind::TimedOut,
-                        "terminal output did not drain on exit",
-                    ))
-                } else {
-                    Ok(())
-                }
-            };
-            loop {
-                check_deadline()?;
-                story.pump(Instant::now())?;
-                control.pump(Instant::now())?;
-                check_deadline()?;
-                if story.is_empty() && control.is_empty() {
-                    runtime.output_drained();
-                    return Ok(());
-                }
-                if matches!(
-                    input.poll(Duration::from_millis(25))?,
-                    InputEvent::Interrupt
-                ) {
-                    return Err(io::Error::new(
-                        io::ErrorKind::Interrupted,
-                        "terminal output drain interrupted",
-                    ));
-                }
-                std::thread::sleep(Duration::from_millis(1));
+            view.printed.clear();
+            show_failure(runtime, control)?;
+            if runtime.controller().phase() == Phase::Faulted {
+                writeln!(control, "The worker is unavailable; use /quit.")?;
+            } else {
+                writeln!(
+                    control,
+                    "Use /retry to repeat the failed intent, or /quit. /diagnostics shows retained evidence."
+                )?;
             }
         }
-        control.flush()?;
+        Acceptance::Closed | Acceptance::Ignored => (),
+    }
+    Ok(())
+}
+fn show_preview(
+    runtime: &mut dyn HeadlessSession,
+    view: &mut View,
+    story: &mut QueuedOutput<'_>,
+    control: &mut QueuedOutput<'_>,
+) -> io::Result<()> {
+    if runtime.controller().phase() != Phase::Running {
+        return Ok(());
+    }
+    let preview = runtime.controller().preview();
+    if preview.len() > view.printed.len() {
+        if view.printed.is_empty() {
+            writeln!(control, "[tentative preview; final validation pending]")?;
+            control.flush()?;
+        }
+        story.write_all(&preview.as_bytes()[view.printed.len()..])?;
+        story.flush()?;
+        // The preview only grows while running: append the new tail, never recopy.
+        view.printed.push_str(&preview[view.printed.len()..]);
+    }
+    Ok(())
+}
+fn drain_on_exit(
+    runtime: &mut dyn HeadlessSession,
+    view: &View,
+    input: &mut dyn Input,
+    story: &mut QueuedOutput<'_>,
+    control: &mut QueuedOutput<'_>,
+) -> io::Result<()> {
+    if !view.printed.is_empty() {
+        writeln!(story)?;
+        writeln!(control, "[tentative preview discarded on exit]")?;
+    }
+    writeln!(
+        control,
+        "Session closed; durability={:?}.",
+        runtime.durability()
+    )?;
+    control.flush()?;
+    // The worker is already joined. Drain queued bytes before reporting
+    // success, with an absolute bound even if a reader keeps trickling.
+    let deadline = Instant::now() + output::STALL_LIMIT;
+    let check_deadline = || {
+        if Instant::now() >= deadline {
+            Err(io::Error::new(
+                io::ErrorKind::TimedOut,
+                "terminal output did not drain on exit",
+            ))
+        } else {
+            Ok(())
+        }
+    };
+    loop {
+        check_deadline()?;
         story.pump(Instant::now())?;
         control.pump(Instant::now())?;
-        if runtime.controller().phase() == Phase::Closing {
-            std::thread::sleep(Duration::from_millis(10));
+        check_deadline()?;
+        if story.is_empty() && control.is_empty() {
+            runtime.output_drained();
+            return Ok(());
         }
+        if matches!(
+            input.poll(Duration::from_millis(25))?,
+            InputEvent::Interrupt
+        ) {
+            return Err(io::Error::new(
+                io::ErrorKind::Interrupted,
+                "terminal output drain interrupted",
+            ));
+        }
+        std::thread::sleep(Duration::from_millis(1));
     }
 }
 impl View {
