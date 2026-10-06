@@ -27,8 +27,9 @@ errors=$(cargo metadata --format-version 1 --no-deps --locked | jq -r '
       "Assign \($name) an architectural layer before adding it."
     else
       .dependencies[].name as $target
-      | if (($names | index($target)) != null) then
-          if ($allowed[$name] | index($target)) == null then
+      | if ($names | index($target)) != null then
+          # A crate may dev-depend on itself to enable its own test-only features.
+          if $target != $name and ($allowed[$name] | index($target)) == null then
             "Forbidden dependency: \($name) -> \($target)"
           else empty end
         elif ($external | has($name)) and ($external[$name] | index($target)) == null then

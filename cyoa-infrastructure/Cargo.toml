@@ -34,10 +34,20 @@ rustix = { version = "1.1.5", default-features = false, features = ["std", "proc
 [[bin]]
 name = "subprocess_fixture"
 path = "src/bin/subprocess_fixture.rs"
+required-features = ["test-fixtures"]
 
 [[bin]]
 name = "storage_fixture"
 path = "src/bin/storage_fixture.rs"
+required-features = ["test-fixtures"]
+
+# Fixture binaries build only for tests: this crate's own test builds enable the
+# feature through the self dev-dependency below; cyoa-cli's escargot builds pass it.
+[features]
+test-fixtures = []
+
+[dev-dependencies]
+cyoa-infrastructure = { path = ".", features = ["test-fixtures"] }
 
 [lints]
 workspace = true

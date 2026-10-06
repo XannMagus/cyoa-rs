@@ -16,6 +16,7 @@ pub(crate) fn fixture_executable() -> &'static Path {
             .manifest_path(Path::new(env!("CARGO_MANIFEST_DIR")).join("../Cargo.toml"))
             .package("cyoa-infrastructure")
             .bin("subprocess_fixture")
+            .features("test-fixtures")
             .args(["--locked", "--offline"])
             .run()
             .unwrap()

@@ -216,6 +216,7 @@ fn closing_or_dropping_storage_runner_reaps_a_real_silent_helper() {
         .manifest_path(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../Cargo.toml"))
         .package("cyoa-infrastructure")
         .bin("storage_fixture")
+        .features("test-fixtures")
         .args(["--locked", "--offline"])
         .run()
         .unwrap()

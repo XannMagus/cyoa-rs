@@ -196,6 +196,15 @@ the use cases, which never mutate the session. Unknown optional save fields reac
 application as opaque `UnrecognizedField` locations, display text that is never
 parsed, rather than raw strings.
 
+`TransportDiagnostics` stays in application with stdout/stderr channels (accepted,
+2026-10-05 review). It is vendor-neutral, byte-exact evidence that application
+carries but never interprets, and every transport today is a subprocess. A
+non-process transport would map its own evidence into the same two channels or
+extend the type then. The test-support fixture binaries now build only with the
+`test-fixtures` feature: the infrastructure crate enables it through a self
+dev-dependency, and the CLI's escargot builds request it, so a normal build no
+longer produces them.
+
 ### ARCH-002 Domain types establish invariants
 
 **Partial: constructors, generation mappings and save-boundary reconstruction
