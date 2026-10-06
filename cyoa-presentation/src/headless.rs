@@ -308,6 +308,9 @@ impl View {
             }
         }
     }
+    /// Each layer either consumes the line or passes it on, in this order:
+    /// always-available commands, storage commands, the play gate, retry, an
+    /// in-progress outline edit, play commands, then stage input.
     fn line(
         &mut self,
         runtime: &mut dyn HeadlessSession,
@@ -315,10 +318,43 @@ impl View {
         control: &mut dyn Write,
     ) -> io::Result<()> {
         let trimmed = line.trim();
+        if self.always_available(runtime, trimmed, control)?
+            || storage_line(runtime, trimmed, control)?
+            || !accepts_play_input(runtime, control)?
+        {
+            return Ok(());
+        }
+        if trimmed == "/retry" {
+            self.dispatch(runtime, Intent::Retry, control)?;
+            return Ok(());
+        }
+        if self.outline_edit(runtime, line, control)?
+            || self.play_command(runtime, trimmed, control)?
+        {
+            return Ok(());
+        }
+        let text = if let Some(escaped) = trimmed.strip_prefix("//") {
+            format!("/{escaped}")
+        } else if trimmed.starts_with('/') {
+            writeln!(
+                control,
+                "Rejected: unsupported command. /help lists commands; // sends a literal slash."
+            )?;
+            return Ok(());
+        } else {
+            line.to_owned()
+        };
+        self.stage_input(runtime, trimmed, text, control)
+    }
+    fn always_available(
+        &mut self,
+        runtime: &mut dyn HeadlessSession,
+        trimmed: &str,
+        control: &mut dyn Write,
+    ) -> io::Result<bool> {
         match trimmed {
             "/quit" => {
                 self.dispatch(runtime, Intent::Quit, control)?;
-                return Ok(());
             }
             "/cancel" => {
                 self.dispatch(runtime, Intent::Cancel, control)?;
@@ -326,102 +362,61 @@ impl View {
                     control,
                     "Cancellation requested (only active generation is affected)."
                 )?;
-                return Ok(());
             }
-            "/help" => {
-                write!(control, "{HELP}")?;
-                return Ok(());
-            }
-            "/inspect" => {
-                inspect(runtime, control)?;
-                return Ok(());
-            }
-            "/diagnostics" => {
-                diagnostics(runtime, control)?;
-                return Ok(());
-            }
-            _ => (),
+            "/help" => write!(control, "{HELP}")?,
+            "/inspect" => inspect(runtime, control)?,
+            "/diagnostics" => diagnostics(runtime, control)?,
+            _ => return Ok(false),
         }
-        if let Some(command) = persistence_command(trimmed) {
-            let result = match command {
-                Ok(PersistenceCommand::Save(slot)) => runtime.save(slot),
-                Ok(PersistenceCommand::List(page)) => runtime.list(page),
-                Ok(PersistenceCommand::Load(command)) => runtime.load(command),
-                Ok(PersistenceCommand::Rewind(count)) => runtime.dispatch(Intent::Rewind(count)),
-                Err(message) => {
-                    writeln!(control, "Rejected: {message}")?;
-                    return Ok(());
+        Ok(true)
+    }
+    fn outline_edit(
+        &mut self,
+        runtime: &mut dyn HeadlessSession,
+        line: &str,
+        control: &mut dyn Write,
+    ) -> io::Result<bool> {
+        match std::mem::replace(&mut self.edit, Edit::None) {
+            Edit::Title => match WorldTitle::new(line) {
+                Ok(title) => {
+                    self.edit = Edit::Description(title);
+                    writeln!(control, "Description: enter a nonblank replacement.")?;
                 }
-            };
-            match result {
-                Ok(()) => writeln!(
-                    control,
-                    "Storage operation started; /inspect and /quit remain available."
-                )?,
-                Err(error) => writeln!(control, "Rejected: {error}")?,
-            }
-            return Ok(());
-        }
-        if runtime.storage_busy() || runtime.shutdown() != Shutdown::Open {
-            writeln!(control, "Rejected: storage or shutdown is in progress.")?;
-            return Ok(());
-        }
-        if matches!(
-            runtime.controller().phase(),
-            Phase::Running | Phase::Cancelling | Phase::Closing | Phase::Closed | Phase::Faulted
-        ) {
-            writeln!(
-                control,
-                "Rejected: generation or cleanup is in progress, or the worker is unavailable. Use /cancel or /quit."
-            )?;
-            return Ok(());
-        }
-        if trimmed == "/retry" {
-            self.dispatch(runtime, Intent::Retry, control)?;
-            return Ok(());
-        }
-        let edit = std::mem::replace(&mut self.edit, Edit::None);
-        match edit {
-            Edit::Title => {
-                match WorldTitle::new(line) {
-                    Ok(title) => {
-                        self.edit = Edit::Description(title);
-                        writeln!(control, "Description: enter a nonblank replacement.")?;
-                    }
-                    Err(e) => {
-                        self.edit = Edit::Title;
-                        writeln!(control, "Rejected: {e}. Title:")?;
+                Err(e) => {
+                    self.edit = Edit::Title;
+                    writeln!(control, "Rejected: {e}. Title:")?;
+                }
+            },
+            Edit::Description(title) => match WorldDescription::new(line) {
+                Ok(description) => {
+                    if self.dispatch(
+                        runtime,
+                        Intent::ReplaceOutline(WorldOutline::new(title, description)),
+                        control,
+                    )? {
+                        show_stage(runtime, control)?;
                     }
                 }
-                return Ok(());
-            }
-            Edit::Description(title) => {
-                match WorldDescription::new(line) {
-                    Ok(description) => {
-                        if self.dispatch(
-                            runtime,
-                            Intent::ReplaceOutline(WorldOutline::new(title, description)),
-                            control,
-                        )? {
-                            show_stage(runtime, control)?;
-                        }
-                    }
-                    Err(e) => {
-                        self.edit = Edit::Description(title);
-                        writeln!(control, "Rejected: {e}. Description:")?;
-                    }
+                Err(e) => {
+                    self.edit = Edit::Description(title);
+                    writeln!(control, "Rejected: {e}. Description:")?;
                 }
-                return Ok(());
-            }
-            Edit::None => (),
+            },
+            Edit::None => return Ok(false),
         }
+        Ok(true)
+    }
+    fn play_command(
+        &mut self,
+        runtime: &mut dyn HeadlessSession,
+        trimmed: &str,
+        control: &mut dyn Write,
+    ) -> io::Result<bool> {
         if trimmed == "/edit" && matches!(runtime.controller().stage(), Stage::OutlineReview { .. })
         {
             self.edit = Edit::Title;
             writeln!(control, "Title: enter a nonblank replacement.")?;
-            return Ok(());
-        }
-        if let Some(number) = trimmed.strip_prefix("/action ") {
+        } else if let Some(number) = trimmed.strip_prefix("/action ") {
             match number.parse::<usize>() {
                 Ok(number) => {
                     self.dispatch(runtime, Intent::Action(number), control)?;
@@ -430,28 +425,24 @@ impl View {
                     writeln!(control, "Rejected: /action requires a one-based number.")?;
                 }
             }
-            return Ok(());
-        }
-        if trimmed == "/event" {
+        } else if trimmed == "/event" {
             self.dispatch(
                 runtime,
                 Intent::Turn(TurnDirection::InterestingEvent),
                 control,
             )?;
-            return Ok(());
-        }
-        let text = if let Some(escaped) = trimmed.strip_prefix("//") {
-            format!("/{escaped}")
         } else {
-            if trimmed.starts_with('/') {
-                writeln!(
-                    control,
-                    "Rejected: unsupported command. /help lists commands; // sends a literal slash."
-                )?;
-                return Ok(());
-            }
-            line.to_owned()
-        };
+            return Ok(false);
+        }
+        Ok(true)
+    }
+    fn stage_input(
+        &mut self,
+        runtime: &mut dyn HeadlessSession,
+        trimmed: &str,
+        text: String,
+        control: &mut dyn Write,
+    ) -> io::Result<()> {
         match runtime.controller().stage() {
             Stage::Brief => match Brief::new(&text) {
                 Ok(brief) => {
@@ -553,6 +544,52 @@ impl View {
         self.printed.clear();
         Ok(())
     }
+}
+/// Storage commands are parsed before any effect or lifecycle edit.
+fn storage_line(
+    runtime: &mut dyn HeadlessSession,
+    trimmed: &str,
+    control: &mut dyn Write,
+) -> io::Result<bool> {
+    let Some(command) = persistence_command(trimmed) else {
+        return Ok(false);
+    };
+    let result = match command {
+        Ok(PersistenceCommand::Save(slot)) => runtime.save(slot),
+        Ok(PersistenceCommand::List(page)) => runtime.list(page),
+        Ok(PersistenceCommand::Load(command)) => runtime.load(command),
+        Ok(PersistenceCommand::Rewind(count)) => runtime.dispatch(Intent::Rewind(count)),
+        Err(message) => {
+            writeln!(control, "Rejected: {message}")?;
+            return Ok(true);
+        }
+    };
+    match result {
+        Ok(()) => writeln!(
+            control,
+            "Storage operation started; /inspect and /quit remain available."
+        )?,
+        Err(error) => writeln!(control, "Rejected: {error}")?,
+    }
+    Ok(true)
+}
+/// Play input is only taken while no storage, shutdown or generation is busy.
+fn accepts_play_input(runtime: &dyn HeadlessSession, control: &mut dyn Write) -> io::Result<bool> {
+    if runtime.storage_busy() || runtime.shutdown() != Shutdown::Open {
+        writeln!(control, "Rejected: storage or shutdown is in progress.")?;
+        return Ok(false);
+    }
+    if matches!(
+        runtime.controller().phase(),
+        Phase::Running | Phase::Cancelling | Phase::Closing | Phase::Closed | Phase::Faulted
+    ) {
+        writeln!(
+            control,
+            "Rejected: generation or cleanup is in progress, or the worker is unavailable. Use /cancel or /quit."
+        )?;
+        return Ok(false);
+    }
+    Ok(true)
 }
 fn show_stage(runtime: &dyn HeadlessSession, control: &mut dyn Write) -> io::Result<()> {
     match runtime.controller().stage() {
