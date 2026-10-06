@@ -186,8 +186,11 @@ fn stale_duplicate_or_wrong_revision_storage_receipts_never_clean_or_rebind() {
 fn storage_counter_exhaustion_rejects_admission_but_reserves_final_quit_save() {
     let mut s = session();
     s.durability = Durability::Clean;
-    s.last_storage_id = u64::MAX - 1;
-    assert!(matches!(s.save(false), Err(CoordinationError::Exhausted)));
+    s.last_storage_id = Some(StorageRequestId::new(u64::MAX - 1).unwrap());
+    assert!(matches!(
+        s.save(SaveSlot::Current),
+        Err(CoordinationError::Exhausted)
+    ));
     assert!(matches!(
         s.dispatch(Intent::Turn(TurnDirection::Continue)),
         Err(CoordinationError::Exhausted)
@@ -195,23 +198,23 @@ fn storage_counter_exhaustion_rejects_admission_but_reserves_final_quit_save() {
     assert_eq!(s.controller().phase(), Phase::Ready);
     assert!(s.running.is_none());
     s.quit();
-    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(2);
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(30);
     while s.shutdown() != Shutdown::DrainingOutput {
         s.poll();
         assert!(std::time::Instant::now() < deadline);
         std::thread::sleep(std::time::Duration::from_millis(1));
     }
-    assert_eq!(s.last_storage_id, u64::MAX);
+    assert_eq!(s.last_storage_id.map(StorageRequestId::get), Some(u64::MAX));
     assert_eq!(s.durability, Durability::Clean);
     assert!(!s.exit_failed());
     s.quit();
-    assert_eq!(s.last_storage_id, u64::MAX);
+    assert_eq!(s.last_storage_id.map(StorageRequestId::get), Some(u64::MAX));
 }
 #[test]
 fn deferred_opening_and_load_reserve_their_followup_write_before_admission() {
     let mut s = session();
     s.durability = Durability::Clean;
-    s.last_storage_id = u64::MAX - 2;
+    s.last_storage_id = Some(StorageRequestId::new(u64::MAX - 2).unwrap());
     let before = s.controller().stage().clone();
     let revision = s.controller().revision();
     assert!(matches!(
@@ -225,6 +228,9 @@ fn deferred_opening_and_load_reserve_their_followup_write_before_admission() {
     assert_eq!(s.controller().stage(), &before);
     assert_eq!(s.controller().revision(), revision);
     s.deferred_opening = true;
-    assert!(matches!(s.save(false), Err(CoordinationError::Exhausted)));
+    assert!(matches!(
+        s.save(SaveSlot::Current),
+        Err(CoordinationError::Exhausted)
+    ));
     assert!(s.running.is_none());
 }

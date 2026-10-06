@@ -299,7 +299,7 @@ impl View {
         }
         if let Some(command) = persistence_command(trimmed) {
             let result = match command {
-                Ok(PersistenceCommand::Save { copy }) => runtime.save(copy),
+                Ok(PersistenceCommand::Save(slot)) => runtime.save(slot),
                 Ok(PersistenceCommand::List(page)) => runtime.list(page),
                 Ok(PersistenceCommand::Load(command)) => runtime.load(command),
                 Ok(PersistenceCommand::Rewind(count)) => runtime.dispatch(Intent::Rewind(count)),

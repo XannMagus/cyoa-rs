@@ -249,7 +249,9 @@ fn cancelled_consumed_demo_passages_preserve_disk_and_retry_all_five_with_persis
             thread::sleep(Duration::from_millis(1));
         }
     }
-    session.save(false).unwrap();
+    session
+        .save(cyoa_presentation::persistence::SaveSlot::Current)
+        .unwrap();
     finish(&mut session);
     let mut reader = LocalRepository::new(root.path().into()).unwrap();
     let token = CancellationSource::default().token();

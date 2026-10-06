@@ -278,7 +278,7 @@ fn settle(s: &mut Session) -> Vec<PersistenceEvent> {
     }
 }
 fn bound(s: &mut Session) {
-    s.save(false).unwrap();
+    s.save(SaveSlot::Current).unwrap();
     settle(s);
     assert_eq!(s.durability(), Durability::Clean);
 }
@@ -312,7 +312,7 @@ fn failed_autosave_keeps_accepted_turn_and_storage_retry_never_regenerates() {
         .is_err()
     );
     let canonical = s.controller().game().unwrap().clone();
-    s.save(false).unwrap();
+    s.save(SaveSlot::Current).unwrap();
     settle(&mut s);
     assert_eq!(s.controller().game().unwrap(), &canonical);
     assert_eq!(calls.load(Ordering::SeqCst), 1);
@@ -339,7 +339,7 @@ fn uncertain_write_and_worker_panic_reconcile_same_attempt_without_a_new_slot() 
         );
         assert!(s.storage_failure().unwrap().pending().is_some());
         let intended = disk.lock().unwrap().saved.clone().unwrap();
-        s.save(false).unwrap();
+        s.save(SaveSlot::Current).unwrap();
         settle(&mut s);
         assert_eq!(s.durability(), Durability::Clean);
         assert_eq!(calls.load(Ordering::SeqCst), 1);
@@ -415,7 +415,7 @@ fn selection_saves_zero_turn_before_one_deferred_opening_and_quit_clears_it() {
             assert_eq!(calls.load(Ordering::SeqCst), 0);
             assert_eq!(disk.lock().unwrap().writes, [("create", 0), ("create", 0)]);
         } else {
-            s.save(false).unwrap();
+            s.save(SaveSlot::Current).unwrap();
             settle(&mut s);
             assert_eq!(calls.load(Ordering::SeqCst), 1);
             assert_eq!(
@@ -546,7 +546,7 @@ fn quit_during_write_finishes_current_revision_once_without_duplicate_backup_rot
     s.poll();
     assert_eq!(s.shutdown(), Shutdown::StoppingGeneration);
     assert!(s.storage_busy());
-    assert!(s.save(false).is_err());
+    assert!(s.save(SaveSlot::Current).is_err());
     release.store(true, Ordering::SeqCst);
     settle(&mut s);
     assert_eq!(s.shutdown(), Shutdown::DrainingOutput);
@@ -594,7 +594,7 @@ fn generation_and_storage_failure_views_remain_independent_and_copy_failure_keep
     let binding = s.binding().clone();
     let revision = s.controller().revision();
     disk.lock().unwrap().modes.push_back(Mode::Fail);
-    s.save(true).unwrap();
+    s.save(SaveSlot::NewCopy).unwrap();
     settle(&mut s);
     assert_eq!(s.binding(), &binding);
     assert_eq!(s.controller().revision(), revision);
@@ -603,7 +603,7 @@ fn generation_and_storage_failure_views_remain_independent_and_copy_failure_keep
         s.controller().failure(),
         Some(Failure::Generation(_))
     ));
-    s.save(true).unwrap();
+    s.save(SaveSlot::NewCopy).unwrap();
     settle(&mut s);
     assert!(s.storage_failure().is_none());
     assert!(matches!(
@@ -647,10 +647,10 @@ fn failed_copy_retains_previous_uncertain_attempt_for_reconciliation() {
     settle(&mut s);
     let saved = disk.lock().unwrap().saved.clone().unwrap();
     disk.lock().unwrap().modes.push_back(Mode::Fail);
-    s.save(true).unwrap();
+    s.save(SaveSlot::NewCopy).unwrap();
     settle(&mut s);
     assert_eq!(s.durability(), Durability::Uncertain);
-    s.save(false).unwrap();
+    s.save(SaveSlot::Current).unwrap();
     settle(&mut s);
     assert_eq!(s.durability(), Durability::Clean);
     assert_eq!(disk.lock().unwrap().saved.as_ref(), Some(&saved));

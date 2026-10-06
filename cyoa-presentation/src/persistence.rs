@@ -49,6 +49,19 @@ pub enum CoordinationError {
     #[error(transparent)]
     Source(#[from] DemoTooLong),
 }
+/// Which slot a save writes: the bound slot (or a new one when unbound), or a
+/// fresh copy that the session then binds to.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SaveSlot {
+    Current,
+    NewCopy,
+}
+/// The obligatory final save may use the request ID reserved for it.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum SaveUrgency {
+    Ordinary,
+    Final,
+}
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum Effect {
     Save,
@@ -92,12 +105,11 @@ where
     binding: SaveBinding,
     durability: Durability,
     running: Option<Running>,
-    last_storage_id: u64,
+    last_storage_id: Option<StorageRequestId>,
     retry_write: Option<RetryWrite>,
     storage_failure: Option<StorageFailure>,
     deferred_opening: bool,
     shutdown: Shutdown,
-    final_attempted: bool,
     closing_write_satisfied: bool,
     worker_fault: bool,
     notifications: Vec<PersistenceEvent>,
@@ -125,12 +137,11 @@ where
             binding: SaveBinding::Unbound,
             durability,
             running: None,
-            last_storage_id: 0,
+            last_storage_id: None,
             retry_write: None,
             storage_failure: None,
             deferred_opening: false,
             shutdown: Shutdown::Open,
-            final_attempted: false,
             closing_write_satisfied: false,
             worker_fault: false,
             notifications: Vec::new(),
@@ -173,7 +184,8 @@ where
     }
     fn capacity_for(&self, count: u64) -> Result<(), CoordinationError> {
         // Keep one distinct ID available for the obligatory final attempt.
-        if self.last_storage_id > u64::MAX - 1 - count {
+        let used = self.last_storage_id.map_or(0, StorageRequestId::get);
+        if used > u64::MAX - 1 - count {
             Err(CoordinationError::Exhausted)
         } else {
             Ok(())
@@ -183,21 +195,21 @@ where
         &mut self,
         effect: Effect,
         intent: StorageIntent,
-        final_save: bool,
+        urgency: SaveUrgency,
     ) -> Result<(), CoordinationError> {
-        if !final_save {
+        if urgency == SaveUrgency::Ordinary {
             self.capacity()?;
         }
-        let id = self
-            .last_storage_id
-            .checked_add(1)
-            .ok_or(CoordinationError::Exhausted)?;
+        let id = match self.last_storage_id {
+            Some(last) => last.next().map_err(|_| CoordinationError::Exhausted)?,
+            None => StorageRequestId::new(1).expect("one is positive"),
+        };
         let key = StorageKey {
-            id: StorageRequestId::new(id).expect("positive checked counter"),
+            id,
             revision: self.controller().revision(),
         };
         self.storage.recover_fault();
-        self.last_storage_id = id;
+        self.last_storage_id = Some(id);
         self.running = Some(Running {
             key,
             effect,
@@ -254,13 +266,13 @@ where
         if canonical {
             self.durability = Durability::Dirty;
             self.deferred_opening = selection;
-            self.write(false, false)?;
+            self.write(SaveSlot::Current, SaveUrgency::Ordinary)?;
         }
         Ok(())
     }
-    fn write(&mut self, copy: bool, final_save: bool) -> Result<(), CoordinationError> {
+    fn write(&mut self, slot: SaveSlot, urgency: SaveUrgency) -> Result<(), CoordinationError> {
         let game = self.controller().game().ok_or(CoordinationError::NoGame)?;
-        let command = if !copy
+        let command = if slot == SaveSlot::Current
             && self
                 .retry_write
                 .as_ref()
@@ -269,8 +281,8 @@ where
             SaveGame::Reconcile(self.retry_write.as_ref().unwrap().pending.clone())
         } else {
             let snapshot = SaveSnapshot::new(game.clone(), self.source)?;
-            match (&self.binding, copy) {
-                (SaveBinding::Bound { id, stamp, .. }, false) => SaveGame::Replace {
+            match (&self.binding, slot) {
+                (SaveBinding::Bound { id, stamp, .. }, SaveSlot::Current) => SaveGame::Replace {
                     target: SaveTarget {
                         id: id.clone(),
                         expected_stamp: *stamp,
@@ -283,17 +295,21 @@ where
         self.start(
             Effect::Save,
             StorageIntent::Save(Box::new(command)),
-            final_save,
+            urgency,
         )
     }
-    pub fn save(&mut self, copy: bool) -> Result<(), CoordinationError> {
+    pub fn save(&mut self, slot: SaveSlot) -> Result<(), CoordinationError> {
         self.idle(true)?;
         self.capacity_for(if self.deferred_opening { 2 } else { 1 })?;
-        self.write(copy, false)
+        self.write(slot, SaveUrgency::Ordinary)
     }
     pub fn list(&mut self, page: SavePage) -> Result<(), CoordinationError> {
         self.idle(true)?;
-        self.start(Effect::List, StorageIntent::List(ListSaves { page }), false)
+        self.start(
+            Effect::List,
+            StorageIntent::List(ListSaves { page }),
+            SaveUrgency::Ordinary,
+        )
     }
     pub fn load(&mut self, command: LoadGame) -> Result<(), CoordinationError> {
         self.idle(false)?;
@@ -302,7 +318,11 @@ where
         }
         self.controller().can_replace_game()?;
         self.capacity_for(2)?;
-        self.start(Effect::Load, StorageIntent::Load(command), false)
+        self.start(
+            Effect::Load,
+            StorageIntent::Load(command),
+            SaveUrgency::Ordinary,
+        )
     }
     /// Admit a startup restore only after source validation and backend construction.
     pub fn admit_loaded(&mut self, loaded: LoadedGame) -> Result<(), CoordinationError> {
@@ -372,7 +392,7 @@ where
             Durability::Clean
         };
         if self.durability == Durability::Dirty {
-            self.write(false, false)?;
+            self.write(SaveSlot::Current, SaveUrgency::Ordinary)?;
         }
         Ok(())
     }
@@ -410,7 +430,7 @@ where
             if save {
                 self.durability = Durability::Dirty;
                 // Capacity was checked when admitting generation.
-                self.write(false, false)
+                self.write(SaveSlot::Current, SaveUrgency::Ordinary)
                     .expect("autosave capacity reserved at admission");
             }
         }
@@ -545,14 +565,13 @@ where
                 self.finish_storage();
             } else {
                 self.shutdown = Shutdown::SavingFinal;
-                self.final_attempted = true;
-                if self.write(false, true).is_err() {
+                if self.write(SaveSlot::Current, SaveUrgency::Final).is_err() {
                     self.finish_storage();
                 }
             }
         }
-        if self.shutdown == Shutdown::SavingFinal && self.final_attempted && self.running.is_none()
-        {
+        // `SavingFinal` is entered only together with the final write attempt.
+        if self.shutdown == Shutdown::SavingFinal && self.running.is_none() {
             self.finish_storage();
         }
     }
@@ -571,7 +590,7 @@ mod tests;
 pub trait HeadlessSession {
     fn controller(&self) -> &SessionController;
     fn dispatch(&mut self, intent: Intent) -> Result<(), CoordinationError>;
-    fn save(&mut self, copy: bool) -> Result<(), CoordinationError>;
+    fn save(&mut self, slot: SaveSlot) -> Result<(), CoordinationError>;
     fn list(&mut self, page: SavePage) -> Result<(), CoordinationError>;
     fn load(&mut self, command: LoadGame) -> Result<(), CoordinationError>;
     fn poll(&mut self) -> Vec<PersistenceEvent>;
@@ -595,8 +614,8 @@ where
     fn dispatch(&mut self, intent: Intent) -> Result<(), CoordinationError> {
         self.dispatch(intent)
     }
-    fn save(&mut self, copy: bool) -> Result<(), CoordinationError> {
-        self.save(copy)
+    fn save(&mut self, slot: SaveSlot) -> Result<(), CoordinationError> {
+        self.save(slot)
     }
     fn list(&mut self, page: SavePage) -> Result<(), CoordinationError> {
         self.list(page)

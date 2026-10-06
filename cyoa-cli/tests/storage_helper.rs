@@ -325,7 +325,8 @@ fn coordinator_rewind_load_and_quit_persist_through_shipped_helpers() {
             }
         }};
     }
-    s.save(false).unwrap();
+    s.save(cyoa_presentation::persistence::SaveSlot::Current)
+        .unwrap();
     settle!();
     assert_eq!(s.durability(), Durability::Clean);
     let SaveBinding::Bound { id, .. } = s.binding().clone() else {

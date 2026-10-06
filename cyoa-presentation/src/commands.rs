@@ -181,7 +181,7 @@ impl PlayOptions {
 }
 
 pub enum PersistenceCommand {
-    Save { copy: bool },
+    Save(crate::persistence::SaveSlot),
     List(SavePage),
     Load(LoadGame),
     Rewind(TurnCount),
@@ -203,9 +203,11 @@ pub fn persistence_command(line: &str) -> Option<Result<PersistenceCommand, Stri
     let result = match command {
         "/save" | "/save-copy" => {
             if words.len() == 1 {
-                Ok(PersistenceCommand::Save {
-                    copy: command == "/save-copy",
-                })
+                Ok(PersistenceCommand::Save(if command == "/save-copy" {
+                    crate::persistence::SaveSlot::NewCopy
+                } else {
+                    crate::persistence::SaveSlot::Current
+                }))
             } else {
                 Err("/save and /save-copy take no arguments".into())
             }
