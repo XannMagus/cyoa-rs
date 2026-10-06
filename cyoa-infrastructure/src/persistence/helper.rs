@@ -708,30 +708,15 @@ impl GameRepository for SupervisedRepository {
         let op = StorageOperation::Create;
         let started = Instant::now();
         check(cancel, op)?;
-        for _ in 0..8 {
+        for _ in 0..super::save_id::COLLISION_ATTEMPTS {
             let random = self
                 .preparation
                 .random()
                 .map_err(|e| preparation_failure(op, e))?;
-            let suffix = random
-                .iter()
-                .map(|b| format!("{b:02x}"))
-                .collect::<String>();
-            let title = snapshot.game().world().outline().title().as_str();
-            let mut slug = String::new();
-            for c in title.chars() {
-                if c.is_ascii_alphanumeric() {
-                    if slug.len() == 40 {
-                        break;
-                    }
-                    slug.push(c.to_ascii_lowercase());
-                } else if !slug.is_empty() && !slug.ends_with('-') && slug.len() < 40 {
-                    slug.push('-');
-                }
-            }
-            let slug = slug.trim_end_matches('-');
-            let slug = if slug.is_empty() { "story" } else { slug };
-            let id = SaveId::new(format!("{slug}-{suffix}")).expect("generated grammar");
+            let id = super::save_id::generated_save_id(
+                snapshot.game().world().outline().title().as_str(),
+                random,
+            );
             let pending = self.prepare(&snapshot, id, None, SaveRevision::new(1).unwrap(), op)?;
             match self.apply(pending, prepared, op, cancel, started) {
                 Err(e)

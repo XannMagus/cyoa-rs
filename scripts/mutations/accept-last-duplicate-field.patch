@@ -1,11 +1,11 @@
 --- a/cyoa-infrastructure/src/backends/claude_cli/protocol.rs
 +++ b/cyoa-infrastructure/src/backends/claude_cli/protocol.rs
-@@ -188,7 +188,7 @@
+@@ -185,7 +185,7 @@
          }
          // `Value` keeps the last of two equal keys silently, so ambiguity must be
          // rejected before any control field is interpreted.
--        if has_duplicate_keys(text, is_control_object) {
-+        if false && has_duplicate_keys(text, is_control_object) {
+-        if crate::json::has_duplicate_keys_in(text, is_control_object) {
++        if false && crate::json::has_duplicate_keys_in(text, is_control_object) {
              return Err(Rejection {
                  error: error(n, "$", ErrorKind::DuplicateField),
                  // Best effort: an unambiguous payload span is still audit evidence.

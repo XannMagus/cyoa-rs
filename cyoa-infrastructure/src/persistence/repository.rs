@@ -61,6 +61,7 @@ pub(super) fn decode_failure(op: StorageOperation, e: codec::SaveCodecError) -> 
 mod linux {
     include!("repository_tests.rs");
     use super::super::filesystem::Directory;
+    use super::super::save_id::{COLLISION_ATTEMPTS, generated_save_id};
     use super::*;
     use std::{collections::BTreeSet, fs::File, io::Write};
 
@@ -183,20 +184,13 @@ mod linux {
             let op = StorageOperation::Create;
             Self::admitted(cancel, op)?;
             let dir = self.directory(true, op)?;
-            for _ in 0..8 {
+            for _ in 0..COLLISION_ATTEMPTS {
                 let random = self
                     .ops
                     .random()
                     .map_err(|e| io_failure(op, StorageStage::Prepare, e))?;
-                let suffix = random
-                    .iter()
-                    .map(|b| format!("{b:02x}"))
-                    .collect::<String>();
-                let id = SaveId::new(format!(
-                    "{}-{suffix}",
-                    slug(snapshot.game().world().outline().title().as_str())
-                ))
-                .expect("generated grammar");
+                let id =
+                    generated_save_id(snapshot.game().world().outline().title().as_str(), random);
                 let _lock = Self::lock(&dir, &id, op)?;
                 if occupied(&dir, &id).map_err(|e| io_failure(op, StorageStage::Prepare, e))? {
                     continue;
@@ -584,25 +578,6 @@ mod linux {
             StorageFailureKind::Conflict,
             "save changed or slot is occupied; create a save copy",
         )
-    }
-    fn slug(title: &str) -> String {
-        let mut result = String::new();
-        for c in title.chars() {
-            if c.is_ascii_alphanumeric() {
-                if result.len() == 40 {
-                    break;
-                }
-                result.push(c.to_ascii_lowercase());
-            } else if !result.is_empty() && !result.ends_with('-') && result.len() < 40 {
-                result.push('-');
-            }
-        }
-        let result = result.trim_end_matches('-');
-        if result.is_empty() {
-            "story".into()
-        } else {
-            result.into()
-        }
     }
     impl GameRepository for LocalRepository {
         fn create(

@@ -96,6 +96,84 @@ impl<'de> Visitor<'de> for Strict<'_> {
     }
 }
 
+/// A syntactically valid span can still be ambiguous: two equal keys in one
+/// object mean different consumers read different values (`serde_json::Value`
+/// silently keeps the last). Reject, never pick. Only objects selected by
+/// `in_scope` (by key path) are checked; other subtrees are skipped unexamined.
+/// Excessive nesting also fails here and is likewise not valid.
+pub(crate) fn has_duplicate_keys_in(span: &str, in_scope: fn(&[String]) -> bool) -> bool {
+    struct Unique {
+        path: Vec<String>,
+        in_scope: fn(&[String]) -> bool,
+    }
+    impl Unique {
+        fn child(&self, key: &str) -> Unique {
+            let mut path = self.path.clone();
+            path.push(key.to_owned());
+            Unique {
+                path,
+                in_scope: self.in_scope,
+            }
+        }
+    }
+    impl<'de> DeserializeSeed<'de> for Unique {
+        type Value = ();
+        fn deserialize<D: de::Deserializer<'de>>(self, d: D) -> Result<(), D::Error> {
+            if (self.in_scope)(&self.path) {
+                d.deserialize_any(self)
+            } else {
+                d.deserialize_ignored_any(de::IgnoredAny).map(|_| ())
+            }
+        }
+    }
+    impl<'de> Visitor<'de> for Unique {
+        type Value = ();
+        fn expecting(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+            f.write_str("any JSON value")
+        }
+        fn visit_bool<E>(self, _: bool) -> Result<(), E> {
+            Ok(())
+        }
+        fn visit_i64<E>(self, _: i64) -> Result<(), E> {
+            Ok(())
+        }
+        fn visit_u64<E>(self, _: u64) -> Result<(), E> {
+            Ok(())
+        }
+        fn visit_f64<E>(self, _: f64) -> Result<(), E> {
+            Ok(())
+        }
+        fn visit_str<E>(self, _: &str) -> Result<(), E> {
+            Ok(())
+        }
+        fn visit_unit<E>(self) -> Result<(), E> {
+            Ok(())
+        }
+        fn visit_seq<A: SeqAccess<'de>>(self, mut seq: A) -> Result<(), A::Error> {
+            while seq.next_element_seed(self.child("[]"))?.is_some() {}
+            Ok(())
+        }
+        fn visit_map<A: MapAccess<'de>>(self, mut map: A) -> Result<(), A::Error> {
+            let mut seen = std::collections::HashSet::new();
+            while let Some(key) = map.next_key::<String>()? {
+                let child = self.child(&key);
+                if !seen.insert(key) {
+                    return Err(de::Error::custom("duplicate key"));
+                }
+                map.next_value_seed(child)?;
+            }
+            Ok(())
+        }
+    }
+    let mut deserializer = serde_json::Deserializer::from_str(span);
+    Unique {
+        path: vec![],
+        in_scope,
+    }
+    .deserialize(&mut deserializer)
+    .is_err()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

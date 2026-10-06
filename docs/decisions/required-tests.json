@@ -1386,7 +1386,8 @@
           "persistence::repository::linux::tests::occupied_noreplace_target_is_never_replaced_and_the_temp_is_retained",
           "persistence::repository::linux::tests::noreplace_publish_moves_the_temp_without_leaving_its_name",
           "persistence::repository::linux::tests::writes_sweep_only_their_own_slots_orphaned_temps_under_the_lock",
-          "generation::demo::tests::bundled_harbour_script_length_is_the_scenarios_declared_passages"
+          "generation::demo::tests::bundled_harbour_script_length_is_the_scenarios_declared_passages",
+          "persistence::save_id::tests::generated_ids_slug_titles_and_always_satisfy_the_id_grammar"
         ]
       },
       {
