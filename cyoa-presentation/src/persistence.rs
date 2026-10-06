@@ -87,7 +87,7 @@ pub enum PersistenceEvent {
     Loaded {
         old_id: SaveId,
         backup: bool,
-        unrecognized_fields: Vec<String>,
+        unrecognized_fields: Vec<UnrecognizedField>,
     },
     Listed(SavePageResult),
     Failed(StorageFailure),

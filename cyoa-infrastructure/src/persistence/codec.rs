@@ -117,7 +117,10 @@ pub fn decode(
         },
         stamp: stamp(bytes),
         copy,
-        unrecognized_fields,
+        unrecognized_fields: unrecognized_fields
+            .into_iter()
+            .map(UnrecognizedField::new)
+            .collect(),
     })
 }
 

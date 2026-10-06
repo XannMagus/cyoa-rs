@@ -187,13 +187,26 @@ pub enum SaveCopy {
     Primary,
     Backup,
 }
+/// Where a save held an optional field this version does not understand. It is
+/// reported to the player and omitted on re-save; the location is display text
+/// only, never parsed by the application.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct UnrecognizedField(Box<str>);
+impl UnrecognizedField {
+    pub fn new(location: impl Into<Box<str>>) -> Self {
+        Self(location.into())
+    }
+    pub fn location(&self) -> &str {
+        &self.0
+    }
+}
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct StoredGame {
     pub snapshot: SaveSnapshot,
     pub metadata: SaveMetadata,
     pub stamp: ContentStamp,
     pub copy: SaveCopy,
-    pub unrecognized_fields: Vec<String>,
+    pub unrecognized_fields: Vec<UnrecognizedField>,
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LoadedGame {

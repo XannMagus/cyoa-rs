@@ -187,6 +187,15 @@ names its operation in failures; it had reported "authentication" for list,
 inspect and load. Each backend config owns its config-directory variable and
 default executable name.
 
+Repository queries (`load`, `list`) keep `&mut self` (2026-10-05 review, accepted):
+both concrete repositories own mutable resources even for reads, namely
+`LocalRepository`'s injectable `FileOps` fault seam and `SupervisedRepository`'s
+helper processes. Interior mutability only to advertise `&self` would hide that.
+Read-only intent is carried by the query types (`InspectSave`, `ListSaves`) and by
+the use cases, which never mutate the session. Unknown optional save fields reach
+application as opaque `UnrecognizedField` locations, display text that is never
+parsed, rather than raw strings.
+
 ### ARCH-002 Domain types establish invariants
 
 **Partial: constructors, generation mappings and save-boundary reconstruction

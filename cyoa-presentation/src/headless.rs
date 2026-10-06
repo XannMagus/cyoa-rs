@@ -683,7 +683,7 @@ fn storage_event(
                 writeln!(
                     control,
                     "Unknown optional field (omitted on resave): {}",
-                    display_text(&field)
+                    display_text(field.location())
                 )?;
             }
             inspect(runtime, control)
@@ -796,7 +796,7 @@ pub fn render_saved_game(stored: &StoredGame, out: &mut dyn Write) -> io::Result
         writeln!(
             out,
             "Unknown optional field (omitted on resave): {}",
-            display_text(field)
+            display_text(field.location())
         )?;
     }
     Ok(())

@@ -150,7 +150,10 @@ fn additive_optional_fields_warn_and_are_omitted_on_resave_while_known_fields_su
         "game.world.characters.0.optional_portrait",
     ] {
         assert!(
-            extra.unrecognized_fields.iter().any(|p| p == expected),
+            extra
+                .unrecognized_fields
+                .iter()
+                .any(|p| p.location() == expected),
             "missing unknown-field warning {expected}: {:?}",
             extra.unrecognized_fields
         );
@@ -189,7 +192,7 @@ fn additive_source_fields_are_reported_for_both_source_variants() {
             loaded
                 .unrecognized_fields
                 .iter()
-                .any(|p| p == "source.extra"),
+                .any(|p| p.location() == "source.extra"),
             "source additions must warn: {:?}",
             loaded.unrecognized_fields
         );
