@@ -1,5 +1,9 @@
 # Next slice: a Codex CLI adapter with independently verified completion
 
+> **Historical record (2026-10-05).** This slice is complete. Current status lives in
+> [PLAN.md](../../PLAN.md) and [the contracts](../decisions/README.md); statements below
+> describe the state when this document was written.
+
 Status: **steps 1–7 complete**, including the 2026-10-02 live adapter gate on
 Codex 0.159.3. [Evidence](../../reviews/2026-10-02-codex-step7/README.md).
 Next: [Claude adapter handoff](phase1-claude-adapter-handoff.md), then presentation.

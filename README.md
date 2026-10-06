@@ -15,83 +15,31 @@ prompt/schema reference content. No calibre checkout is needed.
 
 ## Status
 
-The Phase 0 engine works through scripted generation. Phase 1 now has transport
-outcome types and a vendor-neutral process supervisor tested with real children
-on Linux. The [process review](reviews/2026-09-25-process-supervisor/README.md)
-and [repair record](reviews/2026-09-25-supervisor-repairs/README.md) document the
-correctness gaps found after the first implementation and their fixes: bounded
-capture/cleanup, exact request delivery, authoritative cancellation, diagnostics
-propagation and owned request directories.
+**Phases 0–2 are complete; next is Phase 3, the TUI play screen over an existing
+save.**
 
-Codex's [0.157.1 protocol profile](reviews/2026-09-26-codex-profile/README.md) was
-frozen on 2026-09-26 using bounded bundled-request probes, with full account/tool
-isolation still unverified. Codex has an executable adapter and a completed live
-adapter gate on 0.159.3 (outline, cast, opening, continuation and controlled
-cancellation). Claude's [2.1.286 protocol profile](reviews/2026-10-02-claude-step1/README.md)
-was frozen on 2026-10-02 from production-invocation probes; `ClaudeCliBackend` has
-real-child fixture tests, composed story acceptance and eleven persistent
-mutations, and **passed its own live adapter gate on 2026-10-02**
-([evidence](reviews/2026-10-02-claude-step8/README.md)): the same four bundled
-requests plus a controlled cancellation. Headless play is implemented and tested
-offline for both. Codex also passed the shipped six-turn live headless gate with
-chapter breaks, stable rename, cancellation and explicit retry
-([evidence](reviews/2026-10-02-headless/README.md)). Claude passed the same
-shipped live headless gate on 2026-10-03 with twelve turns, a chapter break,
-stable rename, cancellation and explicit retry, with genuinely incremental previews
-([evidence](reviews/2026-10-03-claude-headless/README.md)). **Both-backend Phase 1
-acceptance is complete.**
-See the [Phase 1 plan](docs/plans/phase1-headless-backends.md)
-and each backend reference file for the remaining work; offline transport tests
-do not establish live vendor behavior.
+- Phase 0, the scripted engine:
+  [acceptance](docs/decisions/phase0-acceptance.md).
+- Phase 1, the [real CLI backends and headless play](docs/plans/phase1-headless-backends.md).
+  - Both co-equal backends have frozen protocol profiles, real-child fixture
+    tests, persistent adapter mutations and passed live gates. The live headless
+    gates ran on 2026-10-02 for Codex 0.159.3
+    ([evidence](reviews/2026-10-02-headless/README.md)) and on 2026-10-03 for
+    Claude 2.1.286 ([evidence](reviews/2026-10-03-claude-headless/README.md)).
+  - What each vendor's CLI was actually observed to do is recorded in
+    `reference/01-claude-cli.md` and `reference/02-codex-cli.md`. Offline tests
+    don't establish live vendor behaviour.
+- Phase 2, [persistence](docs/plans/phase2-persistence.md): canonical autosave,
+  explicit restore policy, atomic primary/backup writes with recovery, and
+  bounded storage helpers ([acceptance audit](reviews/2026-10-05-persistence-s7/README.md)).
+  - Filesystem sync ordering and process-kill recovery are tested on Linux.
+  - Physical power-loss durability on arbitrary filesystems is not established.
+- The pre-Phase 3 cleanup is recorded in
+  [the 2026-10-05 review](reviews/2026-10-05-cleanup/README.md).
 
-Codex adapter **step 2 is implemented**: isolated schema adaptation and owned,
-offline invocation preparation, with [review repairs and evidence](reviews/2026-09-26-codex-step2/review-and-repairs.md).
-**Step 3 is implemented offline**: a private Codex event state machine validates
-the frozen complete-only profile and retains exact candidate evidence on failure.
-See the [implementation record](reviews/2026-09-27-codex-step3/README.md).
-**Step 4 is implemented**: the actual Codex Backend reconciles protocol and process
-outcomes, preserves failure evidence, and checks subscription auth at construction.
-[Evidence](reviews/2026-09-27-codex-step4/README.md) distinguishes real-child tests
-from the bounded live outline smoke. **Step 5 is implemented offline**: composed
-story acceptance checks identity, limits, chapters, cancellation, cleanup failures
-and explicit retry through actual fixture children
-([evidence](reviews/2026-09-28-codex-step5/README.md)). **Step 6 is implemented**:
-seven persistent adapter mutations protect protocol acceptance, shared/peer schema
-isolation and failure evidence ([record](reviews/2026-09-28-codex-step6/README.md)).
-**Step 7 passed live on 2026-10-02**: four successful generations and controlled
-cancellation with observed PID/workspace cleanup and unchanged game state
-([evidence](reviews/2026-10-02-codex-step7/README.md)). The
-[Claude adapter slice](docs/plans/phase1-claude-adapter.md) is complete on the same
-terms. Next is the [presentation/headless handoff](docs/plans/phase1-presentation-handoff.md),
-with an independent live headless gate per backend. The
-[controller/worker slice](docs/plans/phase1-controller-and-worker.md) is now
-implemented offline: canonical session ownership, typed request IDs/revisions,
-stale/cancelled-result rejection, bounded progress, thread join and explicit retry.
-The complete story and both actual adapters are exercised through controlled child
-fixtures. Linux headless play and the credential-free demo are implemented;
-the gate now runs 42 mutations, including persistence, final error-report backpressure and
-demo cancellation/retry regressions ([repair evidence](reviews/2026-10-03-headless-repairs/README.md)).
-TUI and export remain pending. Phase 2 persistence is described below.
-
-Phase 2 steps 1–2 implement checked established-cast restoration, application
-persistence commands/queries and a strictly validated version-one save codec.
-Frozen fixtures and in-memory round trips cover exact audit text, original/active
-limits, selection, identities, chapters and rewind context. The
-[implementation plan](docs/plans/phase2-persistence.md) now also has a blocking
-Linux atomic repository with exact backups, conflict checks and reconciliation
-([S3 evidence](reviews/2026-10-04-persistence-s3/README.md)). Supervised storage
-helpers and the presentation storage worker are also implemented
-([S4 evidence](reviews/2026-10-04-persistence-s4/README.md)). Canonical autosave/load/
-rewind/shutdown coordination is implemented and tested through shipped helpers
-([S5 evidence](reviews/2026-10-04-persistence-s5/README.md)). Public headless
-save/load/list/inspect/rewind and restart flows are implemented
-([S6 evidence](reviews/2026-10-04-persistence-s6/README.md)). S7 completes the
-composed fault acceptance and five focused persistence mutations
-([Phase 2 acceptance audit](reviews/2026-10-05-persistence-s7/README.md)).
-**Phase 2 persistence is complete on the exercised Linux platform.** Next is
-Phase 3, the TUI play screen over an existing save. Filesystem sync ordering and
-process-kill recovery are tested; physical power-loss durability on arbitrary
-filesystems is not established.
+Each [project contract](docs/decisions/README.md) states whether it is enforced,
+and a Partial one names its remaining gap. Dated evidence lives in `reviews/`
+and [the decision history](docs/decisions/history.md).
 
 - `cyoa-core`: checked domain types, namesake-preserving casts and stable IDs,
   summary deltas, typed limits, owned protagonist selection, turns, chapters and
@@ -108,10 +56,15 @@ filesystems is not established.
   local advisor-suppression instruction live in `backend_compat::claude_cli`. Codex
   and Claude each have isolated request preparation, a private protocol codec and an
   executable `Backend` reconciled with the supervisor. Separate save DTOs and a
-  bounded version-one codec validate historical state without replay or repair.
-- `cyoa-presentation`: session controller, owned worker/runtime, explicit CLI
-  intent and Linux headless input/output with cancellation and shutdown.
-- `cyoa-cli`: executable and composition root.
+  bounded version-one codec validate historical state without replay or repair. A
+  Linux atomic local repository and a supervised storage helper (one bounded child
+  per operation) implement the persistence port. Vendor-neutral transport plumbing
+  shared by both adapters lives in `backends::transport`.
+- `cyoa-presentation`: session controller, owned worker/runtime, the storage runner
+  and persistence coordinator (autosave, explicit load/rewind, final save on quit),
+  explicit CLI intent and Linux headless input/output with cancellation and shutdown.
+- `cyoa-cli`: executable and composition root, which also serves as the internal
+  storage helper entry point.
 - `reference/`: source material and each backend's separate live-verification record.
 
 The port deliberately preserves distinct namesakes, repairs ID collisions with
@@ -209,8 +162,8 @@ claims and inward dependencies, then runs workspace runtime tests with Nextest
 and doctests (including compile-fail examples) with Cargo. The `workspace`
 Nextest profile disables retries and runs the complete suite even after a failure.
 Pinned tool versions are checked before starting the gate. It also
-copies the current source to a temporary directory and verifies that 42 deliberate
-regressions fail their exact registered behavioral tests. Compiler failures and
+copies the current source to a temporary directory and verifies that every deliberate regression in the manifest
+fails its exact registered behavioral test. Compiler failures and
 missing tests do not count as detected regressions. The isolated build uses cached
 Cargo dependencies after Clippy; the first mutation build costs additional time.
 Run `bash scripts/check_contract_mutations.sh` for only that check.
@@ -233,22 +186,12 @@ The gate also runs **automatically generated mutations across `cyoa-core`**, usi
 only the domain's own tests. Install the pinned tools once as above. Run
 `bash scripts/check_domain_mutations.sh` for that sweep alone; reports live in
 `mutants.out/` and CI uploads them. Survivors fail the gate; compile-invalid
-mutations are separate from detections. The initial strengthened sweep detected
-96 mutations through test failures and two through bounded per-test nontermination,
-with 78 compile-invalid cases and two documented behavior-equivalent exclusions.
-See [scope and limitations](docs/testing/domain-mutations.md) and
-[evidence](reviews/2026-10-03-domain-mutations/README.md).
+mutations are separate from detections. Counts change as the domain grows: each gate
+run prints its own tally, and dated tallies are kept with the reviews that ran them.
+See [scope and limitations](docs/testing/domain-mutations.md) and the
+[initial evidence](reviews/2026-10-03-domain-mutations/README.md).
 
-See the [acceptance sequence](docs/decisions/phase0-acceptance.md) and
-[TDD/evidence record](reviews/2026-09-25-phase0-acceptance/README.md). Phase 1
-is [real subprocess adapters and a playable headless loop](docs/plans/phase1-headless-backends.md)
-— transport foundations and Codex Backend reconciliation are implemented and
-Linux-tested for both backends, including composed story acceptance, persistent
-adapter mutations and a bounded live adapter gate each. Controller/worker and Linux
-headless/demo acceptance are implemented. Both backends passed the live headless
-gate (Codex 2026-10-02, Claude 2026-10-03), so Phase 1 is complete; persistence
-(Phase 2) is complete through S7's acceptance gate. v1 completion still requires
-the remaining phases, beginning with the Phase 3 TUI play screen.
+The phase-by-phase status is in [Status](#status) above.
 
 ## Where to start
 

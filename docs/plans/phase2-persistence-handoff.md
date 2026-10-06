@@ -1,5 +1,9 @@
 # Phase 2 persistence: Astra planning handoff
 
+> **Historical record (2026-10-05).** This slice is complete. Current status lives in
+> [PLAN.md](../../PLAN.md) and [the contracts](../decisions/README.md); statements below
+> describe the state when this document was written.
+
 Prepared 2026-10-03 from merged `main` at `1663f62`, also `origin/main`.
 Working branch: `phase-2/persistence`, created directly from that main baseline.
 This handoff commissions architecture and implementation planning. Persistence
@@ -219,7 +223,7 @@ handwritten mutation's target, update it without changing the protected behavior
 
 ## Goal to activate after switching to Astra
 
-Use the text in [phase2-persistence-goal.txt](phase2-persistence-goal.txt), or:
+Use the text in `docs/plans/phase2-persistence-goal.txt` (removed 2026-10-05; see commit `9d7b3a9`), or:
 
 ```text
 /goal Produce and commit an implementation-ready Phase 2 persistence plan in docs/plans/phase2-persistence.md, following docs/plans/phase2-persistence-handoff.md. Inspect the actual code and project contracts; specify architecture, save schema and compatibility, failure behavior, autosave/load/rewind/quit transitions, acceptance tests and dependency-ordered atomic implementation steps. Audit every requirement in the handoff against the plan. Resolve routine technical choices with reasoned proposals and identify genuinely unresolved user decisions. This goal covers planning and documentation only; retain implemented behavior and truthful contract coverage.

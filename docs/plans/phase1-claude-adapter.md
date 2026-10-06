@@ -1,5 +1,9 @@
 # Next slice: a Claude CLI adapter with independently verified completion
 
+> **Historical record (2026-10-05).** This slice is complete. Current status lives in
+> [PLAN.md](../../PLAN.md) and [the contracts](../decisions/README.md); statements below
+> describe the state when this document was written.
+
 Status: **steps 0–8 complete, 2026-10-02**, including the live adapter gate on Claude
 2.1.286 ([evidence](../../reviews/2026-10-02-claude-step8/README.md)); presentation and
 headless acceptance remain pending (see the

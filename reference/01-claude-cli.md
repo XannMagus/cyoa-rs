@@ -387,6 +387,7 @@ see the linked review.
   may carry a different one.
 - **Account/tool isolation under concurrent calls** — not tested.
 - **Process-group cleanup of a descendant that retains a pipe past the
-  killed child's exit** — not directly observed; the SIGTERM probe tested
-  single-PID signaling only, not the group-kill approach item 3 will
-  implement.
+  killed child's exit** — not observed live against Claude. The supervisor has
+  implemented group-kill since Phase 1 item 3, and it is covered offline by
+  `a_descendant_retaining_the_inherited_pipe_does_not_hang_the_supervisor`; live
+  runs confirmed only direct-child cleanup.

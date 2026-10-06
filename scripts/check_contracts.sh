@@ -42,6 +42,22 @@ if [[ "$documented_coverage" != "$registered_coverage" ]]; then
   exit 1
 fi
 
+# A Partial decision must say what keeps it partial, in its own section.
+missing_remaining=$(awk '
+  /^##+ / {
+    if (id && partial && !remaining) print id
+    id=""; partial=0; remaining=0
+  }
+  /^### [A-Z]+-[0-9]+ / { id=$2 }
+  id && /^\*\*Partial/ { partial=1 }
+  id && /^Remaining: [^[:space:]]/ { remaining=1 }
+  END { if (id && partial && !remaining) print id }
+' "$contract")
+if [[ -n "$missing_remaining" ]]; then
+  printf 'Partial decisions without a "Remaining:" line: %s\n' "$missing_remaining" >&2
+  exit 1
+fi
+
 while IFS=$'\t' read -r package target; do
   args=(-p "$package" --locked --offline)
   case "$target" in

@@ -1,5 +1,9 @@
 # Phase 1 — controller and worker implementation plan
 
+> **Historical record (2026-10-05).** This slice is complete. Current status lives in
+> [PLAN.md](../../PLAN.md) and [the contracts](../decisions/README.md); statements below
+> describe the state when this document was written.
+
 Status: implemented offline through steps 1–5, with the completion handoff below.
 Written 2026-10-02 against
 `d22db81` on `phase-1/controller-and-worker`, after both adapters and Claude's

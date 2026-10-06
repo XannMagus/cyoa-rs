@@ -10,42 +10,23 @@ or weaken a regression to make such a change pass. The required-test registry an
 `bash scripts/check_contracts.sh` guard existing coverage in CI and local work.
 The contract catalog distinguishes implemented guarantees from pending obligations.
 
-The next implementation sequence is [Phase 1: real CLI backends and headless
-play](docs/plans/phase1-headless-backends.md). It starts from the completed scripted
-engine and specifies dependent commits, error/edge/nominal TDD, process cleanup,
-backend-local compatibility, headless ownership and separate live-verification gates.
-Use that document for the next phase rather than implementing historical sketches
-below literally. Its features remain planned until their acceptance evidence exists.
-The immediate adapter slice is detailed in [the Codex adapter plan](docs/plans/phase1-codex-adapter.md),
-including evidence gates, atomic commits and cross-backend acceptance obligations.
-Steps 1–7 are complete: frozen live discovery, isolated request preparation,
-private protocol decoding, Codex Backend reconciliation and composed story
-acceptance through real fixture children, persistent adapter mutations, and the
-2026-10-02 live outline/cast/opening/continuation/cancellation gate on Codex 0.159.3.
-See the [live evidence](reviews/2026-10-02-codex-step7/README.md) and
-[Claude adapter handoff](docs/plans/phase1-claude-adapter-handoff.md).
-The Claude slice ([its adapter plan](docs/plans/phase1-claude-adapter.md)) is
-complete on the same terms: a frozen 2.1.286 profile, isolated preparation, a private
-codec, Backend reconciliation, composed story acceptance through real fixture
-children, eleven persistent mutations, and the 2026-10-02 live outline/cast/opening/
-continuation/cancellation gate ([evidence](reviews/2026-10-02-claude-step8/README.md)).
-Codex's and Claude's shipped live headless acceptance are both complete. See the
-[presentation/headless handoff](docs/plans/phase1-presentation-handoff.md).
-The next slice is expanded in the
-[controller and worker implementation plan](docs/plans/phase1-controller-and-worker.md).
-The controller/worker slice is implemented and tested offline through both adapter
-fixtures. Linux headless play and demo now drive that runtime, with binary tests
-through both adapters and cancellable input/output shutdown. Live headless gates
-remain separate obligations: Codex passed six turns, chapter breaks, cancellation
-and explicit retry ([evidence](reviews/2026-10-02-headless/README.md)); Claude
-passed twelve turns, a chapter break, cancellation and explicit retry
-([evidence](reviews/2026-10-03-claude-headless/README.md)). Both-backend Phase 1
-acceptance is complete. Phase 2 persistence is also complete through S7's
-[acceptance audit](reviews/2026-10-05-persistence-s7/README.md), including canonical
-autosave, explicit restore, atomic backup/recovery, bounded storage helpers and
-the focused persistence mutation suite. The next build step is Phase 3's TUI
-play screen over an existing save. See the
-[implementation record](reviews/2026-10-02-controller-worker/README.md).
+**Current status (2026-10-05).** Phases 0–2 are complete, and the next build step
+is Phase 3: the TUI play screen over an existing save.
+
+- Phase 0: the scripted engine.
+- Phase 1: [real CLI backends and headless play](docs/plans/phase1-headless-backends.md).
+  Both co-equal backends passed their live headless gates: Codex on 2026-10-02
+  ([evidence](reviews/2026-10-02-headless/README.md)) and Claude on 2026-10-03
+  ([evidence](reviews/2026-10-03-claude-headless/README.md)).
+- Phase 2: [persistence](docs/plans/phase2-persistence.md), through its
+  [acceptance audit](reviews/2026-10-05-persistence-s7/README.md).
+- The pre-Phase 3 cleanup is recorded in
+  [the 2026-10-05 review](reviews/2026-10-05-cleanup/README.md).
+
+The per-slice plans under `docs/plans/` are historical records of how each slice
+was built. The contracts in `docs/decisions/` hold current behaviour, including
+each Partial decision's `Remaining:` gap. Sketches below remain design rationale,
+not instructions to implement literally.
 
 ## Context
 

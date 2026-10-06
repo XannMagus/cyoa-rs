@@ -1,5 +1,9 @@
 # Step 2 handoff: Codex schema and invocation preparation
 
+> **Historical record (2026-10-05).** This slice is complete. Current status lives in
+> [PLAN.md](../../PLAN.md) and [the contracts](../decisions/README.md); statements below
+> describe the state when this document was written.
+
 Prepared against `70a669c` (2026-09-26); clean tree at preparation start.
 **Planning only. Step 2 is not implemented.** This expands step 2 of
 [the adapter plan](phase1-codex-adapter.md) without extending its scope.

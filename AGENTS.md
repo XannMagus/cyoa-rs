@@ -62,13 +62,14 @@ The scripted Phase 0 engine, generation use cases, streaming and complete story
 acceptance scenario are implemented. Both real subprocess adapters and Linux
 headless/demo play are implemented; both Codex's and Claude's live headless gates
 passed, completing Phase 1. Phase 2 persistence is implemented with its full
-acceptance audit and 42 handwritten behavioral mutations; see
-`reviews/2026-10-05-persistence-s7/README.md`. TUI and export are subsequent work — see `README.md`'s
+acceptance audit; see `reviews/2026-10-05-persistence-s7/README.md`. The pre-Phase 3
+cleanup is in `reviews/2026-10-05-cleanup/README.md`; the handwritten behavioral
+mutations are listed in `scripts/mutations/manifest.json`. TUI and export are subsequent work — see `README.md`'s
 "Status". The contract gate also runs isolated behavioral
 mutations; stale patches, compiler failures and missing tests must fail the gate,
 not be counted as detected regressions. Keep domain, boundary, orchestration and
-live-backend evidence distinct. See `docs/decisions/phase0-acceptance.md` before
-starting the next phase.
+live-backend evidence distinct. Before starting the next phase, read PLAN.md's
+current status and build order, and the `Remaining:` line of each Partial contract.
 
 The gate also runs pinned cargo-mutants/cargo-nextest against `cyoa-core` and only
 its own tests (TESTING-001). Install the documented tool versions before running
