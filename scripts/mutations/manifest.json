@@ -138,7 +138,7 @@
     "package": "cyoa-infrastructure",
     "target": "codex_backend",
     "test": "application_receives_complete_candidate_and_diagnostics_on_adapter_timeout",
-    "file": "cyoa-infrastructure/src/backends/codex_cli/adapter.rs",
+    "file": "cyoa-infrastructure/src/backends/transport.rs",
     "failure_contains": "candidate evidence regression"
   },
   {
@@ -147,7 +147,7 @@
     "package": "cyoa-infrastructure",
     "target": "codex_backend",
     "test": "application_receives_complete_candidate_and_diagnostics_on_adapter_timeout",
-    "file": "cyoa-infrastructure/src/backends/codex_cli/adapter.rs",
+    "file": "cyoa-infrastructure/src/backends/transport.rs",
     "failure_contains": "diagnostic evidence regression"
   },
   {
@@ -237,7 +237,7 @@
     "package": "cyoa-infrastructure",
     "target": "claude_backend",
     "test": "application_receives_candidate_and_diagnostics_on_adapter_timeout",
-    "file": "cyoa-infrastructure/src/backends/claude_cli/adapter.rs",
+    "file": "cyoa-infrastructure/src/backends/transport.rs",
     "failure_contains": "diagnostic evidence regression"
   },
   {

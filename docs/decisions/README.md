@@ -347,6 +347,15 @@ runtime) was considered and deliberately deferred: with only two backends,
 one `pub mod` line per backend is simpler than the complexity is worth;
 revisit only if a third backend joins.
 
+Vendor-neutral outcome plumbing is shared, not duplicated (2026-10-05 review):
+`backends::transport` maps supervisor outcomes to `BackendError` and runs the
+subscription preflight for both adapters. It takes the vendor name for wording,
+plus each adapter's own auth command and success predicate, and never inspects
+event shapes. Protocols, auth predicates, invocation and vendor-typed config
+(`ClaudeModel`/`CodexModel`, executables) stay per backend. The evidence-discard
+mutations for the shared mapping run against each backend's own real-boundary
+tests.
+
 Placement is checked mechanically (2026-10-05): `scripts/check_architecture.sh`
 fails when a vendor name appears in code of the shared modules (domain,
 application, `backend.rs`, `json.rs`, `generation/` outside each backend's own

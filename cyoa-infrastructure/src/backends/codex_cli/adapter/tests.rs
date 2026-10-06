@@ -166,7 +166,7 @@ fn every_transport_failure_category_remains_distinct_and_never_emits() {
         assert_eq!(diagnostics, d);
     }
     assert!(matches!(
-        transport_error(SupervisorError::Unsupported, None),
+        transport::transport_error(VENDOR, SupervisorError::Unsupported, None),
         BackendError::Unavailable { .. }
     ));
 }

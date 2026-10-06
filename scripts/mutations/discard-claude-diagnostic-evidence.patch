@@ -1,6 +1,6 @@
---- a/cyoa-infrastructure/src/backends/claude_cli/adapter.rs
-+++ b/cyoa-infrastructure/src/backends/claude_cli/adapter.rs
-@@ -188,7 +188,7 @@ fn transport_error(error: SupervisorError, raw: Option<String>) -> BackendError
+--- a/cyoa-infrastructure/src/backends/transport.rs
++++ b/cyoa-infrastructure/src/backends/transport.rs
+@@ -72,7 +72,7 @@
          SupervisorError::Cancelled { .. } => cancelled(raw, diagnostics),
          SupervisorError::Timeout { .. } => BackendError::Timeout {
              raw_response: raw,
@@ -8,4 +8,4 @@
 +            diagnostics: TransportDiagnostics::empty(),
          },
          SupervisorError::Spawn(source) => BackendError::Unavailable {
-             message: format!("Claude launch failed: {source}"),
+             message: format!("{vendor} launch failed: {source}"),

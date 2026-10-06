@@ -1,15 +1,11 @@
---- a/cyoa-infrastructure/src/backends/codex_cli/adapter.rs
-+++ b/cyoa-infrastructure/src/backends/codex_cli/adapter.rs
-@@ -169,9 +169,9 @@
-     let diagnostics = error.diagnostics();
-     match error {
+--- a/cyoa-infrastructure/src/backends/transport.rs
++++ b/cyoa-infrastructure/src/backends/transport.rs
+@@ -72,7 +72,7 @@
          SupervisorError::Cancelled { .. } => cancelled(raw, diagnostics),
--        SupervisorError::Timeout { .. } => BackendError::Timeout {
--            raw_response: raw,
+         SupervisorError::Timeout { .. } => BackendError::Timeout {
+             raw_response: raw,
 -            diagnostics,
-+        SupervisorError::Timeout { .. } => BackendError::Timeout {
-+            raw_response: raw,
 +            diagnostics: TransportDiagnostics::empty(),
          },
          SupervisorError::Spawn(source) => BackendError::Unavailable {
-             message: format!("Codex launch failed: {source}"),
+             message: format!("{vendor} launch failed: {source}"),

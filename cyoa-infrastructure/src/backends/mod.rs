@@ -7,3 +7,4 @@ pub mod claude_cli;
 pub mod codex_cli;
 pub mod executable;
 pub mod process;
+mod transport;
