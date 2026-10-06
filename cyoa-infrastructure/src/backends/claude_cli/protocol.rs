@@ -145,7 +145,7 @@ impl Protocol {
     /// let the supervisor clean up. `Ok(Some(_))` is a preview fragment of the
     /// correlated payload block, tentative and possibly different from the
     /// final payload.
-    pub fn record(&mut self, record: &[u8]) -> Result<Option<String>, ProtocolError> {
+    pub(crate) fn record(&mut self, record: &[u8]) -> Result<Option<String>, ProtocolError> {
         if let State::Failed(failure) = &self.state {
             return Err(failure.error.clone());
         }
@@ -166,7 +166,7 @@ impl Protocol {
 
     /// End-of-stream is mandatory. Returns protocol evidence only, never a
     /// `GenerationResponse`; process failure can still invalidate a completion.
-    pub fn finish(self) -> Result<Completion, Failure> {
+    pub(crate) fn finish(self) -> Result<Completion, Failure> {
         match self.state {
             State::Finished(done) => Ok(done),
             State::Failed(failure) => Err(failure),

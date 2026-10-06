@@ -182,7 +182,8 @@ fn drive(
                 }
                 story.write_all(&preview.as_bytes()[view.printed.len()..])?;
                 story.flush()?;
-                view.printed = preview.to_owned();
+                // The preview only grows while running: append the new tail, never recopy.
+                view.printed.push_str(&preview[view.printed.len()..]);
             }
         }
         if runtime.shutdown() == Shutdown::DrainingOutput {

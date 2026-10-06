@@ -1811,7 +1811,8 @@
           "failed_and_cancelled_results_preserve_state_and_exact_evidence",
           "stale_and_duplicate_completions_never_replace_current_state",
           "lifecycle_keeps_edited_outline_selection_and_one_opening",
-          "wrong_kind_faults_and_quit_waits_for_active_completion"
+          "wrong_kind_faults_and_quit_waits_for_active_completion",
+          "an_incomplete_preview_stops_growing_instead_of_leaving_a_gap"
         ]
       },
       {

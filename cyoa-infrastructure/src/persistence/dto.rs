@@ -104,7 +104,7 @@ impl From<StorySource> for SourceSave {
 impl SourceSave {
     // Serde's internally tagged enum buffers its fields before deserializing a
     // variant, so serde_ignored cannot see discarded source extensions.
-    pub fn unrecognized_fields(value: &serde_json::Value) -> Vec<String> {
+    pub(crate) fn unrecognized_fields(value: &serde_json::Value) -> Vec<String> {
         let Some(source) = value.get("source").and_then(serde_json::Value::as_object) else {
             return vec![];
         };
@@ -115,7 +115,7 @@ impl SourceSave {
             .map(|key| format!("source.{key}"))
             .collect()
     }
-    pub fn into_domain(self) -> Result<StorySource> {
+    pub(crate) fn into_domain(self) -> Result<StorySource> {
         match self {
             Self::Live => Ok(StorySource::Live),
             Self::Demo { scenario } if scenario == "harbour-v1" => Ok(StorySource::Demo {
@@ -203,7 +203,7 @@ impl From<&GameState> for GameSaveV1 {
     }
 }
 impl GameSaveV1 {
-    pub fn into_domain(self) -> Result<GameState> {
+    pub(crate) fn into_domain(self) -> Result<GameState> {
         let original = self.original_limits.into_domain("game.original_limits")?;
         let active = self.active_limits.into_domain("game.active_limits")?;
         let selected = self

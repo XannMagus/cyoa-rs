@@ -253,3 +253,16 @@ fn in_session_load_advances_revision_preserves_request_ids_and_rejects_old_gener
     let fresh = s.take_turn(TurnDirection::Continue).unwrap();
     assert!(fresh.key().id().get() > old.key().id().get());
 }
+#[test]
+fn an_incomplete_preview_stops_growing_instead_of_leaving_a_gap() {
+    let mut s = SessionController::from_game(game());
+    let request = s.take_turn(TurnDirection::Continue).unwrap();
+    s.progress(request.key(), "First words", false);
+    let oversized = "x".repeat(cyoa_presentation::worker::PreviewLimit::MAX_BYTES);
+    s.progress(request.key(), &oversized, false);
+    assert!(s.preview_incomplete());
+    // A later chunk that would fit must not be appended after the dropped one.
+    s.progress(request.key(), " and more", false);
+    assert_eq!(s.preview(), "First words");
+    assert!(s.preview_incomplete());
+}

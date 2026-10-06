@@ -426,8 +426,11 @@ impl SessionController {
     pub fn progress(&mut self, key: RequestKey, text: &str, incomplete: bool) {
         if matches!(&self.operation, Operation::Running(p) if p.key == key && key.revision == self.revision)
         {
-            let remaining = 1_048_576usize.saturating_sub(self.preview.len());
-            if text.len() <= remaining {
+            // Once incomplete, the preview stops growing: appending a later, smaller
+            // chunk would leave a gap where the dropped text was.
+            let remaining =
+                crate::worker::PreviewLimit::MAX_BYTES.saturating_sub(self.preview.len());
+            if !self.incomplete && text.len() <= remaining {
                 self.preview.push_str(text);
             } else {
                 self.incomplete = true;

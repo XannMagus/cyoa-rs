@@ -10,7 +10,9 @@ pub fn data_directory(explicit: Option<PathBuf>) -> io::Result<PathBuf> {
     if let Some(path) = explicit {
         return absolute(path);
     }
-    if let Some(path) = std::env::var_os("XDG_DATA_HOME") {
+    // The XDG spec treats an empty value as unset; a relative one is rejected
+    // explicitly rather than silently replaced by the default.
+    if let Some(path) = std::env::var_os("XDG_DATA_HOME").filter(|path| !path.is_empty()) {
         absolute(PathBuf::from(path))?;
     }
     directories::ProjectDirs::from("", "", "cyoa")

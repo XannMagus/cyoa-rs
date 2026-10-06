@@ -31,9 +31,8 @@ pub(super) enum ErrorKind {
 
 #[derive(Debug)]
 pub(super) struct Candidate {
-    #[allow(dead_code)]
-    // Retained protocol identity; the complete-only adapter consumes payload text.
-    pub item_id: String,
+    // The item ID is validated (nonblank) while parsing but not retained: the
+    // complete-only adapter consumes payload text, and reuse is rejected by order.
     pub payload: String,
     record: usize,
 }
@@ -70,7 +69,7 @@ pub(super) struct Protocol {
 impl Protocol {
     /// A rejected record latches the first failure. Further records cannot repair
     /// it; callers should stop delivery and ask the supervisor to clean up.
-    pub fn record(&mut self, record: &[u8]) -> Result<(), ProtocolError> {
+    pub(crate) fn record(&mut self, record: &[u8]) -> Result<(), ProtocolError> {
         if let State::Failed(failure) = &self.state {
             return Err(failure.error.clone());
         }
@@ -119,7 +118,7 @@ impl Protocol {
 
     /// End-of-stream is mandatory. This returns protocol evidence only, never a
     /// GenerationResponse. Process failure can still invalidate a Completion.
-    pub fn finish(self) -> Result<Completion, Failure> {
+    pub(crate) fn finish(self) -> Result<Completion, Failure> {
         match self.state {
             State::Completed(completion) => {
                 // Delay syntax validation until the transcript is complete:
@@ -217,14 +216,13 @@ fn parse_event(bytes: &[u8], record: usize) -> Result<Event, ProtocolError> {
                 .get("item")
                 .filter(|v| v.is_object())
                 .ok_or_else(|| error(record, "$.item", ErrorKind::InvalidField))?;
-            let id = string_field(item, "id", record, "$.item.id", true)?;
+            string_field(item, "id", record, "$.item.id", true)?;
             let kind = string_field(item, "type", record, "$.item.type", true)?;
             if kind != "agent_message" {
                 return Err(error(record, "$.item.type", ErrorKind::Unsupported));
             }
             let text = string_field(item, "text", record, "$.item.text", false)?;
             Ok(Event::Message(Candidate {
-                item_id: id.into(),
                 payload: text.into(),
                 record,
             }))

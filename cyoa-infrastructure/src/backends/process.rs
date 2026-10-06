@@ -188,13 +188,13 @@ pub enum OutputStream {
     Stderr,
 }
 
-/// Explicit process lifecycle, per the plan's "spawned -> stopping or
-/// exited -> reaped" requirement — not `is_running`/`has_result` booleans.
+/// Explicit ownership lifecycle of a supervised child, not `is_running`/`has_result`
+/// booleans: spawned -> stopping -> reaped. Exit is observed with `WNOWAIT`, which
+/// leaves the child unreaped, so it is not a separate ownership state.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Lifecycle {
+pub(crate) enum Lifecycle {
     Spawned,
     Stopping,
-    Exited,
     Reaped,
 }
 

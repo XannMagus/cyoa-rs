@@ -33,7 +33,7 @@ fn private_dirs(path: &Path) -> io::Result<()> {
     }
 }
 impl Directory {
-    pub fn open(app: &Path, create: bool) -> io::Result<Self> {
+    pub(crate) fn open(app: &Path, create: bool) -> io::Result<Self> {
         if create {
             private_dirs(app)?;
         }
@@ -66,7 +66,7 @@ impl Directory {
         let path = PathBuf::from(format!("/proc/self/fd/{}", file.as_raw_fd()));
         Ok(Self { file, path })
     }
-    pub fn open_file(&self, name: &str, create: bool) -> io::Result<File> {
+    pub(crate) fn open_file(&self, name: &str, create: bool) -> io::Result<File> {
         let flags = if create {
             OFlags::RDWR | OFlags::CREATE
         } else {
@@ -86,20 +86,20 @@ impl Directory {
         }
         Ok(file)
     }
-    pub fn exists(&self, name: &str) -> io::Result<bool> {
+    pub(crate) fn exists(&self, name: &str) -> io::Result<bool> {
         match statat(&self.file, name, AtFlags::SYMLINK_NOFOLLOW) {
             Ok(_) => Ok(true),
             Err(rustix::io::Errno::NOENT) => Ok(false),
             Err(e) => Err(e.into()),
         }
     }
-    pub fn checked_optional(&self, name: &str) -> io::Result<()> {
+    pub(crate) fn checked_optional(&self, name: &str) -> io::Result<()> {
         if self.exists(name)? {
             self.open_file(name, false)?;
         }
         Ok(())
     }
-    pub fn lock(&self, name: &str) -> io::Result<File> {
+    pub(crate) fn lock(&self, name: &str) -> io::Result<File> {
         let file = self.open_file(name, true)?;
         if file.metadata()?.len() != 0 {
             return Err(io::Error::other("slot lock must be empty"));
@@ -107,7 +107,7 @@ impl Directory {
         flock(&file, FlockOperation::NonBlockingLockExclusive)?;
         Ok(file)
     }
-    pub fn read(&self, name: &str) -> io::Result<Vec<u8>> {
+    pub(crate) fn read(&self, name: &str) -> io::Result<Vec<u8>> {
         let file = self.open_file(name, false)?;
         if file.metadata()?.len() > MAX_SAVE_BYTES as u64 {
             return Err(io::Error::new(
@@ -126,15 +126,15 @@ impl Directory {
         }
         Ok(bytes)
     }
-    pub fn sync(&self) -> io::Result<()> {
+    pub(crate) fn sync(&self) -> io::Result<()> {
         self.file.sync_all()
     }
-    pub fn names(&self) -> io::Result<fs::ReadDir> {
+    pub(crate) fn names(&self) -> io::Result<fs::ReadDir> {
         fs::read_dir(&self.path)
     }
     /// Unlinks one directory entry relative to the owned fd; never follows a
     /// symlink and never removes a directory.
-    pub fn remove(&self, name: &str) -> io::Result<()> {
+    pub(crate) fn remove(&self, name: &str) -> io::Result<()> {
         Ok(rustix::fs::unlinkat(&self.file, name, AtFlags::empty())?)
     }
 }

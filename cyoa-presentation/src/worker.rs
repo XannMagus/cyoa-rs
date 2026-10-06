@@ -13,8 +13,10 @@ use std::{
 #[derive(Debug, Clone, Copy)]
 pub struct PreviewLimit(NonZeroUsize);
 impl PreviewLimit {
+    /// The largest preview any layer retains.
+    pub const MAX_BYTES: usize = 1_048_576;
     pub fn new(bytes: usize) -> Option<Self> {
-        (bytes <= 1_048_576)
+        (bytes <= Self::MAX_BYTES)
             .then(|| NonZeroUsize::new(bytes).map(Self))
             .flatten()
     }
@@ -24,7 +26,7 @@ impl PreviewLimit {
 }
 impl Default for PreviewLimit {
     fn default() -> Self {
-        Self::new(1_048_576).unwrap()
+        Self::new(Self::MAX_BYTES).unwrap()
     }
 }
 #[derive(Default)]
@@ -128,7 +130,10 @@ impl<G: StoryGenerator + Send + 'static> WorkerRunner<G> {
                 .take()
                 .expect("single worker owns use cases");
             let completion = request.execute(&mut cases, &mut |text| {
-                writer.lock().unwrap().publish(text, limit)
+                writer
+                    .lock()
+                    .unwrap_or_else(std::sync::PoisonError::into_inner)
+                    .publish(text, limit)
             });
             (cases, completion)
         });
@@ -163,7 +168,11 @@ impl<G: StoryGenerator + Send + 'static> WorkerRunner<G> {
             ..
         } = &self.state
         {
-            if let Some(event) = mailbox.lock().unwrap().drain(*key) {
+            if let Some(event) = mailbox
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner)
+                .drain(*key)
+            {
                 events.push(event);
             }
             handle.is_finished()
@@ -181,7 +190,11 @@ impl<G: StoryGenerator + Send + 'static> WorkerRunner<G> {
                 unreachable!()
             };
             // The writer is now finished. Drain its final publication before the terminal.
-            if let Some(event) = mailbox.lock().unwrap().drain(key) {
+            if let Some(event) = mailbox
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner)
+                .drain(key)
+            {
                 events.push(event);
             }
             match handle.join() {

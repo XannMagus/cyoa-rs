@@ -35,7 +35,10 @@ impl CancellationSource {
     /// the first panic resumes after the remaining callbacks have run.
     pub fn cancel(&self) {
         let drained = {
-            let mut inner = self.0.lock().unwrap();
+            let mut inner = self
+                .0
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner);
             if inner.cancelled {
                 return;
             }
@@ -80,7 +83,10 @@ impl CancellationToken {
         }
     }
     pub fn is_cancelled(&self) -> bool {
-        self.0.lock().unwrap().cancelled
+        self.0
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .cancelled
     }
 
     /// Registers a wake callback invoked at most once, when cancellation
@@ -94,7 +100,10 @@ impl CancellationToken {
     }
 
     fn register(&self, notify: impl Fn() + Send + 'static) -> Option<usize> {
-        let mut inner = self.0.lock().unwrap();
+        let mut inner = self
+            .0
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
         if inner.cancelled {
             drop(inner);
             notify();

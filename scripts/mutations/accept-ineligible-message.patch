@@ -1,8 +1,8 @@
 --- a/cyoa-infrastructure/src/backends/codex_cli/protocol.rs
 +++ b/cyoa-infrastructure/src/backends/codex_cli/protocol.rs
-@@ -210,7 +210,7 @@
+@@ -218,7 +218,7 @@
                  .ok_or_else(|| error(record, "$.item", ErrorKind::InvalidField))?;
-             let id = string_field(item, "id", record, "$.item.id", true)?;
+             string_field(item, "id", record, "$.item.id", true)?;
              let kind = string_field(item, "type", record, "$.item.type", true)?;
 -            if kind != "agent_message" {
 +            if kind != "agent_message" && kind != "reasoning" {

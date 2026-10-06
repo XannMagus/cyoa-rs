@@ -265,7 +265,6 @@ fn framing_metadata_and_escaped_text_preserve_exact_candidate_bytes() {
     ] {
         let completion = decode(&fixture(file)).unwrap();
         assert_eq!(completion.candidate.payload, payload(), "{file}");
-        assert_eq!(completion.candidate.item_id, "item_0");
     }
     let raw = " \r\n{\"narrative\":\"A \\\"quote\\\", \\u706f and 😀; \\\\ path\"}\t";
     let mut input = events();
@@ -334,7 +333,6 @@ fn frozen_live_story_captures_match_independent_payload_and_usage_expectations()
             fs::read(dir.join("payload.json")).unwrap(),
             "{name}"
         );
-        assert_eq!(completion.candidate.item_id, "item_0");
         assert_eq!(completion.usage.input.unwrap().total(), total, "{name}");
         assert_eq!(completion.usage.input.unwrap().cached(), Some(0), "{name}");
         assert_eq!(completion.usage.output, Some(output), "{name}");
