@@ -5,7 +5,7 @@
 use std::collections::HashSet;
 
 use crate::{
-    limits::Limits,
+    limits::{Limits, MinPlayableCharacters},
     text::{
         Backstory, CharacterDescription, CharacterName, Relationships, WorldDescription, WorldTitle,
     },
@@ -126,16 +126,22 @@ impl PlayablePosition {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Error)]
-#[error("playable position {requested} is outside a cast of {available} characters")]
+#[error(
+    "playable position {} is outside a cast of {available} characters",
+    .requested.get()
+)]
 pub struct InvalidPlayablePosition {
-    requested: usize,
+    requested: PlayablePosition,
     available: usize,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Error)]
-#[error("a world needs at least {minimum} usable playable characters, found {found}")]
+#[error(
+    "a world needs at least {} usable playable characters, found {found}",
+    .minimum.get()
+)]
 pub struct TooFewPlayableCharacters {
-    minimum: usize,
+    minimum: MinPlayableCharacters,
     found: usize,
 }
 
@@ -194,8 +200,8 @@ impl WorldCast {
             .into_iter()
             .filter(|c| seen.insert(c.clone()))
             .collect();
-        let minimum = limits.min_playable_characters.get();
-        if playable.len() < minimum {
+        let minimum = limits.min_playable_characters;
+        if playable.len() < minimum.get() {
             return Err(TooFewPlayableCharacters {
                 minimum,
                 found: playable.len(),
@@ -249,7 +255,7 @@ impl World {
     ) -> Result<SelectedWorld, InvalidPlayablePosition> {
         if position.get() >= self.cast.playable.len() {
             return Err(InvalidPlayablePosition {
-                requested: position.get(),
+                requested: position,
                 available: self.cast.playable.len(),
             });
         }
@@ -315,7 +321,7 @@ mod tests {
     fn too_few_playable_characters_is_rejected() {
         let limits = Limits::default();
         let err = WorldCast::new([player("Solo")], [], &limits).unwrap_err();
-        assert_eq!(err.minimum, 2);
+        assert_eq!(err.minimum.get(), 2);
         assert_eq!(err.found, 1);
     }
 

@@ -1,5 +1,6 @@
 //! Optional image generation seam. Images are disabled in v1.
 
+use cyoa_core::text::RenderedPrompt;
 use thiserror::Error;
 
 /// Only the disabled state is supported until image generation is implemented.
@@ -16,5 +17,5 @@ pub struct ImageError(pub String);
 
 /// Disabled generation is an explicit outcome, distinct from a failed request.
 pub trait ImageBackend: Send {
-    fn generate(&mut self, prompt: &str) -> Result<ImageOutcome, ImageError>;
+    fn generate(&mut self, prompt: &RenderedPrompt) -> Result<ImageOutcome, ImageError>;
 }

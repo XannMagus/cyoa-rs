@@ -45,9 +45,12 @@ impl TurnCount {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Error)]
-#[error("cannot rewind {requested} turn(s) in a game with {available} turn(s)")]
+#[error(
+    "cannot rewind {} turn(s) in a game with {available} turn(s)",
+    .requested.get()
+)]
 pub struct InvalidRewind {
-    requested: usize,
+    requested: TurnCount,
     available: usize,
 }
 
@@ -104,10 +107,14 @@ fn chapter_title(turns: &[TurnRecord]) -> Option<&ChapterTitle> {
 
 /// The complete state of a game.
 ///
+/// During play the turn log grows only through `commit_turn`. `restore` is the
+/// trusted reconstruction path for a persisted log: it accepts stored summaries as
+/// they are (snapshot memory stays authoritative, without replaying deltas).
+///
 /// ```compile_fail
 /// use cyoa_core::game::GameState;
 /// fn push_turn_directly(state: &mut GameState, turn: cyoa_core::turn::TurnRecord) {
-///     state.turns.push(turn); // `turns` is private: only `commit_turn` can extend the log.
+///     state.turns.push(turn); // `turns` is private: play extends the log only through `commit_turn`.
 /// }
 /// ```
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -336,14 +343,13 @@ impl GameState {
     /// Undoes the last `count` turns. Everything else (summary, chapter
     /// position) is derived from `turns`, so nothing else needs updating.
     pub fn rewind(&mut self, count: TurnCount) -> Result<(), InvalidRewind> {
-        let count = count.get();
-        if count > self.turns.len() {
+        if count.get() > self.turns.len() {
             return Err(InvalidRewind {
                 requested: count,
                 available: self.turns.len(),
             });
         }
-        self.turns.truncate(self.turns.len() - count);
+        self.turns.truncate(self.turns.len() - count.get());
         Ok(())
     }
 
