@@ -101,3 +101,29 @@ The first full run on this branch failed, and that failure was genuine.
 `disable-cancellation-wake` survived because the reworked self-pipe test's 10 s
 bound exceeded its 5 s request deadline, so the deadline wake masked a broken
 self-pipe. The fix is a separate commit that keeps the deadline beyond the bound.
+
+## Merged: Astra's independent review repairs (2026-10-06)
+
+Astra's [review](../2026-10-05-repository-review/README.md) found two boundary
+bugs this cleanup had missed, and a third it shared. All five of Astra's
+commits are cherry-picked here with authorship kept:
+
+- **R1, Codex control keys:** this replaces the cleanup's whole-record strictness
+  (**decision**: strict where vital, tolerant elsewhere, so minor CLI versions can
+  evolve). Duplicate keys reject only within the record and its `item`, `error`
+  and `usage` control objects. Other metadata is tolerated, and a new regression
+  pins that tolerance. The payload stays strict. The check reuses the shared
+  `json::duplicate_key_location` helper (which now reports the location) instead
+  of a second visitor. Astra's `accept-codex-duplicate-control` mutation replaces
+  `accept-duplicate-codex-control-key` and was regenerated against the merged
+  code.
+- **R2, Claude auth status:** a typed DTO rejects repeated known fields and
+  tolerates unknown ones.
+- **R3, input read-ahead:** the 64 KiB limit applies to each complete line, not
+  to buffered read-ahead.
+
+After the merge, `bash scripts/check_contracts.sh` passed (exit 0;
+[log](contracts-merged.log)): 460 workspace tests, all 45 handwritten mutations
+detected, and 181 domain mutants (101 caught, 80 unviable, no survivors).
+Astra's live Codex 0.160.0 smoke evidence predates the merge and is not a live
+run of the merged code.

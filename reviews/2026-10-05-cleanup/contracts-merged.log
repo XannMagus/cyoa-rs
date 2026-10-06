@@ -1,0 +1,816 @@
+   Compiling cyoa-application v0.1.0 (./cyoa-application)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+     Running tests/cancellation.rs (target/debug/deps/cancellation-bdc66e1330d83289)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running tests/cancellation.rs (target/debug/deps/cancellation-bdc66e1330d83289)
+   Compiling cyoa-application v0.1.0 (./cyoa-application)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+     Running unittests src/lib.rs (target/debug/deps/cyoa_application-9feed941631ad9ad)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running unittests src/lib.rs (target/debug/deps/cyoa_application-9feed941631ad9ad)
+   Compiling cyoa-application v0.1.0 (./cyoa-application)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.15s
+     Running tests/persistence.rs (target/debug/deps/persistence-eb8238bd281b04ab)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/persistence.rs (target/debug/deps/persistence-eb8238bd281b04ab)
+   Compiling cyoa-cli v0.1.0 (./cyoa-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.48s
+     Running tests/controller_backends.rs (target/debug/deps/controller_backends-98ab09546e1632b0)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/controller_backends.rs (target/debug/deps/controller_backends-98ab09546e1632b0)
+   Compiling cyoa-cli v0.1.0 (./cyoa-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.53s
+     Running tests/controller_story.rs (target/debug/deps/controller_story-7a7386f09e182695)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/controller_story.rs (target/debug/deps/controller_story-7a7386f09e182695)
+   Compiling cyoa-cli v0.1.0 (./cyoa-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.47s
+     Running tests/demo_persistence.rs (target/debug/deps/demo_persistence-2cae7537f3f813f9)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+     Running tests/demo_persistence.rs (target/debug/deps/demo_persistence-2cae7537f3f813f9)
+   Compiling cyoa-cli v0.1.0 (./cyoa-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.49s
+     Running tests/demo_retry.rs (target/debug/deps/demo_retry-e6eb4729d4524859)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/demo_retry.rs (target/debug/deps/demo_retry-e6eb4729d4524859)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running tests/headless.rs (target/debug/deps/headless-eae72b2337d3a9e8)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running tests/headless.rs (target/debug/deps/headless-eae72b2337d3a9e8)
+   Compiling cyoa-cli v0.1.0 (./cyoa-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.52s
+     Running tests/headless_output.rs (target/debug/deps/headless_output-067bbf0440dc4334)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running tests/headless_output.rs (target/debug/deps/headless_output-067bbf0440dc4334)
+   Compiling cyoa-cli v0.1.0 (./cyoa-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.47s
+     Running tests/headless_persistence.rs (target/debug/deps/headless_persistence-aaa26fcac153a9fe)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/headless_persistence.rs (target/debug/deps/headless_persistence-aaa26fcac153a9fe)
+   Compiling cyoa-cli v0.1.0 (./cyoa-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.54s
+     Running tests/persistence_shutdown.rs (target/debug/deps/persistence_shutdown-536de9f56eb23e7b)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/persistence_shutdown.rs (target/debug/deps/persistence_shutdown-536de9f56eb23e7b)
+   Compiling cyoa-cli v0.1.0 (./cyoa-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.46s
+     Running tests/storage_helper.rs (target/debug/deps/storage_helper-5d3ff2125a93ae4a)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/storage_helper.rs (target/debug/deps/storage_helper-5d3ff2125a93ae4a)
+   Compiling cyoa-core v0.1.0 (./cyoa-core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+     Running tests/decision_contracts.rs (target/debug/deps/decision_contracts-dc90655dd55b2ea4)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running tests/decision_contracts.rs (target/debug/deps/decision_contracts-dc90655dd55b2ea4)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+   Doc-tests cyoa_core
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+   Doc-tests cyoa_core
+   Compiling cyoa-core v0.1.0 (./cyoa-core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.15s
+     Running tests/domain_invariants.rs (target/debug/deps/domain_invariants-6c67be68bf708227)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running tests/domain_invariants.rs (target/debug/deps/domain_invariants-6c67be68bf708227)
+   Compiling cyoa-core v0.1.0 (./cyoa-core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.25s
+     Running unittests src/lib.rs (target/debug/deps/cyoa_core-0041ce0fd5041808)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running unittests src/lib.rs (target/debug/deps/cyoa_core-0041ce0fd5041808)
+   Compiling cyoa-core v0.1.0 (./cyoa-core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.15s
+     Running tests/restore_limits.rs (target/debug/deps/restore_limits-5bc2258119d5acef)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running tests/restore_limits.rs (target/debug/deps/restore_limits-5bc2258119d5acef)
+   Compiling cyoa-core v0.1.0 (./cyoa-core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+     Running tests/restored_world.rs (target/debug/deps/restored_world-5b0139bc36b2927c)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running tests/restored_world.rs (target/debug/deps/restored_world-5b0139bc36b2927c)
+   Compiling cyoa-core v0.1.0 (./cyoa-core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.15s
+     Running tests/summary_merge.rs (target/debug/deps/summary_merge-5eddb178b5206269)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running tests/summary_merge.rs (target/debug/deps/summary_merge-5eddb178b5206269)
+   Compiling cyoa-infrastructure v0.1.0 (./cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.35s
+     Running tests/backend_contract.rs (target/debug/deps/backend_contract-89cb9a1870e3220c)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running tests/backend_contract.rs (target/debug/deps/backend_contract-89cb9a1870e3220c)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/claude_backend.rs (target/debug/deps/claude_backend-ffaef28fbbdf3b7c)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/claude_backend.rs (target/debug/deps/claude_backend-ffaef28fbbdf3b7c)
+   Compiling cyoa-infrastructure v0.1.0 (./cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.47s
+     Running tests/claude_story_acceptance.rs (target/debug/deps/claude_story_acceptance-edbc4580051a033f)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running tests/claude_story_acceptance.rs (target/debug/deps/claude_story_acceptance-edbc4580051a033f)
+   Compiling cyoa-infrastructure v0.1.0 (./cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.37s
+     Running tests/codex_backend.rs (target/debug/deps/codex_backend-a84902aa83d8bbec)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/codex_backend.rs (target/debug/deps/codex_backend-a84902aa83d8bbec)
+   Compiling cyoa-infrastructure v0.1.0 (./cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.44s
+     Running tests/codex_story_acceptance.rs (target/debug/deps/codex_story_acceptance-684cb73a93613142)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/codex_story_acceptance.rs (target/debug/deps/codex_story_acceptance-684cb73a93613142)
+   Compiling cyoa-infrastructure v0.1.0 (./cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.34s
+     Running tests/filesystem_repository.rs (target/debug/deps/filesystem_repository-31ed777c6a2eb1a6)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/filesystem_repository.rs (target/debug/deps/filesystem_repository-31ed777c6a2eb1a6)
+   Compiling cyoa-infrastructure v0.1.0 (./cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.32s
+     Running tests/generation_lifecycle.rs (target/debug/deps/generation_lifecycle-967ca856c2bd8aa9)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/generation_lifecycle.rs (target/debug/deps/generation_lifecycle-967ca856c2bd8aa9)
+   Compiling cyoa-infrastructure v0.1.0 (./cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.36s
+     Running tests/generation_use_cases.rs (target/debug/deps/generation_use_cases-7774ae436fc32bba)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/generation_use_cases.rs (target/debug/deps/generation_use_cases-7774ae436fc32bba)
+   Compiling cyoa-infrastructure v0.1.0 (./cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.57s
+     Running unittests src/lib.rs (target/debug/deps/cyoa_infrastructure-e31032b98de45ad4)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running unittests src/lib.rs (target/debug/deps/cyoa_infrastructure-e31032b98de45ad4)
+   Compiling cyoa-infrastructure v0.1.0 (./cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.34s
+     Running tests/persistence_limits.rs (target/debug/deps/persistence_limits-65d9e03685f1fd6b)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running tests/persistence_limits.rs (target/debug/deps/persistence_limits-65d9e03685f1fd6b)
+   Compiling cyoa-infrastructure v0.1.0 (./cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.35s
+     Running tests/persistence_roundtrip.rs (target/debug/deps/persistence_roundtrip-9aec13aa2441f42c)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/persistence_roundtrip.rs (target/debug/deps/persistence_roundtrip-9aec13aa2441f42c)
+   Compiling cyoa-infrastructure v0.1.0 (./cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.28s
+     Running tests/phase_zero_acceptance.rs (target/debug/deps/phase_zero_acceptance-e69557c89f3596a8)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/phase_zero_acceptance.rs (target/debug/deps/phase_zero_acceptance-e69557c89f3596a8)
+   Compiling cyoa-infrastructure v0.1.0 (./cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.58s
+     Running tests/process_supervisor.rs (target/debug/deps/process_supervisor-1de8c5b1c3b4e3e7)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/process_supervisor.rs (target/debug/deps/process_supervisor-1de8c5b1c3b4e3e7)
+   Compiling cyoa-infrastructure v0.1.0 (./cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.42s
+     Running tests/prompt_rendering.rs (target/debug/deps/prompt_rendering-4e03d586b4394a03)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/prompt_rendering.rs (target/debug/deps/prompt_rendering-4e03d586b4394a03)
+   Compiling cyoa-infrastructure v0.1.0 (./cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.38s
+     Running tests/save_compatibility.rs (target/debug/deps/save_compatibility-8fcfbddbdbb923d3)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/save_compatibility.rs (target/debug/deps/save_compatibility-8fcfbddbdbb923d3)
+   Compiling cyoa-infrastructure v0.1.0 (./cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.32s
+     Running tests/save_validation.rs (target/debug/deps/save_validation-53860f9037fe1362)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/save_validation.rs (target/debug/deps/save_validation-53860f9037fe1362)
+   Compiling cyoa-infrastructure v0.1.0 (./cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.35s
+     Running tests/storage_transport.rs (target/debug/deps/storage_transport-00c1c8d72cc08292)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/storage_transport.rs (target/debug/deps/storage_transport-00c1c8d72cc08292)
+   Compiling cyoa-infrastructure v0.1.0 (./cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.29s
+     Running tests/streaming.rs (target/debug/deps/streaming-600a00d1160b5330)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+     Running tests/streaming.rs (target/debug/deps/streaming-600a00d1160b5330)
+   Compiling cyoa-infrastructure v0.1.0 (./cyoa-infrastructure)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.39s
+     Running tests/wire_mapping.rs (target/debug/deps/wire_mapping-b91159373115df19)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/wire_mapping.rs (target/debug/deps/wire_mapping-b91159373115df19)
+   Compiling cyoa-presentation v0.1.0 (./cyoa-presentation)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.49s
+     Running tests/commands.rs (target/debug/deps/commands-730cf38051e220ec)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/commands.rs (target/debug/deps/commands-730cf38051e220ec)
+   Compiling cyoa-presentation v0.1.0 (./cyoa-presentation)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.40s
+     Running unittests src/lib.rs (target/debug/deps/cyoa_presentation-151909070cf17261)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running unittests src/lib.rs (target/debug/deps/cyoa_presentation-151909070cf17261)
+   Compiling cyoa-presentation v0.1.0 (./cyoa-presentation)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.26s
+     Running tests/persistence.rs (target/debug/deps/persistence-8e66e0705353e99c)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/persistence.rs (target/debug/deps/persistence-8e66e0705353e99c)
+   Compiling cyoa-presentation v0.1.0 (./cyoa-presentation)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.22s
+     Running tests/session.rs (target/debug/deps/session-4af4e87e18984df8)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running tests/session.rs (target/debug/deps/session-4af4e87e18984df8)
+   Compiling cyoa-presentation v0.1.0 (./cyoa-presentation)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.18s
+     Running tests/storage.rs (target/debug/deps/storage-bc874e9527c517dd)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running tests/storage.rs (target/debug/deps/storage-bc874e9527c517dd)
+   Compiling cyoa-presentation v0.1.0 (./cyoa-presentation)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.25s
+     Running tests/worker.rs (target/debug/deps/worker-06fe8ef837a2e12a)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/worker.rs (target/debug/deps/worker-06fe8ef837a2e12a)
+Workspace dependency and backend placement boundaries verified.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+────────────
+[32;1m Nextest run[0m ID [1m78a7f269-11d0-4c2a-b378-3b85d4674178[0m with nextest profile: [1mworkspace[0m
+[32;1m    Starting[0m [1m460[0m tests across [1m46[0m binaries
+[32;1m        PASS[0m [   0.005s] (  1/460) [35;1mcyoa-application::persistence[0m [34;1mdemo_sources_admit_at_most_their_scenarios_passages_and_live_admits_any[0m
+[32;1m        PASS[0m [   0.005s] (  2/460) [35;1mcyoa-application::cancellation[0m [34;1mdropping_a_subscription_releases_resources_without_waiting_for_cancellation[0m
+[32;1m        PASS[0m [   0.005s] (  3/460) [35;1mcyoa-application::persistence[0m [34;1mexplicit_restore_policy_and_read_only_queries_do_not_write_or_rebind_the_disk_stamp[0m
+[32;1m        PASS[0m [   0.005s] (  4/460) [35;1mcyoa-application::persistence[0m [34;1mchecked_persistence_values_reject_invalid_names_counters_pages_and_bounds[0m
+[32;1m        PASS[0m [   0.005s] (  5/460) [35;1mcyoa-application::cancellation[0m [34;1mnotifier_registered_after_cancel_already_fired_still_runs_immediately[0m
+[32;1m        PASS[0m [   0.005s] (  6/460) [35;1mcyoa-application::persistence[0m [34;1mrepository_failures_are_preserved_without_retry_or_changing_the_owned_snapshot[0m
+[32;1m        PASS[0m [   0.006s] (  7/460) [35;1mcyoa-application::cancellation[0m [34;1mnotifier_registered_before_cancel_runs_once_when_cancel_fires[0m
+[32;1m        PASS[0m [   0.006s] (  8/460) [35;1mcyoa-application::persistence[0m [34;1mpre_cancelled_commands_and_queries_never_call_the_repository[0m
+[32;1m        PASS[0m [   0.007s] (  9/460) [35;1mcyoa-application::cancellation[0m [34;1mscoped_notifications_handle_reuse_late_registration_and_reentrant_callbacks[0m
+[32;1m        PASS[0m [   0.009s] ( 10/460) [35;1mcyoa-application::cancellation[0m [34;1mcancellation_is_shared_across_threads_and_isolated_between_requests[0m
+[32;1m        PASS[0m [   0.010s] ( 11/460) [35;1mcyoa-application::cancellation[0m [34;1ma_panicking_notifier_does_not_skip_later_notifiers_or_poison_state[0m
+[32;1m        PASS[0m [   0.007s] ( 12/460) [35;1mcyoa-application::persistence[0m [34;1mwrites_forward_the_callers_own_preparation_sink_to_the_repository[0m
+[32;1m        PASS[0m [   0.012s] ( 13/460) [35;1mcyoa-application::persistence[0m [34;1mlate_read_cancellation_rejects_results_but_never_hides_a_durable_write_receipt[0m
+[32;1m        PASS[0m [   0.012s] ( 14/460) [35;1mcyoa-application::persistence[0m [34;1mexplicit_storage_commands_make_exactly_one_call_each_and_return_observed_receipts[0m
+[32;1m        PASS[0m [   0.012s] ( 15/460) [35;1mcyoa-application[0m [36mdiagnostics::tests[0m[36m::[0m[34;1mtransport_diagnostics_preserve_non_utf8_bytes_exactly_and_lossy_display_never_panics[0m
+[32;1m        PASS[0m [   0.013s] ( 16/460) [35;1mcyoa-application::persistence[0m [34;1mstorage_failures_derive_replacement_stamps_from_their_own_write[0m
+[32;1m        PASS[0m [   0.028s] ( 17/460) [35;1mcyoa-cli::headless[0m [34;1mcommand_surface_rejects_demo_vendor_settings_and_unimplemented_ui[0m
+[32;1m        PASS[0m [   0.040s] ( 18/460) [35;1mcyoa-cli::headless[0m [34;1mchosen_backend_is_required_and_demo_never_resolves_a_vendor[0m
+[32;1m        PASS[0m [   0.057s] ( 19/460) [35;1mcyoa-cli::controller_story[0m [34;1mcontroller_zero_npcs_and_both_restore_policies_use_active_limits[0m
+[32;1m        PASS[0m [   0.053s] ( 20/460) [35;1mcyoa-cli::headless[0m [34;1mbuffered_multiple_lines_are_read_without_waiting_for_more_kernel_bytes[0m
+[32;1m        PASS[0m [   0.062s] ( 21/460) [35;1mcyoa-cli::controller_story[0m [34;1mcomplete_controller_story_preserves_context_retry_identity_chapters_and_rewind[0m
+[32;1m        PASS[0m [   0.093s] ( 22/460) [35;1mcyoa-cli::demo_retry[0m [34;1mcancellation_after_demo_consumption_retries_each_stage_and_preserves_all_passages[0m
+[32;1m        PASS[0m [   0.008s] ( 23/460) [35;1mcyoa-cli::headless[0m [34;1mmissing_chosen_executable_does_not_probe_other_backend[0m
+[32;1m        PASS[0m [   0.164s] ( 24/460) [35;1mcyoa-cli::demo_persistence[0m [34;1munknown_scenario_future_version_source_mismatch_and_excess_demo_turns_fail_before_auth[0m
+[32;1m        PASS[0m [   0.205s] ( 25/460) [35;1mcyoa-cli::controller_backends[0m [34;1mboth_joined_adapter_successes_are_rejected_if_cancel_wins_acceptance[0m
+[32;1m        PASS[0m [   0.182s] ( 26/460) [35;1mcyoa-cli::headless[0m [34;1minput_line_bound_ignores_read_ahead_and_rejects_oversized_lines[0m
+[32;1m        PASS[0m [   0.064s] ( 27/460) [35;1mcyoa-cli::headless_output[0m [34;1mcancellation_and_quit_join_active_worker_while_control_output_is_blocked[0m
+[32;1m        PASS[0m [   0.143s] ( 28/460) [35;1mcyoa-cli::headless_output[0m [34;1minitially_full_real_control_pipe_recovers_without_losing_help_or_close[0m
+[32;1m        PASS[0m [   0.469s] ( 29/460) [35;1mcyoa-cli::demo_retry[0m [34;1mcancelled_consumed_demo_passages_preserve_disk_and_retry_all_five_with_persistence[0m
+[32;1m        PASS[0m [   0.526s] ( 30/460) [35;1mcyoa-cli::controller_backends[0m [34;1mboth_adapters_preserve_controller_state_through_failure_cancel_retry_and_quit[0m
+[32;1m        PASS[0m [   0.565s] ( 31/460) [35;1mcyoa-cli::headless[0m [34;1minvalid_utf8_input_closes_active_worker_without_committing[0m
+[32;1m        PASS[0m [   0.191s] ( 32/460) [35;1mcyoa-cli::headless_output[0m [34;1minitially_full_real_story_pipe_drains_exact_committed_narrative_on_exit[0m
+[32;1m        PASS[0m [   0.167s] ( 33/460) [35;1mcyoa-cli::headless_output[0m [34;1mpaused_control_reader_resumes_and_final_drain_delivers_every_help_once[0m
+[32;1m        PASS[0m [   0.707s] ( 34/460) [35;1mcyoa-cli::headless[0m [34;1mbroken_stdout_closes_worker_and_reports_io_failure[0m
+[32;1m        PASS[0m [   0.192s] ( 35/460) [35;1mcyoa-cli::headless_persistence[0m [34;1mauth_free_list_inspect_and_invalid_resume_leave_save_bytes_unchanged[0m
+[32;1m        PASS[0m [   0.869s] ( 36/460) [35;1mcyoa-cli::headless[0m [34;1mdemo_full_story_exhaustion_and_idle_interrupt_are_credential_free[0m
+[32;1m        PASS[0m [   0.845s] ( 37/460) [35;1mcyoa-cli::headless[0m [34;1msigint_alone_cancels_idle_generation_before_any_fallback_command[0m
+[32;1m        PASS[0m [   1.036s] ( 38/460) [35;1mcyoa-cli::headless[0m [34;1mfull_undrained_stderr_does_not_block_error_exit[0m
+[32;1m        PASS[0m [   1.080s] ( 39/460) [35;1mcyoa-cli::headless[0m [34;1mmalformed_turn_keeps_state_and_raw_candidate_until_explicit_retry[0m
+[32;1m        PASS[0m [   1.283s] ( 40/460) [35;1mcyoa-cli::demo_persistence[0m [34;1mharbour_restart_rewind_and_exhaustion_preserve_fixed_passages_without_vendor_access[0m
+[32;1m        PASS[0m [   1.136s] ( 41/460) [35;1mcyoa-cli::headless[0m [34;1mquotes_unicode_multiline_narrative_and_numeric_player_intent_survive_binary_io[0m
+[32;1m        PASS[0m [   0.520s] ( 42/460) [35;1mcyoa-cli::headless_persistence[0m [34;1min_session_load_keeps_failed_edit_buffers_and_save_copy_switches_slots_only_after_success[0m
+[32;1m        PASS[0m [   0.104s] ( 43/460) [35;1mcyoa-cli::storage_helper[0m [34;1mclosing_or_dropping_storage_runner_reaps_a_real_silent_helper[0m
+[32;1m        PASS[0m [   0.697s] ( 44/460) [35;1mcyoa-cli::headless_persistence[0m [34;1mexplicit_backup_recovery_creates_a_fresh_slot_and_preserves_damaged_originals[0m
+[32;1m        PASS[0m [   0.144s] ( 45/460) [35;1mcyoa-cli::persistence_shutdown[0m [34;1minput_and_output_errors_still_save_last_canonical_story_and_remain_errors[0m
+[32;1m        PASS[0m [   0.020s] ( 46/460) [35;1mcyoa-cli::storage_helper[0m [34;1munavailable_or_precancelled_helpers_cannot_report_durable_success[0m
+[32;1m        PASS[0m [   0.006s] ( 47/460) [35;1mcyoa-core[0m [36mgame::tests[0m[36m::[0m[34;1mfirst_turn_cannot_open_a_chapter[0m
+[32;1m        PASS[0m [   0.005s] ( 48/460) [35;1mcyoa-core[0m [36mgame::tests[0m[36m::[0m[34;1minitial_summary_gives_protagonist_and_unmet_npcs[0m
+[32;1m        PASS[0m [   0.005s] ( 49/460) [35;1mcyoa-core[0m [36mgame::tests[0m[36m::[0m[34;1mlater_turn_retitles_its_chapter_and_rewind_restores_the_earlier_title[0m
+[32;1m        PASS[0m [   0.006s] ( 50/460) [35;1mcyoa-core[0m [36mgame::tests[0m[36m::[0m[34;1mnew_chapter_marker_starts_a_second_chapter[0m
+[32;1m        PASS[0m [   0.026s] ( 51/460) [35;1mcyoa-core[0m [36mgame::tests[0m[36m::[0m[34;1mprose_context_matches_a_naive_transcription_of_the_python_filter[0m
+[32;1m        PASS[0m [   0.006s] ( 52/460) [35;1mcyoa-core[0m [36mgame::tests[0m[36m::[0m[34;1mrewind_rejects_undoing_more_turns_than_exist[0m
+[32;1m        PASS[0m [   0.090s] ( 53/460) [35;1mcyoa-cli::storage_helper[0m [34;1mpresentation_storage_runner_drives_shipped_helpers_off_the_event_loop[0m
+[32;1m        PASS[0m [   1.399s] ( 54/460) [35;1mcyoa-cli::headless[0m [34;1mpreview_failure_and_disagreement_never_masquerade_as_committed_prose[0m
+[32;1m        PASS[0m [   0.005s] ( 55/460) [35;1mcyoa-core[0m [36mgame::tests[0m[36m::[0m[34;1mstart_and_restore_keep_the_selected_world_and_protagonist_together[0m
+[32;1m        PASS[0m [   0.004s] ( 56/460) [35;1mcyoa-core[0m [36mgame::tests[0m[36m::[0m[34;1mturn_count_rejects_zero[0m
+[32;1m        PASS[0m [   0.005s] ( 57/460) [35;1mcyoa-core[0m [36mgame::tests[0m[36m::[0m[34;1mworld_namesakes_survive_into_summary_and_remain_addressable_by_id[0m
+[32;1m        PASS[0m [   0.005s] ( 58/460) [35;1mcyoa-core[0m [36mlimits::tests[0m[36m::[0m[34;1mdefaults_match_calibre_constants[0m
+[32;1m        PASS[0m [   0.005s] ( 59/460) [35;1mcyoa-core[0m [36mlimits::tests[0m[36m::[0m[34;1mzero_is_accepted_for_count_limits[0m
+[32;1m        PASS[0m [   0.004s] ( 60/460) [35;1mcyoa-core[0m [36mlimits::tests[0m[36m::[0m[34;1mzero_is_rejected_for_nonzero_limits[0m
+[32;1m        PASS[0m [   0.004s] ( 61/460) [35;1mcyoa-core[0m [36mtext::tests[0m[36m::[0m[34;1mexchange_text_preserves_every_byte_including_empty_and_whitespace[0m
+[32;1m        PASS[0m [   0.005s] ( 62/460) [35;1mcyoa-core[0m [36mtext::tests[0m[36m::[0m[34;1mtype_names_supply_readable_error_labels[0m
+[32;1m        PASS[0m [   0.005s] ( 63/460) [35;1mcyoa-core[0m [36mturn::tests[0m[36m::[0m[34;1mall_blank_or_empty_is_rejected[0m
+[32;1m        PASS[0m [   0.005s] ( 64/460) [35;1mcyoa-core[0m [36mturn::tests[0m[36m::[0m[34;1mcasefold_duplicate_actions_are_dropped_preserving_order[0m
+[32;1m        PASS[0m [   0.004s] ( 65/460) [35;1mcyoa-core[0m [36mturn::tests[0m[36m::[0m[34;1mfewer_kinds_than_actions_fills_from_the_remainder_in_original_order[0m
+[32;1m        PASS[0m [   0.005s] ( 66/460) [35;1mcyoa-core[0m [36mturn::tests[0m[36m::[0m[34;1mcost_amount_rejects_negative_and_nonfinite[0m
+[32;1m        PASS[0m [   0.004s] ( 67/460) [35;1mcyoa-core[0m [36mworld::tests[0m[36m::[0m[34;1mdistinct_playable_namesakes_satisfy_the_minimum[0m
+[32;1m        PASS[0m [   0.005s] ( 68/460) [35;1mcyoa-core[0m [36mturn::tests[0m[36m::[0m[34;1mmore_than_three_prefers_one_action_per_kind_in_original_order[0m
+[32;1m        PASS[0m [   0.005s] ( 69/460) [35;1mcyoa-core[0m [36mworld::tests[0m[36m::[0m[34;1mexact_records_collapse_within_each_role_but_shared_names_survive[0m
+[32;1m        PASS[0m [   0.004s] ( 70/460) [35;1mcyoa-core[0m [36mworld::tests[0m[36m::[0m[34;1mnpcs_are_capped_at_the_configured_limit[0m
+[32;1m        PASS[0m [   0.005s] ( 71/460) [35;1mcyoa-core[0m [36mworld::tests[0m[36m::[0m[34;1mnpc_limit_applies_to_surviving_entries_including_zero[0m
+[32;1m        PASS[0m [   0.005s] ( 72/460) [35;1mcyoa-core[0m [36mworld::tests[0m[36m::[0m[34;1mselection_is_checked_against_the_world_it_owns[0m
+[32;1m        PASS[0m [   0.006s] ( 73/460) [35;1mcyoa-core[0m [36mworld::tests[0m[36m::[0m[34;1mtoo_few_playable_characters_is_rejected[0m
+[32;1m        PASS[0m [   0.005s] ( 74/460) [35;1mcyoa-core[0m [36mworld::tests[0m[36m::[0m[34;1mzero_npc_limit_does_not_consume_candidates[0m
+[32;1m        PASS[0m [   0.005s] ( 75/460) [35;1mcyoa-core::decision_contracts[0m [34;1mtext_002_combining_marks_stay_inside_generated_id_words[0m
+[32;1m        PASS[0m [   0.004s] ( 76/460) [35;1mcyoa-core::domain_invariants[0m [34;1mchanging_style_preserves_committed_story_and_other_game_settings[0m
+[32;1m        PASS[0m [   0.004s] ( 77/460) [35;1mcyoa-core::domain_invariants[0m [34;1mchapters_expose_zero_based_numbers_and_one_based_ordinals[0m
+[32;1m        PASS[0m [   0.005s] ( 78/460) [35;1mcyoa-core::decision_contracts[0m [34;1mtext_002_unicode_lowercase_is_not_python_casefold[0m
+[32;1m        PASS[0m [   0.004s] ( 79/460) [35;1mcyoa-core::domain_invariants[0m [34;1mnpc_relationships_survive_initial_summary_construction[0m
+[32;1m        PASS[0m [   0.005s] ( 80/460) [35;1mcyoa-core::domain_invariants[0m [34;1mcost_amount_preserves_valid_values_and_rejects_nonfinite_or_negative_values[0m
+[32;1m        PASS[0m [   0.005s] ( 81/460) [35;1mcyoa-core::domain_invariants[0m [34;1moptional_turn_fields_and_audit_record_survive_commit[0m
+[32;1m        PASS[0m [   0.004s] ( 82/460) [35;1mcyoa-core::restore_limits[0m [34;1mconsuming_rebind_matches_a_full_restore_and_leaves_matching_policies_untouched[0m
+[32;1m        PASS[0m [   0.005s] ( 83/460) [35;1mcyoa-core::restore_limits[0m [34;1mcurrent_limits_apply_to_every_snapshot_and_survive_commit_and_rewind[0m
+[32;1m        PASS[0m [   0.005s] ( 84/460) [35;1mcyoa-core::restore_limits[0m [34;1mempty_restored_games_use_the_selected_limits_for_their_opening_summary[0m
+[32;1m        PASS[0m [   0.004s] ( 85/460) [35;1mcyoa-core::restore_limits[0m [34;1mraising_the_limit_allows_future_events_without_recovering_discarded_ones[0m
+[32;1m        PASS[0m [   0.005s] ( 86/460) [35;1mcyoa-core::restore_limits[0m [34;1moriginal_limits_remain_available_after_restoring_with_current_settings[0m
+[32;1m        PASS[0m [   0.005s] ( 87/460) [35;1mcyoa-core::restored_world[0m [34;1mestablished_cast_is_not_pruned_or_rejected_by_restore_generation_limits[0m
+[32;1m        PASS[0m [   0.005s] ( 88/460) [35;1mcyoa-core::restored_world[0m [34;1mrestored_cast_rejects_empty_playables_and_exact_duplicates_in_each_role[0m
+[32;1m        PASS[0m [   0.006s] ( 89/460) [35;1mcyoa-core::restored_world[0m [34;1mrestored_cast_preserves_namesakes_role_order_and_checked_selection[0m
+[32;1m        PASS[0m [   0.006s] ( 90/460) [35;1mcyoa-core::restored_world[0m [34;1mrestored_single_playable_and_no_npcs_is_a_valid_zero_turn_game[0m
+[32;1m        PASS[0m [   0.513s] ( 91/460) [35;1mcyoa-cli::headless_persistence[0m [34;1mzero_turn_resume_waits_for_explicit_opening_and_rewind_persists_before_next_request[0m
+[32;1m        PASS[0m [   0.006s] ( 92/460) [35;1mcyoa-core::summary_merge[0m [34;1mblank_updates_preserve_durable_fields_and_leave_previous_untouched[0m
+[32;1m        PASS[0m [   0.006s] ( 93/460) [35;1mcyoa-core::summary_merge[0m [34;1mcap_keeps_last_thirty_and_supports_a_configured_limit[0m
+[32;1m        PASS[0m [   0.004s] ( 94/460) [35;1mcyoa-core::summary_merge[0m [34;1mcast_suffixes_nonadjacent_duplicate_ids_without_dropping_characters[0m
+[32;1m        PASS[0m [   0.006s] ( 95/460) [35;1mcyoa-core::summary_merge[0m [34;1mcast_equality_includes_presentation_order[0m
+[32;1m        PASS[0m [   0.004s] ( 96/460) [35;1mcyoa-core::summary_merge[0m [34;1mcast_supports_id_lookup_without_changing_order_after_rename_or_insertion[0m
+[32;1m        PASS[0m [   0.006s] ( 97/460) [35;1mcyoa-core::summary_merge[0m [34;1mcharacter_ids_follow_calibre_slug_rules_and_character_not_byte_limit[0m
+[32;1m        PASS[0m [   0.004s] ( 98/460) [35;1mcyoa-core::summary_merge[0m [34;1mderived_id_collisions_get_a_unique_suffix[0m
+[32;1m        PASS[0m [   0.005s] ( 99/460) [35;1mcyoa-core::summary_merge[0m [34;1mdomain_constructors_reject_invalid_state[0m
+[32;1m        PASS[0m [   0.005s] (100/460) [35;1mcyoa-core::summary_merge[0m [34;1mdetails_establish_the_invariant_before_infallible_character_construction[0m
+[32;1m        PASS[0m [   0.004s] (101/460) [35;1mcyoa-core::summary_merge[0m [34;1meach_nonblank_character_field_changes_independently[0m
+[32;1m        PASS[0m [   0.004s] (102/460) [35;1mcyoa-core::summary_merge[0m [34;1mevents_accumulate_deduplicate_and_consolidate_in_order[0m
+[32;1m        PASS[0m [   0.004s] (103/460) [35;1mcyoa-core::summary_merge[0m [34;1mexact_duplicates_collapse_before_suffixes_are_assigned[0m
+[32;1m        PASS[0m [   0.005s] (104/460) [35;1mcyoa-core::summary_merge[0m [34;1mexact_deduplication_includes_identity_and_all_character_details[0m
+[32;1m        PASS[0m [   0.004s] (105/460) [35;1mcyoa-core::summary_merge[0m [34;1mfirst_update_wins_including_new_and_old_name_aliases[0m
+[32;1m        PASS[0m [   0.005s] (106/460) [35;1mcyoa-core::summary_merge[0m [34;1mexplicit_ids_are_preserved_and_duplicate_names_match_the_last_entry[0m
+[32;1m        PASS[0m [   0.004s] (107/460) [35;1mcyoa-core::summary_merge[0m [34;1mid_match_wins_over_conflicting_name_match[0m
+[32;1m        PASS[0m [   0.005s] (108/460) [35;1mcyoa-core::summary_merge[0m [34;1mmerging_deduplicates_before_truncating_and_preserves_configured_limit[0m
+[32;1m        PASS[0m [   0.005s] (109/460) [35;1mcyoa-core::summary_merge[0m [34;1mname_aliases_only_last_for_the_current_turn[0m
+[32;1m        PASS[0m [   0.004s] (110/460) [35;1mcyoa-core::summary_merge[0m [34;1mpresent_delta_values_cannot_be_blank[0m
+[32;1m        PASS[0m [   0.005s] (111/460) [35;1mcyoa-core::summary_merge[0m [34;1mnew_characters_need_name_and_durable_information[0m
+[32;1m        PASS[0m [   0.004s] (112/460) [35;1mcyoa-core::summary_merge[0m [34;1mrename_keeps_identity_and_name_fallback_ignores_invented_id[0m
+[32;1m        PASS[0m [   0.004s] (113/460) [35;1mcyoa-core::summary_merge[0m [34;1mworld_and_situation_can_change_without_losing_characters[0m
+[32;1m        PASS[0m [   0.005s] (114/460) [35;1mcyoa-core::summary_merge[0m [34;1msuffixing_preserves_existing_ids_and_repaired_ids_support_future_updates[0m
+[32;1m        PASS[0m [   0.005s] (115/460) [35;1mcyoa-core::summary_merge[0m [34;1mupcoming_events_null_is_not_empty[0m
+[32;1m        PASS[0m [   0.007s] (116/460) [35;1mcyoa-infrastructure[0m [36mbackends::claude_cli::protocol::tests[0m[36m::[0m[34;1mduplicate_control_fields_make_a_record_ambiguous_and_are_rejected[0m
+[32;1m        PASS[0m [   0.007s] (117/460) [35;1mcyoa-infrastructure[0m [36mbackends::claude_cli::protocol::tests[0m[36m::[0m[34;1mfirst_failure_is_sticky_and_later_records_cannot_repair_it[0m
+[32;1m        PASS[0m [   0.013s] (118/460) [35;1mcyoa-infrastructure[0m [36mbackends::claude_cli::protocol::tests[0m[36m::[0m[34;1mfrozen_error_variants_reject_with_located_reasons_and_candidate_evidence[0m
+[32;1m        PASS[0m [   0.010s] (119/460) [35;1mcyoa-infrastructure[0m [36mbackends::claude_cli::protocol::tests[0m[36m::[0m[34;1mlive_failure_captures_are_rejected_at_the_expected_record[0m
+[32;1m        PASS[0m [   0.008s] (120/460) [35;1mcyoa-infrastructure[0m [36mbackends::claude_cli::protocol::tests[0m[36m::[0m[34;1mmalformed_required_fields_and_unsupported_records_are_rejected_not_ignored[0m
+[32;1m        PASS[0m [   0.006s] (121/460) [35;1mcyoa-infrastructure[0m [36mbackends::claude_cli::protocol::tests[0m[36m::[0m[34;1mmalformed_terminal_metadata_keeps_the_exact_candidate_span[0m
+[32;1m        PASS[0m [   0.025s] (122/460) [35;1mcyoa-infrastructure[0m [36mbackends::claude_cli::protocol::tests[0m[36m::[0m[34;1mfrozen_completed_variants_emit_expected_previews_payload_usage_and_provenance[0m
+[32;1m        PASS[0m [   0.007s] (123/460) [35;1mcyoa-infrastructure[0m [36mbackends::claude_cli::protocol::tests[0m[36m::[0m[34;1mping_is_tolerated_and_a_stream_error_event_is_a_vendor_error[0m
+[32;1m        PASS[0m [   0.006s] (124/460) [35;1mcyoa-infrastructure[0m [36mbackends::claude_cli::protocol::tests[0m[36m::[0m[34;1mpreview_is_forwarded_at_the_delta_record_and_never_waits_for_the_result[0m
+[32;1m        PASS[0m [   0.005s] (125/460) [35;1mcyoa-infrastructure[0m [36mbackends::claude_cli::protocol::tests[0m[36m::[0m[34;1mresult_payload_is_the_exact_span_not_a_reserialization[0m
+[32;1m        PASS[0m [   0.006s] (126/460) [35;1mcyoa-infrastructure[0m [36mbackends::claude_cli::protocol::tests[0m[36m::[0m[34;1musage_and_provenance_distinguish_unknown_from_zero_and_never_invent_cost[0m
+[32;1m        PASS[0m [   0.007s] (127/460) [35;1mcyoa-infrastructure[0m [36mbackends::claude_cli::tests[0m[36m::[0m[34;1ma_configured_model_is_inserted_before_the_prompt_arguments[0m
+[32;1m        PASS[0m [   0.006s] (128/460) [35;1mcyoa-infrastructure[0m [36mbackends::claude_cli::tests[0m[36m::[0m[34;1minvalid_model_home_config_dir_and_search_path_values_are_rejected[0m
+[32;1m        PASS[0m [   0.010s] (129/460) [35;1mcyoa-infrastructure[0m [36mbackends::claude_cli::tests[0m[36m::[0m[34;1mnul_and_oversize_arguments_fail_preparation_before_any_launch[0m
+[32;1m        PASS[0m [   0.027s] (130/460) [35;1mcyoa-infrastructure[0m [36mbackends::claude_cli::tests[0m[36m::[0m[34;1madvisor_suppression_is_local_to_the_claude_invocation[0m
+[32;1m        PASS[0m [   0.007s] (131/460) [35;1mcyoa-infrastructure[0m [36mbackends::claude_cli::tests[0m[36m::[0m[34;1mpreparation_never_launches_the_selected_executable[0m
+[32;1m        PASS[0m [   1.127s] (132/460) [35;1mcyoa-cli::headless_output[0m [34;1mreader_resuming_after_final_deadline_cannot_turn_expiry_into_success[0m
+[32;1m        PASS[0m [   0.301s] (133/460) [35;1mcyoa-cli::storage_helper[0m [34;1mcoordinator_rewind_load_and_quit_persist_through_shipped_helpers[0m
+[32;1m        PASS[0m [   0.006s] (134/460) [35;1mcyoa-infrastructure[0m [36mbackends::claude_cli::tests[0m[36m::[0m[34;1mprepared_request_has_exact_argv_environment_stdin_and_empty_workspace[0m
+[32;1m        PASS[0m [   1.029s] (135/460) [35;1mcyoa-cli::headless_output[0m [34;1mtrickling_reader_cannot_extend_final_drain_indefinitely[0m
+[32;1m        PASS[0m [   0.028s] (136/460) [35;1mcyoa-infrastructure[0m [36mbackends::claude_cli::tests[0m[36m::[0m[34;1mnarrative_stays_the_first_property_in_the_schema_argument[0m
+[32;1m        PASS[0m [   0.253s] (137/460) [35;1mcyoa-cli::storage_helper[0m [34;1minternal_helper_runs_storage_before_clap_or_auth_and_preserves_exact_documents[0m
+[32;1m        PASS[0m [   0.007s] (138/460) [35;1mcyoa-infrastructure[0m [36mbackends::codex_cli::adapter::tests[0m[36m::[0m[34;1mcancellation_at_acceptance_overrides_protocol_completion_without_emitting[0m
+[32;1m        PASS[0m [   0.006s] (139/460) [35;1mcyoa-infrastructure[0m [36mbackends::codex_cli::adapter::tests[0m[36m::[0m[34;1mnested_cleanup_retains_initiating_failure_payload_and_prefix_without_displaying_buffers[0m
+[32;1m        PASS[0m [   0.009s] (140/460) [35;1mcyoa-infrastructure[0m [36mbackends::codex_cli::adapter::tests[0m[36m::[0m[34;1mevery_transport_failure_category_remains_distinct_and_never_emits[0m
+[32;1m        PASS[0m [   0.010s] (141/460) [35;1mcyoa-infrastructure[0m [36mbackends::codex_cli::protocol::tests[0m[36m::[0m[34;1mduplicated_control_keys_reject_the_record_instead_of_picking_one[0m
+[32;1m        PASS[0m [   0.009s] (142/460) [35;1mcyoa-infrastructure[0m [36mbackends::codex_cli::protocol::tests[0m[36m::[0m[34;1mduplicates_outside_control_objects_are_tolerated_for_minor_cli_evolution[0m
+[32;1m        PASS[0m [   0.008s] (143/460) [35;1mcyoa-infrastructure[0m [36mbackends::codex_cli::protocol::tests[0m[36m::[0m[34;1mfirst_failure_is_sticky_and_keeps_candidate_after_later_records[0m
+[32;1m        PASS[0m [   0.017s] (144/460) [35;1mcyoa-infrastructure[0m [36mbackends::codex_cli::protocol::tests[0m[36m::[0m[34;1mduplicated_payload_keys_are_invalid_payload_with_the_candidate_retained[0m
+[32;1m        PASS[0m [   0.023s] (145/460) [35;1mcyoa-infrastructure[0m [36mbackends::claude_cli::tests[0m[36m::[0m[34;1mpublic_generation_preparation_uses_one_rendered_request_for_prompt_and_schema[0m
+[32;1m        PASS[0m [   0.011s] (146/460) [35;1mcyoa-infrastructure[0m [36mbackends::codex_cli::protocol::tests[0m[36m::[0m[34;1mframing_metadata_and_escaped_text_preserve_exact_candidate_bytes[0m
+[32;1m        PASS[0m [   0.007s] (147/460) [35;1mcyoa-infrastructure[0m [36mbackends::codex_cli::protocol::tests[0m[36m::[0m[34;1minvalid_payload_is_retained_and_never_repaired_or_accepted[0m
+[32;1m        PASS[0m [   0.026s] (148/460) [35;1mcyoa-infrastructure[0m [36mbackends::claude_cli::tests[0m[36m::[0m[34;1mschema_argument_is_the_claude_adaptation_of_the_shared_schema_and_nothing_else[0m
+[32;1m        PASS[0m [   0.008s] (149/460) [35;1mcyoa-infrastructure[0m [36mbackends::codex_cli::protocol::tests[0m[36m::[0m[34;1mlive_tool_canary_is_unsupported_even_though_the_cli_exited_successfully[0m
+[32;1m        PASS[0m [   0.006s] (150/460) [35;1mcyoa-infrastructure[0m [36mbackends::codex_cli::protocol::tests[0m[36m::[0m[34;1morder_failures_and_end_of_stream_never_authorize_completion[0m
+[32;1m        PASS[0m [   0.009s] (151/460) [35;1mcyoa-infrastructure[0m [36mbackends::codex_cli::protocol::tests[0m[36m::[0m[34;1mmalformed_required_fields_and_unsupported_items_are_not_candidates[0m
+[32;1m        PASS[0m [   0.009s] (152/460) [35;1mcyoa-infrastructure[0m [36mbackends::codex_cli::protocol::tests[0m[36m::[0m[34;1moptional_telemetry_preserves_unknown_zero_and_normalizes_invalid_cache[0m
+[32;1m        PASS[0m [   0.005s] (153/460) [35;1mcyoa-infrastructure[0m [36mbackends::codex_cli::tests[0m[36m::[0m[34;1mexecutable_resolution_handles_absolute_relative_and_selected_path_names[0m
+[32;1m        PASS[0m [   0.021s] (154/460) [35;1mcyoa-infrastructure[0m [36mbackends::codex_cli::protocol::tests[0m[36m::[0m[34;1mfrozen_error_transcripts_reject_with_located_reasons_and_candidate_evidence[0m
+[32;1m        PASS[0m [   0.005s] (155/460) [35;1mcyoa-infrastructure[0m [36mbackends::codex_cli::tests[0m[36m::[0m[34;1minvalid_model_home_and_search_path_values_are_rejected[0m
+[32;1m        PASS[0m [   0.007s] (156/460) [35;1mcyoa-infrastructure[0m [36mbackends::codex_cli::tests[0m[36m::[0m[34;1mfailed_schema_write_is_located_and_workspace_drop_cleans_up[0m
+[32;1m        PASS[0m [   0.007s] (157/460) [35;1mcyoa-infrastructure[0m [36mbackends::codex_cli::tests[0m[36m::[0m[34;1mexecutable_search_skips_nonexecutables_and_resolves_empty_path_entries[0m
+[32;1m        PASS[0m [   0.006s] (158/460) [35;1mcyoa-infrastructure[0m [36mbackends::codex_cli::tests[0m[36m::[0m[34;1mpreparation_never_launches_the_selected_executable[0m
+[32;1m        PASS[0m [   0.025s] (159/460) [35;1mcyoa-infrastructure[0m [36mbackends::codex_cli::protocol::tests[0m[36m::[0m[34;1mfrozen_live_story_captures_match_independent_payload_and_usage_expectations[0m
+[32;1m        PASS[0m [   0.005s] (160/460) [35;1mcyoa-infrastructure[0m [36mbackends::process::split_record_tests[0m[36m::[0m[34;1ma_single_complete_record_is_extracted_and_removed[0m
+[32;1m        PASS[0m [   0.006s] (161/460) [35;1mcyoa-infrastructure[0m [36mbackends::executable::tests[0m[36m::[0m[34;1mblank_nul_missing_and_non_file_executables_are_typed_errors[0m
+[32;1m        PASS[0m [   0.006s] (162/460) [35;1mcyoa-infrastructure[0m [36mbackends::executable::tests[0m[36m::[0m[34;1mstring_and_path_validators_reject_blank_nul_and_relative_values[0m
+[32;1m        PASS[0m [   0.008s] (163/460) [35;1mcyoa-infrastructure[0m [36mbackends::executable::tests[0m[36m::[0m[34;1mnames_resolve_through_the_selected_path_to_a_canonical_file[0m
+[32;1m        PASS[0m [   0.006s] (164/460) [35;1mcyoa-infrastructure[0m [36mbackends::process::split_record_tests[0m[36m::[0m[34;1ma_trailing_partial_record_without_newline_remains_buffered[0m
+[32;1m        PASS[0m [   0.007s] (165/460) [35;1mcyoa-infrastructure[0m [36mbackends::process::split_record_tests[0m[36m::[0m[34;1mcrlf_records_keep_the_carriage_return_attached_to_the_record[0m
+[32;1m        PASS[0m [   0.007s] (166/460) [35;1mcyoa-infrastructure[0m [36mbackends::process::split_record_tests[0m[36m::[0m[34;1man_empty_record_between_two_newlines_is_preserved_as_empty[0m
+[32;1m        PASS[0m [   0.007s] (167/460) [35;1mcyoa-infrastructure[0m [36mbackends::process::split_record_tests[0m[36m::[0m[34;1mempty_buffer_yields_no_records_and_stays_empty[0m
+[32;1m        PASS[0m [   0.007s] (168/460) [35;1mcyoa-infrastructure[0m [36mbackends::process::split_record_tests[0m[36m::[0m[34;1mfeeding_bytes_across_multiple_calls_reassembles_a_split_record[0m
+[32;1m        PASS[0m [   0.007s] (169/460) [35;1mcyoa-infrastructure[0m [36mbackends::process::unix_impl::fault_tests[0m[36m::[0m[34;1mfatal_read_error_is_not_treated_as_would_block[0m
+[32;1m        PASS[0m [   0.022s] (170/460) [35;1mcyoa-infrastructure[0m [36mbackends::codex_cli::tests[0m[36m::[0m[34;1mpublic_generation_preparation_uses_one_rendered_request_for_prompt_and_schema[0m
+[32;1m        PASS[0m [   0.006s] (171/460) [35;1mcyoa-infrastructure[0m [36mgeneration::backend_compat::codex_cli::tests[0m[36m::[0m[34;1ma_ref_with_a_union_sibling_is_rejected_at_its_location[0m
+[32;1m        PASS[0m [   0.016s] (172/460) [35;1mcyoa-infrastructure[0m [36mbackends::process::unix_impl::fault_tests[0m[36m::[0m[34;1mself_pipe_wakes_a_long_poll_without_removing_token_checks[0m
+[32;1m        PASS[0m [   0.035s] (173/460) [35;1mcyoa-infrastructure[0m [36mbackends::codex_cli::tests[0m[36m::[0m[34;1mprepared_request_owns_schema_stdin_environment_and_workspace_until_transfer_drop[0m
+[32;1m        PASS[0m [   0.007s] (174/460) [35;1mcyoa-infrastructure[0m [36mgeneration::backend_compat::codex_cli::tests[0m[36m::[0m[34;1mframing_matches_the_committed_discovery_capture_byte_for_byte[0m
+[32;1m        PASS[0m [   0.011s] (175/460) [35;1mcyoa-infrastructure[0m [36mgeneration::backend_compat::codex_cli::tests[0m[36m::[0m[34;1madapted_turn_keeps_order_nullability_defaults_and_empty_strings[0m
+[32;1m        PASS[0m [   0.009s] (176/460) [35;1mcyoa-infrastructure[0m [36mgeneration::backend_compat::codex_cli::tests[0m[36m::[0m[34;1mbundled_schemas_match_independent_discovery_expectations[0m
+[32;1m        PASS[0m [   0.008s] (177/460) [35;1mcyoa-infrastructure[0m [36mgeneration::backend_compat::codex_cli::tests[0m[36m::[0m[34;1mmalformed_property_map_is_a_located_preparation_error[0m
+[32;1m        PASS[0m [   0.007s] (178/460) [35;1mcyoa-infrastructure[0m [36mgeneration::backend_compat::codex_cli::tests[0m[36m::[0m[34;1mmalformed_required_keyword_is_rejected_even_without_properties[0m
+[32;1m        PASS[0m [   0.006s] (179/460) [35;1mcyoa-infrastructure[0m [36mgeneration::backend_compat::codex_cli::tests[0m[36m::[0m[34;1mrequired_names_outside_properties_are_rejected_without_losing_constraints[0m
+[32;1m        PASS[0m [   0.030s] (180/460) [35;1mcyoa-infrastructure[0m [36mgeneration::backend_compat::claude_cli::tests[0m[36m::[0m[34;1madapt_schema_strips_the_root_schema_key_and_nothing_else[0m
+[32;1m        PASS[0m [   0.007s] (181/460) [35;1mcyoa-infrastructure[0m [36mgeneration::backend_compat::codex_cli::tests[0m[36m::[0m[34;1munsupported_schema_children_report_their_location_and_boolean_constraints_survive[0m
+[32;1m        PASS[0m [   0.038s] (182/460) [35;1mcyoa-infrastructure[0m [36mbackends::process::unix_impl::fault_tests[0m[36m::[0m[34;1msetup_write_read_poll_and_exit_observation_failures_are_errors[0m
+[32;1m        PASS[0m [   0.008s] (183/460) [35;1mcyoa-infrastructure[0m [36mgeneration::backend_compat::codex_cli::tests[0m[36m::[0m[34;1mtransformation_is_idempotent_and_leaves_schema_looking_annotations_opaque[0m
+[32;1m        PASS[0m [   0.008s] (184/460) [35;1mcyoa-infrastructure[0m [36mgeneration::backend_compat::codex_cli::tests[0m[36m::[0m[34;1munsupported_dialects_and_structural_keywords_are_located_errors[0m
+[32;1m        PASS[0m [   0.024s] (185/460) [35;1mcyoa-infrastructure[0m [36mgeneration::demo::tests[0m[36m::[0m[34;1mbundled_harbour_script_length_is_the_scenarios_declared_passages[0m
+[32;1m        PASS[0m [   0.040s] (186/460) [35;1mcyoa-infrastructure[0m [36mgeneration::schema::tests[0m[36m::[0m[34;1mschema_docs_placeholders_render_against_supplied_limits[0m
+[32;1m        PASS[0m [   0.037s] (187/460) [35;1mcyoa-infrastructure[0m [36mgeneration::schema::tests[0m[36m::[0m[34;1mshared_turn_schema_keeps_optional_character_updates[0m
+[32;1m        PASS[0m [   0.078s] (188/460) [35;1mcyoa-infrastructure[0m [36mgeneration::schema::tests[0m[36m::[0m[34;1mschema_docs_cover_every_field_and_no_others[0m
+[32;1m        PASS[0m [   0.080s] (189/460) [35;1mcyoa-infrastructure[0m [36mgeneration::schema::tests[0m[36m::[0m[34;1mevery_generated_object_schema_forbids_additional_properties[0m
+[32;1m        PASS[0m [   0.081s] (190/460) [35;1mcyoa-infrastructure[0m [36mgeneration::schema::tests[0m[36m::[0m[34;1mgeneric_schemas_declare_a_root_schema_key[0m
+[32;1m        PASS[0m [   0.040s] (191/460) [35;1mcyoa-infrastructure[0m [36mgeneration::schema::tests[0m[36m::[0m[34;1mstory_turn_schema_lists_narrative_first[0m
+[32;1m        PASS[0m [   0.014s] (192/460) [35;1mcyoa-infrastructure[0m [36mgeneration::templates::tests[0m[36m::[0m[34;1mmalformed_sources_report_the_source_file[0m
+[32;1m        PASS[0m [   0.034s] (193/460) [35;1mcyoa-infrastructure[0m [36mgeneration::templates::tests[0m[36m::[0m[34;1mconfigured_turn_fragments_render_once_and_player_text_is_not_a_template[0m
+[32;1m        PASS[0m [   0.036s] (194/460) [35;1mcyoa-infrastructure[0m [36mgeneration::templates::tests[0m[36m::[0m[34;1mdata_dependent_render_errors_are_values_with_template_locations[0m
+[32;1m        PASS[0m [   0.037s] (195/460) [35;1mcyoa-infrastructure[0m [36mgeneration::templates::tests[0m[36m::[0m[34;1mempty_schema_descriptions_remove_defaults_and_nested_overrides_apply[0m
+[32;1m        PASS[0m [   0.025s] (196/460) [35;1mcyoa-infrastructure[0m [36mgeneration::templates::tests[0m[36m::[0m[34;1mmerged_configuration_drives_all_three_generation_requests[0m
+[32;1m        PASS[0m [   0.064s] (197/460) [35;1mcyoa-infrastructure[0m [36mgeneration::templates::tests[0m[36m::[0m[34;1mconfigured_opening_continuation_and_bridge_match_complete_snapshots[0m
+[32;1m        PASS[0m [   0.049s] (198/460) [35;1mcyoa-infrastructure[0m [36mgeneration::templates::tests[0m[36m::[0m[34;1mprompt_shape_rejects_missing_wrong_type_and_unknown_keys[0m
+[32;1m        PASS[0m [   0.052s] (199/460) [35;1mcyoa-infrastructure[0m [36mgeneration::templates::tests[0m[36m::[0m[34;1mquick_actions_reject_dangling_references_and_empty_groups[0m
+[32;1m        PASS[0m [   0.056s] (200/460) [35;1mcyoa-infrastructure[0m [36mgeneration::templates::tests[0m[36m::[0m[34;1mstartup_checks_the_zero_npc_branch_in_prompts_and_schema_docs[0m
+[32;1m        PASS[0m [   0.065s] (201/460) [35;1mcyoa-infrastructure[0m [36mgeneration::templates::tests[0m[36m::[0m[34;1mquick_action_instructions_change_when_kinds_table_is_overridden[0m
+[32;1m        PASS[0m [   1.057s] (202/460) [35;1mcyoa-cli::headless_persistence[0m [34;1mstartup_policy_changes_persist_after_auth_and_failed_auth_never_rewrites_a_save[0m
+[32;1m        PASS[0m [   0.018s] (203/460) [35;1mcyoa-infrastructure[0m [36mgeneration::templates::tests[0m[36m::[0m[34;1mtoml_override_merges_per_key_not_per_file[0m
+[32;1m        PASS[0m [   0.007s] (204/460) [35;1mcyoa-infrastructure[0m [36mjson::tests[0m[36m::[0m[34;1mduplicate_keys_are_rejected_at_any_depth_and_never_resolved[0m
+[32;1m        PASS[0m [   0.352s] (205/460) [35;1mcyoa-infrastructure[0m [36mbackends::claude_cli::protocol::tests[0m[36m::[0m[34;1mfrozen_live_captures_match_independent_payload_preview_usage_and_provenance[0m
+[32;1m        PASS[0m [   0.046s] (206/460) [35;1mcyoa-infrastructure[0m [36mgeneration::templates::tests[0m[36m::[0m[34;1mstyles_reject_empty_tables_duplicate_keys_and_wrong_shapes[0m
+[32;1m        PASS[0m [   0.087s] (207/460) [35;1mcyoa-infrastructure[0m [36mgeneration::templates::tests[0m[36m::[0m[34;1mschema_documentation_rejects_unknown_missing_and_invalid_entries[0m
+[32;1m        PASS[0m [   0.007s] (208/460) [35;1mcyoa-infrastructure[0m [36mjson::tests[0m[36m::[0m[34;1msyntax_errors_stay_distinct_from_duplicates[0m
+[32;1m        PASS[0m [   0.009s] (209/460) [35;1mcyoa-infrastructure[0m [36mjson::tests[0m[36m::[0m[34;1mexcessive_nesting_is_a_bounded_syntax_error[0m
+[32;1m        PASS[0m [   0.007s] (210/460) [35;1mcyoa-infrastructure[0m [36mjson::tests[0m[36m::[0m[34;1munique_documents_parse_identically_to_serde_json[0m
+[32;1m        PASS[0m [   0.008s] (211/460) [35;1mcyoa-infrastructure[0m [36mjson::tests[0m[36m::[0m[34;1mtree_free_validation_agrees_with_strict_parsing[0m
+[32;1m        PASS[0m [   0.009s] (212/460) [35;1mcyoa-infrastructure[0m [36mpersistence::codec::tests[0m[36m::[0m[34;1mbounded_writer_rejects_a_document_or_final_newline_that_exceeds_the_limit[0m
+[32;1m        PASS[0m [   0.011s] (213/460) [35;1mcyoa-infrastructure[0m [36mpersistence::codec::tests[0m[36m::[0m[34;1mcanonical_writer_timestamps_cover_utc_year_boundaries_and_millisecond_precision[0m
+[32;1m        PASS[0m [   0.012s] (214/460) [35;1mcyoa-infrastructure[0m [36mpersistence::helper::tests[0m[36m::[0m[34;1mhelper_versions_round_trip_and_a_zero_version_is_a_helper_fault[0m
+[32;1m        PASS[0m [   0.061s] (215/460) [35;1mcyoa-infrastructure[0m [36mgeneration::templates::tests[0m[36m::[0m[34;1mtemplates_reject_syntax_wrong_context_and_nested_typos[0m
+[32;1m        PASS[0m [   0.015s] (216/460) [35;1mcyoa-infrastructure[0m [36mpersistence::helper::tests[0m[36m::[0m[34;1mpreparation_clock_or_entropy_failure_launches_no_helper_and_keeps_visibility_unchanged[0m
+[32;1m        PASS[0m [   0.007s] (217/460) [35;1mcyoa-infrastructure[0m [36mpersistence::migrations::tests[0m[36m::[0m[34;1msynthetic_scaffold_rejects_missing_steps_and_incorrect_advancement[0m
+[32;1m        PASS[0m [   0.010s] (218/460) [35;1mcyoa-infrastructure[0m [36mpersistence::helper::tests[0m[36m::[0m[34;1mprivate_protocol_rejects_duplicate_keys_unknown_fields_versions_and_wrong_shapes_before_disk[0m
+[32;1m        PASS[0m [   0.054s] (219/460) [35;1mcyoa-infrastructure[0m [36mgeneration::templates::tests[0m[36m::[0m[34;1mundefined_template_variable_is_a_render_error[0m
+[32;1m        PASS[0m [   0.007s] (220/460) [35;1mcyoa-infrastructure[0m [36mpersistence::migrations::tests[0m[36m::[0m[34;1msynthetic_scaffold_runs_each_step_once_in_order_without_shipping_legacy_support[0m
+[32;1m        PASS[0m [   0.042s] (221/460) [35;1mcyoa-infrastructure[0m [36mgeneration::templates::tests[0m[36m::[0m[34;1munknown_styles_use_configured_first_entry_and_blank_tone_is_omitted[0m
+[32;1m        PASS[0m [   0.009s] (222/460) [35;1mcyoa-infrastructure[0m [36mpersistence::repository::linux::tests[0m[36m::[0m[34;1moccupied_noreplace_target_is_never_replaced_and_the_temp_is_retained[0m
+[32;1m        PASS[0m [   0.009s] (223/460) [35;1mcyoa-infrastructure[0m [36mpersistence::repository::linux::tests[0m[36m::[0m[34;1mnoreplace_publish_moves_the_temp_without_leaving_its_name[0m
+[32;1m        PASS[0m [   0.015s] (224/460) [35;1mcyoa-infrastructure[0m [36mpersistence::repository::linux::tests[0m[36m::[0m[34;1mdefault_data_location_honors_absolute_xdg_and_rejects_relative_locations[0m
+[32;1m        PASS[0m [   0.009s] (225/460) [35;1mcyoa-infrastructure[0m [36mpersistence::repository::linux::tests[0m[36m::[0m[34;1munsupported_noreplace_publishes_by_rename_with_exactly_one_link[0m
+[32;1m        PASS[0m [   0.012s] (226/460) [35;1mcyoa-infrastructure[0m [36mpersistence::repository::linux::tests[0m[36m::[0m[34;1mwrites_rejected_at_admission_publish_nothing[0m
+[32;1m        PASS[0m [   0.062s] (227/460) [35;1mcyoa-infrastructure[0m [36mpersistence::repository::linux::tests[0m[36m::[0m[34;1mpreparation_read_encode_and_cleanup_failures_keep_the_initiating_cause[0m
+[32;1m        PASS[0m [   0.071s] (228/460) [35;1mcyoa-infrastructure[0m [36mpersistence::repository::linux::tests[0m[36m::[0m[34;1mfirst_create_receipt_loss_reconciles_without_duplicate_slots_or_backup_rotation[0m
+[32;1m        PASS[0m [   0.009s] (229/460) [35;1mcyoa-infrastructure[0m [36mpersistence::save_id::tests[0m[36m::[0m[34;1mgenerated_ids_slug_titles_and_always_satisfy_the_id_grammar[0m
+[32;1m        PASS[0m [   0.006s] (230/460) [35;1mcyoa-infrastructure::backend_contract[0m [34;1ma_response_with_no_attached_diagnostics_reports_empty[0m
+[32;1m        PASS[0m [   0.010s] (231/460) [35;1mcyoa-infrastructure::backend_contract[0m [34;1mcached_tokens_cannot_exceed_total_but_unknown_is_not_zero[0m
+[32;1m        PASS[0m [   0.013s] (232/460) [35;1mcyoa-infrastructure::backend_contract[0m [34;1madapter_reported_invalid_cache_accounting_normalizes_to_unknown_over_a_real_process_boundary[0m
+[32;1m        PASS[0m [   1.434s] (233/460) [35;1mcyoa-cli::headless_persistence[0m [34;1mboth_fixture_backends_restart_from_disk_and_live_saves_are_vendor_neutral[0m
+[32;1m        PASS[0m [   0.012s] (234/460) [35;1mcyoa-infrastructure::backend_contract[0m [34;1mcancelling_from_inside_the_streamed_callback_returns_cancelled_with_diagnostics_seen_so_far[0m
+[32;1m        PASS[0m [   0.007s] (235/460) [35;1mcyoa-infrastructure::backend_contract[0m [34;1mcrlf_in_diagnostics_is_preserved_without_normalization[0m
+[32;1m        PASS[0m [   0.008s] (236/460) [35;1mcyoa-infrastructure::backend_contract[0m [34;1mduplicated_payload_keys_are_rejected_with_the_exact_payload_retained[0m
+[32;1m        PASS[0m [   0.009s] (237/460) [35;1mcyoa-infrastructure::backend_contract[0m [34;1mempty_stdout_with_exit_zero_does_not_construct_a_false_success[0m
+[32;1m        PASS[0m [   0.010s] (238/460) [35;1mcyoa-infrastructure::backend_contract[0m [34;1mfixture_reports_the_exact_argv_and_stdin_prompt_bytes_it_received[0m
+[32;1m        PASS[0m [   0.009s] (239/460) [35;1mcyoa-infrastructure::backend_contract[0m [34;1mfixture_round_trips_quotes_newlines_and_unicode_through_a_real_process_boundary[0m
+[32;1m        PASS[0m [   0.007s] (240/460) [35;1mcyoa-infrastructure::backend_contract[0m [34;1mmalformed_response_is_an_error_with_original_diagnostics[0m
+[32;1m        PASS[0m [   0.130s] (241/460) [35;1mcyoa-infrastructure[0m [36mpersistence::repository::linux::tests[0m[36m::[0m[34;1mwrites_publish_the_prepared_attempt_before_their_first_disk_mutation[0m
+[32;1m        PASS[0m [   0.133s] (242/460) [35;1mcyoa-infrastructure[0m [36mpersistence::repository::linux::tests[0m[36m::[0m[34;1msync_order_constant_clock_collision_entropy_and_revision_exhaustion_are_observable[0m
+[32;1m        PASS[0m [   0.009s] (243/460) [35;1mcyoa-infrastructure::backend_contract[0m [34;1mnon_utf8_stderr_diagnostics_survive_the_process_boundary_and_lossy_display_does_not_panic[0m
+[32;1m        PASS[0m [   0.009s] (244/460) [35;1mcyoa-infrastructure::backend_contract[0m [34;1mnonzero_exit_with_no_stdout_maps_to_unavailable_with_exact_stderr_bytes[0m
+[32;1m        PASS[0m [   0.120s] (245/460) [35;1mcyoa-infrastructure[0m [36mpersistence::repository::linux::tests[0m[36m::[0m[34;1mwrites_sweep_only_their_own_slots_orphaned_temps_under_the_lock[0m
+[32;1m        PASS[0m [   0.012s] (246/460) [35;1mcyoa-infrastructure::backend_contract[0m [34;1mnonzero_exit_after_emitting_stdout_maps_to_generation_not_unavailable[0m
+[32;1m        PASS[0m [   0.012s] (247/460) [35;1mcyoa-infrastructure::backend_contract[0m [34;1msuccessful_fixture_transport_attaches_both_captured_streams[0m
+[32;1m        PASS[0m [   0.015s] (248/460) [35;1mcyoa-infrastructure::backend_contract[0m [34;1mnormalize_input_tokens_distinguishes_unknown_from_zero_and_repairs_only_invalid_cache[0m
+[32;1m        PASS[0m [   0.015s] (249/460) [35;1mcyoa-infrastructure::backend_contract[0m [34;1msuccessful_response_retains_the_exact_json_it_parsed[0m
+[32;1m        PASS[0m [   0.016s] (250/460) [35;1mcyoa-infrastructure::backend_contract[0m [34;1mwith_diagnostics_attaches_transport_bytes_to_an_otherwise_successful_response[0m
+[32;1m        PASS[0m [   0.018s] (251/460) [35;1mcyoa-infrastructure::claude_backend[0m [34;1mambiguous_payload_blocks_are_rejected_after_cleanup[0m
+[32;1m        PASS[0m [   0.101s] (252/460) [35;1mcyoa-infrastructure::backend_contract[0m [34;1mcomplete_only_cancellation_and_timeout_keep_explicit_candidate_without_preview[0m
+[32;1m        PASS[0m [   0.014s] (253/460) [35;1mcyoa-infrastructure::claude_backend[0m [34;1mcancellation_from_the_complete_callback_cannot_return_success[0m
+[32;1m        PASS[0m [   0.045s] (254/460) [35;1mcyoa-infrastructure::claude_backend[0m [34;1mambiguous_control_fields_cannot_authorize_success_at_the_real_boundary[0m
+[32;1m        PASS[0m [   0.012s] (255/460) [35;1mcyoa-infrastructure::claude_backend[0m [34;1mcomplete_only_stream_emits_the_payload_once_after_cleanup[0m
+[32;1m        PASS[0m [   0.043s] (256/460) [35;1mcyoa-infrastructure::claude_backend[0m [34;1mcancellation_from_a_preview_stops_the_live_child_and_keeps_the_evidence[0m
+[32;1m        PASS[0m [   0.120s] (257/460) [35;1mcyoa-infrastructure::backend_contract[0m [34;1mevery_backend_error_variant_maps_to_its_failure_kind_with_exact_diagnostics[0m
+[32;1m        PASS[0m [   0.056s] (258/460) [35;1mcyoa-infrastructure::claude_backend[0m [34;1mcapped_output_preserves_prefix_metadata_and_a_structured_cause[0m
+[32;1m        PASS[0m [   0.035s] (259/460) [35;1mcyoa-infrastructure::claude_backend[0m [34;1mfailed_auth_exit_is_unavailable_even_with_a_success_looking_status_on_stdout[0m
+[32;1m        PASS[0m [   0.042s] (260/460) [35;1mcyoa-infrastructure::claude_backend[0m [34;1mduplicate_result_is_rejected_after_cleanup[0m
+[32;1m        PASS[0m [   0.039s] (261/460) [35;1mcyoa-infrastructure::claude_backend[0m [34;1mfinal_payload_wins_when_it_disagrees_with_the_preview[0m
+[32;1m        PASS[0m [   0.037s] (262/460) [35;1mcyoa-infrastructure::claude_backend[0m [34;1mmalformed_result_metadata_keeps_the_candidate_visible_to_the_application[0m
+[32;1m        PASS[0m [   2.259s] (263/460) [35;1mcyoa-cli::headless[0m [34;1mboth_shipped_backend_commands_play_retry_and_inspect_canonical_story[0m
+[32;1m        PASS[0m [   0.042s] (264/460) [35;1mcyoa-infrastructure::claude_backend[0m [34;1mis_error_result_is_rejected_after_cleanup[0m
+[32;1m        PASS[0m [   0.043s] (265/460) [35;1mcyoa-infrastructure::claude_backend[0m [34;1mresult_cannot_override_nonzero_exit_and_previews_are_tentative_evidence[0m
+[32;1m        PASS[0m [   0.149s] (266/460) [35;1mcyoa-infrastructure::claude_backend[0m [34;1mduplicate_auth_keys_fail_closed_before_generation_and_retain_status[0m
+[32;1m        PASS[0m [   0.071s] (267/460) [35;1mcyoa-infrastructure::claude_backend[0m [34;1mpreparation_failure_and_removed_executable_never_launch_a_generation[0m
+[32;1m        PASS[0m [   0.046s] (268/460) [35;1mcyoa-infrastructure::claude_backend[0m [34;1msilent_cancellation_uses_a_child_handshake_and_pre_cancel_launches_nothing[0m
+[32;1m        PASS[0m [   0.125s] (269/460) [35;1mcyoa-infrastructure::claude_backend[0m [34;1mno_stdout_failure_and_invalid_protocol_preserve_bytes_with_distinct_categories[0m
+[32;1m        PASS[0m [   0.040s] (270/460) [35;1mcyoa-infrastructure::claude_backend[0m [34;1mstream_without_a_result_is_rejected_after_cleanup[0m
+[32;1m        PASS[0m [   0.042s] (271/460) [35;1mcyoa-infrastructure::claude_backend[0m [34;1msuccessful_response_forwards_previews_then_returns_exact_payload_usage_and_provenance[0m
+[32;1m        PASS[0m [   0.086s] (272/460) [35;1mcyoa-infrastructure::claude_story_acceptance[0m [34;1ma_disagreeing_preview_is_shown_but_only_the_final_payload_is_committed[0m
+[32;1m        PASS[0m [   0.083s] (273/460) [35;1mcyoa-infrastructure::claude_story_acceptance[0m [34;1man_enforce_retry_stream_commits_only_the_structured_payload[0m
+[32;1m        PASS[0m [   0.236s] (274/460) [35;1mcyoa-infrastructure::claude_backend[0m [34;1mpreflight_rejects_non_subscription_unknown_and_conflicting_auth_without_generation[0m
+[32;1m        PASS[0m [   2.461s] (275/460) [35;1mcyoa-cli::headless[0m [34;1midle_output_cancellation_eof_and_quit_join_real_children[0m
+[32;1m        PASS[0m [   0.291s] (276/460) [35;1mcyoa-infrastructure::claude_backend[0m [34;1mprotocol_rejections_keep_candidate_evidence_and_clean_up[0m
+[32;1m        PASS[0m [   0.105s] (277/460) [35;1mcyoa-infrastructure::claude_story_acceptance[0m [34;1mreal_workspace_cleanup_failure_preserves_the_game_and_candidate[0m
+[32;1m        PASS[0m [   0.242s] (278/460) [35;1mcyoa-infrastructure::claude_story_acceptance[0m [34;1mboth_restore_policies_control_actual_requests_snapshots_and_chapter_bridge[0m
+[32;1m        PASS[0m [   0.166s] (279/460) [35;1mcyoa-infrastructure::claude_story_acceptance[0m [34;1mcomposed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context[0m
+[32;1m        PASS[0m [   0.013s] (280/460) [35;1mcyoa-infrastructure::codex_backend[0m [34;1mcancellation_from_the_complete_callback_cannot_return_success[0m
+[32;1m        PASS[0m [   0.012s] (281/460) [35;1mcyoa-infrastructure::codex_backend[0m [34;1mcandidate_and_success_terminal_cannot_override_nonzero_process_exit[0m
+[32;1m        PASS[0m [   0.082s] (282/460) [35;1mcyoa-infrastructure::claude_story_acceptance[0m [34;1mzero_npc_limit_survives_cast_selection_opening_and_continuation[0m
+[32;1m        PASS[0m [   0.014s] (283/460) [35;1mcyoa-infrastructure::codex_backend[0m [34;1mcandidate_without_terminal_is_rejected_after_cleanup[0m
+[32;1m        PASS[0m [   0.207s] (284/460) [35;1mcyoa-infrastructure::claude_story_acceptance[0m [34;1mcancellation_and_output_cap_preserve_state_context_and_explicit_retry[0m
+[32;1m        PASS[0m [   0.015s] (285/460) [35;1mcyoa-infrastructure::codex_backend[0m [34;1mconflicting_terminal_is_rejected_after_cleanup[0m
+[32;1m        PASS[0m [   0.012s] (286/460) [35;1mcyoa-infrastructure::codex_backend[0m [34;1mduplicated_terminal_type_cannot_authorize_success_at_the_real_boundary[0m
+[32;1m        PASS[0m [   0.027s] (287/460) [35;1mcyoa-infrastructure::codex_backend[0m [34;1mcapped_output_preserves_prefix_metadata_and_a_structured_cause[0m
+[32;1m        PASS[0m [   0.011s] (288/460) [35;1mcyoa-infrastructure::codex_backend[0m [34;1mineligible_message_is_rejected_after_cleanup[0m
+[32;1m        PASS[0m [   0.034s] (289/460) [35;1mcyoa-infrastructure::codex_backend[0m [34;1mfailed_auth_exit_is_unavailable_even_with_a_success_looking_status_on_stdout[0m
+[32;1m        PASS[0m [   0.543s] (290/460) [35;1mcyoa-infrastructure::claude_backend[0m [34;1mapplication_receives_candidate_and_diagnostics_on_adapter_timeout[0m
+[32;1m        PASS[0m [   0.222s] (291/460) [35;1mcyoa-infrastructure::claude_story_acceptance[0m [34;1mlate_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once[0m
+[32;1m        PASS[0m [   0.020s] (292/460) [35;1mcyoa-infrastructure::codex_backend[0m [34;1msilent_cancellation_uses_a_child_handshake_and_pre_cancel_launches_nothing[0m
+[32;1m        PASS[0m [   0.038s] (293/460) [35;1mcyoa-infrastructure::codex_backend[0m [34;1msuccessful_response_emits_once_after_cleanup_and_retains_usage_and_exact_request[0m
+[32;1m        PASS[0m [   0.075s] (294/460) [35;1mcyoa-infrastructure::codex_backend[0m [34;1mpreparation_failure_and_removed_executable_never_launch_a_generation[0m
+[32;1m        PASS[0m [   0.122s] (295/460) [35;1mcyoa-infrastructure::codex_backend[0m [34;1mduplicate_control_keys_reject_without_emission_and_preserve_prior_candidate[0m
+[32;1m        PASS[0m [   0.119s] (296/460) [35;1mcyoa-infrastructure::codex_backend[0m [34;1mpreflight_rejects_non_subscription_unknown_and_conflicting_auth_without_generation[0m
+[32;1m        PASS[0m [   0.102s] (297/460) [35;1mcyoa-infrastructure::codex_backend[0m [34;1mprotocol_rejection_and_missing_completion_keep_candidate_without_emission[0m
+[32;1m        PASS[0m [   0.152s] (298/460) [35;1mcyoa-infrastructure::codex_backend[0m [34;1mno_stdout_failure_and_invalid_protocol_preserve_bytes_with_distinct_categories[0m
+[32;1m        PASS[0m [   0.542s] (299/460) [35;1mcyoa-infrastructure::claude_backend[0m [34;1mtimeout_after_result_retains_unemitted_candidate_and_reaps_child[0m
+[32;1m        PASS[0m [   0.191s] (300/460) [35;1mcyoa-infrastructure::codex_story_acceptance[0m [34;1mcomposed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context[0m
+[32;1m        PASS[0m [   0.176s] (301/460) [35;1mcyoa-infrastructure::codex_story_acceptance[0m [34;1mreal_workspace_cleanup_failure_preserves_the_game_and_candidate[0m
+[32;1m        PASS[0m [   0.275s] (302/460) [35;1mcyoa-infrastructure::codex_story_acceptance[0m [34;1mcancellation_and_output_cap_preserve_state_context_and_explicit_retry[0m
+[32;1m        PASS[0m [   0.171s] (303/460) [35;1mcyoa-infrastructure::codex_story_acceptance[0m [34;1mzero_npc_limit_survives_cast_selection_opening_and_continuation[0m
+[32;1m        PASS[0m [   1.095s] (304/460) [35;1mcyoa-infrastructure[0m [36mpersistence::repository::linux::tests[0m[36m::[0m[34;1mkilled_helpers_leave_complete_crash_window_files_release_locks_and_reconcile_once[0m
+[32;1m        PASS[0m [   0.295s] (305/460) [35;1mcyoa-infrastructure::codex_story_acceptance[0m [34;1mlate_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once[0m
+[32;1m        PASS[0m [   0.107s] (306/460) [35;1mcyoa-infrastructure::filesystem_repository[0m [34;1mcorrupt_primary_never_rotates_over_a_good_backup_and_recovery_creates_a_new_slot[0m
+[32;1m        PASS[0m [   0.123s] (307/460) [35;1mcyoa-infrastructure::filesystem_repository[0m [34;1matomic_create_replace_and_independent_writer_conflict_preserve_exact_backup[0m
+[32;1m        PASS[0m [   1.129s] (308/460) [35;1mcyoa-infrastructure[0m [36mpersistence::repository::linux::tests[0m[36m::[0m[34;1mevery_write_failure_preserves_complete_files_visibility_and_retry_material[0m
+[32;1m        PASS[0m [   0.348s] (309/460) [35;1mcyoa-infrastructure::codex_story_acceptance[0m [34;1mboth_restore_policies_control_actual_requests_snapshots_and_chapter_bridge[0m
+[32;1m        PASS[0m [   0.010s] (310/460) [35;1mcyoa-infrastructure::filesystem_repository[0m [34;1mmissing_and_unsafe_storage_paths_are_errors_without_following_links[0m
+[32;1m        PASS[0m [   0.023s] (311/460) [35;1mcyoa-infrastructure::generation_use_cases[0m [34;1mcancelled_commands_make_no_backend_calls_and_preserve_state[0m
+[32;1m        PASS[0m [   0.032s] (312/460) [35;1mcyoa-infrastructure::generation_lifecycle[0m [34;1moutline_to_selected_world_requires_no_placeholder_cast[0m
+[32;1m        PASS[0m [   0.031s] (313/460) [35;1mcyoa-infrastructure::generation_use_cases[0m [34;1mcancelling_after_a_streamed_preview_preserves_state_and_partial_diagnostics[0m
+[32;1m        PASS[0m [   0.080s] (314/460) [35;1mcyoa-infrastructure::filesystem_repository[0m [34;1mhostile_unicode_titles_never_become_paths_and_retitle_preserves_the_slot_id[0m
+[32;1m        PASS[0m [   0.096s] (315/460) [35;1mcyoa-infrastructure::filesystem_repository[0m [34;1mlisting_pages_report_corrupt_future_and_backup_only_without_rewriting_documents[0m
+[32;1m        PASS[0m [   0.554s] (316/460) [35;1mcyoa-infrastructure::codex_backend[0m [34;1mapplication_receives_complete_candidate_and_diagnostics_on_adapter_timeout[0m
+[32;1m        PASS[0m [   0.022s] (317/460) [35;1mcyoa-infrastructure::generation_use_cases[0m [34;1mpreview_then_transport_failure_leaves_state_untouched[0m
+[32;1m        PASS[0m [   0.035s] (318/460) [35;1mcyoa-infrastructure::generation_use_cases[0m [34;1minvalid_outline_and_insufficient_cast_are_returned_with_raw_output[0m
+[32;1m        PASS[0m [   0.082s] (319/460) [35;1mcyoa-infrastructure::generation_use_cases[0m [34;1mapplication_cancellation_after_generation_preserves_evidence[0m
+[32;1m        PASS[0m [   0.028s] (320/460) [35;1mcyoa-infrastructure::generation_use_cases[0m [34;1msuccess_diagnostics_reach_generation_failure_when_turns_own_post_decode_check_cancels[0m
+[32;1m        PASS[0m [   0.119s] (321/460) [35;1mcyoa-infrastructure::filesystem_repository[0m [34;1mlocks_survive_primary_replacement_and_hostile_entries_are_never_followed[0m
+[32;1m        PASS[0m [   0.035s] (322/460) [35;1mcyoa-infrastructure::generation_use_cases[0m [34;1msuccess_diagnostics_reach_generation_failure_when_outline_cancels_right_after_transport[0m
+[32;1m        PASS[0m [   0.036s] (323/460) [35;1mcyoa-infrastructure::generation_use_cases[0m [34;1mscripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls[0m
+[32;1m        PASS[0m [   0.008s] (324/460) [35;1mcyoa-infrastructure::persistence_roundtrip[0m [34;1mcontent_stamps_cover_exact_bytes_and_have_independent_sha256_evidence[0m
+[32;1m        PASS[0m [   0.064s] (325/460) [35;1mcyoa-infrastructure::generation_use_cases[0m [34;1mrestored_limits_reach_captured_prompt_schema_and_committed_memory[0m
+[32;1m        PASS[0m [   0.040s] (326/460) [35;1mcyoa-infrastructure::persistence_limits[0m [34;1mzero_turn_restore_uses_selected_cap_and_preserves_established_single_playable[0m
+[32;1m        PASS[0m [   0.043s] (327/460) [35;1mcyoa-infrastructure::persistence_limits[0m [34;1mrepeated_codec_restore_cycles_rebind_every_snapshot_without_resurrecting_events_or_pruning_casts[0m
+[32;1m        PASS[0m [   0.074s] (328/460) [35;1mcyoa-infrastructure::generation_use_cases[0m [34;1msuccessful_generation_preserves_observed_provenance_and_diagnostics[0m
+[32;1m        PASS[0m [   0.135s] (329/460) [35;1mcyoa-infrastructure::generation_use_cases[0m [34;1mfailed_turns_preserve_diagnostics_state_and_single_attempt[0m
+[32;1m        PASS[0m [   0.025s] (330/460) [35;1mcyoa-infrastructure::phase_zero_acceptance[0m [34;1minvalid_rewind_is_an_error_without_state_changes_or_generation[0m
+[32;1m        PASS[0m [   0.042s] (331/460) [35;1mcyoa-infrastructure::persistence_roundtrip[0m [34;1mzero_turn_selected_second_playable_roundtrip_restores_one_opening_request[0m
+[32;1m        PASS[0m [   0.013s] (332/460) [35;1mcyoa-infrastructure::process_supervisor[0m [34;1ma_panicking_consumer_still_gets_the_child_cleaned_up[0m
+[32;1m        PASS[0m [   0.011s] (333/460) [35;1mcyoa-infrastructure::process_supervisor[0m [34;1mbroken_stdin_delivery_is_reported_without_hanging[0m
+[32;1m        PASS[0m [   0.542s] (334/460) [35;1mcyoa-infrastructure::codex_backend[0m [34;1mtimeout_after_candidate_retains_unemitted_payload_and_reaps_child[0m
+[32;1m        PASS[0m [   0.058s] (335/460) [35;1mcyoa-infrastructure::phase_zero_acceptance[0m [34;1mfull_story_preserves_contracts_through_failure_retry_cancellation_and_rewind[0m
+[32;1m        PASS[0m [   0.046s] (336/460) [35;1mcyoa-infrastructure::phase_zero_acceptance[0m [34;1mrewinding_the_only_turn_restores_opening_context_without_an_extra_call[0m
+[32;1m        PASS[0m [   0.036s] (337/460) [35;1mcyoa-infrastructure::process_supervisor[0m [34;1ma_child_that_never_reads_stdin_still_completes[0m
+[32;1m        PASS[0m [   0.008s] (338/460) [35;1mcyoa-infrastructure::process_supervisor[0m [34;1mcancellation_before_spawn_launches_no_process[0m
+[32;1m        PASS[0m [   0.040s] (339/460) [35;1mcyoa-infrastructure::process_supervisor[0m [34;1ma_descendant_retaining_the_inherited_pipe_does_not_hang_the_supervisor[0m
+[32;1m        PASS[0m [   0.013s] (340/460) [35;1mcyoa-infrastructure::process_supervisor[0m [34;1mcancelling_from_inside_the_record_consumer_wins_over_a_same_tick_exit[0m
+[32;1m        PASS[0m [   0.008s] (341/460) [35;1mcyoa-infrastructure::process_supervisor[0m [34;1mcapture_at_the_exact_bound_is_complete_and_preserves_arbitrary_bytes[0m
+[32;1m        PASS[0m [   0.018s] (342/460) [35;1mcyoa-infrastructure::process_supervisor[0m [34;1mcancellation_while_the_child_is_silent_still_wakes_the_poll_loop_and_returns_promptly[0m
+[32;1m        PASS[0m [   0.016s] (343/460) [35;1mcyoa-infrastructure::process_supervisor[0m [34;1mconsumer_rejection_triggers_cleanup_and_reports_the_reason[0m
+[32;1m        PASS[0m [   0.035s] (344/460) [35;1mcyoa-infrastructure::process_supervisor[0m [34;1mcancelling_from_inside_the_final_no_newline_record_still_wins_over_exit[0m
+[32;1m        PASS[0m [   0.040s] (345/460) [35;1mcyoa-infrastructure::process_supervisor[0m [34;1mcancelled_token_wins_even_before_its_notifier_runs[0m
+[32;1m        PASS[0m [   0.144s] (346/460) [35;1mcyoa-infrastructure::generation_use_cases[0m [34;1mvalidation_failures_retain_transport_diagnostics_for_every_request_kind[0m
+[32;1m        PASS[0m [   0.008s] (347/460) [35;1mcyoa-infrastructure::process_supervisor[0m [34;1menv_policy_is_an_explicit_allowlist_not_ambient_inheritance[0m
+[32;1m        PASS[0m [   0.030s] (348/460) [35;1mcyoa-infrastructure::process_supervisor[0m [34;1mcaptured_output_never_exceeds_either_configured_bound[0m
+[32;1m        PASS[0m [   0.033s] (349/460) [35;1mcyoa-infrastructure::process_supervisor[0m [34;1mcrlf_records_are_delivered_with_the_carriage_return_intact[0m
+[32;1m        PASS[0m [   0.006s] (350/460) [35;1mcyoa-infrastructure::process_supervisor[0m [34;1mfailure_after_a_candidate_record_still_reports_nonzero_exit_not_success[0m
+[32;1m        PASS[0m [   0.010s] (351/460) [35;1mcyoa-infrastructure::process_supervisor[0m [34;1mincomplete_request_delivery_cannot_report_success[0m
+[32;1m        PASS[0m [   0.008s] (352/460) [35;1mcyoa-infrastructure::process_supervisor[0m [34;1mmissing_executable_is_a_spawn_error_not_a_panic[0m
+[32;1m        PASS[0m [   0.320s] (353/460) [35;1mcyoa-infrastructure::filesystem_repository[0m [34;1mdisk_restore_cycles_preserve_original_limits_and_every_narrowed_snapshot[0m
+[32;1m        PASS[0m [   2.225s] (354/460) [35;1mcyoa-cli::persistence_shutdown[0m [34;1mbounded_silent_storage_keeps_input_responsive_and_reaps_current_and_final_helpers[0m
+[32;1m        PASS[0m [   0.034s] (355/460) [35;1mcyoa-infrastructure::process_supervisor[0m [34;1mexact_argv_and_stdin_reach_the_child_and_both_pipes_are_drained[0m
+[32;1m        PASS[0m [   0.033s] (356/460) [35;1mcyoa-infrastructure::process_supervisor[0m [34;1mfinal_record_without_a_trailing_newline_is_still_delivered[0m
+[32;1m        PASS[0m [   0.019s] (357/460) [35;1mcyoa-infrastructure::process_supervisor[0m [34;1moutput_bound_exceeded_stops_the_child_instead_of_buffering_forever[0m
+[32;1m        PASS[0m [   0.007s] (358/460) [35;1mcyoa-infrastructure::process_supervisor[0m [34;1mrequest_workspace_is_private_and_unique[0m
+[32;1m        PASS[0m [   0.034s] (359/460) [35;1mcyoa-infrastructure::process_supervisor[0m [34;1mmultiple_records_are_delivered_in_order_and_success_requires_zero_exit[0m
+[32;1m        PASS[0m [   0.028s] (360/460) [35;1mcyoa-infrastructure::process_supervisor[0m [34;1mrecords_written_right_before_exit_are_not_silently_dropped[0m
+[32;1m        PASS[0m [   0.010s] (361/460) [35;1mcyoa-infrastructure::process_supervisor[0m [34;1mrequests_do_not_inherit_the_repository_working_directory[0m
+[32;1m        PASS[0m [   0.035s] (362/460) [35;1mcyoa-infrastructure::process_supervisor[0m [34;1mnonzero_exit_is_reported_with_diagnostics[0m
+[32;1m        PASS[0m [   0.012s] (363/460) [35;1mcyoa-infrastructure::process_supervisor[0m [34;1mstdout_larger_than_pipe_capacity_is_fully_delivered_and_diagnostics_agree[0m
+[32;1m        PASS[0m [   0.012s] (364/460) [35;1mcyoa-infrastructure::prompt_rendering[0m [34;1mloaded_instructions_contain_no_json_formatting_directive[0m
+[32;1m        PASS[0m [   0.201s] (365/460) [35;1mcyoa-infrastructure::persistence_roundtrip[0m [34;1mfrozen_full_story_roundtrip_preserves_complete_state_exact_audit_and_next_rewind_request[0m
+[32;1m        PASS[0m [   0.029s] (366/460) [35;1mcyoa-infrastructure::prompt_rendering[0m [34;1minteresting_event_includes_threads_only_when_present[0m
+[32;1m        PASS[0m [   0.036s] (367/460) [35;1mcyoa-infrastructure::prompt_rendering[0m [34;1mloaded_turn_instructions_ask_for_schema_field_order[0m
+[32;1m        PASS[0m [   0.035s] (368/460) [35;1mcyoa-infrastructure::prompt_rendering[0m [34;1mopening_turn_prompt_includes_the_identity_review_addition_exactly_once[0m
+[32;1m        PASS[0m [   0.033s] (369/460) [35;1mcyoa-infrastructure::prompt_rendering[0m [34;1mplayer_input_versus_no_direction[0m
+[32;1m        PASS[0m [   0.035s] (370/460) [35;1mcyoa-infrastructure::prompt_rendering[0m [34;1mprose_contract_omits_tone_clause_when_tone_is_default[0m
+[32;1m        PASS[0m [   0.034s] (371/460) [35;1mcyoa-infrastructure::prompt_rendering[0m [34;1mrendered_limits_reflect_the_supplied_value_not_a_constant[0m
+[32;1m        PASS[0m [   0.065s] (372/460) [35;1mcyoa-infrastructure::prompt_rendering[0m [34;1mcast_requests_and_schemas_obey_small_caps_and_large_minimums[0m
+[32;1m        PASS[0m [   0.038s] (373/460) [35;1mcyoa-infrastructure::prompt_rendering[0m [34;1mretitling_instructions_reach_wire_commit_and_rewind[0m
+[32;1m        PASS[0m [   0.018s] (374/460) [35;1mcyoa-infrastructure::save_compatibility[0m [34;1madditive_source_fields_are_reported_for_both_source_variants[0m
+[32;1m        PASS[0m [   0.039s] (375/460) [35;1mcyoa-infrastructure::prompt_rendering[0m [34;1mworld_and_cast_prompts_interpolate_the_brief_and_world[0m
+[32;1m        PASS[0m [   0.027s] (376/460) [35;1mcyoa-infrastructure::save_compatibility[0m [34;1madditive_optional_fields_warn_and_are_omitted_on_resave_while_known_fields_survive[0m
+[32;1m        PASS[0m [   0.045s] (377/460) [35;1mcyoa-infrastructure::prompt_rendering[0m [34;1mturn_prompt_bridge_and_transcript_appear_only_when_nonempty[0m
+[32;1m        PASS[0m [   0.011s] (378/460) [35;1mcyoa-infrastructure::save_compatibility[0m [34;1monly_shipped_version_one_is_supported_and_reads_leave_input_bytes_unchanged[0m
+[32;1m        PASS[0m [   0.016s] (379/460) [35;1mcyoa-infrastructure::save_compatibility[0m [34;1moptional_omissions_nulls_and_empty_replacements_keep_distinct_meanings[0m
+[32;1m        PASS[0m [   0.016s] (380/460) [35;1mcyoa-infrastructure::save_compatibility[0m [34;1mstored_unicode_matching_preserves_sharp_s_distinctions_and_rejects_lowercase_duplicates[0m
+[32;1m        PASS[0m [   0.039s] (381/460) [35;1mcyoa-infrastructure::save_compatibility[0m [34;1maudit_strings_including_empty_whitespace_crlf_and_unicode_roundtrip_without_normalization[0m
+[32;1m        PASS[0m [   0.014s] (382/460) [35;1mcyoa-infrastructure::save_validation[0m [34;1mcast_and_stored_character_ids_are_required_fields_not_failing_defaults[0m
+[32;1m        PASS[0m [   0.009s] (383/460) [35;1mcyoa-infrastructure::save_validation[0m [34;1minvalid_json_utf8_and_duplicate_keys_are_never_last_key_wins[0m
+[32;1m        PASS[0m [   0.164s] (384/460) [35;1mcyoa-infrastructure::process_supervisor[0m [34;1mdeadline_exceeded_kills_the_child_and_reports_timeout[0m
+[32;1m        PASS[0m [   0.027s] (385/460) [35;1mcyoa-infrastructure::save_compatibility[0m [34;1msupported_demo_source_roundtrips_and_rejects_impossible_passage_counts[0m
+[32;1m        PASS[0m [   0.208s] (386/460) [35;1mcyoa-infrastructure::process_supervisor[0m [34;1mcancellation_and_deadline_stop_continuous_writers_with_bounded_diagnostics[0m
+[32;1m        PASS[0m [   0.014s] (387/460) [35;1mcyoa-infrastructure::save_validation[0m [34;1mmalformed_versions_metadata_and_world_are_rejected_without_repair[0m
+[32;1m        PASS[0m [   0.021s] (388/460) [35;1mcyoa-infrastructure::storage_transport[0m [34;1mpreparation_exhausting_the_total_deadline_launches_no_helper_or_disk_write[0m
+[32;1m        PASS[0m [   0.050s] (389/460) [35;1mcyoa-infrastructure::save_compatibility[0m [34;1mvalid_authoritative_snapshots_and_unknown_style_keys_are_preserved_without_delta_replay[0m
+[32;1m        PASS[0m [   0.009s] (390/460) [35;1mcyoa-infrastructure::streaming[0m [34;1monly_the_requested_top_level_string_is_streamed[0m
+[32;1m        PASS[0m [   0.009s] (391/460) [35;1mcyoa-infrastructure::streaming[0m [34;1msurrogate_pairs_lone_halves_and_escapes_survive_single_character_chunks[0m
+[32;1m        PASS[0m [   0.011s] (392/460) [35;1mcyoa-infrastructure::streaming[0m [34;1mtruncated_and_invalid_json_only_yield_available_preview_text[0m
+[32;1m        PASS[0m [   0.066s] (393/460) [35;1mcyoa-infrastructure::save_validation[0m [34;1msize_depth_overflow_and_nested_duplicate_keys_are_bounded_errors[0m
+[32;1m        PASS[0m [   0.010s] (394/460) [35;1mcyoa-infrastructure::wire_mapping[0m [34;1mblank_narrative_is_rejected_but_blank_scene_description_is_not[0m
+[32;1m        PASS[0m [   0.010s] (395/460) [35;1mcyoa-infrastructure::wire_mapping[0m [34;1mblank_quick_action_text_is_filtered_before_selection_not_a_hard_error[0m
+[32;1m        PASS[0m [   0.009s] (396/460) [35;1mcyoa-infrastructure::wire_mapping[0m [34;1mincomplete_generated_characters_are_dropped_not_erroring_the_whole_cast[0m
+[32;1m        PASS[0m [   0.011s] (397/460) [35;1mcyoa-infrastructure::wire_mapping[0m [34;1mblank_wire_fields_map_to_none_across_every_optional_field[0m
+[32;1m        PASS[0m [   0.011s] (398/460) [35;1mcyoa-infrastructure::wire_mapping[0m [34;1mnew_chapter_marker_carries_a_blank_filtered_title_and_so_does_continue[0m
+[32;1m        PASS[0m [   0.231s] (399/460) [35;1mcyoa-infrastructure::process_supervisor[0m [34;1mrequest_files_live_through_execution_and_are_removed_on_every_outcome[0m
+[32;1m        PASS[0m [   0.010s] (400/460) [35;1mcyoa-infrastructure::wire_mapping[0m [34;1munknown_quick_action_kind_deserializes_to_other_not_an_error[0m
+[32;1m        PASS[0m [   0.109s] (401/460) [35;1mcyoa-infrastructure::save_validation[0m [34;1mstored_history_cannot_be_normalized_capped_or_reidentified[0m
+[32;1m        PASS[0m [   0.011s] (402/460) [35;1mcyoa-infrastructure::wire_mapping[0m [34;1mupcoming_events_null_is_keep_empty_list_is_replace_with_no_threads[0m
+[32;1m        PASS[0m [   0.013s] (403/460) [35;1mcyoa-infrastructure::wire_mapping[0m [34;1mwire_defaults_and_nullable_updates_keep_their_distinct_meanings[0m
+[32;1m        PASS[0m [   0.010s] (404/460) [35;1mcyoa-infrastructure::wire_mapping[0m [34;1mworld_outline_rejects_blank_title_or_description[0m
+[32;1m        PASS[0m [   0.012s] (405/460) [35;1mcyoa-presentation[0m [36mheadless::output::tests[0m[36m::[0m[34;1mcontinuously_writable_output_and_interrupted_calls_have_finite_pump_budgets[0m
+[32;1m        PASS[0m [   0.011s] (406/460) [35;1mcyoa-presentation[0m [36mheadless::output::tests[0m[36m::[0m[34;1mpartial_writes_and_backpressure_retain_exact_unicode_bytes_once[0m
+[32;1m        PASS[0m [   0.009s] (407/460) [35;1mcyoa-presentation[0m [36mheadless::output::tests[0m[36m::[0m[34;1mpermanent_stall_and_trickling_progress_have_distinct_clock_behavior[0m
+[32;1m        PASS[0m [   0.046s] (408/460) [35;1mcyoa-infrastructure::wire_mapping[0m [34;1mrequired_response_text_distinguishes_missing_null_and_empty[0m
+[32;1m        PASS[0m [   0.013s] (409/460) [35;1mcyoa-presentation[0m [36mheadless::output::tests[0m[36m::[0m[34;1mqueue_overflow_write_zero_and_broken_pipe_are_explicit_errors[0m
+[32;1m        PASS[0m [   0.009s] (410/460) [35;1mcyoa-presentation[0m [36mpersistence::tests[0m[36m::[0m[34;1mdeferred_opening_and_load_reserve_their_followup_write_before_admission[0m
+[32;1m        PASS[0m [   0.009s] (411/460) [35;1mcyoa-presentation[0m [36mpersistence::tests[0m[36m::[0m[34;1mstale_duplicate_or_wrong_revision_storage_receipts_never_clean_or_rebind[0m
+[32;1m        PASS[0m [   0.011s] (412/460) [35;1mcyoa-presentation[0m [36mpersistence::tests[0m[36m::[0m[34;1mstorage_counter_exhaustion_rejects_admission_but_reserves_final_quit_save[0m
+[32;1m        PASS[0m [   0.010s] (413/460) [35;1mcyoa-presentation[0m [36msession::tests[0m[36m::[0m[34;1mexhausted_counters_and_wrong_base_revision_cannot_start_or_commit[0m
+[32;1m        PASS[0m [   0.012s] (414/460) [35;1mcyoa-presentation[0m [36mstorage::tests[0m[36m::[0m[34;1mfailed_storage_thread_spawn_preserves_ready_state_and_never_runs_factory[0m
+[32;1m        PASS[0m [   0.010s] (415/460) [35;1mcyoa-presentation[0m [36mworker::tests[0m[36m::[0m[34;1mfailed_spawn_keeps_use_cases_available_for_explicit_retry[0m
+[32;1m        PASS[0m [   0.007s] (416/460) [35;1mcyoa-presentation[0m [36mworker::tests[0m[36m::[0m[34;1mmailbox_budget_is_cumulative_and_does_not_split_unicode[0m
+[32;1m        PASS[0m [   0.010s] (417/460) [35;1mcyoa-presentation::commands[0m [34;1min_session_persistence_syntax_rejects_partial_paths_and_invalid_rewind_before_effects[0m
+[32;1m        PASS[0m [   0.009s] (418/460) [35;1mcyoa-presentation::commands[0m [34;1minconsistent_play_options_are_usage_errors_not_panics[0m
+[32;1m        PASS[0m [   0.009s] (419/460) [35;1mcyoa-presentation::commands[0m [34;1mparsed_options_translate_into_application_commands_without_panicking[0m
+[32;1m        PASS[0m [   0.014s] (420/460) [35;1mcyoa-presentation::commands[0m [34;1mpersistence_cli_accepts_explicit_resume_policies_and_auth_free_queries[0m
+[32;1m        PASS[0m [   0.013s] (421/460) [35;1mcyoa-presentation::commands[0m [34;1mpersistence_cli_rejects_missing_policy_paths_invalid_ids_and_page_bounds[0m
+[32;1m        PASS[0m [   0.013s] (422/460) [35;1mcyoa-presentation::persistence[0m [34;1mcancelled_generation_never_autosaves_a_rejected_turn[0m
+[32;1m        PASS[0m [   0.039s] (423/460) [35;1mcyoa-presentation[0m [36mterminal::tests[0m[36m::[0m[34;1minterruptible_jobs_return_values_and_name_their_operation_in_failures[0m
+[32;1m        PASS[0m [   0.173s] (424/460) [35;1mcyoa-infrastructure::storage_transport[0m [34;1mreplacement_prepares_with_one_read_child_and_dispatches_one_mutating_child[0m
+[32;1m        PASS[0m [   0.013s] (425/460) [35;1mcyoa-presentation::persistence[0m [34;1mfailed_autosave_keeps_accepted_turn_and_storage_retry_never_regenerates[0m
+[32;1m        PASS[0m [   0.014s] (426/460) [35;1mcyoa-presentation::persistence[0m [34;1mfailed_copy_retains_previous_uncertain_attempt_for_reconciliation[0m
+[32;1m        PASS[0m [   0.013s] (427/460) [35;1mcyoa-presentation::persistence[0m [34;1mload_failure_preserves_stage_revision_binding_and_generation_retry[0m
+[32;1m        PASS[0m [   0.011s] (428/460) [35;1mcyoa-presentation::persistence[0m [34;1mqueued_generation_panic_remains_an_exit_failure_after_quit_and_successful_save[0m
+[32;1m        PASS[0m [   0.014s] (429/460) [35;1mcyoa-presentation::persistence[0m [34;1mgeneration_and_storage_failure_views_remain_independent_and_copy_failure_keeps_binding[0m
+[32;1m        PASS[0m [   0.014s] (430/460) [35;1mcyoa-presentation::persistence[0m [34;1mquit_cancels_load_joins_and_saves_old_canonical_game_once[0m
+[32;1m        PASS[0m [   0.013s] (431/460) [35;1mcyoa-presentation::persistence[0m [34;1mquit_during_write_finishes_current_revision_once_without_duplicate_backup_rotation[0m
+[32;1m        PASS[0m [   0.014s] (432/460) [35;1mcyoa-presentation::persistence[0m [34;1msource_mismatch_preserves_session_and_backup_recovery_creates_instead_of_replacing[0m
+[32;1m        PASS[0m [   0.016s] (433/460) [35;1mcyoa-presentation::persistence[0m [34;1mrewind_and_changed_policy_load_save_canonical_snapshots_before_generation[0m
+[32;1m        PASS[0m [   0.019s] (434/460) [35;1mcyoa-presentation::persistence[0m [34;1mselection_saves_zero_turn_before_one_deferred_opening_and_quit_clears_it[0m
+[32;1m        PASS[0m [   0.009s] (435/460) [35;1mcyoa-presentation::session[0m [34;1man_incomplete_preview_stops_growing_instead_of_leaving_a_gap[0m
+[32;1m        PASS[0m [   2.009s] (436/460) [35;1mcyoa-infrastructure[0m [36mbackends::process::unix_impl::fault_tests[0m[36m::[0m[34;1minterrupted_reaping_still_has_a_finite_deadline[0m
+[32;1m        PASS[0m [   0.009s] (437/460) [35;1mcyoa-presentation::session[0m [34;1mfailed_and_cancelled_results_preserve_state_and_exact_evidence[0m
+[32;1m        PASS[0m [   0.009s] (438/460) [35;1mcyoa-presentation::session[0m [34;1min_session_load_advances_revision_preserves_request_ids_and_rejects_old_generation[0m
+[32;1m        PASS[0m [   0.018s] (439/460) [35;1mcyoa-presentation::persistence[0m [34;1muncertain_write_and_worker_panic_reconcile_same_attempt_without_a_new_slot[0m
+[32;1m        PASS[0m [   0.009s] (440/460) [35;1mcyoa-presentation::session[0m [34;1mstale_and_duplicate_completions_never_replace_current_state[0m
+[32;1m        PASS[0m [   0.011s] (441/460) [35;1mcyoa-presentation::session[0m [34;1mobsolete_cast_cannot_replace_an_edited_outline_and_actions_are_checked[0m
+[32;1m        PASS[0m [   0.013s] (442/460) [35;1mcyoa-presentation::session[0m [34;1mlifecycle_keeps_edited_outline_selection_and_one_opening[0m
+[32;1m        PASS[0m [   0.009s] (443/460) [35;1mcyoa-presentation::session[0m [34;1mwrong_kind_faults_and_quit_waits_for_active_completion[0m
+[32;1m        PASS[0m [   2.024s] (444/460) [35;1mcyoa-infrastructure[0m [36mbackends::process::unix_impl::fault_tests[0m[36m::[0m[34;1mcleanup_failures_preserve_the_initiating_error[0m
+[32;1m        PASS[0m [   0.012s] (445/460) [35;1mcyoa-presentation::storage[0m [34;1mdropping_runner_cancels_and_joins_without_leaving_storage_work_detached[0m
+[32;1m        PASS[0m [   0.012s] (446/460) [35;1mcyoa-presentation::storage[0m [34;1mpolling_is_nonblocking_preparation_precedes_completion_and_close_joins_cancelled_work[0m
+[32;1m        PASS[0m [   0.010s] (447/460) [35;1mcyoa-presentation::worker[0m [34;1mjoined_success_queued_before_cancel_is_discarded[0m
+[32;1m        PASS[0m [   0.011s] (448/460) [35;1mcyoa-presentation::worker[0m [34;1mdropping_runner_cancels_and_joins_silent_request[0m
+[32;1m        PASS[0m [   0.011s] (449/460) [35;1mcyoa-presentation::storage[0m [34;1mworker_panics_distinguish_unprepared_from_uncertain_writes_and_retain_identity[0m
+[32;1m        PASS[0m [   0.011s] (450/460) [35;1mcyoa-presentation::worker[0m [34;1mpaused_progress_consumer_cannot_block_completion_or_exceed_budget[0m
+[32;1m        PASS[0m [   0.011s] (451/460) [35;1mcyoa-presentation::worker[0m [34;1mquick_action_and_player_text_share_the_same_generation_intent[0m
+[32;1m        PASS[0m [   0.014s] (452/460) [35;1mcyoa-presentation::worker[0m [34;1mpanic_faults_without_committing_and_quit_remains_available[0m
+[32;1m        PASS[0m [   0.012s] (453/460) [35;1mcyoa-presentation::worker[0m [34;1msilent_cancel_joins_before_retry_and_preserves_generator_and_evidence[0m
+[32;1m        PASS[0m [   0.227s] (454/460) [35;1mcyoa-infrastructure::streaming[0m [34;1marbitrary_scalar_splits_match_the_independent_narrative[0m
+[32;1m        PASS[0m [   0.292s] (455/460) [35;1mcyoa-infrastructure::save_validation[0m [34;1mrequired_fields_and_known_field_types_cannot_hide_behind_defaults[0m
+[32;1m        PASS[0m [   0.294s] (456/460) [35;1mcyoa-infrastructure::storage_transport[0m [34;1msilent_helper_cancellation_and_timeout_reap_children_and_keep_prepared_identity[0m
+[32;1m        PASS[0m [   0.333s] (457/460) [35;1mcyoa-infrastructure::storage_transport[0m [34;1mlost_invalid_multiple_or_capped_replies_never_authorize_success_and_reconcile_exact_write[0m
+[32;1m        PASS[0m [   0.749s] (458/460) [35;1mcyoa-infrastructure::generation_use_cases[0m [34;1mchunked_and_complete_transports_commit_the_same_turn_without_duplicate_preview[0m
+[32;1m        PASS[0m [   0.726s] (459/460) [35;1mcyoa-infrastructure::process_supervisor[0m [34;1mstdin_larger_than_pipe_capacity_is_delivered_in_full_when_the_child_reads_it[0m
+[32;1m        PASS[0m [   3.301s] (460/460) [35;1mcyoa-cli::persistence_shutdown[0m [34;1mblocked_storage_and_faulted_output_sinks_preserve_canonical_state_and_reap_helpers[0m
+────────────
+[32;1m     Summary[0m [   4.378s] [1m460[0m tests run: [1m460[0m [32;1mpassed[0m, [1m0[0m [33;1mskipped[0m
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+   Doc-tests cyoa_application
+
+running 1 test
+test cyoa-application/src/cancellation.rs - cancellation::CancellationToken (line 67) - compile fail ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+   Doc-tests cyoa_core
+
+running 5 tests
+test cyoa-core/src/game.rs - game::GameState (line 114) - compile fail ... ok
+test cyoa-core/src/world.rs - world::SelectedWorld (line 272) - compile fail ... ok
+test cyoa-core/src/character.rs - character::Character (line 98) - compile fail ... ok
+test cyoa-core/src/character.rs - character::CharacterDetails (line 31) - compile fail ... ok
+test cyoa-core/src/summary.rs - summary::StorySummary (line 113) - compile fail ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+   Doc-tests cyoa_infrastructure
+
+running 1 test
+test cyoa-infrastructure/src/backend.rs - backend::GenerationResponse (line 26) - compile fail ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+   Doc-tests cyoa_presentation
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+Mutation outcome validation verified.
+Checking mutation: name-only-deduplication
+Detected mutation: name-only-deduplication (generation_use_cases/scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls)
+Checking mutation: duplicate-opening-request
+Detected mutation: duplicate-opening-request (generation_use_cases/scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls)
+Checking mutation: default-instead-of-active-limits
+Detected mutation: default-instead-of-active-limits (generation_use_cases/restored_limits_reach_captured_prompt_schema_and_committed_memory)
+Checking mutation: commit-before-reporting-failure
+Detected mutation: commit-before-reporting-failure (phase_zero_acceptance/full_story_preserves_contracts_through_failure_retry_cancellation_and_rewind)
+Checking mutation: capture-past-limit
+Detected mutation: capture-past-limit (process_supervisor/captured_output_never_exceeds_either_configured_bound)
+Checking mutation: accept-incomplete-input
+Detected mutation: accept-incomplete-input (process_supervisor/incomplete_request_delivery_cannot_report_success)
+Checking mutation: ignore-cancelled-token
+Detected mutation: ignore-cancelled-token (process_supervisor/cancelled_token_wins_even_before_its_notifier_runs)
+Checking mutation: accept-failed-process
+Detected mutation: accept-failed-process (process_supervisor/failure_after_a_candidate_record_still_reports_nonzero_exit_not_success)
+Checking mutation: swallow-reader-error
+Detected mutation: swallow-reader-error (lib/backends::process::unix_impl::fault_tests::fatal_read_error_is_not_treated_as_would_block)
+Checking mutation: disable-cancellation-wake
+Detected mutation: disable-cancellation-wake (lib/backends::process::unix_impl::fault_tests::self_pipe_wakes_a_long_poll_without_removing_token_checks)
+Checking mutation: discard-cleanup-cause
+Detected mutation: discard-cleanup-cause (lib/backends::process::unix_impl::fault_tests::cleanup_failures_preserve_the_initiating_error)
+Checking mutation: accept-ineligible-message
+Detected mutation: accept-ineligible-message (codex_backend/ineligible_message_is_rejected_after_cleanup)
+Checking mutation: accept-missing-terminal
+Detected mutation: accept-missing-terminal (codex_backend/candidate_without_terminal_is_rejected_after_cleanup)
+Checking mutation: accept-conflicting-terminal
+Detected mutation: accept-conflicting-terminal (codex_backend/conflicting_terminal_is_rejected_after_cleanup)
+Checking mutation: adapt-shared-schema
+Detected mutation: adapt-shared-schema (lib/generation::schema::tests::shared_turn_schema_keeps_optional_character_updates)
+Checking mutation: adapt-peer-schema
+Detected mutation: adapt-peer-schema (lib/generation::backend_compat::claude_cli::tests::adapt_schema_strips_the_root_schema_key_and_nothing_else)
+Checking mutation: discard-candidate-evidence
+Detected mutation: discard-candidate-evidence (codex_backend/application_receives_complete_candidate_and_diagnostics_on_adapter_timeout)
+Checking mutation: discard-diagnostic-evidence
+Detected mutation: discard-diagnostic-evidence (codex_backend/application_receives_complete_candidate_and_diagnostics_on_adapter_timeout)
+Checking mutation: forward-uncorrelated-preview
+Detected mutation: forward-uncorrelated-preview (lib/backends::claude_cli::protocol::tests::frozen_completed_variants_emit_expected_previews_payload_usage_and_provenance)
+Checking mutation: share-block-indices-across-messages
+Detected mutation: share-block-indices-across-messages (lib/backends::claude_cli::protocol::tests::frozen_completed_variants_emit_expected_previews_payload_usage_and_provenance)
+Checking mutation: ignore-is-error-result
+Detected mutation: ignore-is-error-result (claude_backend/is_error_result_is_rejected_after_cleanup)
+Checking mutation: accept-stream-without-result
+Detected mutation: accept-stream-without-result (claude_backend/stream_without_a_result_is_rejected_after_cleanup)
+Checking mutation: accept-duplicate-result
+Detected mutation: accept-duplicate-result (claude_backend/duplicate_result_is_rejected_after_cleanup)
+Checking mutation: reserialize-structured-output
+Detected mutation: reserialize-structured-output (lib/backends::claude_cli::protocol::tests::result_payload_is_the_exact_span_not_a_reserialization)
+Checking mutation: result-overrides-process-failure
+Detected mutation: result-overrides-process-failure (claude_backend/result_cannot_override_nonzero_exit_and_previews_are_tentative_evidence)
+Checking mutation: accept-api-key-auth
+Detected mutation: accept-api-key-auth (claude_backend/preflight_rejects_non_subscription_unknown_and_conflicting_auth_without_generation)
+Checking mutation: discard-claude-candidate-evidence
+Detected mutation: discard-claude-candidate-evidence (claude_backend/application_receives_candidate_and_diagnostics_on_adapter_timeout)
+Checking mutation: discard-claude-diagnostic-evidence
+Detected mutation: discard-claude-diagnostic-evidence (claude_backend/application_receives_candidate_and_diagnostics_on_adapter_timeout)
+Checking mutation: leak-advisor-into-shared-instructions
+Detected mutation: leak-advisor-into-shared-instructions (claude_story_acceptance/composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context)
+Checking mutation: drop-candidate-on-malformed-metadata
+Detected mutation: drop-candidate-on-malformed-metadata (claude_backend/malformed_result_metadata_keeps_the_candidate_visible_to_the_application)
+Checking mutation: accept-last-duplicate-field
+Detected mutation: accept-last-duplicate-field (claude_backend/ambiguous_control_fields_cannot_authorize_success_at_the_real_boundary)
+Checking mutation: accept-stale-worker-result
+Detected mutation: accept-stale-worker-result (session/stale_and_duplicate_completions_never_replace_current_state)
+Checking mutation: accept-cancelled-worker-success
+Detected mutation: accept-cancelled-worker-success (controller_backends/both_joined_adapter_successes_are_rejected_if_cancel_wins_acceptance)
+Checking mutation: commit-worker-turn-twice
+Detected mutation: commit-worker-turn-twice (session/stale_and_duplicate_completions_never_replace_current_state)
+Checking mutation: ignore-headless-interrupt
+Detected mutation: ignore-headless-interrupt (headless/sigint_alone_cancels_idle_generation_before_any_fallback_command)
+Checking mutation: block-final-error-report
+Detected mutation: block-final-error-report (headless/full_undrained_stderr_does_not_block_error_exit)
+Checking mutation: advance-demo-on-cancel
+Detected mutation: advance-demo-on-cancel (demo_retry/cancellation_after_demo_consumption_retries_each_stage_and_preserves_all_passages)
+Checking mutation: accept-stale-storage-receipt
+Detected mutation: accept-stale-storage-receipt (lib/persistence::tests::stale_duplicate_or_wrong_revision_storage_receipts_never_clean_or_rebind)
+Checking mutation: autosave-unaccepted-generation
+Detected mutation: autosave-unaccepted-generation (persistence/cancelled_generation_never_autosaves_a_rejected_turn)
+Checking mutation: rotate-corrupt-primary
+Detected mutation: rotate-corrupt-primary (filesystem_repository/corrupt_primary_never_rotates_over_a_good_backup_and_recovery_creates_a_new_slot)
+Checking mutation: mark-post-rename-failure-clean
+Detected mutation: mark-post-rename-failure-clean (persistence/uncertain_write_and_worker_panic_reconcile_same_attempt_without_a_new_slot)
+Checking mutation: retry-generation-on-save-failure
+Detected mutation: retry-generation-on-save-failure (persistence/failed_autosave_keeps_accepted_turn_and_storage_retry_never_regenerates)
+Checking mutation: accept-codex-duplicate-control
+Detected mutation: accept-codex-duplicate-control (codex_backend/duplicate_control_keys_reject_without_emission_and_preserve_prior_candidate)
+Checking mutation: accept-claude-duplicate-auth
+Detected mutation: accept-claude-duplicate-auth (claude_backend/duplicate_auth_keys_fail_closed_before_generation_and_retain_status)
+Checking mutation: count-input-read-ahead
+Detected mutation: count-input-read-ahead (headless/input_line_bound_ignores_read_ahead_and_rejects_oversized_lines)
+All required behavioral mutations detected.
+Found 181 mutants to test
+ok       Unmutated baseline in 5s build + 0s test
+ INFO Auto-set test timeout to 30s
+181 mutants tested in 2m: 101 caught, 80 unviable
+Caught mutations with per-test nontermination failures: 0 (included in cargo-mutants caught count).
+Domain mutation gate passed. Unviable mutants are not test detections; review limits remain documented.
+Project contracts verified. Pending feature obligations remain listed in docs/decisions.
+exit=0
