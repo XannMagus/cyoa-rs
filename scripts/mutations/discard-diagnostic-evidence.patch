@@ -1,8 +1,8 @@
 --- a/cyoa-infrastructure/src/backends/transport.rs
 +++ b/cyoa-infrastructure/src/backends/transport.rs
 @@ -72,7 +72,7 @@
-         SupervisorError::Cancelled { .. } => cancelled(raw, diagnostics),
-         SupervisorError::Timeout { .. } => BackendError::Timeout {
+         SupervisorError::Cancelled { diagnostics } => cancelled(raw, diagnostics),
+         SupervisorError::Timeout { diagnostics } => BackendError::Timeout {
              raw_response: raw,
 -            diagnostics,
 +            diagnostics: TransportDiagnostics::empty(),

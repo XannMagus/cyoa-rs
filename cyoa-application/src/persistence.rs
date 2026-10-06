@@ -224,7 +224,9 @@ pub struct PendingWrite {
     target: SaveId,
     previous_stamp: Option<ContentStamp>,
     intended_stamp: ContentStamp,
-    bytes: Vec<u8>,
+    // Shared, not copied: a prepared write is retained by the caller's evidence
+    // sink, a retry and failures at once, and can be up to MAX_SAVE_BYTES.
+    bytes: std::sync::Arc<[u8]>,
 }
 impl PendingWrite {
     pub fn new(
@@ -240,7 +242,7 @@ impl PendingWrite {
             target,
             previous_stamp,
             intended_stamp,
-            bytes,
+            bytes: bytes.into(),
         })
     }
     pub fn target(&self) -> &SaveId {

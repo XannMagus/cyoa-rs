@@ -96,6 +96,72 @@ impl<'de> Visitor<'de> for Strict<'_> {
     }
 }
 
+/// Validates one complete document's syntax and key uniqueness without building
+/// a value tree, so a caller can then deserialize the same bytes directly into
+/// its own types. Only each object's own keys are retained while it is read.
+pub(crate) fn reject_duplicate_keys(bytes: &[u8]) -> Result<(), StrictJsonError> {
+    let duplicate = Cell::new(None);
+    let mut deserializer = serde_json::Deserializer::from_slice(bytes);
+    let checked = Unique(&duplicate)
+        .deserialize(&mut deserializer)
+        .and_then(|()| deserializer.end());
+    checked.map_err(|error| match duplicate.take() {
+        Some(key) => StrictJsonError::DuplicateKey(key),
+        None => StrictJsonError::Syntax(error),
+    })
+}
+#[derive(Clone, Copy)]
+struct Unique<'a>(&'a Cell<Option<String>>);
+impl<'de> DeserializeSeed<'de> for Unique<'_> {
+    type Value = ();
+    fn deserialize<D: de::Deserializer<'de>>(self, d: D) -> Result<(), D::Error> {
+        d.deserialize_any(self)
+    }
+}
+impl<'de> Visitor<'de> for Unique<'_> {
+    type Value = ();
+    fn expecting(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        f.write_str("JSON with unique object keys")
+    }
+    fn visit_bool<E: de::Error>(self, _: bool) -> Result<(), E> {
+        Ok(())
+    }
+    fn visit_i64<E: de::Error>(self, _: i64) -> Result<(), E> {
+        Ok(())
+    }
+    fn visit_u64<E: de::Error>(self, _: u64) -> Result<(), E> {
+        Ok(())
+    }
+    fn visit_f64<E: de::Error>(self, _: f64) -> Result<(), E> {
+        Ok(())
+    }
+    fn visit_str<E: de::Error>(self, _: &str) -> Result<(), E> {
+        Ok(())
+    }
+    fn visit_unit<E: de::Error>(self) -> Result<(), E> {
+        Ok(())
+    }
+    fn visit_none<E: de::Error>(self) -> Result<(), E> {
+        Ok(())
+    }
+    fn visit_seq<A: SeqAccess<'de>>(self, mut a: A) -> Result<(), A::Error> {
+        while a.next_element_seed(self)?.is_some() {}
+        Ok(())
+    }
+    fn visit_map<A: MapAccess<'de>>(self, mut a: A) -> Result<(), A::Error> {
+        let mut seen = std::collections::HashSet::new();
+        while let Some(key) = a.next_key::<String>()? {
+            if !seen.insert(key.clone()) {
+                let error = de::Error::custom(format!("duplicate object key {key:?}"));
+                self.0.set(Some(key));
+                return Err(error);
+            }
+            a.next_value_seed(self)?;
+        }
+        Ok(())
+    }
+}
+
 /// A syntactically valid span can still be ambiguous: two equal keys in one
 /// object mean different consumers read different values (`serde_json::Value`
 /// silently keeps the last). Reject, never pick. Only objects selected by
@@ -215,6 +281,30 @@ mod tests {
             strict_value(document.as_bytes()).unwrap(),
             serde_json::from_str::<Value>(document).unwrap()
         );
+    }
+
+    #[test]
+    fn tree_free_validation_agrees_with_strict_parsing() {
+        for document in [
+            r#"{"a":1,"a":2}"#,
+            r#"[{"x":{"y":[{"k":1,"k":1}]}}]"#,
+            r#"{"a":[1,{"b":null}],"c":"\u00e9"}"#,
+            "{",
+            r#"{"a":1} trailing"#,
+        ] {
+            let tree = strict_value(document.as_bytes()).map(|_| ());
+            let free = reject_duplicate_keys(document.as_bytes());
+            assert_eq!(
+                format!("{tree:?}").split('(').next(),
+                format!("{free:?}").split('(').next(),
+                "{document}"
+            );
+            assert_eq!(
+                matches!(tree, Err(StrictJsonError::DuplicateKey(_))),
+                matches!(free, Err(StrictJsonError::DuplicateKey(_))),
+                "{document}"
+            );
+        }
     }
 
     #[test]

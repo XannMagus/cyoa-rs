@@ -2,8 +2,8 @@
 +++ b/cyoa-infrastructure/src/backends/transport.rs
 @@ -71,7 +71,7 @@
      match error {
-         SupervisorError::Cancelled { .. } => cancelled(raw, diagnostics),
-         SupervisorError::Timeout { .. } => BackendError::Timeout {
+         SupervisorError::Cancelled { diagnostics } => cancelled(raw, diagnostics),
+         SupervisorError::Timeout { diagnostics } => BackendError::Timeout {
 -            raw_response: raw,
 +            raw_response: None,
              diagnostics,

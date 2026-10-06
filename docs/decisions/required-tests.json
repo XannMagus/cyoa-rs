@@ -198,7 +198,8 @@
           "backends::codex_cli::tests::prepared_request_owns_schema_stdin_environment_and_workspace_until_transfer_drop",
           "generation::backend_compat::codex_cli::tests::framing_matches_the_committed_discovery_capture_byte_for_byte",
           "json::tests::duplicate_keys_are_rejected_at_any_depth_and_never_resolved",
-          "json::tests::syntax_errors_stay_distinct_from_duplicates"
+          "json::tests::syntax_errors_stay_distinct_from_duplicates",
+          "json::tests::tree_free_validation_agrees_with_strict_parsing"
         ]
       },
       {

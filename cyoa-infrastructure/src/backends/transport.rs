@@ -66,22 +66,26 @@ pub(crate) fn transport_error(
     error: SupervisorError,
     raw: Option<String>,
 ) -> BackendError {
-    let diagnostics = error.diagnostics();
+    // Diagnostics (up to the output bounds) move out of the error; only the
+    // `Transport` arm, which keeps the error itself as its cause, copies them.
     match error {
-        SupervisorError::Cancelled { .. } => cancelled(raw, diagnostics),
-        SupervisorError::Timeout { .. } => BackendError::Timeout {
+        SupervisorError::Cancelled { diagnostics } => cancelled(raw, diagnostics),
+        SupervisorError::Timeout { diagnostics } => BackendError::Timeout {
             raw_response: raw,
             diagnostics,
         },
         SupervisorError::Spawn(source) => BackendError::Unavailable {
             message: format!("{vendor} launch failed: {source}"),
-            diagnostics,
+            diagnostics: TransportDiagnostics::empty(),
         },
         SupervisorError::Unsupported => BackendError::Unavailable {
             message: "process supervision is unsupported on this platform".into(),
-            diagnostics,
+            diagnostics: TransportDiagnostics::empty(),
         },
-        SupervisorError::NonzeroExit { exit_code, .. } => {
+        SupervisorError::NonzeroExit {
+            exit_code,
+            diagnostics,
+        } => {
             let message = format!("{vendor} exited with status {exit_code}");
             if diagnostics.stdout().is_empty() {
                 BackendError::Unavailable {
@@ -96,7 +100,10 @@ pub(crate) fn transport_error(
                 }
             }
         }
-        SupervisorError::ConsumerRejected { reason, .. } => BackendError::Generation {
+        SupervisorError::ConsumerRejected {
+            reason,
+            diagnostics,
+        } => BackendError::Generation {
             message: reason,
             raw_response: raw.unwrap_or_default(),
             diagnostics,
@@ -107,7 +114,7 @@ pub(crate) fn transport_error(
         | SupervisorError::OutputBoundExceeded { .. }) => BackendError::Transport {
             message: safe_transport_summary(&error),
             raw_response: raw.unwrap_or_default(),
-            diagnostics: Box::new(diagnostics),
+            diagnostics: Box::new(error.diagnostics()),
             cause: Box::new(error),
         },
     }

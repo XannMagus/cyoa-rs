@@ -368,8 +368,9 @@ fn parse<T: serde::de::DeserializeOwned>(bytes: &[u8]) -> io::Result<T> {
     if bytes.len() > MAX_HELPER_BYTES {
         return Err(io::Error::other("helper document exceeds 160 MiB"));
     }
-    let value = crate::json::strict_value(bytes).map_err(io::Error::other)?;
-    serde_json::from_value(value).map_err(io::Error::other)
+    // Validate uniqueness without a value tree, then deserialize the bytes once.
+    crate::json::reject_duplicate_keys(bytes).map_err(io::Error::other)?;
+    serde_json::from_slice(bytes).map_err(io::Error::other)
 }
 struct Limited {
     bytes: Vec<u8>,
