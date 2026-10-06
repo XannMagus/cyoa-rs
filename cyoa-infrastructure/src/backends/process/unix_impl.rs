@@ -589,10 +589,12 @@ mod fault_tests {
     fn self_pipe_wakes_a_long_poll_without_removing_token_checks() {
         let mut request = spec();
         request.program = "/bin/sleep".into();
-        request.args = vec!["30".into()];
+        request.args = vec!["120".into()];
         request.stdin.clear();
         request.bounds = super::super::ProcessBounds::new(
-            Duration::from_secs(5),
+            // Longer than the 30 s tick, so neither can rescue a missed self-pipe wake
+            // inside the 10 s bound below.
+            Duration::from_secs(60),
             super::super::MaxStdoutBytes::new(100).unwrap(),
             super::super::MaxStderrBytes::new(100).unwrap(),
         )
