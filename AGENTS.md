@@ -89,3 +89,20 @@ Use `bash scripts/check_contracts.sh` for the shared local/CI completion gate.
 Avoid Python for project tooling. Prefer shell scripts for small checks or Rust
 utilities for larger tools. The copied Python under `reference/calibre/` is source
 reference for the port, not a tooling dependency.
+
+## Agent skills
+
+### Issue tracker
+
+Track issues in GitHub Issues for `XannMagus/cyoa-rs`. Before ticket operations,
+read `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Use the five default triage labels. Before triaging,
+read `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Use a single-context glossary and ADR layout. Before domain exploration,
+read `docs/agents/domain.md`.

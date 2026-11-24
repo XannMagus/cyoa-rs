@@ -1,0 +1,70 @@
+:root {
+  color-scheme: dark;
+  background: #171a21;
+  color: #d9dfe9;
+  font-family: system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.65;
+}
+html { background: #171a21; scroll-behavior: smooth; }
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  background: #171a21;
+  color: #d9dfe9;
+  width: 100%;
+  max-width: none;
+  margin: 0 auto;
+  padding: 2rem clamp(1rem, 3vw, 4rem) 5rem;
+  font-family: system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.65;
+  overflow-wrap: break-word;
+}
+h1, h2, h3, h4 { color: #f0f3f9; line-height: 1.3; }
+h1, h2 { margin-top: 2.5rem; }
+a { color: #92baff; text-underline-offset: 3px; }
+a:visited { color: #c5a9ef; }
+a:hover { color: #c6daff; }
+nav#TOC {
+  background: #202530;
+  padding: 1rem 1.5rem;
+  border: 1px solid #394252;
+  border-radius: 8px;
+}
+code { background: #252b36; color: #e6ca9c; padding: .1em .3em; border-radius: 3px; }
+pre {
+  background: #202530;
+  color: #d9dfe9;
+  border: 1px solid #394252;
+  border-radius: 6px;
+  padding: 1rem;
+  overflow-x: auto;
+}
+pre code { background: transparent; padding: 0; }
+div.sourceCode, pre.sourceCode { background: #202530; color: #d9dfe9; }
+code span.kw, code span.dt { color: #c5a9ef; }
+code span.st, code span.ch { color: #acd5ad; }
+code span.co { color: #a0adbe; }
+code span.dv, code span.fl { color: #e6ca9c; }
+table {
+  display: table;
+  width: 100%;
+  border-collapse: collapse;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  font-size: .9rem;
+}
+@media (max-width: 800px) {
+  table { display: block; }
+}
+th, td { border: 1px solid #394252; padding: .65rem .8rem; vertical-align: top; }
+th { background: #2a3241; color: #f0f3f9; text-align: left; }
+tbody tr:nth-child(even) { background: #202530; }
+blockquote { color: #b9c5d7; border-left: 3px solid #7295c7; margin-left: 0; padding-left: 1rem; }
+hr { border: 0; border-top: 1px solid #394252; margin: 2rem 0; }
+::selection { background: #3b5275; color: #fff; }
+@media print {
+  :root, html, body { background: white; color: black; }
+  h1, h2, h3, h4, a, a:visited { color: black; }
+  nav#TOC, th, pre, code, tbody tr:nth-child(even) { background: #f1f1f1; color: black; }
+}
