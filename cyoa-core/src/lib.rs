@@ -7,8 +7,10 @@
 
 pub mod character;
 pub mod game;
+pub mod generation;
 pub mod ids;
 pub mod limits;
+pub mod persistence;
 pub mod style;
 pub mod summary;
 pub mod text;

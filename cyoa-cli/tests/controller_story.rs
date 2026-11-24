@@ -2,6 +2,7 @@ use cyoa_application::{
     cancellation::CancellationToken,
     generation::{FailureKind, StoryUseCases, TurnDirection},
 };
+use cyoa_application::{execution::PreviewLimit, runtime::*, session::*};
 use cyoa_core::{
     game::{GameState, TurnCount},
     ids::CharacterId,
@@ -11,13 +12,13 @@ use cyoa_core::{
     turn::QuickActionKind,
     world::{PlayablePosition, WorldOutline},
 };
+use cyoa_infrastructure::execution::generation::WorkerRunner;
 use cyoa_infrastructure::{
     backend::*,
     generation::{
         engine::GenerationEngine, scripted::ChunkedBackend, templates::GenerationTemplates,
     },
 };
-use cyoa_presentation::{runtime::*, session::*, worker::PreviewLimit};
 use serde_json::Value;
 use std::{
     sync::{Arc, Mutex, mpsc},
@@ -86,7 +87,7 @@ fn fixture() -> Value {
     ))
     .unwrap()
 }
-type Runtime = SessionRuntime<GenerationEngine<Recorder<ChunkedBackend>>>;
+type Runtime = SessionRuntime<WorkerRunner<GenerationEngine<Recorder<ChunkedBackend>>>>;
 fn runtime(
     responses: Vec<String>,
     limits: Limits,
@@ -101,11 +102,13 @@ fn runtime(
     (
         SessionRuntime::new(
             SessionController::new(limits, StoryStyle::default()),
-            StoryUseCases::new(GenerationEngine::new(
-                backend,
-                GenerationTemplates::bundled().unwrap(),
-            )),
-            PreviewLimit::default(),
+            cyoa_infrastructure::execution::generation::WorkerRunner::new(
+                StoryUseCases::new(GenerationEngine::new(
+                    backend,
+                    GenerationTemplates::bundled().unwrap(),
+                )),
+                PreviewLimit::default(),
+            ),
         ),
         captures,
     )
@@ -113,7 +116,7 @@ fn runtime(
 fn settle(runtime: &mut Runtime) {
     let deadline = Instant::now() + Duration::from_secs(30);
     while matches!(
-        runtime.controller().phase(),
+        runtime.view().phase(),
         Phase::Running | Phase::Cancelling | Phase::Closing
     ) {
         runtime.poll();
@@ -127,7 +130,7 @@ fn dispatch(runtime: &mut Runtime, intent: Intent) {
 }
 fn advance(runtime: &mut Runtime) {
     dispatch(runtime, Intent::Turn(TurnDirection::Continue));
-    assert_eq!(runtime.controller().phase(), Phase::Ready);
+    assert_eq!(runtime.view().phase(), Phase::Ready);
 }
 fn events(game: &GameState) -> Vec<String> {
     game.current_summary()
@@ -184,19 +187,12 @@ fn complete_controller_story_preserves_context_retry_identity_chapters_and_rewin
     );
     dispatch(&mut runtime, Intent::Select(PlayablePosition::new(1)));
     assert_eq!(
-        runtime
-            .controller()
-            .game()
-            .unwrap()
-            .world()
-            .cast()
-            .npcs()
-            .len(),
+        runtime.view().game().unwrap().world().cast().npcs().len(),
         2
     );
     advance(&mut runtime);
     advance(&mut runtime);
-    let before = runtime.controller().game().unwrap().clone();
+    let before = runtime.view().game().unwrap().clone();
     assert_eq!(before.turns().len(), 2, "double commit regression");
     assert_eq!(events(&before), ["B", "C"]);
     assert_eq!(
@@ -222,8 +218,8 @@ fn complete_controller_story_preserves_context_retry_identity_chapters_and_rewin
         );
     }
     dispatch(&mut runtime, Intent::Turn(TurnDirection::Continue));
-    assert_eq!(runtime.controller().game().unwrap(), &before);
-    let Some(Failure::Generation(error)) = runtime.controller().failure() else {
+    assert_eq!(runtime.view().game().unwrap(), &before);
+    let Some(Failure::Generation(error)) = runtime.view().failure() else {
         panic!("expected failure")
     };
     assert_eq!(error.kind(), FailureKind::Transport);
@@ -234,7 +230,7 @@ fn complete_controller_story_preserves_context_retry_identity_chapters_and_rewin
     dispatch(&mut runtime, Intent::Retry);
     assert_eq!(
         runtime
-            .controller()
+            .view()
             .game()
             .unwrap()
             .current_chapter()
@@ -243,13 +239,10 @@ fn complete_controller_story_preserves_context_retry_identity_chapters_and_rewin
             .get(),
         1
     );
-    assert_eq!(
-        runtime.controller().game().unwrap().prose_context().0.len(),
-        2
-    );
+    assert_eq!(runtime.view().game().unwrap().prose_context().0.len(), 2);
     assert!(
         runtime
-            .controller()
+            .view()
             .game()
             .unwrap()
             .current_summary()
@@ -257,20 +250,20 @@ fn complete_controller_story_preserves_context_retry_identity_chapters_and_rewin
             .as_slice()
             .is_empty()
     );
-    let before_cancel = runtime.controller().game().unwrap().clone();
+    let before_cancel = runtime.view().game().unwrap().clone();
     runtime
         .dispatch(Intent::Turn(TurnDirection::Continue))
         .unwrap();
     rx.recv_timeout(Duration::from_secs(5)).unwrap();
     runtime.poll();
-    assert!(!runtime.controller().preview().is_empty());
+    assert!(!runtime.view().preview().is_empty());
     runtime.dispatch(Intent::Cancel).unwrap();
     settle(&mut runtime);
-    assert_eq!(runtime.controller().game().unwrap(), &before_cancel);
+    assert_eq!(runtime.view().game().unwrap(), &before_cancel);
     dispatch(&mut runtime, Intent::Retry);
     assert_eq!(
         runtime
-            .controller()
+            .view()
             .game()
             .unwrap()
             .current_chapter()
@@ -281,9 +274,9 @@ fn complete_controller_story_preserves_context_retry_identity_chapters_and_rewin
         "At Sea"
     );
     dispatch(&mut runtime, Intent::Rewind(TurnCount::new(2).unwrap()));
-    assert_eq!(runtime.controller().game().unwrap(), &before);
+    assert_eq!(runtime.view().game().unwrap(), &before);
     advance(&mut runtime);
-    assert_eq!(events(runtime.controller().game().unwrap()), ["C", "F"]);
+    assert_eq!(events(runtime.view().game().unwrap()), ["C", "F"]);
     let records = captures.lock().unwrap();
     assert_eq!(records.len(), 9);
     assert!(records[1].prompt.contains("Edited coastline"));
@@ -332,7 +325,7 @@ fn controller_zero_npcs_and_both_restore_policies_use_active_limits() {
     dispatch(&mut original, Intent::AcceptOutline);
     dispatch(&mut original, Intent::Select(PlayablePosition::new(0)));
     advance(&mut original);
-    let game = original.controller().game().unwrap().clone();
+    let game = original.view().game().unwrap().clone();
     assert!(game.world().cast().npcs().is_empty());
     for (policy, cap) in [
         (RestoreLimits::Original, 2),
@@ -360,16 +353,18 @@ fn controller_zero_npcs_and_both_restore_policies_use_active_limits() {
         };
         let mut restored_runtime = SessionRuntime::new(
             SessionController::from_game(restored),
-            StoryUseCases::new(GenerationEngine::new(
-                backend,
-                GenerationTemplates::bundled().unwrap(),
-            )),
-            PreviewLimit::default(),
+            cyoa_infrastructure::execution::generation::WorkerRunner::new(
+                StoryUseCases::new(GenerationEngine::new(
+                    backend,
+                    GenerationTemplates::bundled().unwrap(),
+                )),
+                PreviewLimit::default(),
+            ),
         );
         advance(&mut restored_runtime);
         assert_eq!(
             restored_runtime
-                .controller()
+                .view()
                 .game()
                 .unwrap()
                 .limits()
@@ -377,10 +372,7 @@ fn controller_zero_npcs_and_both_restore_policies_use_active_limits() {
                 .get(),
             cap
         );
-        assert_eq!(
-            events(restored_runtime.controller().game().unwrap()).len(),
-            cap
-        );
+        assert_eq!(events(restored_runtime.view().game().unwrap()).len(), cap);
         assert!(
             captures.lock().unwrap()[0]
                 .instructions

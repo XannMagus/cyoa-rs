@@ -1,8 +1,13 @@
+use cyoa_application::execution::PreviewLimit;
+use cyoa_application::runtime::SessionRuntime;
+use cyoa_application::session::SessionController;
+use cyoa_application::session_persistence::{PersistedSession, validate_loaded_source};
 use cyoa_application::{
     generation::{StoryGenerator, StoryUseCases},
     persistence::*,
 };
 use cyoa_core::{limits::Limits, style::StoryStyle};
+use cyoa_infrastructure::execution::storage::StorageRunner;
 use cyoa_infrastructure::{
     backend::Backend,
     backends::{
@@ -15,14 +20,8 @@ use cyoa_infrastructure::{
         repository::data_directory,
     },
 };
-use cyoa_presentation::{
-    commands::{BackendChoice, Cli, Command, PlayOptions, PlaySource},
-    persistence::{PersistedSession, validate_loaded_source},
-    runtime::SessionRuntime,
-    session::SessionController,
-    storage::StorageRunner,
-    worker::PreviewLimit,
-};
+use cyoa_presentation::commands::{BackendChoice, Cli, Command, PlayOptions, PlaySource};
+
 use std::{
     ffi::OsStr,
     io::{self, Write},
@@ -79,18 +78,22 @@ fn execute() -> Result<(), Box<dyn std::error::Error>> {
         let options = match cli.command {
             Command::List(options) => {
                 let query = options.query();
-                let result = run_interruptible("save listing", move |token| {
-                    repository(helper).list_saves(query, token)
-                })?;
+                let result = run_interruptible(
+                    &cyoa_infrastructure::execution::blocking::ScopedJobs,
+                    "save listing",
+                    move |token| repository(helper).list_saves(query, token),
+                )?;
                 return query_output(|out| {
                     cyoa_presentation::headless::render_listing(&result, out)
                 });
             }
             Command::Inspect(options) => {
                 let query = options.query();
-                let stored = run_interruptible("save inspection", move |token| {
-                    repository(helper).inspect_save(query, token)
-                })?;
+                let stored = run_interruptible(
+                    &cyoa_infrastructure::execution::blocking::ScopedJobs,
+                    "save inspection",
+                    move |token| repository(helper).inspect_save(query, token),
+                )?;
                 return query_output(|out| {
                     cyoa_presentation::headless::render_saved_game(&stored, out)
                 });
@@ -102,9 +105,11 @@ fn execute() -> Result<(), Box<dyn std::error::Error>> {
         let loaded = match options.load()? {
             Some(command) => {
                 let config = helper.clone();
-                let loaded = run_interruptible("startup load", move |token| {
-                    repository(config).load_game(command, token)
-                })?;
+                let loaded = run_interruptible(
+                    &cyoa_infrastructure::execution::blocking::ScopedJobs,
+                    "startup load",
+                    move |token| repository(config).load_game(command, token),
+                )?;
                 validate_loaded_source(&loaded, source)?;
                 Some(loaded)
             }
@@ -148,9 +153,11 @@ fn play_live(
                 options.model.clone().map(CodexModel::new).transpose()?,
             )?;
             play_backend(
-                run_interruptible("authentication", move |token| {
-                    CodexCliBackend::connect(config, token)
-                })?,
+                run_interruptible(
+                    &cyoa_infrastructure::execution::blocking::ScopedJobs,
+                    "authentication",
+                    move |token| CodexCliBackend::connect(config, token),
+                )?,
                 helper,
                 loaded,
             )
@@ -168,9 +175,11 @@ fn play_live(
                 options.model.clone().map(ClaudeModel::new).transpose()?,
             )?;
             play_backend(
-                run_interruptible("authentication", move |token| {
-                    ClaudeCliBackend::connect(config, token)
-                })?,
+                run_interruptible(
+                    &cyoa_infrastructure::execution::blocking::ScopedJobs,
+                    "authentication",
+                    move |token| ClaudeCliBackend::connect(config, token),
+                )?,
                 helper,
                 loaded,
             )
@@ -206,8 +215,10 @@ fn play<G: StoryGenerator + Send + 'static>(
     let cases = StoryUseCases::new(generator);
     let runtime = SessionRuntime::new(
         SessionController::new(Limits::default(), StoryStyle::default()),
-        cases,
-        PreviewLimit::default(),
+        cyoa_infrastructure::execution::generation::WorkerRunner::new(
+            cases,
+            PreviewLimit::default(),
+        ),
     );
     let mut input = cyoa_presentation::terminal::TerminalInput::new()?;
     let mut story = cyoa_presentation::terminal::Flags::new(io::stdout())?;

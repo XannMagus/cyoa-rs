@@ -1,5 +1,6 @@
 //! Atomic local saves. Blocking methods run only off the presentation loop.
 use super::codec;
+use crate::persistence::prepared::{PreparedWriteBytes, prepare_write};
 use cyoa_application::{cancellation::CancellationToken, persistence::*};
 use std::{
     io,
@@ -256,7 +257,7 @@ mod linux {
                     .map_err(|e| io_failure(op, StorageStage::Prepare, e))?,
             };
             let bytes = codec::encode(snapshot, &metadata).map_err(|e| decode_failure(op, e))?;
-            PendingWrite::new(id, previous, codec::stamp(&bytes), bytes).map_err(|e| {
+            prepare_write(id, previous, codec::stamp(&bytes), bytes).map_err(|e| {
                 failure(
                     op,
                     StorageStage::Prepare,
@@ -579,11 +580,16 @@ mod linux {
             "save changed or slot is occupied; create a save copy",
         )
     }
-    impl GameRepository for LocalRepository {
+    impl cyoa_core::persistence::GameRepository for LocalRepository {
+        type Context = cyoa_application::cancellation::CancellationToken;
+        type Failure = cyoa_application::persistence::StorageFailure;
+        type Attempt = cyoa_application::persistence::PendingWrite;
+        type Stored = cyoa_application::persistence::StoredGame;
+
         fn create(
             &mut self,
             snapshot: SaveSnapshot,
-            prepared: &PreparedWriteEvidence,
+            prepared: &dyn AttemptObserver<PendingWrite>,
             cancel: &CancellationToken,
         ) -> Result<SaveReceipt, StorageFailure> {
             let pending = self.prepare_create(&snapshot, cancel)?;
@@ -594,7 +600,7 @@ mod linux {
             &mut self,
             target: SaveTarget,
             snapshot: SaveSnapshot,
-            prepared: &PreparedWriteEvidence,
+            prepared: &dyn AttemptObserver<PendingWrite>,
             cancel: &CancellationToken,
         ) -> Result<SaveReceipt, StorageFailure> {
             let pending = self.prepare_replace(&target, &snapshot, cancel)?;
@@ -604,7 +610,7 @@ mod linux {
         fn reconcile(
             &mut self,
             attempt: PendingWrite,
-            prepared: &PreparedWriteEvidence,
+            prepared: &dyn AttemptObserver<PendingWrite>,
             cancel: &CancellationToken,
         ) -> Result<SaveReceipt, StorageFailure> {
             prepared.publish(attempt.clone());
@@ -624,6 +630,8 @@ mod linux {
             Self::admitted(cancel, op)?;
             Ok(stored)
         }
+    }
+    impl cyoa_application::persistence::SaveQueries for LocalRepository {
         fn list(
             &mut self,
             page: SavePage,
@@ -728,11 +736,16 @@ impl LocalRepository {
     }
 }
 #[cfg(not(target_os = "linux"))]
-impl GameRepository for LocalRepository {
+impl cyoa_core::persistence::GameRepository for LocalRepository {
+    type Context = cyoa_application::cancellation::CancellationToken;
+    type Failure = cyoa_application::persistence::StorageFailure;
+    type Attempt = cyoa_application::persistence::PendingWrite;
+    type Stored = cyoa_application::persistence::StoredGame;
+
     fn create(
         &mut self,
         _: SaveSnapshot,
-        _: &PreparedWriteEvidence,
+        _: &dyn AttemptObserver<PendingWrite>,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         Err(unsupported(StorageOperation::Create))
@@ -741,7 +754,7 @@ impl GameRepository for LocalRepository {
         &mut self,
         _: SaveTarget,
         _: SaveSnapshot,
-        _: &PreparedWriteEvidence,
+        _: &dyn AttemptObserver<PendingWrite>,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         Err(unsupported(StorageOperation::Replace))
@@ -749,7 +762,7 @@ impl GameRepository for LocalRepository {
     fn reconcile(
         &mut self,
         _: PendingWrite,
-        _: &PreparedWriteEvidence,
+        _: &dyn AttemptObserver<PendingWrite>,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         Err(unsupported(StorageOperation::Reconcile))
@@ -762,6 +775,9 @@ impl GameRepository for LocalRepository {
     ) -> Result<StoredGame, StorageFailure> {
         Err(unsupported(StorageOperation::Load))
     }
+}
+#[cfg(not(target_os = "linux"))]
+impl cyoa_application::persistence::SaveQueries for LocalRepository {
     fn list(
         &mut self,
         _: SavePage,

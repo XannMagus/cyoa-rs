@@ -7,6 +7,10 @@ Python alone cannot establish correctness for this project.
 
 ## Precedence and change procedure
 
+For domain vocabulary, see [GLOSSARY.md](../../GLOSSARY.md). For concise decision
+rationale and a mapping back to these contract IDs, see [the ADR index](../adr/README.md).
+These contracts remain the authority for precise behavior, coverage and remaining work.
+
 1. Explicit user decisions take precedence. Record new decisions here and in PLAN.
 2. These contracts and their required regressions override conflicting Calibre code,
    source notes, old plan sketches, and historical review recommendations.
@@ -33,6 +37,13 @@ prove every possible implementation correct. Review remains necessary for edits
 to the contracts, tests, or CI itself.
 
 ## Implemented contracts
+
+The [accepted 2026-10-30 decisions](2026-10-30-roleplay-and-session.md) specify
+session-ownership changes and pending expanded roleplay requirements. The
+2026-11-03 iso-functional cleanup implements the ownership move without those
+gameplay additions. Current implementations and required tests remain evidence
+of existing behavior; no future capability is claimed enforced. See that record for
+affected contract IDs and unresolved specification work.
 
 ### IDENTITY-001 Namesakes and exact world-record deduplication
 
@@ -164,7 +175,17 @@ allowlists domain/application external crates (2026-10-05: previously a denylist
 that would have admitted `serde`, `tempfile` or terminal crates). It does not prove absence of filesystem or
 process calls through std; those require code review.
 
-Remaining: TUI and export use cases, each behind inward ports with port-based tests. Session policy (controller, persisted session) lives in presentation per the Phase 1 and 2 plans; revisit when a second front end needs it.
+Remaining: TUI and export use cases, each behind inward ports with port-based tests.
+
+Iso-functional cleanup (2026-11-03): application owns canonical session admission,
+acceptance, autosave, recovery and final-save policy. Read-only `SessionView` and
+typed intents let library clients drive the same policy as the REPL. Domain owns
+the business generation/repository capabilities and checked save identity/snapshot
+values; application binds their associated reports, cancellation and opaque attempt
+types to its execution contracts. Infrastructure owns generation/storage runners
+and scoped blocking jobs; presentation owns syntax, signals and output draining.
+Application completion has no output-drain acknowledgement. A client integration
+test uses explicit helper configuration with no presentation dependency.
 
 Use lightweight CQRS as use cases arrive: commands change state, queries expose
 read-only views. No message bus, event sourcing, or duplicate types by convention.
@@ -172,9 +193,9 @@ No concrete adapter types in use-case signatures. New use cases need port-based
 tests; the original Python module layout and old two-crate plan are not precedent.
 
 Port obligations live in port signatures (2026-10-05 review): `GameRepository`
-writes take the caller's `PreparedWriteEvidence` sink and must publish the exact
+writes take the caller's required `AttemptObserver` sink and must publish the exact
 `PendingWrite` before their first disk mutation. It had been injected through
-repository constructors, which made presentation's factory generics depend on one
+repository constructors, which made the caller's factory generics depend on one
 adapter's crash-recovery needs and let a repository silently skip publication.
 Factories now build repositories with no evidence argument; the runner passes a
 fresh sink per request and keeps its own clone. Port-level tests cover sink
@@ -184,8 +205,8 @@ admission rejection (local repository).
 `main.rs` is composition only (2026-10-05 review): presentation option types build
 application commands (`ListOptions::query`, `InspectOptions::query`,
 `PlayOptions::{source, load}`) and report constraint drift as `UsageError`, not a
-panic. The interruptible pre-UI job loop lives in `presentation::terminal` and
-names its operation in failures; it had reported "authentication" for list,
+panic. Presentation's interrupt flag drives the infrastructure scoped-job executor,
+which names its operation in failures; it had reported "authentication" for list,
 inspect and load. Each backend config owns its config-directory variable and
 default executable name.
 
@@ -211,6 +232,12 @@ longer produces them.
 
 **Partial: constructors, generation mappings and save-boundary reconstruction
 checked; subsequent feature mappings pending.**
+
+Prepared save documents are private infrastructure payloads behind application's
+immutable `PendingWrite` handle (2026-11-03). Application can forward/compare
+attempt identity and metadata but has no encoded-byte accessor. Only the creating
+adapter recovers its private payload; foreign payloads fail repository validation.
+Compile-fail examples protect this boundary and read-only canonical views.
 Prefer domain newtypes over interchangeable primitives; aliases are semantic only.
 Use checked construction for constraints and enums/typestate for legal alternatives.
 Do not assume valid fields imply a valid aggregate. Keep fields private when
@@ -573,7 +600,7 @@ record path at the real-child boundary.
 persistence use cases/version-one codec, supervised local atomic storage and
 autosave/headless persistence and Phase 2 acceptance enforced; TUI and export
 pending.** Rust TUI and headless demo replace the Qt/calibre host. Keep vendor and
-filesystem work in adapters, one generation in flight, UI-owned canonical state,
+filesystem work in adapters, one generation in flight, application-owned canonical state,
 worker progress messages, cancellable children, cached narrative wrapping. Do not
 hold a state mutex during a model call. Save atomically with backup and versioned
 migrations; Markdown/EPUB export are in v1, images are behind a disabled port in v1.
@@ -594,13 +621,15 @@ export fixtures. PLAN retains the full build order and acceptance scenarios.
 
 Remaining: TUI (Phases 3 and 4), Markdown/EPUB export (Phase 5); images stay behind the disabled port in v1.
 
-Controller/worker item 6 is implemented (2026-10-02) through presentation session
+Controller/worker item 6 was implemented (2026-10-02) through presentation session
 and real-thread tests, the unchanged Phase 0 fixture through the full runtime,
 and actual Claude/Codex adapters using synthetic real-child streams in CLI tests.
 Three presentation mutations protect stale acceptance, cancelled success and a
 second commit of a returned turn (34 total). This establishes no playable command,
 stdin/signal shutdown, saves, rendering cache or exports. Evidence:
 `reviews/2026-10-02-controller-worker/README.md`.
+The 2026-11-03 cleanup moves those policies/tests to application and execution/tests
+to infrastructure, preserving the assertions and handwritten mutation behaviors.
 
 Headless item 7 adds shipped `play --headless --backend claude|codex` and
 `play --headless --demo`, manual outline replacement, checked selection, one
@@ -698,13 +727,15 @@ preserves the source boundary, not a backend tolerance workaround. Regressions
 also protect genuinely defaulted delta relationships/action kinds, nullable chapter
 titles, and omitted/null versus empty-list upcoming-event updates.
 
-Step 5 (2026-09-25): application-owned `StoryGenerator`, typed `TurnDirection`,
+Step 5 (2026-09-25; ownership updated 2026-11-03): domain-owned `StoryGenerator`, typed `TurnDirection`,
 `Generated<T>` and `GenerationFailure` isolate the domain-facing contract from
 JSON/template/backend types. `StoryUseCases` rejects pre-cancelled commands and
 commits only validated successful turns after checking cancellation again. A worker
-may operate on an owned snapshot; presentation must retain canonical state and
-never hold its lock during generation. Concurrency/stale-worker handling remains
-presentation work, not a guarantee provided by this synchronous use case.
+may operate on an owned snapshot; application retains canonical state without
+holding its lock during generation. The application session handles stale-worker
+acceptance separately from the synchronous use case. Successful and failed raw
+responses, provenance when available, and exact diagnostics remain execution
+evidence outside saved story state.
 
 The infrastructure `GenerationEngine` performs one transport call, decodes wire
 DTOs, and applies domain constructors. `ScriptedBackend` exercises that same path
@@ -724,7 +755,7 @@ each backend; controller/worker and Linux headless I/O acceptance enforced.**
 
 Remaining: TUI preview rendering and cache (Phase 3); terminal I/O on non-Linux hosts is unsupported.
 
-Controller slice (2026-10-02): presentation retains canonical state, tracks typed
+Controller slice (2026-10-02; moved inward 2026-11-03): application retains canonical state, tracks typed
 request IDs/base revisions, and rejects stale, duplicate and cancelled terminal
 results. `tests/session.rs` checks full state preservation and separate failure
 evidence, lifecycle selection and snapshot replacement without a second commit.

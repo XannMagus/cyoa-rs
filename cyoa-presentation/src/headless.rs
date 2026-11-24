@@ -1,11 +1,11 @@
 //! Append-only terminal view over the canonical session controller.
-use crate::{
-    commands::{PersistenceCommand, persistence_command},
-    persistence::{HeadlessSession, PersistenceEvent, SaveBinding, Shutdown},
+use crate::commands::{PersistenceCommand, persistence_command};
+use cyoa_application::{generation::TurnDirection, persistence::*};
+use cyoa_application::{
     runtime::Intent,
     session::{Acceptance, Failure, Phase, Stage},
+    session_persistence::{ApplicationSession, PersistenceEvent, SaveBinding, Shutdown},
 };
-use cyoa_application::{generation::TurnDirection, persistence::*};
 use cyoa_core::{
     text::{Brief, PlayerInput, WorldDescription, WorldTitle},
     world::{PlayablePosition, WorldOutline},
@@ -50,7 +50,7 @@ const HELP: &str = "Commands: /help /quit /cancel /retry /inspect /diagnostics /
 /// Sinks must be nonblocking and unbuffered (the Linux terminal guards provide
 /// this). Order is preserved within each stream, not between stdout and stderr.
 pub fn run(
-    runtime: &mut dyn HeadlessSession,
+    runtime: &mut dyn ApplicationSession,
     input: &mut dyn Input,
     story: &mut dyn Write,
     control: &mut dyn Write,
@@ -64,10 +64,7 @@ pub fn run(
     // input and the healthy output sink while both owned workers finish.
     let mut story_ok = !story.is_faulted();
     let mut control_ok = !control.is_faulted();
-    while !matches!(
-        runtime.shutdown(),
-        Shutdown::DrainingOutput | Shutdown::Closed
-    ) {
+    while !matches!(runtime.shutdown(), Shutdown::Complete) {
         if let Ok(InputEvent::Interrupt | InputEvent::Eof) = input.poll(Duration::from_millis(25)) {
             let _ = runtime.dispatch(Intent::Quit);
         }
@@ -91,7 +88,7 @@ pub fn run(
     result
 }
 fn drive(
-    runtime: &mut dyn HeadlessSession,
+    runtime: &mut dyn ApplicationSession,
     input: &mut dyn Input,
     story: &mut QueuedOutput<'_>,
     control: &mut QueuedOutput<'_>,
@@ -109,19 +106,19 @@ fn drive(
             handle_event(runtime, &mut view, event, story, control)?;
         }
         show_preview(runtime, &mut view, story, control)?;
-        if runtime.shutdown() == Shutdown::DrainingOutput {
+        if runtime.shutdown() == Shutdown::Complete {
             return drain_on_exit(runtime, &view, input, story, control);
         }
         control.flush()?;
         story.pump(Instant::now())?;
         control.pump(Instant::now())?;
-        if runtime.controller().phase() == Phase::Closing {
+        if runtime.view().phase() == Phase::Closing {
             std::thread::sleep(Duration::from_millis(10));
         }
     }
 }
 fn announce(
-    runtime: &mut dyn HeadlessSession,
+    runtime: &mut dyn ApplicationSession,
     control: &mut QueuedOutput<'_>,
     demo: bool,
 ) -> io::Result<()> {
@@ -135,7 +132,7 @@ fn announce(
             "Demo harbour-v1: five prerecorded turns; your choices do not alter the recorded fiction. Exhaustion never switches to a live backend."
         )?;
     }
-    if runtime.controller().game().is_some() {
+    if runtime.view().game().is_some() {
         writeln!(
             control,
             "Resumed game; loading makes no inference call. Empty line continues."
@@ -150,7 +147,7 @@ fn announce(
     control.flush()
 }
 fn handle_input(
-    runtime: &mut dyn HeadlessSession,
+    runtime: &mut dyn ApplicationSession,
     view: &mut View,
     event: InputEvent,
     control: &mut QueuedOutput<'_>,
@@ -161,10 +158,7 @@ fn handle_input(
             runtime.dispatch(Intent::Quit).map_err(io::Error::other)?;
         }
         InputEvent::Interrupt => {
-            if matches!(
-                runtime.controller().phase(),
-                Phase::Running | Phase::Cancelling
-            ) {
+            if matches!(runtime.view().phase(), Phase::Running | Phase::Cancelling) {
                 runtime.dispatch(Intent::Cancel).map_err(io::Error::other)?;
                 writeln!(control, "Cancellation requested; waiting for cleanup.")?;
             } else {
@@ -176,7 +170,7 @@ fn handle_input(
     Ok(())
 }
 fn handle_event(
-    runtime: &mut dyn HeadlessSession,
+    runtime: &mut dyn ApplicationSession,
     view: &mut View,
     event: PersistenceEvent,
     story: &mut QueuedOutput<'_>,
@@ -198,7 +192,7 @@ fn handle_event(
             }
             view.printed.clear();
             show_failure(runtime, control)?;
-            if runtime.controller().phase() == Phase::Faulted {
+            if runtime.view().phase() == Phase::Faulted {
                 writeln!(control, "The worker is unavailable; use /quit.")?;
             } else {
                 writeln!(
@@ -212,15 +206,15 @@ fn handle_event(
     Ok(())
 }
 fn show_preview(
-    runtime: &mut dyn HeadlessSession,
+    runtime: &mut dyn ApplicationSession,
     view: &mut View,
     story: &mut QueuedOutput<'_>,
     control: &mut QueuedOutput<'_>,
 ) -> io::Result<()> {
-    if runtime.controller().phase() != Phase::Running {
+    if runtime.view().phase() != Phase::Running {
         return Ok(());
     }
-    let preview = runtime.controller().preview();
+    let preview = runtime.view().preview();
     if preview.len() > view.printed.len() {
         if view.printed.is_empty() {
             writeln!(control, "[tentative preview; final validation pending]")?;
@@ -234,7 +228,7 @@ fn show_preview(
     Ok(())
 }
 fn drain_on_exit(
-    runtime: &mut dyn HeadlessSession,
+    runtime: &mut dyn ApplicationSession,
     view: &View,
     input: &mut dyn Input,
     story: &mut QueuedOutput<'_>,
@@ -269,7 +263,6 @@ fn drain_on_exit(
         control.pump(Instant::now())?;
         check_deadline()?;
         if story.is_empty() && control.is_empty() {
-            runtime.output_drained();
             return Ok(());
         }
         if matches!(
@@ -287,13 +280,13 @@ fn drain_on_exit(
 impl View {
     fn dispatch(
         &mut self,
-        runtime: &mut dyn HeadlessSession,
+        runtime: &mut dyn ApplicationSession,
         intent: Intent,
         control: &mut dyn Write,
     ) -> io::Result<bool> {
         match runtime.dispatch(intent) {
             Ok(()) => {
-                if runtime.controller().phase() == Phase::Running {
+                if runtime.view().phase() == Phase::Running {
                     self.printed.clear();
                     writeln!(
                         control,
@@ -313,7 +306,7 @@ impl View {
     /// in-progress outline edit, play commands, then stage input.
     fn line(
         &mut self,
-        runtime: &mut dyn HeadlessSession,
+        runtime: &mut dyn ApplicationSession,
         line: &str,
         control: &mut dyn Write,
     ) -> io::Result<()> {
@@ -348,7 +341,7 @@ impl View {
     }
     fn always_available(
         &mut self,
-        runtime: &mut dyn HeadlessSession,
+        runtime: &mut dyn ApplicationSession,
         trimmed: &str,
         control: &mut dyn Write,
     ) -> io::Result<bool> {
@@ -372,7 +365,7 @@ impl View {
     }
     fn outline_edit(
         &mut self,
-        runtime: &mut dyn HeadlessSession,
+        runtime: &mut dyn ApplicationSession,
         line: &str,
         control: &mut dyn Write,
     ) -> io::Result<bool> {
@@ -408,12 +401,11 @@ impl View {
     }
     fn play_command(
         &mut self,
-        runtime: &mut dyn HeadlessSession,
+        runtime: &mut dyn ApplicationSession,
         trimmed: &str,
         control: &mut dyn Write,
     ) -> io::Result<bool> {
-        if trimmed == "/edit" && matches!(runtime.controller().stage(), Stage::OutlineReview { .. })
-        {
+        if trimmed == "/edit" && matches!(runtime.view().stage(), Stage::OutlineReview { .. }) {
             self.edit = Edit::Title;
             writeln!(control, "Title: enter a nonblank replacement.")?;
         } else if let Some(number) = trimmed.strip_prefix("/action ") {
@@ -438,12 +430,12 @@ impl View {
     }
     fn stage_input(
         &mut self,
-        runtime: &mut dyn HeadlessSession,
+        runtime: &mut dyn ApplicationSession,
         trimmed: &str,
         text: String,
         control: &mut dyn Write,
     ) -> io::Result<()> {
-        match runtime.controller().stage() {
+        match runtime.view().stage() {
             Stage::Brief => match Brief::new(&text) {
                 Ok(brief) => {
                     self.dispatch(runtime, Intent::SubmitBrief(brief), control)?;
@@ -490,11 +482,11 @@ impl View {
     }
     fn committed(
         &mut self,
-        runtime: &dyn HeadlessSession,
+        runtime: &dyn ApplicationSession,
         story: &mut dyn Write,
         control: &mut dyn Write,
     ) -> io::Result<()> {
-        if let Some(game) = runtime.controller().game() {
+        if let Some(game) = runtime.view().game() {
             let final_text = game
                 .turns()
                 .last()
@@ -502,7 +494,7 @@ impl View {
                 .turn()
                 .narrative()
                 .as_str();
-            if final_text.starts_with(&self.printed) && !runtime.controller().preview_incomplete() {
+            if final_text.starts_with(&self.printed) && !runtime.view().preview_incomplete() {
                 story.write_all(&final_text.as_bytes()[self.printed.len()..])?;
             } else {
                 writeln!(story)?;
@@ -547,7 +539,7 @@ impl View {
 }
 /// Storage commands are parsed before any effect or lifecycle edit.
 fn storage_line(
-    runtime: &mut dyn HeadlessSession,
+    runtime: &mut dyn ApplicationSession,
     trimmed: &str,
     control: &mut dyn Write,
 ) -> io::Result<bool> {
@@ -574,13 +566,16 @@ fn storage_line(
     Ok(true)
 }
 /// Play input is only taken while no storage, shutdown or generation is busy.
-fn accepts_play_input(runtime: &dyn HeadlessSession, control: &mut dyn Write) -> io::Result<bool> {
+fn accepts_play_input(
+    runtime: &dyn ApplicationSession,
+    control: &mut dyn Write,
+) -> io::Result<bool> {
     if runtime.storage_busy() || runtime.shutdown() != Shutdown::Open {
         writeln!(control, "Rejected: storage or shutdown is in progress.")?;
         return Ok(false);
     }
     if matches!(
-        runtime.controller().phase(),
+        runtime.view().phase(),
         Phase::Running | Phase::Cancelling | Phase::Closing | Phase::Closed | Phase::Faulted
     ) {
         writeln!(
@@ -591,8 +586,8 @@ fn accepts_play_input(runtime: &dyn HeadlessSession, control: &mut dyn Write) ->
     }
     Ok(true)
 }
-fn show_stage(runtime: &dyn HeadlessSession, control: &mut dyn Write) -> io::Result<()> {
-    match runtime.controller().stage() {
+fn show_stage(runtime: &dyn ApplicationSession, control: &mut dyn Write) -> io::Result<()> {
+    match runtime.view().stage() {
         Stage::OutlineReview { outline, .. } => {
             writeln!(
                 control,
@@ -618,8 +613,8 @@ fn show_stage(runtime: &dyn HeadlessSession, control: &mut dyn Write) -> io::Res
     }
     Ok(())
 }
-fn show_failure(runtime: &dyn HeadlessSession, control: &mut dyn Write) -> io::Result<()> {
-    match runtime.controller().failure() {
+fn show_failure(runtime: &dyn ApplicationSession, control: &mut dyn Write) -> io::Result<()> {
+    match runtime.view().failure() {
         Some(Failure::Generation(e)) => {
             writeln!(control, "Generation failed: {e}. State unchanged.")
         }
@@ -631,7 +626,7 @@ fn show_failure(runtime: &dyn HeadlessSession, control: &mut dyn Write) -> io::R
         None => Ok(()),
     }
 }
-fn diagnostics(runtime: &dyn HeadlessSession, control: &mut dyn Write) -> io::Result<()> {
+fn diagnostics(runtime: &dyn ApplicationSession, control: &mut dyn Write) -> io::Result<()> {
     if let Some(error) = runtime.storage_failure() {
         writeln!(
             control,
@@ -643,7 +638,7 @@ fn diagnostics(runtime: &dyn HeadlessSession, control: &mut dyn Write) -> io::Re
             error
         )?;
     }
-    let failure = match runtime.controller().failure() {
+    let failure = match runtime.view().failure() {
         Some(Failure::Generation(e)) | Some(Failure::Cancelled { rejected: Err(e) }) => Some(e),
         _ => None,
     };
@@ -665,8 +660,8 @@ fn diagnostics(runtime: &dyn HeadlessSession, control: &mut dyn Write) -> io::Re
     }
     Ok(())
 }
-fn inspect(runtime: &dyn HeadlessSession, control: &mut dyn Write) -> io::Result<()> {
-    let c = runtime.controller();
+fn inspect(runtime: &dyn ApplicationSession, control: &mut dyn Write) -> io::Result<()> {
+    let c = runtime.view();
     writeln!(
         control,
         "Inspection: phase={:?} revision={}",
@@ -734,7 +729,7 @@ fn inspect(runtime: &dyn HeadlessSession, control: &mut dyn Write) -> io::Result
 }
 
 fn storage_event(
-    runtime: &dyn HeadlessSession,
+    runtime: &dyn ApplicationSession,
     event: PersistenceEvent,
     control: &mut dyn Write,
 ) -> io::Result<()> {
@@ -744,7 +739,7 @@ fn storage_event(
             "Saved: {} disk_revision={} turns={} durability={:?}",
             receipt.metadata.id.as_str(),
             receipt.metadata.revision.get(),
-            runtime.controller().game().map_or(0, |g| g.turns().len()),
+            runtime.view().game().map_or(0, |g| g.turns().len()),
             runtime.durability()
         ),
         PersistenceEvent::Loaded {

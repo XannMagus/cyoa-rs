@@ -1,11 +1,11 @@
 //! Typed generation ports and synchronous use cases. Workers may run these on an
-//! owned game snapshot; presentation retains ownership of canonical state.
+//! owned game snapshot; the application session retains canonical state.
 use crate::cancellation::CancellationToken;
 use crate::diagnostics::TransportDiagnostics;
 use cyoa_core::{
     game::GameState,
     limits::Limits,
-    text::{Brief, PlayerInput, RawResponse},
+    text::{Brief, RawResponse},
     turn::{GenerationProvenance, StoryTurn},
     world::{World, WorldCast, WorldOutline},
 };
@@ -99,47 +99,79 @@ impl<T> Generated<T> {
         }
     }
 }
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum TurnDirection {
-    Continue,
-    Player(PlayerInput),
-    InterestingEvent,
+pub use cyoa_core::generation::{StoryGenerator as DomainStoryGenerator, TurnDirection};
+
+impl cyoa_core::generation::GenerationControl for CancellationToken {
+    fn is_cancelled(&self) -> bool {
+        self.is_cancelled()
+    }
 }
-impl TurnDirection {
-    pub fn input(&self) -> Option<&PlayerInput> {
-        match self {
-            Self::Player(input) => Some(input),
-            _ => None,
+impl<T> cyoa_core::generation::GenerationReport<T> for Generated<T> {
+    fn value(&self) -> &T {
+        self.value()
+    }
+    fn into_parts(self) -> (T, RawResponse, GenerationProvenance) {
+        self.into_parts()
+    }
+}
+
+/// Binds the inward business capability to this application's execution report.
+pub trait StoryGenerator:
+    DomainStoryGenerator<
+        Context = CancellationToken,
+        Failure = GenerationFailure,
+        Report<WorldOutline> = Generated<WorldOutline>,
+        Report<WorldCast> = Generated<WorldCast>,
+        Report<StoryTurn> = Generated<StoryTurn>,
+    >
+{
+}
+impl<T> StoryGenerator for T where
+    T: DomainStoryGenerator<
+            Context = CancellationToken,
+            Failure = GenerationFailure,
+            Report<WorldOutline> = Generated<WorldOutline>,
+            Report<WorldCast> = Generated<WorldCast>,
+            Report<StoryTurn> = Generated<StoryTurn>,
+        >
+{
+}
+/// Execution evidence stays outside the saved story and retains exact bytes.
+#[derive(Debug, Clone)]
+pub struct GenerationEvidence {
+    pub raw_response: Option<RawResponse>,
+    pub provenance: Option<GenerationProvenance>,
+    pub diagnostics: TransportDiagnostics,
+}
+impl GenerationEvidence {
+    fn capture<T>(result: &Result<Generated<T>, GenerationFailure>) -> Self {
+        match result {
+            Ok(report) => Self {
+                raw_response: Some(report.raw_response.clone()),
+                provenance: Some(report.provenance.clone()),
+                diagnostics: report.diagnostics.clone(),
+            },
+            Err(failure) => Self {
+                raw_response: failure.raw_response.clone(),
+                provenance: None,
+                diagnostics: failure.diagnostics.clone(),
+            },
         }
     }
 }
-pub trait StoryGenerator {
-    fn outline(
-        &mut self,
-        brief: &Brief,
-        cancellation: &CancellationToken,
-    ) -> Result<Generated<WorldOutline>, GenerationFailure>;
-    fn cast(
-        &mut self,
-        brief: &Brief,
-        outline: &WorldOutline,
-        limits: &Limits,
-        cancellation: &CancellationToken,
-    ) -> Result<Generated<WorldCast>, GenerationFailure>;
-    fn turn(
-        &mut self,
-        state: &GameState,
-        direction: &TurnDirection,
-        cancellation: &CancellationToken,
-        on_narrative: &mut dyn FnMut(&str),
-    ) -> Result<Generated<StoryTurn>, GenerationFailure>;
-}
 pub struct StoryUseCases<G> {
     generator: G,
+    evidence: Option<GenerationEvidence>,
 }
 impl<G: StoryGenerator> StoryUseCases<G> {
     pub fn new(generator: G) -> Self {
-        Self { generator }
+        Self {
+            generator,
+            evidence: None,
+        }
+    }
+    pub fn take_evidence(&mut self) -> Option<GenerationEvidence> {
+        self.evidence.take()
     }
     pub fn into_generator(self) -> G {
         self.generator
@@ -149,8 +181,9 @@ impl<G: StoryGenerator> StoryUseCases<G> {
         brief: &Brief,
         cancel: &CancellationToken,
     ) -> Result<Generated<WorldOutline>, GenerationFailure> {
-        check_cancelled(cancel)?;
-        let generated = self.generator.outline(brief, cancel)?;
+        let result = check_cancelled(cancel).and_then(|()| self.generator.outline(brief, cancel));
+        self.evidence = Some(GenerationEvidence::capture(&result));
+        let generated = result?;
         generated.check_cancelled(cancel)?;
         Ok(generated)
     }
@@ -161,8 +194,10 @@ impl<G: StoryGenerator> StoryUseCases<G> {
         limits: &Limits,
         cancel: &CancellationToken,
     ) -> Result<World, GenerationFailure> {
-        check_cancelled(cancel)?;
-        let generated = self.generator.cast(brief, &outline, limits, cancel)?;
+        let result = check_cancelled(cancel)
+            .and_then(|()| self.generator.cast(brief, &outline, limits, cancel));
+        self.evidence = Some(GenerationEvidence::capture(&result));
+        let generated = result?;
         generated.check_cancelled(cancel)?;
         Ok(World::new(outline, generated.into_parts().0))
     }
@@ -175,11 +210,12 @@ impl<G: StoryGenerator> StoryUseCases<G> {
         cancel: &CancellationToken,
         on_narrative: &mut dyn FnMut(&str),
     ) -> Result<GameState, Box<TurnFailure>> {
-        let generated = match check_cancelled(cancel)
-            .and_then(|()| {
-                self.generator
-                    .turn(&state, &direction, cancel, on_narrative)
-            })
+        let result = check_cancelled(cancel).and_then(|()| {
+            self.generator
+                .turn(&state, &direction, cancel, on_narrative)
+        });
+        self.evidence = Some(GenerationEvidence::capture(&result));
+        let generated = match result
             .and_then(|generated| generated.check_cancelled(cancel).map(|()| generated))
         {
             Ok(generated) => generated,

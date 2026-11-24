@@ -1,5 +1,6 @@
 #![cfg(target_os = "linux")]
 use cyoa_application::{cancellation::CancellationSource, persistence::*};
+use cyoa_infrastructure::execution::storage::StorageRunner;
 use cyoa_infrastructure::persistence::{
     codec,
     helper::{HelperConfig, SupervisedRepository},
@@ -125,8 +126,9 @@ fn unavailable_or_precancelled_helpers_cannot_report_durable_success() {
 
 #[test]
 fn presentation_storage_runner_drives_shipped_helpers_off_the_event_loop() {
+    use cyoa_application::{execution::*, session::SessionController};
     use cyoa_core::{limits::Limits, style::StoryStyle};
-    use cyoa_presentation::{session::SessionController, storage::*};
+    use cyoa_infrastructure::execution::storage::StorageRunner;
     use std::time::{Duration, Instant};
     let root = tempfile::tempdir().unwrap();
     let config = HelperConfig::new(
@@ -209,8 +211,9 @@ fn presentation_storage_runner_drives_shipped_helpers_off_the_event_loop() {
 
 #[test]
 fn closing_or_dropping_storage_runner_reaps_a_real_silent_helper() {
+    use cyoa_application::{execution::*, session::SessionController};
     use cyoa_core::{limits::Limits, style::StoryStyle};
-    use cyoa_presentation::{session::SessionController, storage::*};
+    use cyoa_infrastructure::execution::storage::StorageRunner;
     use std::time::{Duration, Instant};
     let executable = escargot::CargoBuild::new()
         .manifest_path(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../Cargo.toml"))
@@ -286,15 +289,13 @@ fn closing_or_dropping_storage_runner_reaps_a_real_silent_helper() {
 
 #[test]
 fn coordinator_rewind_load_and_quit_persist_through_shipped_helpers() {
+    use cyoa_application::execution::PreviewLimit;
     use cyoa_application::generation::StoryUseCases;
+    use cyoa_application::runtime::{Intent, SessionRuntime};
+    use cyoa_application::session::SessionController;
+    use cyoa_application::session_persistence::*;
     use cyoa_core::{game::TurnCount, limits::RestoreLimits};
-    use cyoa_presentation::{
-        persistence::*,
-        runtime::{Intent, SessionRuntime},
-        session::SessionController,
-        storage::StorageRunner,
-        worker::PreviewLimit,
-    };
+
     use std::time::{Duration, Instant};
     let root = tempfile::tempdir().unwrap();
     let config = HelperConfig::new(
@@ -305,8 +306,10 @@ fn coordinator_rewind_load_and_quit_persist_through_shipped_helpers() {
     let initial = snapshot();
     let runtime = SessionRuntime::new(
         SessionController::from_game(initial.game().clone()),
-        StoryUseCases::new(cyoa_infrastructure::generation::demo::harbour_v1().unwrap()),
-        PreviewLimit::default(),
+        cyoa_infrastructure::execution::generation::WorkerRunner::new(
+            StoryUseCases::new(cyoa_infrastructure::generation::demo::harbour_v1().unwrap()),
+            PreviewLimit::default(),
+        ),
     );
     let mut s = PersistedSession::new(
         runtime,
@@ -326,7 +329,7 @@ fn coordinator_rewind_load_and_quit_persist_through_shipped_helpers() {
             }
         }};
     }
-    s.save(cyoa_presentation::persistence::SaveSlot::Current)
+    s.save(cyoa_application::session_persistence::SaveSlot::Current)
         .unwrap();
     settle!();
     assert_eq!(s.durability(), Durability::Clean);
@@ -347,7 +350,7 @@ fn coordinator_rewind_load_and_quit_persist_through_shipped_helpers() {
     s.dispatch(Intent::Rewind(TurnCount::new(1).unwrap()))
         .unwrap();
     settle!();
-    let rewound = s.controller().game().unwrap().clone();
+    let rewound = s.view().game().unwrap().clone();
     assert_eq!(rewound.turns().len(), initial.game().turns().len() - 1);
     assert_eq!(
         codec::decode(&fs::read(&path).unwrap(), &id, SaveCopy::Primary)
@@ -364,12 +367,12 @@ fn coordinator_rewind_load_and_quit_persist_through_shipped_helpers() {
     })
     .unwrap();
     settle!();
-    assert_eq!(s.controller().game(), Some(&rewound));
+    assert_eq!(s.view().game(), Some(&rewound));
     s.quit();
     s.quit();
     s.poll();
     settle!();
-    assert_eq!(s.shutdown(), Shutdown::DrainingOutput);
+    assert_eq!(s.shutdown(), Shutdown::Complete);
     assert!(!s.exit_failed());
     assert_eq!(
         codec::decode(&fs::read(path).unwrap(), &id, SaveCopy::Primary)

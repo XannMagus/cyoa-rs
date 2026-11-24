@@ -184,3 +184,98 @@ fn cost_amount_preserves_valid_values_and_rejects_nonfinite_or_negative_values()
         assert!(CostAmount::new(amount).is_err());
     }
 }
+
+#[test]
+fn persistence_identity_counters_stamps_and_time_keep_checked_boundaries() {
+    use cyoa_core::persistence::*;
+    let hex = "0123456789abcdef0123456789abcdef";
+    for slug in [
+        "a".to_string(),
+        "a-b".to_string(),
+        "a1-2b".to_string(),
+        "a".repeat(40),
+    ] {
+        let name = format!("{slug}-{hex}");
+        assert_eq!(SaveId::new(name.clone()).unwrap().as_str(), name);
+    }
+    for name in [
+        "story".to_string(),
+        format!("-{hex}"),
+        format!("{}-{hex}", "a".repeat(41)),
+        format!("two--words-{hex}"),
+        format!("Upper-{hex}"),
+        format!("a_-{hex}"),
+        format!("é-{hex}"),
+        format!("a-{}", &hex[..31]),
+        format!("a-{hex}0"),
+        "a-0123456789abcdef0123456789abcdeF".into(),
+        "a-0123456789abcdef0123456789abcdeg".into(),
+    ] {
+        assert!(SaveId::new(name).is_err());
+    }
+    assert!(SaveRevision::new(0).is_err());
+    let one = SaveRevision::new(1).unwrap();
+    assert_eq!(one.get(), 1);
+    assert_eq!(one.next().unwrap().get(), 2);
+    let last = SaveRevision::new(u64::MAX).unwrap();
+    assert_eq!(last.get(), u64::MAX);
+    assert!(last.next().is_err());
+    let stamp = ContentStamp::new([9; 32]);
+    assert_eq!(stamp.bytes(), &[9; 32]);
+    assert!(SavedAt::new(-62_135_596_801, 0).is_err());
+    assert!(SavedAt::new(253_402_300_800, 0).is_err());
+    assert!(SavedAt::new(0, 1_000_000_000).is_err());
+    for seconds in [-62_135_596_800, 0, 253_402_300_799] {
+        for (nanos, expected) in [
+            (0, 0),
+            (123_456_789, 123_000_000),
+            (999_999_999, 999_000_000),
+        ] {
+            let at = SavedAt::new(seconds, nanos).unwrap();
+            assert_eq!(at.unix_seconds(), seconds);
+            assert_eq!(at.nanoseconds(), expected);
+        }
+    }
+}
+
+#[test]
+fn save_snapshot_preserves_game_source_and_demo_passage_limit() {
+    use cyoa_core::persistence::*;
+    let demo = StorySource::Demo {
+        scenario: DemoScenarioId::HarbourV1,
+    };
+    assert_eq!(DemoScenarioId::HarbourV1.as_str(), "harbour-v1");
+    assert_eq!(DemoScenarioId::HarbourV1.passages().get(), 5);
+    assert!(StorySource::Live.admits(usize::MAX));
+    assert!(demo.admits(0));
+    assert!(demo.admits(5));
+    assert!(!demo.admits(6));
+    assert!(!demo.admits(usize::MAX));
+    let mut state = game(StoryStyle::default());
+    for turns in 0..=6 {
+        let live = SaveSnapshot::new(state.clone(), StorySource::Live).unwrap();
+        assert_eq!(live.game(), &state);
+        assert_eq!(live.source(), StorySource::Live);
+        assert_eq!(live.into_game(), state);
+        if turns <= 5 {
+            let saved = SaveSnapshot::new(state.clone(), demo).unwrap();
+            assert_eq!(saved.game(), &state);
+            assert_eq!(saved.source(), demo);
+            assert_eq!(saved.into_game(), state);
+        } else {
+            let failure = SaveSnapshot::new(state.clone(), demo).unwrap_err();
+            assert_eq!(failure.scenario, DemoScenarioId::HarbourV1);
+            assert_eq!(failure.turns, 6);
+        }
+        state.commit_turn(turn(ChapterMarker::Continue { title: None }), record());
+    }
+}
+
+#[test]
+fn turn_direction_keeps_player_input_distinct_from_generated_continuation() {
+    use cyoa_core::generation::TurnDirection;
+    assert_eq!(TurnDirection::Continue.input(), None);
+    assert_eq!(TurnDirection::InterestingEvent.input(), None);
+    let input = PlayerInput::new("Wait by the door").unwrap();
+    assert_eq!(TurnDirection::Player(input.clone()).input(), Some(&input));
+}

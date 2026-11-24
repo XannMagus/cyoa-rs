@@ -5,5 +5,6 @@ mod dto;
 mod filesystem;
 pub mod helper;
 mod migrations;
+pub mod prepared;
 pub mod repository;
 mod save_id;

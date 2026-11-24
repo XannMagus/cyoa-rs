@@ -74,11 +74,16 @@ impl FakeRepository {
         }
     }
 }
-impl GameRepository for FakeRepository {
+impl cyoa_core::persistence::GameRepository for FakeRepository {
+    type Context = cyoa_application::cancellation::CancellationToken;
+    type Failure = cyoa_application::persistence::StorageFailure;
+    type Attempt = cyoa_application::persistence::PendingWrite;
+    type Stored = cyoa_application::persistence::StoredGame;
+
     fn create(
         &mut self,
         s: SaveSnapshot,
-        _: &PreparedWriteEvidence,
+        _: &dyn AttemptObserver<PendingWrite>,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         assert_eq!(s, self.loaded.snapshot);
@@ -89,7 +94,7 @@ impl GameRepository for FakeRepository {
         &mut self,
         t: SaveTarget,
         s: SaveSnapshot,
-        _: &PreparedWriteEvidence,
+        _: &dyn AttemptObserver<PendingWrite>,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         assert_eq!(s, self.loaded.snapshot);
@@ -101,11 +106,11 @@ impl GameRepository for FakeRepository {
     fn reconcile(
         &mut self,
         t: PendingWrite,
-        prepared: &PreparedWriteEvidence,
+        prepared: &dyn AttemptObserver<PendingWrite>,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         assert_eq!(t.target(), &id());
-        assert_eq!(t.bytes(), b"prepared");
+        assert_eq!(t.evidence::<FixtureAttempt>().unwrap().bytes, b"prepared");
         prepared.publish(t.clone());
         self.call(StorageOperation::Reconcile)?;
         Ok(self.receipt())
@@ -122,6 +127,8 @@ impl GameRepository for FakeRepository {
         loaded.copy = c;
         Ok(loaded)
     }
+}
+impl cyoa_application::persistence::SaveQueries for FakeRepository {
     fn list(
         &mut self,
         p: SavePage,
@@ -151,13 +158,43 @@ fn failure() -> StorageFailure {
     .with_cleanup_errors(["cleanup failed".to_string()])
 }
 fn pending() -> PendingWrite {
-    PendingWrite::new(
+    fixture_attempt(
         id(),
         Some(ContentStamp::new([1; 32])),
         ContentStamp::new([2; 32]),
         b"prepared".to_vec(),
     )
-    .unwrap()
+}
+#[derive(PartialEq, Eq)]
+struct FixtureAttempt {
+    target: SaveId,
+    previous: Option<ContentStamp>,
+    intended: ContentStamp,
+    bytes: Vec<u8>,
+}
+impl SaveAttempt for FixtureAttempt {
+    fn target(&self) -> &SaveId {
+        &self.target
+    }
+    fn previous_stamp(&self) -> Option<ContentStamp> {
+        self.previous
+    }
+    fn intended_stamp(&self) -> ContentStamp {
+        self.intended
+    }
+}
+fn fixture_attempt(
+    target: SaveId,
+    previous: Option<ContentStamp>,
+    intended: ContentStamp,
+    bytes: Vec<u8>,
+) -> PendingWrite {
+    PendingWrite::new(FixtureAttempt {
+        target,
+        previous,
+        intended,
+        bytes,
+    })
 }
 #[test]
 fn repository_failures_are_preserved_without_retry_or_changing_the_owned_snapshot() {
@@ -378,7 +415,9 @@ fn checked_persistence_values_reject_invalid_names_counters_pages_and_bounds() {
         SavedAt::new(0, 123_456_789).unwrap().nanoseconds(),
         123_000_000
     );
-    assert!(PendingWrite::new(id(), None, ContentStamp::new([0; 32]), vec![]).is_err());
+    // Encoded-document validation moved with preparation into infrastructure;
+    // prepared_attempt::prepared_document_bounds_and_exact_evidence_are_preserved
+    // retains the empty/oversized rejection assertions at the owning adapter.
     assert_eq!(pending().previous_stamp(), Some(ContentStamp::new([1; 32])));
     assert_eq!(pending().intended_stamp(), ContentStamp::new([2; 32]));
 }
@@ -528,13 +567,12 @@ fn storage_failures_derive_replacement_stamps_from_their_own_write() {
     assert_eq!(replaced.pending(), Some(&pending()));
     // Re-attaching the same write keeps the claim; a different one cannot inherit it.
     assert_eq!(replaced.clone().prepared(pending()), replaced);
-    let other = PendingWrite::new(
+    let other = fixture_attempt(
         id(),
         Some(ContentStamp::new([1; 32])),
         ContentStamp::new([9; 32]),
         b"other".to_vec(),
-    )
-    .unwrap();
+    );
     let mixed = replaced.prepared(other.clone());
     assert_eq!(mixed.visibility(), WriteVisibility::Unknown);
     assert_eq!(mixed.pending(), Some(&other));

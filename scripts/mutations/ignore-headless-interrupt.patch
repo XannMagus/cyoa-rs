@@ -1,9 +1,9 @@
 --- a/cyoa-presentation/src/headless.rs
 +++ b/cyoa-presentation/src/headless.rs
-@@ -165,7 +165,7 @@
-                 runtime.controller().phase(),
-                 Phase::Running | Phase::Cancelling
-             ) {
+@@ -159,7 +159,7 @@
+         }
+         InputEvent::Interrupt => {
+             if matches!(runtime.view().phase(), Phase::Running | Phase::Cancelling) {
 -                runtime.dispatch(Intent::Cancel).map_err(io::Error::other)?;
 +                // MUTATION: ignore Ctrl-C while the worker is idle on output.
                  writeln!(control, "Cancellation requested; waiting for cleanup.")?;

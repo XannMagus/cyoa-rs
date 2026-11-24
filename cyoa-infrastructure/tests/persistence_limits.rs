@@ -15,7 +15,12 @@ fn id() -> SaveId {
     SaveId::new("harbour-0123456789abcdef0123456789abcdef").unwrap()
 }
 struct ReadRepository(StoredGame);
-impl GameRepository for ReadRepository {
+impl cyoa_core::persistence::GameRepository for ReadRepository {
+    type Context = cyoa_application::cancellation::CancellationToken;
+    type Failure = cyoa_application::persistence::StorageFailure;
+    type Attempt = cyoa_application::persistence::PendingWrite;
+    type Stored = cyoa_application::persistence::StoredGame;
+
     fn load(
         &mut self,
         id: &SaveId,
@@ -30,7 +35,7 @@ impl GameRepository for ReadRepository {
     fn create(
         &mut self,
         _: SaveSnapshot,
-        _: &PreparedWriteEvidence,
+        _: &dyn AttemptObserver<PendingWrite>,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         panic!("load policy must not write automatically")
@@ -39,7 +44,7 @@ impl GameRepository for ReadRepository {
         &mut self,
         _: SaveTarget,
         _: SaveSnapshot,
-        _: &PreparedWriteEvidence,
+        _: &dyn AttemptObserver<PendingWrite>,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         panic!("load policy must not write automatically")
@@ -47,11 +52,13 @@ impl GameRepository for ReadRepository {
     fn reconcile(
         &mut self,
         _: PendingWrite,
-        _: &PreparedWriteEvidence,
+        _: &dyn AttemptObserver<PendingWrite>,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         panic!("unexpected reconcile")
     }
+}
+impl cyoa_application::persistence::SaveQueries for ReadRepository {
     fn list(
         &mut self,
         _: SavePage,

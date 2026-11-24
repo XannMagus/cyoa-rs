@@ -1,5 +1,5 @@
---- a/cyoa-presentation/src/session.rs
-+++ b/cyoa-presentation/src/session.rs
+--- a/cyoa-application/src/session.rs
++++ b/cyoa-application/src/session.rs
 @@ -460,7 +460,16 @@
                      (Work::Cast { brief, .. }, WorkSuccess::Cast(world)) => {
                          Stage::CastSelection { brief, world }

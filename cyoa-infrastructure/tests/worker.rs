@@ -1,5 +1,7 @@
+#[path = "support/session.rs"]
 mod support;
 use cyoa_application::{cancellation::CancellationToken, generation::*};
+use cyoa_application::{execution::*, runtime::*, session::*};
 use cyoa_core::{
     game::GameState,
     limits::Limits,
@@ -7,7 +9,7 @@ use cyoa_core::{
     turn::{ChapterMarker, StoryTurn},
     world::{WorldCast, WorldOutline},
 };
-use cyoa_presentation::{runtime::*, session::*, worker::*};
+use cyoa_infrastructure::execution::generation::WorkerRunner;
 use std::{
     collections::VecDeque,
     sync::{Arc, Mutex, mpsc},
@@ -27,7 +29,11 @@ struct Fake {
     started: mpsc::Sender<usize>,
     calls: Arc<Mutex<Vec<TurnDirection>>>,
 }
-impl StoryGenerator for Fake {
+impl cyoa_core::generation::StoryGenerator for Fake {
+    type Context = cyoa_application::cancellation::CancellationToken;
+    type Failure = cyoa_application::generation::GenerationFailure;
+    type Report<T> = cyoa_application::generation::Generated<T>;
+
     fn outline(
         &mut self,
         _: &Brief,
@@ -121,10 +127,10 @@ fn finish(runner: &mut WorkerRunner<Fake>) -> WorkerEvent {
         thread::sleep(Duration::from_millis(1));
     }
 }
-fn settle(runtime: &mut SessionRuntime<Fake>) {
+fn settle(runtime: &mut SessionRuntime<WorkerRunner<Fake>>) {
     let deadline = Instant::now() + Duration::from_secs(30);
     while matches!(
-        runtime.controller().phase(),
+        runtime.view().phase(),
         Phase::Running | Phase::Cancelling | Phase::Closing
     ) {
         runtime.poll();
@@ -139,28 +145,30 @@ fn silent_cancel_joins_before_retry_and_preserves_generator_and_evidence() {
     let before = game();
     let mut runtime = SessionRuntime::new(
         SessionController::from_game(before.clone()),
-        cases,
-        PreviewLimit::default(),
+        cyoa_infrastructure::execution::generation::WorkerRunner::new(
+            cases,
+            PreviewLimit::default(),
+        ),
     );
     runtime
         .dispatch(Intent::Turn(TurnDirection::Continue))
         .unwrap();
     started.recv_timeout(Duration::from_secs(5)).unwrap();
     runtime.dispatch(Intent::Cancel).unwrap();
-    assert_eq!(runtime.controller().phase(), Phase::Cancelling);
+    assert_eq!(runtime.view().phase(), Phase::Cancelling);
     assert!(runtime.dispatch(Intent::Retry).is_err());
     settle(&mut runtime);
-    assert_eq!(runtime.controller().game().unwrap(), &before);
+    assert_eq!(runtime.view().game().unwrap(), &before);
     let Some(Failure::Cancelled {
         rejected: Err(error),
-    }) = runtime.controller().failure()
+    }) = runtime.view().failure()
     else {
         panic!("cancel evidence lost")
     };
     assert_eq!(error.diagnostics().stdout(), [255, 13, 10]);
     runtime.dispatch(Intent::Retry).unwrap();
     settle(&mut runtime);
-    assert_eq!(runtime.controller().game().unwrap().turns().len(), 1);
+    assert_eq!(runtime.view().game().unwrap().turns().len(), 1);
     assert_eq!(
         *calls.lock().unwrap(),
         [TurnDirection::Continue, TurnDirection::Continue]
@@ -180,7 +188,7 @@ fn joined_success_queued_before_cancel_is_discarded() {
     assert!(done.outcome.is_ok());
     assert!(runner.is_ready());
     session.cancel();
-    assert_eq!(session.complete(done), Acceptance::Failed);
+    assert_eq!(session.complete(*done), Acceptance::Failed);
     assert_eq!(
         session.game().unwrap(),
         &before,
@@ -193,18 +201,20 @@ fn panic_faults_without_committing_and_quit_remains_available() {
     let before = game();
     let mut runtime = SessionRuntime::new(
         SessionController::from_game(before.clone()),
-        cases,
-        PreviewLimit::default(),
+        cyoa_infrastructure::execution::generation::WorkerRunner::new(
+            cases,
+            PreviewLimit::default(),
+        ),
     );
     runtime
         .dispatch(Intent::Turn(TurnDirection::Continue))
         .unwrap();
     settle(&mut runtime);
-    assert_eq!(runtime.controller().phase(), Phase::Faulted);
-    assert_eq!(runtime.controller().game().unwrap(), &before);
+    assert_eq!(runtime.view().phase(), Phase::Faulted);
+    assert_eq!(runtime.view().game().unwrap(), &before);
     assert!(runtime.dispatch(Intent::Retry).is_err());
     runtime.dispatch(Intent::Quit).unwrap();
-    assert_eq!(runtime.controller().phase(), Phase::Closed);
+    assert_eq!(runtime.view().phase(), Phase::Closed);
 }
 #[test]
 fn paused_progress_consumer_cannot_block_completion_or_exceed_budget() {
@@ -233,7 +243,7 @@ fn paused_progress_consumer_cannot_block_completion_or_exceed_budget() {
                     incomplete |= i;
                 }
                 WorkerEvent::Finished(c) => {
-                    session.complete(c);
+                    session.complete(*c);
                     done = true;
                 }
                 _ => panic!("unexpected fault"),
@@ -273,8 +283,10 @@ fn quick_action_and_player_text_share_the_same_generation_intent() {
     let (cases, _, calls) = fake([Mode::Success]);
     let mut runtime = SessionRuntime::new(
         SessionController::from_game(committed(game())),
-        cases,
-        PreviewLimit::default(),
+        cyoa_infrastructure::execution::generation::WorkerRunner::new(
+            cases,
+            PreviewLimit::default(),
+        ),
     );
     assert!(runtime.dispatch(Intent::Action(0)).is_err());
     runtime.dispatch(Intent::Action(1)).unwrap();
@@ -287,7 +299,7 @@ fn quick_action_and_player_text_share_the_same_generation_intent() {
     );
     assert_eq!(
         runtime
-            .controller()
+            .view()
             .game()
             .unwrap()
             .turns()

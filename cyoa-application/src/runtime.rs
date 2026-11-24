@@ -1,6 +1,9 @@
 //! Drives effects without exposing mutable canonical state or concrete backends.
-use crate::{session::*, worker::*};
-use cyoa_application::generation::{StoryGenerator, StoryUseCases, TurnDirection};
+use crate::generation::TurnDirection;
+use crate::{
+    execution::{GenerationExecution, WorkerEvent},
+    session::*,
+};
 use cyoa_core::{
     game::TurnCount,
     text::Brief,
@@ -25,9 +28,9 @@ pub enum RuntimeError {
     #[error("could not start worker: {0}")]
     Spawn(#[from] std::io::Error),
 }
-pub struct SessionRuntime<G: StoryGenerator + Send + 'static> {
+pub struct SessionRuntime<E: GenerationExecution> {
     controller: SessionController,
-    worker: WorkerRunner<G>,
+    worker: E,
 }
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CanonicalChange {
@@ -40,19 +43,18 @@ pub struct RuntimeEvent {
     pub change: Option<CanonicalChange>,
     pub worker_fault: bool,
 }
-impl<G: StoryGenerator + Send + 'static> SessionRuntime<G> {
-    pub fn new(
-        controller: SessionController,
-        cases: StoryUseCases<G>,
-        limit: PreviewLimit,
-    ) -> Self {
-        Self {
-            controller,
-            worker: WorkerRunner::new(cases, limit),
-        }
+impl<E: GenerationExecution> SessionRuntime<E> {
+    pub fn new(controller: SessionController, worker: E) -> Self {
+        Self { controller, worker }
     }
-    pub fn controller(&self) -> &SessionController {
-        &self.controller
+    pub fn view(&self) -> SessionView<'_> {
+        self.controller.view()
+    }
+    pub(crate) fn reserve_selection_opening(&self) -> Result<(), SessionError> {
+        self.controller.reserve_selection_opening()
+    }
+    pub(crate) fn can_replace_game(&self) -> Result<(), SessionError> {
+        self.controller.can_replace_game()
     }
     pub fn replace_game(&mut self, game: cyoa_core::game::GameState) -> Result<(), SessionError> {
         self.controller.replace_game(game)
@@ -117,7 +119,7 @@ impl<G: StoryGenerator + Send + 'static> SessionRuntime<G> {
                         Ok(WorkSuccess::Turn(_)) => Some(CanonicalChange::Turn),
                         Err(_) => None,
                     };
-                    let acceptance = self.controller.complete(done);
+                    let acceptance = self.controller.complete(*done);
                     accepted.push(RuntimeEvent {
                         acceptance,
                         worker_fault: false,

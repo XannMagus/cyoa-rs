@@ -304,7 +304,7 @@ mod tests {
                 serde_json::from_value(value["previous"].clone()).unwrap(),
             ))
         };
-        let pending = PendingWrite::new(id, previous, codec::stamp(&bytes), bytes).unwrap();
+        let pending = prepare_write(id, previous, codec::stamp(&bytes), bytes).unwrap();
         let point = match value["point"].as_str().unwrap() {
             "NewSync" => Point::NewSync,
             "BackupDirSync" => Point::BackupDirSync,

@@ -4,7 +4,9 @@ use cyoa_application::{
     cancellation::{CancellationSource, CancellationToken},
     generation::{StoryUseCases, TurnDirection},
 };
+use cyoa_application::{execution::*, runtime::*, session::*};
 use cyoa_core::{limits::Limits, style::StoryStyle, text::Brief, world::PlayablePosition};
+use cyoa_infrastructure::execution::generation::WorkerRunner;
 use cyoa_infrastructure::{
     backend::*,
     backends::{
@@ -14,7 +16,6 @@ use cyoa_infrastructure::{
     },
     generation::{engine::GenerationEngine, templates::GenerationTemplates},
 };
-use cyoa_presentation::{runtime::*, session::*, worker::*};
 use serde_json::{Value, json};
 use std::{
     fs,
@@ -185,11 +186,11 @@ impl Fixture {
             .collect()
     }
 }
-type Runtime = SessionRuntime<GenerationEngine<Peer>>;
+type Runtime = SessionRuntime<WorkerRunner<GenerationEngine<Peer>>>;
 fn settle(runtime: &mut Runtime) {
     let deadline = Instant::now() + Duration::from_secs(30);
     while matches!(
-        runtime.controller().phase(),
+        runtime.view().phase(),
         Phase::Running | Phase::Cancelling | Phase::Closing
     ) {
         runtime.poll();
@@ -212,18 +213,20 @@ fn both_adapters_preserve_controller_state_through_failure_cancel_retry_and_quit
         fixture.set(&data["outline"], 0, false);
         let mut runtime = SessionRuntime::new(
             SessionController::new(Limits::default(), StoryStyle::default()),
-            StoryUseCases::new(GenerationEngine::new(
-                fixture.backend(),
-                GenerationTemplates::bundled().unwrap(),
-            )),
-            PreviewLimit::default(),
+            cyoa_infrastructure::execution::generation::WorkerRunner::new(
+                StoryUseCases::new(GenerationEngine::new(
+                    fixture.backend(),
+                    GenerationTemplates::bundled().unwrap(),
+                )),
+                PreviewLimit::default(),
+            ),
         );
         runtime
             .dispatch(Intent::SubmitBrief(Brief::new("bell").unwrap()))
             .unwrap();
         settle(&mut runtime);
         fixture.cleanup();
-        assert_eq!(runtime.controller().phase(), Phase::Ready);
+        assert_eq!(runtime.view().phase(), Phase::Ready);
         fixture.set(&data["cast"], 0, false);
         runtime.dispatch(Intent::AcceptOutline).unwrap();
         settle(&mut runtime);
@@ -238,19 +241,19 @@ fn both_adapters_preserve_controller_state_through_failure_cancel_retry_and_quit
         settle(&mut runtime);
         fixture.cleanup();
         assert_eq!(
-            runtime.controller().game().unwrap().turns().len(),
+            runtime.view().game().unwrap().turns().len(),
             1,
             "double commit regression"
         );
-        let before = runtime.controller().game().unwrap().clone();
+        let before = runtime.view().game().unwrap().clone();
         fixture.set(&data["turns"][1], 7, false);
         runtime
             .dispatch(Intent::Turn(TurnDirection::Continue))
             .unwrap();
         settle(&mut runtime);
         let failed = fixture.cleanup();
-        assert_eq!(runtime.controller().game().unwrap(), &before);
-        let Some(Failure::Generation(error)) = runtime.controller().failure() else {
+        assert_eq!(runtime.view().game().unwrap(), &before);
+        let Some(Failure::Generation(error)) = runtime.view().failure() else {
             panic!("candidate failure absent")
         };
         assert_eq!(
@@ -263,8 +266,8 @@ fn both_adapters_preserve_controller_state_through_failure_cancel_retry_and_quit
         settle(&mut runtime);
         let retried = fixture.cleanup();
         assert_eq!(failed["stdin"], retried["stdin"]);
-        assert_eq!(runtime.controller().game().unwrap().turns().len(), 2);
-        let before_cancel = runtime.controller().game().unwrap().clone();
+        assert_eq!(runtime.view().game().unwrap().turns().len(), 2);
+        let before_cancel = runtime.view().game().unwrap().clone();
         fixture.set(&data["turns"][2], 0, true);
         runtime
             .dispatch(Intent::Turn(TurnDirection::Continue))
@@ -274,10 +277,10 @@ fn both_adapters_preserve_controller_state_through_failure_cancel_retry_and_quit
         assert!(runtime.dispatch(Intent::Retry).is_err());
         settle(&mut runtime);
         let cancelled = fixture.cleanup();
-        assert_eq!(runtime.controller().game().unwrap(), &before_cancel);
+        assert_eq!(runtime.view().game().unwrap(), &before_cancel);
         let Some(Failure::Cancelled {
             rejected: Err(error),
-        }) = runtime.controller().failure()
+        }) = runtime.view().failure()
         else {
             panic!("cancelled child outcome absent")
         };
@@ -290,18 +293,18 @@ fn both_adapters_preserve_controller_state_through_failure_cancel_retry_and_quit
         settle(&mut runtime);
         let retry = fixture.cleanup();
         assert_eq!(cancelled["stdin"], retry["stdin"]);
-        assert_eq!(runtime.controller().game().unwrap().turns().len(), 3);
+        assert_eq!(runtime.view().game().unwrap().turns().len(), 3);
         fixture.set(&data["turns"][3], 0, true);
         runtime
             .dispatch(Intent::Turn(TurnDirection::Continue))
             .unwrap();
         fixture.wait_started();
         runtime.dispatch(Intent::Quit).unwrap();
-        assert_eq!(runtime.controller().phase(), Phase::Closing);
+        assert_eq!(runtime.view().phase(), Phase::Closing);
         settle(&mut runtime);
         fixture.cleanup();
-        assert_eq!(runtime.controller().phase(), Phase::Closed);
-        assert_eq!(runtime.controller().game().unwrap().turns().len(), 3);
+        assert_eq!(runtime.view().phase(), Phase::Closed);
+        assert_eq!(runtime.view().game().unwrap().turns().len(), 3);
         let launches = fixture.launches();
         assert_eq!(launches.len(), 9);
         assert_eq!(launches[0], if claude { "auth" } else { "login" });
@@ -354,7 +357,7 @@ fn both_joined_adapter_successes_are_rejected_if_cancel_wins_acceptance() {
         fixture.cleanup();
         controller.cancel();
         assert_eq!(
-            controller.complete(done),
+            controller.complete(*done),
             Acceptance::Failed,
             "cancelled success regression"
         );

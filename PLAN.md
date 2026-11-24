@@ -2,6 +2,10 @@
 
 ## Authority of project decisions
 
+Domain vocabulary is collected in [GLOSSARY.md](GLOSSARY.md). The
+[ADR index](docs/adr/README.md) adapts established decision rationale into focused
+records linked to the existing contracts; it adds no new behavioral decisions.
+
 Read this plan in full, then [the project contracts](docs/decisions/README.md).
 Explicit user decisions and those contracts override Calibre code, source notes,
 and historical sketches below. "Faithful port" always means faithful except for
@@ -10,8 +14,27 @@ or weaken a regression to make such a change pass. The required-test registry an
 `bash scripts/check_contracts.sh` guard existing coverage in CI and local work.
 The contract catalog distinguishes implemented guarantees from pending obligations.
 
-**Current status (2026-10-05).** Phases 0–2 are complete, and the next build step
-is Phase 3: the TUI play screen over an existing save.
+**Current status:** the existing REPL is already the lean MVP. The
+[iso-functional architecture cleanup](docs/plans/iso-functional-cleanup.md) into
+a reusable application library driven by CLI and the REPL is complete, preserving
+existing behavior. New gameplay and further frontends remain roadmap work. This direction
+supersedes earlier wording treating additional REPL features as MVP prerequisites.
+
+The approved cleanup is implemented, with the passing shared gate and ownership
+audit in [the 2026-11-03 evidence](reviews/2026-11-03-iso-functional-cleanup/README.md).
+Deferred gameplay proposals below remain unimplemented.
+
+**Prior scope discussion (2026-11-02).** Phases 0–2 are implemented. The user has now
+limited MVP to a lean playable REPL. See the [MVP/roadmap split](docs/plans/mvp-and-roadmap.md):
+sophisticated roleplay/replay requirements remain intact for future work; TUI,
+GUI, export and anything beyond REPL are outside MVP. Before later Phase 3,
+stabilize domain/application contracts, refactor session ownership using headless
+play, then improve the interactive REPL. The user also specified future capabilities;
+see the [accepted interview decisions](docs/decisions/2026-10-30-roleplay-and-session.md).
+These additions are pending. The detailed use-case specification now has a
+[technical contract proposal](docs/plans/2026-11-02-technical-contract.md) and
+[implementation plan/contract audit](docs/plans/2026-11-02-implementation-plan.md)
+for review; implementation has not begun. This sequence supersedes the old build order.
 
 - Phase 0: the scripted engine.
 - Phase 1: [real CLI backends and headless play](docs/plans/phase1-headless-backends.md).
@@ -501,10 +524,10 @@ generation/persistence use cases, both backends and Linux headless play.
 ### Current workspace layout
 
 ```text
-cyoa-core/            domain types, summary merge, chapters, limits and rewind
-cyoa-application/     generation/persistence use cases and inward-owned ports
-cyoa-infrastructure/ CLI backends, templates, save codec, supervised atomic storage
-cyoa-presentation/   canonical session, owned workers and Linux headless interface
+cyoa-core/            domain types, business ports, summary merge, chapters, limits and rewind
+cyoa-application/     canonical session, generation/persistence policy and execution ports
+cyoa-infrastructure/ CLI backends, templates, save codec, runners and supervised atomic storage
+cyoa-presentation/   CLI/REPL interaction and Linux headless input/output
 cyoa-cli/            executable composition root
 ```
 

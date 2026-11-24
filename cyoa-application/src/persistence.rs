@@ -1,47 +1,12 @@
 //! Persistence commands, queries and inward-owned repository contract.
 //! JSON, paths, clocks and filesystem effects belong to infrastructure.
 use crate::cancellation::CancellationToken;
-use cyoa_core::{
-    game::{GameState, TurnCount},
-    limits::RestoreLimits,
-    text::WorldTitle,
-};
+use cyoa_core::{limits::RestoreLimits, text::WorldTitle};
 use thiserror::Error;
 
 pub const MAX_SAVE_BYTES: usize = 64 * 1024 * 1024;
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub struct SaveId(String);
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Error)]
-#[error("save ID must be a 1–40 character ASCII slug followed by 32 lowercase hex digits")]
-pub struct InvalidSaveId;
-impl SaveId {
-    pub fn new(value: impl Into<String>) -> Result<Self, InvalidSaveId> {
-        let value = value.into();
-        let (slug, suffix) = value.rsplit_once('-').ok_or(InvalidSaveId)?;
-        if !(1..=40).contains(&slug.len())
-            || suffix.len() != 32
-            || !suffix
-                .bytes()
-                .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
-            || !slug.split('-').all(|word| {
-                !word.is_empty()
-                    && word
-                        .bytes()
-                        .all(|b| b.is_ascii_lowercase() || b.is_ascii_digit())
-            })
-        {
-            return Err(InvalidSaveId);
-        }
-        Ok(Self(value))
-    }
-    pub fn as_str(&self) -> &str {
-        &self.0
-    }
-}
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Error)]
-#[error("persistence counter must be positive and must not overflow")]
-pub struct InvalidCounter;
+pub use cyoa_core::persistence::*;
 macro_rules! counter {
     ($name:ident) => {
         #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -64,129 +29,8 @@ macro_rules! counter {
         }
     };
 }
-counter!(SaveRevision);
+
 counter!(StorageRequestId);
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct ContentStamp([u8; 32]);
-impl ContentStamp {
-    /// The repository supplies the SHA-256 of the exact encoded document.
-    pub fn new(bytes: [u8; 32]) -> Self {
-        Self(bytes)
-    }
-    pub fn bytes(&self) -> &[u8; 32] {
-        &self.0
-    }
-}
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct SavedAt {
-    seconds: i64,
-    nanos: u32,
-}
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Error)]
-#[error("save time must be a UTC instant within years 0001–9999 with valid nanoseconds")]
-pub struct InvalidSavedAt;
-impl SavedAt {
-    /// Save metadata uses millisecond precision; finer clock precision is rounded
-    /// down once at this boundary, never used for write ordering or freshness.
-    pub fn new(seconds: i64, nanos: u32) -> Result<Self, InvalidSavedAt> {
-        if !(-62_135_596_800..=253_402_300_799).contains(&seconds) || nanos >= 1_000_000_000 {
-            return Err(InvalidSavedAt);
-        }
-        Ok(Self {
-            seconds,
-            nanos: nanos / 1_000_000 * 1_000_000,
-        })
-    }
-    pub fn unix_seconds(self) -> i64 {
-        self.seconds
-    }
-    pub fn nanoseconds(self) -> u32 {
-        self.nanos
-    }
-}
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DemoScenarioId {
-    HarbourV1,
-}
-impl DemoScenarioId {
-    pub fn as_str(self) -> &'static str {
-        match self {
-            Self::HarbourV1 => "harbour-v1",
-        }
-    }
-    /// The scripted scenario's fixed length; a demo game never holds more turns.
-    pub fn passages(self) -> TurnCount {
-        match self {
-            Self::HarbourV1 => TurnCount::new(5).expect("nonzero literal"),
-        }
-    }
-}
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum StorySource {
-    Live,
-    Demo { scenario: DemoScenarioId },
-}
-impl StorySource {
-    /// Whether a game with this many turns can come from this source.
-    pub fn admits(self, turns: usize) -> bool {
-        match self {
-            Self::Live => true,
-            Self::Demo { scenario } => turns <= scenario.passages().get(),
-        }
-    }
-}
-#[derive(Debug, Clone, Copy, PartialEq, Eq, thiserror::Error)]
-#[error("{scenario} has only {passages} passages, not {turns}", scenario = .scenario.as_str(), passages = .scenario.passages().get())]
-pub struct DemoTooLong {
-    pub scenario: DemoScenarioId,
-    pub turns: usize,
-}
-/// A game paired with the source it was played from. Construction checks that
-/// the source could have produced the game: a demo snapshot never exceeds its
-/// scenario's passages.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SaveSnapshot {
-    game: GameState,
-    source: StorySource,
-}
-impl SaveSnapshot {
-    pub fn new(game: GameState, source: StorySource) -> Result<Self, DemoTooLong> {
-        match source {
-            StorySource::Demo { scenario } if !source.admits(game.turns().len()) => {
-                Err(DemoTooLong {
-                    scenario,
-                    turns: game.turns().len(),
-                })
-            }
-            _ => Ok(Self { game, source }),
-        }
-    }
-    pub fn game(&self) -> &GameState {
-        &self.game
-    }
-    pub fn source(&self) -> StorySource {
-        self.source
-    }
-    pub fn into_game(self) -> GameState {
-        self.game
-    }
-}
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SaveTarget {
-    pub id: SaveId,
-    pub expected_stamp: ContentStamp,
-}
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SaveMetadata {
-    pub id: SaveId,
-    pub revision: SaveRevision,
-    pub saved_at: SavedAt,
-}
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum SaveCopy {
-    Primary,
-    Backup,
-}
 /// Where a save held an optional field this version does not understand. It is
 /// reported to the player and omitted on re-save; the location is display text
 /// only, never parsed by the application.
@@ -213,51 +57,7 @@ pub struct LoadedGame {
     pub stored: StoredGame,
     pub changed_by_restore: bool,
 }
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SaveReceipt {
-    pub metadata: SaveMetadata,
-    pub stamp: ContentStamp,
-}
-/// Opaque prepared-write evidence; application never parses or edits these bytes.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct PendingWrite {
-    target: SaveId,
-    previous_stamp: Option<ContentStamp>,
-    intended_stamp: ContentStamp,
-    // Shared, not copied: a prepared write is retained by the caller's evidence
-    // sink, a retry and failures at once, and can be up to MAX_SAVE_BYTES.
-    bytes: std::sync::Arc<[u8]>,
-}
-impl PendingWrite {
-    pub fn new(
-        target: SaveId,
-        previous_stamp: Option<ContentStamp>,
-        intended_stamp: ContentStamp,
-        bytes: Vec<u8>,
-    ) -> Result<Self, InvalidPendingWrite> {
-        if bytes.is_empty() || bytes.len() > MAX_SAVE_BYTES {
-            return Err(InvalidPendingWrite);
-        }
-        Ok(Self {
-            target,
-            previous_stamp,
-            intended_stamp,
-            bytes: bytes.into(),
-        })
-    }
-    pub fn target(&self) -> &SaveId {
-        &self.target
-    }
-    pub fn previous_stamp(&self) -> Option<ContentStamp> {
-        self.previous_stamp
-    }
-    pub fn intended_stamp(&self) -> ContentStamp {
-        self.intended_stamp
-    }
-    pub fn bytes(&self) -> &[u8] {
-        &self.bytes
-    }
-}
+pub use crate::attempt::PendingWrite;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Error)]
 #[error("prepared save bytes must be nonempty and within the save size bound")]
 pub struct InvalidPendingWrite;
@@ -545,38 +345,48 @@ pub struct SavePageResult {
 /// reconcile what may have become visible. Publishing again for the same
 /// attempt is allowed; a write that never prepares (for example, rejected at
 /// admission) publishes nothing.
-pub trait GameRepository {
-    fn create(
-        &mut self,
-        snapshot: SaveSnapshot,
-        prepared: &PreparedWriteEvidence,
-        cancel: &CancellationToken,
-    ) -> Result<SaveReceipt, StorageFailure>;
-    fn replace(
-        &mut self,
-        target: SaveTarget,
-        snapshot: SaveSnapshot,
-        prepared: &PreparedWriteEvidence,
-        cancel: &CancellationToken,
-    ) -> Result<SaveReceipt, StorageFailure>;
-    fn reconcile(
-        &mut self,
-        attempt: PendingWrite,
-        prepared: &PreparedWriteEvidence,
-        cancel: &CancellationToken,
-    ) -> Result<SaveReceipt, StorageFailure>;
-    fn load(
-        &mut self,
-        id: &SaveId,
-        copy: SaveCopy,
-        cancel: &CancellationToken,
-    ) -> Result<StoredGame, StorageFailure>;
+pub use cyoa_core::persistence::GameRepository as DomainGameRepository;
+pub trait SaveQueries {
     fn list(
         &mut self,
         page: SavePage,
         cancel: &CancellationToken,
     ) -> Result<SavePageResult, StorageFailure>;
 }
+pub trait GameRepository:
+    DomainGameRepository<
+        Context = CancellationToken,
+        Failure = StorageFailure,
+        Attempt = PendingWrite,
+        Stored = StoredGame,
+    > + SaveQueries
+{
+}
+impl<T> GameRepository for T where
+    T: DomainGameRepository<
+            Context = CancellationToken,
+            Failure = StorageFailure,
+            Attempt = PendingWrite,
+            Stored = StoredGame,
+        > + SaveQueries
+{
+}
+
+impl StoredReport for StoredGame {
+    fn snapshot(&self) -> &SaveSnapshot {
+        &self.snapshot
+    }
+    fn metadata(&self) -> &SaveMetadata {
+        &self.metadata
+    }
+    fn stamp(&self) -> ContentStamp {
+        self.stamp
+    }
+    fn copy(&self) -> SaveCopy {
+        self.copy
+    }
+}
+
 #[derive(Debug)]
 pub enum SaveGame {
     Create(SaveSnapshot),
@@ -614,7 +424,7 @@ impl<R: GameRepository> PersistenceUseCases<R> {
     pub fn save_game(
         &mut self,
         command: SaveGame,
-        prepared: &PreparedWriteEvidence,
+        prepared: &dyn AttemptObserver<PendingWrite>,
         cancel: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         let operation = match &command {
@@ -718,5 +528,11 @@ impl PreparedWriteEvidence {
     }
     pub fn pending(&self) -> Option<PendingWrite> {
         self.0.lock().unwrap_or_else(|e| e.into_inner()).clone()
+    }
+}
+
+impl AttemptObserver<PendingWrite> for PreparedWriteEvidence {
+    fn publish(&self, pending: PendingWrite) {
+        self.publish(pending);
     }
 }

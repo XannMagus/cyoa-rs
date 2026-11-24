@@ -181,7 +181,7 @@ impl PlayOptions {
 }
 
 pub enum PersistenceCommand {
-    Save(crate::persistence::SaveSlot),
+    Save(cyoa_application::session_persistence::SaveSlot),
     List(SavePage),
     Load(LoadGame),
     Rewind(TurnCount),
@@ -204,9 +204,9 @@ pub fn persistence_command(line: &str) -> Option<Result<PersistenceCommand, Stri
         "/save" | "/save-copy" => {
             if words.len() == 1 {
                 Ok(PersistenceCommand::Save(if command == "/save-copy" {
-                    crate::persistence::SaveSlot::NewCopy
+                    cyoa_application::session_persistence::SaveSlot::NewCopy
                 } else {
-                    crate::persistence::SaveSlot::Current
+                    cyoa_application::session_persistence::SaveSlot::Current
                 }))
             } else {
                 Err("/save and /save-copy take no arguments".into())

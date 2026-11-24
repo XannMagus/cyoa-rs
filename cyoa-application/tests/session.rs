@@ -1,9 +1,9 @@
 mod support;
 use cyoa_application::generation::TurnDirection;
+use cyoa_application::session::*;
 use cyoa_core::{
     game::TurnCount, limits::Limits, style::StoryStyle, text::Brief, world::PlayablePosition,
 };
-use cyoa_presentation::session::*;
 use support::*;
 
 #[test]
@@ -21,6 +21,7 @@ fn failed_and_cancelled_results_preserve_state_and_exact_evidence() {
     );
     assert_eq!(
         s.complete(Completion {
+            evidence: None,
             key: r.key(),
             outcome: Err(failure())
         }),
@@ -47,6 +48,7 @@ fn failed_and_cancelled_results_preserve_state_and_exact_evidence() {
     assert!(s.retry().is_err());
     assert_eq!(
         s.complete(Completion {
+            evidence: None,
             key: retry.key(),
             outcome: Ok(WorkSuccess::Turn(Box::new(committed(before.clone()))))
         }),
@@ -65,6 +67,7 @@ fn stale_and_duplicate_completions_never_replace_current_state() {
     let old = s.take_turn(TurnDirection::Continue).unwrap();
     s.cancel();
     s.complete(Completion {
+        evidence: None,
         key: old.key(),
         outcome: Err(failure()),
     });
@@ -72,6 +75,7 @@ fn stale_and_duplicate_completions_never_replace_current_state() {
     let before = s.game().unwrap().clone();
     assert_eq!(
         s.complete(Completion {
+            evidence: None,
             key: old.key(),
             outcome: Ok(WorkSuccess::Turn(Box::new(committed(before.clone()))))
         }),
@@ -81,6 +85,7 @@ fn stale_and_duplicate_completions_never_replace_current_state() {
     assert_eq!(s.phase(), Phase::Running);
     assert_eq!(
         s.complete(Completion {
+            evidence: None,
             key: fresh.key(),
             outcome: Ok(WorkSuccess::Turn(Box::new(committed(before))))
         }),
@@ -93,6 +98,7 @@ fn stale_and_duplicate_completions_never_replace_current_state() {
     );
     assert_eq!(
         s.complete(Completion {
+            evidence: None,
             key: fresh.key(),
             outcome: Err(failure())
         }),
@@ -111,6 +117,7 @@ fn lifecycle_keeps_edited_outline_selection_and_one_opening() {
     let r = s.submit_brief(Brief::new("bell").unwrap()).unwrap();
     assert_eq!(
         s.complete(Completion {
+            evidence: None,
             key: r.key(),
             outcome: Ok(WorkSuccess::Outline(generated(outline("original"))))
         }),
@@ -121,6 +128,7 @@ fn lifecycle_keeps_edited_outline_selection_and_one_opening() {
     let mut w = world();
     w = cyoa_core::world::World::new(outline("edited"), w.cast().clone());
     s.complete(Completion {
+        evidence: None,
         key: r.key(),
         outcome: Ok(WorkSuccess::Cast(w)),
     });
@@ -137,6 +145,7 @@ fn lifecycle_keeps_edited_outline_selection_and_one_opening() {
     let g = committed(s.game().unwrap().clone());
     assert_eq!(
         s.complete(Completion {
+            evidence: None,
             key: r.key(),
             outcome: Ok(WorkSuccess::Turn(Box::new(g)))
         }),
@@ -158,6 +167,7 @@ fn wrong_kind_faults_and_quit_waits_for_active_completion() {
     let r = s.take_turn(TurnDirection::Continue).unwrap();
     assert_eq!(
         s.complete(Completion {
+            evidence: None,
             key: r.key(),
             outcome: Ok(WorkSuccess::Cast(world()))
         }),
@@ -172,6 +182,7 @@ fn wrong_kind_faults_and_quit_waits_for_active_completion() {
     assert!(r.token().is_cancelled());
     assert_eq!(
         s.complete(Completion {
+            evidence: None,
             key: r.key(),
             outcome: Err(failure())
         }),
@@ -184,12 +195,14 @@ fn obsolete_cast_cannot_replace_an_edited_outline_and_actions_are_checked() {
     let mut s = SessionController::new(Limits::default(), StoryStyle::default());
     let r = s.submit_brief(Brief::new("bell").unwrap()).unwrap();
     s.complete(Completion {
+        evidence: None,
         key: r.key(),
         outcome: Ok(WorkSuccess::Outline(generated(outline("first")))),
     });
     let old = s.accept_outline().unwrap();
     s.cancel();
     s.complete(Completion {
+        evidence: None,
         key: old.key(),
         outcome: Err(failure()),
     });
@@ -198,6 +211,7 @@ fn obsolete_cast_cannot_replace_an_edited_outline_and_actions_are_checked() {
     let before = s.stage().clone();
     assert_eq!(
         s.complete(Completion {
+            evidence: None,
             key: old.key(),
             outcome: Ok(WorkSuccess::Cast(world()))
         }),
@@ -207,12 +221,14 @@ fn obsolete_cast_cannot_replace_an_edited_outline_and_actions_are_checked() {
     assert_eq!(s.phase(), Phase::Running);
     let world = cyoa_core::world::World::new(outline("second"), world().cast().clone());
     s.complete(Completion {
+        evidence: None,
         key: fresh.key(),
         outcome: Ok(WorkSuccess::Cast(world)),
     });
     s.select(PlayablePosition::new(0)).unwrap();
     let r = s.take_turn(TurnDirection::Continue).unwrap();
     s.complete(Completion {
+        evidence: None,
         key: r.key(),
         outcome: Ok(WorkSuccess::Turn(Box::new(committed(
             s.game().unwrap().clone(),
@@ -232,6 +248,7 @@ fn in_session_load_advances_revision_preserves_request_ids_and_rejects_old_gener
     assert_eq!(s.stage(), &before);
     s.cancel();
     s.complete(Completion {
+        evidence: None,
         key: old.key(),
         outcome: Err(failure()),
     });
@@ -244,6 +261,7 @@ fn in_session_load_advances_revision_preserves_request_ids_and_rejects_old_gener
     assert!(s.preview().is_empty());
     assert_eq!(
         s.complete(Completion {
+            evidence: None,
             key: old.key(),
             outcome: Ok(WorkSuccess::Turn(Box::new(committed(restored.clone()))))
         }),
@@ -258,7 +276,7 @@ fn an_incomplete_preview_stops_growing_instead_of_leaving_a_gap() {
     let mut s = SessionController::from_game(game());
     let request = s.take_turn(TurnDirection::Continue).unwrap();
     s.progress(request.key(), "First words", false);
-    let oversized = "x".repeat(cyoa_presentation::worker::PreviewLimit::MAX_BYTES);
+    let oversized = "x".repeat(cyoa_application::execution::PreviewLimit::MAX_BYTES);
     s.progress(request.key(), &oversized, false);
     assert!(s.preview_incomplete());
     // A later chunk that would fit must not be appended after the dropped one.

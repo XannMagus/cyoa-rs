@@ -51,7 +51,13 @@ mutation_root=$(mktemp -d)
 trap 'rm -rf -- "$mutation_root"' EXIT
 mkdir "$mutation_root/work"
 # Include unstaged and nonignored new source, never .git or build artifacts.
-git ls-files -z --cached --others --exclude-standard > "$mutation_root/files"
+git ls-files -z --cached --others --exclude-standard |
+  while IFS= read -r -d '' source_path; do
+    # Include the current worktree: moved/deleted tracked files no longer exist.
+    if [[ -e "$source_path" || -L "$source_path" ]]; then
+      printf '%s\0' "$source_path"
+    fi
+  done > "$mutation_root/files"
 tar -cf "$mutation_root/source.tar" --null -T "$mutation_root/files"
 tar -xf "$mutation_root/source.tar" -C "$mutation_root/work"
 export CARGO_TARGET_DIR="$mutation_root/target"

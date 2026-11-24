@@ -1,5 +1,8 @@
 //! Actual demo -> engine -> application -> worker -> canonical acceptance.
 //! A handshake holds a consumed response before controller acceptance.
+use cyoa_application::execution::PreviewLimit;
+use cyoa_application::runtime::{Intent, SessionRuntime};
+use cyoa_application::session::{Phase, SessionController, Stage};
 use cyoa_application::{
     cancellation::CancellationToken,
     generation::{Generated, GenerationFailure, StoryGenerator, StoryUseCases, TurnDirection},
@@ -12,12 +15,9 @@ use cyoa_core::{
     turn::StoryTurn,
     world::{PlayablePosition, WorldCast, WorldOutline},
 };
+use cyoa_infrastructure::execution::storage::StorageRunner;
 use cyoa_infrastructure::generation::demo;
-use cyoa_presentation::{
-    runtime::{Intent, SessionRuntime},
-    session::{Phase, SessionController, Stage},
-    worker::PreviewLimit,
-};
+
 use std::{
     sync::mpsc,
     thread,
@@ -46,7 +46,11 @@ impl<G> Gate<G> {
         result
     }
 }
-impl<G: StoryGenerator> StoryGenerator for Gate<G> {
+impl<G: StoryGenerator> cyoa_core::generation::StoryGenerator for Gate<G> {
+    type Context = cyoa_application::cancellation::CancellationToken;
+    type Failure = cyoa_application::generation::GenerationFailure;
+    type Report<T> = cyoa_application::generation::Generated<T>;
+
     fn outline(
         &mut self,
         brief: &Brief,
@@ -76,10 +80,12 @@ impl<G: StoryGenerator> StoryGenerator for Gate<G> {
         self.finished(result)
     }
 }
-fn settle<G: StoryGenerator + Send + 'static>(runtime: &mut SessionRuntime<G>) {
+fn settle<G: StoryGenerator + Send + 'static>(
+    runtime: &mut SessionRuntime<cyoa_infrastructure::execution::generation::WorkerRunner<G>>,
+) {
     let deadline = Instant::now() + Duration::from_secs(30);
     while matches!(
-        runtime.controller().phase(),
+        runtime.view().phase(),
         Phase::Running | Phase::Cancelling | Phase::Closing
     ) {
         runtime.poll();
@@ -98,8 +104,10 @@ fn cancellation_after_demo_consumption_retries_each_stage_and_preserves_all_pass
     });
     let mut runtime = SessionRuntime::new(
         SessionController::new(Limits::default(), StoryStyle::default()),
-        cases,
-        PreviewLimit::default(),
+        cyoa_infrastructure::execution::generation::WorkerRunner::new(
+            cases,
+            PreviewLimit::default(),
+        ),
     );
     let run = |runtime: &mut SessionRuntime<_>, intent, cancel: bool| {
         runtime.dispatch(intent).unwrap();
@@ -114,7 +122,7 @@ fn cancellation_after_demo_consumption_retries_each_stage_and_preserves_all_pass
     };
     let cancelled = |runtime: &SessionRuntime<_>| {
         assert_eq!(
-            runtime.controller().phase(),
+            runtime.view().phase(),
             Phase::Failed,
             "demo cancellation must leave retryable failure"
         );
@@ -125,7 +133,7 @@ fn cancellation_after_demo_consumption_retries_each_stage_and_preserves_all_pass
         true,
     );
     cancelled(&runtime);
-    assert_eq!(runtime.controller().stage(), &Stage::Brief);
+    assert_eq!(runtime.view().stage(), &Stage::Brief);
     // If retry gets the cast payload, it fails before reaching the success gate.
     runtime.dispatch(Intent::Retry).unwrap();
     let retry_generated = consumed_rx.recv_timeout(Duration::from_secs(2)).is_ok();
@@ -137,13 +145,13 @@ fn cancellation_after_demo_consumption_retries_each_stage_and_preserves_all_pass
         retry_generated,
         "demo outline retry regression: consumed outline advanced the replay"
     );
-    assert_eq!(runtime.controller().phase(), Phase::Ready);
-    let outline_stage = runtime.controller().stage().clone();
+    assert_eq!(runtime.view().phase(), Phase::Ready);
+    let outline_stage = runtime.view().stage().clone();
     run(&mut runtime, Intent::AcceptOutline, true);
     cancelled(&runtime);
-    assert_eq!(runtime.controller().stage(), &outline_stage);
+    assert_eq!(runtime.view().stage(), &outline_stage);
     run(&mut runtime, Intent::Retry, false);
-    assert_eq!(runtime.controller().phase(), Phase::Ready);
+    assert_eq!(runtime.view().phase(), Phase::Ready);
     runtime
         .dispatch(Intent::Select(PlayablePosition::new(0)))
         .unwrap();
@@ -155,10 +163,10 @@ fn cancellation_after_demo_consumption_retries_each_stage_and_preserves_all_pass
         "Rewritten: the ship stayed.",
     ];
     for (index, narrative) in expected.iter().enumerate() {
-        let before = runtime.controller().game().unwrap().clone();
+        let before = runtime.view().game().unwrap().clone();
         run(&mut runtime, Intent::Turn(TurnDirection::Continue), true);
         cancelled(&runtime);
-        assert_eq!(runtime.controller().game(), Some(&before));
+        assert_eq!(runtime.view().game(), Some(&before));
         if index % 2 == 0 {
             run(&mut runtime, Intent::Retry, false);
         } else {
@@ -170,7 +178,7 @@ fn cancellation_after_demo_consumption_retries_each_stage_and_preserves_all_pass
                 false,
             );
         }
-        let game = runtime.controller().game().unwrap();
+        let game = runtime.view().game().unwrap();
         assert_eq!(game.turns().len(), index + 1);
         assert_eq!(
             game.turns().last().unwrap().turn().narrative().as_str(),
@@ -178,31 +186,29 @@ fn cancellation_after_demo_consumption_retries_each_stage_and_preserves_all_pass
             "demo passage retry regression"
         );
     }
-    let before = runtime.controller().game().unwrap().clone();
+    let before = runtime.view().game().unwrap().clone();
     runtime
         .dispatch(Intent::Turn(TurnDirection::Continue))
         .unwrap();
     settle(&mut runtime);
-    assert_eq!(runtime.controller().phase(), Phase::Failed);
-    assert_eq!(runtime.controller().game(), Some(&before));
+    assert_eq!(runtime.view().phase(), Phase::Failed);
+    assert_eq!(runtime.view().game(), Some(&before));
     runtime.dispatch(Intent::Retry).unwrap();
     settle(&mut runtime);
-    assert_eq!(runtime.controller().phase(), Phase::Failed);
-    assert_eq!(runtime.controller().game(), Some(&before));
+    assert_eq!(runtime.view().phase(), Phase::Failed);
+    assert_eq!(runtime.view().game(), Some(&before));
 }
 
 #[test]
 fn cancelled_consumed_demo_passages_preserve_disk_and_retry_all_five_with_persistence() {
+    use cyoa_application::session_persistence::{ApplicationSession, Durability, PersistedSession};
     use cyoa_application::{cancellation::CancellationSource, persistence::*};
     use cyoa_infrastructure::persistence::{
         codec,
         helper::{HelperConfig, SupervisedRepository},
         repository::LocalRepository,
     };
-    use cyoa_presentation::{
-        persistence::{Durability, HeadlessSession, PersistedSession},
-        storage::StorageRunner,
-    };
+
     let root = tempfile::tempdir().unwrap();
     let id = SaveId::new("harbour-0123456789abcdef0123456789abcdef").unwrap();
     let game = codec::decode(
@@ -217,12 +223,14 @@ fn cancelled_consumed_demo_passages_preserve_disk_and_retry_all_five_with_persis
     let (release_tx, release_rx) = mpsc::channel();
     let runtime = SessionRuntime::new(
         SessionController::from_game(game),
-        StoryUseCases::new(Gate {
-            inner: demo_generator(),
-            consumed: consumed_tx,
-            release: release_rx,
-        }),
-        PreviewLimit::default(),
+        cyoa_infrastructure::execution::generation::WorkerRunner::new(
+            StoryUseCases::new(Gate {
+                inner: demo_generator(),
+                consumed: consumed_tx,
+                release: release_rx,
+            }),
+            PreviewLimit::default(),
+        ),
     );
     let config = HelperConfig::new(
         std::path::PathBuf::from(env!("CARGO_BIN_EXE_cyoa")),
@@ -236,11 +244,11 @@ fn cancelled_consumed_demo_passages_preserve_disk_and_retry_all_five_with_persis
             scenario: DemoScenarioId::HarbourV1,
         },
     );
-    fn finish(session: &mut dyn HeadlessSession) {
+    fn finish(session: &mut dyn ApplicationSession) {
         let deadline = Instant::now() + Duration::from_secs(30);
         while session.storage_busy()
             || matches!(
-                session.controller().phase(),
+                session.view().phase(),
                 Phase::Running | Phase::Cancelling | Phase::Closing
             )
         {
@@ -250,7 +258,7 @@ fn cancelled_consumed_demo_passages_preserve_disk_and_retry_all_five_with_persis
         }
     }
     session
-        .save(cyoa_presentation::persistence::SaveSlot::Current)
+        .save(cyoa_application::session_persistence::SaveSlot::Current)
         .unwrap();
     finish(&mut session);
     let mut reader = LocalRepository::new(root.path().into()).unwrap();
@@ -275,7 +283,7 @@ fn cancelled_consumed_demo_passages_preserve_disk_and_retry_all_five_with_persis
     .iter()
     .enumerate()
     {
-        let before = session.controller().game().unwrap().clone();
+        let before = session.view().game().unwrap().clone();
         let bytes = std::fs::read(&path).unwrap();
         session
             .dispatch(Intent::Turn(TurnDirection::Continue))
@@ -284,7 +292,7 @@ fn cancelled_consumed_demo_passages_preserve_disk_and_retry_all_five_with_persis
         session.dispatch(Intent::Cancel).unwrap();
         release_tx.send(()).unwrap();
         finish(&mut session);
-        assert_eq!(session.controller().game(), Some(&before));
+        assert_eq!(session.view().game(), Some(&before));
         assert_eq!(std::fs::read(&path).unwrap(), bytes);
         assert_eq!(session.durability(), Durability::Clean);
         session.dispatch(Intent::Retry).unwrap();
@@ -306,6 +314,6 @@ fn cancelled_consumed_demo_passages_preserve_disk_and_retry_all_five_with_persis
             *narrative,
             "persistent demo replay drift"
         );
-        assert_eq!(stored.snapshot.game(), session.controller().game().unwrap());
+        assert_eq!(stored.snapshot.game(), session.view().game().unwrap());
     }
 }

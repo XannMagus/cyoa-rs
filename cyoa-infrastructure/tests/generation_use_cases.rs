@@ -666,7 +666,11 @@ fn application_cancellation_after_generation_preserves_evidence() {
         inner: G,
         source: std::sync::Arc<CancellationSource>,
     }
-    impl<G: StoryGenerator> StoryGenerator for CancelAfter<G> {
+    impl<G: StoryGenerator> cyoa_core::generation::StoryGenerator for CancelAfter<G> {
+        type Context = cyoa_application::cancellation::CancellationToken;
+        type Failure = cyoa_application::generation::GenerationFailure;
+        type Report<T> = cyoa_application::generation::Generated<T>;
+
         fn outline(
             &mut self,
             brief: &Brief,

@@ -5,6 +5,7 @@
 
 pub mod backend;
 pub mod backends;
+pub mod execution;
 pub mod generation;
 pub mod image;
 mod json;

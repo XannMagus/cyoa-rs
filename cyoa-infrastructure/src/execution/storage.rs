@@ -1,5 +1,7 @@
 //! Owned storage worker. Polling never joins a live thread or performs JSON/I/O.
-use crate::session::SessionRevision;
+use cyoa_application::execution::{
+    StorageEvent, StorageExecution, StorageIntent, StorageKey, StorageOutcome,
+};
 use cyoa_application::{cancellation::CancellationSource, persistence::*};
 use std::{
     io,
@@ -7,47 +9,6 @@ use std::{
     thread::{self, JoinHandle},
 };
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct StorageKey {
-    pub id: StorageRequestId,
-    pub revision: SessionRevision,
-}
-pub enum StorageIntent {
-    Save(Box<SaveGame>),
-    Load(LoadGame),
-    Inspect(InspectSave),
-    List(ListSaves),
-}
-impl StorageIntent {
-    pub(crate) fn operation(&self) -> StorageOperation {
-        match self {
-            Self::Save(command) => match command.as_ref() {
-                SaveGame::Create(_) => StorageOperation::Create,
-                SaveGame::Replace { .. } => StorageOperation::Replace,
-                SaveGame::Reconcile(_) => StorageOperation::Reconcile,
-            },
-            Self::Load(_) => StorageOperation::Load,
-            Self::Inspect(_) => StorageOperation::Inspect,
-            Self::List(_) => StorageOperation::List,
-        }
-    }
-}
-pub enum StorageOutcome {
-    Saved(SaveReceipt),
-    Loaded(Box<LoadedGame>),
-    Inspected(Box<StoredGame>),
-    Listed(SavePageResult),
-}
-pub enum StorageEvent {
-    Prepared {
-        key: StorageKey,
-        pending: PendingWrite,
-    },
-    Finished {
-        key: StorageKey,
-        result: Result<StorageOutcome, StorageFailure>,
-    },
-}
 enum State {
     Ready,
     Running {
@@ -228,6 +189,27 @@ where
         events
     }
 }
+impl<R, F> StorageExecution for StorageRunner<R, F>
+where
+    R: GameRepository + Send + 'static,
+    F: Fn() -> R + Send + Sync + 'static,
+{
+    fn start(&mut self, key: StorageKey, intent: StorageIntent) -> io::Result<()> {
+        self.start(key, intent)
+    }
+    fn recover_fault(&mut self) {
+        self.recover_fault();
+    }
+    fn cancel(&self) {
+        self.cancel();
+    }
+    fn close(&mut self) {
+        self.close();
+    }
+    fn poll(&mut self) -> Vec<StorageEvent> {
+        self.poll()
+    }
+}
 impl<R, F> Drop for StorageRunner<R, F>
 where
     R: GameRepository + Send + 'static,
@@ -247,11 +229,16 @@ where
 mod tests {
     use super::*;
     struct Empty;
-    impl GameRepository for Empty {
+    impl cyoa_core::persistence::GameRepository for Empty {
+        type Context = cyoa_application::cancellation::CancellationToken;
+        type Failure = cyoa_application::persistence::StorageFailure;
+        type Attempt = cyoa_application::persistence::PendingWrite;
+        type Stored = cyoa_application::persistence::StoredGame;
+
         fn create(
             &mut self,
             _: SaveSnapshot,
-            _: &PreparedWriteEvidence,
+            _: &dyn AttemptObserver<PendingWrite>,
             _: &cyoa_application::cancellation::CancellationToken,
         ) -> Result<SaveReceipt, StorageFailure> {
             unreachable!()
@@ -260,7 +247,7 @@ mod tests {
             &mut self,
             _: SaveTarget,
             _: SaveSnapshot,
-            _: &PreparedWriteEvidence,
+            _: &dyn AttemptObserver<PendingWrite>,
             _: &cyoa_application::cancellation::CancellationToken,
         ) -> Result<SaveReceipt, StorageFailure> {
             unreachable!()
@@ -268,7 +255,7 @@ mod tests {
         fn reconcile(
             &mut self,
             _: PendingWrite,
-            _: &PreparedWriteEvidence,
+            _: &dyn AttemptObserver<PendingWrite>,
             _: &cyoa_application::cancellation::CancellationToken,
         ) -> Result<SaveReceipt, StorageFailure> {
             unreachable!()
@@ -281,6 +268,8 @@ mod tests {
         ) -> Result<StoredGame, StorageFailure> {
             unreachable!()
         }
+    }
+    impl cyoa_application::persistence::SaveQueries for Empty {
         fn list(
             &mut self,
             _: SavePage,
@@ -303,7 +292,7 @@ mod tests {
         });
         let key = StorageKey {
             id: StorageRequestId::new(1).unwrap(),
-            revision: crate::session::SessionController::new(
+            revision: cyoa_application::session::SessionController::new(
                 cyoa_core::limits::Limits::default(),
                 cyoa_core::style::StoryStyle::default(),
             )

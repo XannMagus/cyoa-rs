@@ -1,5 +1,7 @@
+#[path = "support/session.rs"]
 mod support;
 use cyoa_application::{cancellation::CancellationToken, generation::*, persistence::*};
+use cyoa_application::{execution::PreviewLimit, runtime::*, session::*, session_persistence::*};
 use cyoa_core::{
     game::{GameState, TurnCount},
     limits::{Limits, RestoreLimits},
@@ -8,9 +10,8 @@ use cyoa_core::{
     turn::{ChapterMarker, StoryTurn},
     world::{PlayablePosition, WorldCast, WorldOutline},
 };
-use cyoa_presentation::{
-    persistence::*, runtime::*, session::*, storage::StorageRunner, worker::PreviewLimit,
-};
+use cyoa_infrastructure::execution::storage::StorageRunner;
+use cyoa_infrastructure::persistence::prepared::prepare_write;
 use std::{
     collections::VecDeque,
     sync::{
@@ -64,7 +65,7 @@ impl Repo {
     fn write(
         &mut self,
         snapshot: SaveSnapshot,
-        prepared: &PreparedWriteEvidence,
+        prepared: &dyn AttemptObserver<PendingWrite>,
         kind: &'static str,
         operation: StorageOperation,
     ) -> Result<SaveReceipt, StorageFailure> {
@@ -75,7 +76,7 @@ impl Repo {
             .as_ref()
             .map_or(1, |s| s.metadata.revision.get() + 1);
         let receipt = receipt(revision);
-        let pending = PendingWrite::new(
+        let pending = prepare_write(
             id(),
             disk.saved.as_ref().map(|s| s.stamp),
             receipt.stamp,
@@ -115,11 +116,16 @@ impl Repo {
         }
     }
 }
-impl GameRepository for Repo {
+impl cyoa_core::persistence::GameRepository for Repo {
+    type Context = cyoa_application::cancellation::CancellationToken;
+    type Failure = cyoa_application::persistence::StorageFailure;
+    type Attempt = cyoa_application::persistence::PendingWrite;
+    type Stored = cyoa_application::persistence::StoredGame;
+
     fn create(
         &mut self,
         s: SaveSnapshot,
-        prepared: &PreparedWriteEvidence,
+        prepared: &dyn AttemptObserver<PendingWrite>,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         self.write(s, prepared, "create", StorageOperation::Create)
@@ -128,7 +134,7 @@ impl GameRepository for Repo {
         &mut self,
         _: SaveTarget,
         s: SaveSnapshot,
-        prepared: &PreparedWriteEvidence,
+        prepared: &dyn AttemptObserver<PendingWrite>,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         self.write(s, prepared, "replace", StorageOperation::Replace)
@@ -136,7 +142,7 @@ impl GameRepository for Repo {
     fn reconcile(
         &mut self,
         p: PendingWrite,
-        _: &PreparedWriteEvidence,
+        _: &dyn AttemptObserver<PendingWrite>,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         let mut disk = self.disk.lock().unwrap();
@@ -175,6 +181,8 @@ impl GameRepository for Repo {
         stored.copy = copy;
         Ok(stored)
     }
+}
+impl cyoa_application::persistence::SaveQueries for Repo {
     fn list(
         &mut self,
         _: SavePage,
@@ -200,7 +208,11 @@ impl From<bool> for GeneratorMode {
         if fail { Self::Fail } else { Self::Success }
     }
 }
-impl StoryGenerator for Generator {
+impl cyoa_core::generation::StoryGenerator for Generator {
+    type Context = cyoa_application::cancellation::CancellationToken;
+    type Failure = cyoa_application::generation::GenerationFailure;
+    type Report<T> = cyoa_application::generation::Generated<T>;
+
     fn outline(
         &mut self,
         _: &Brief,
@@ -238,7 +250,10 @@ impl StoryGenerator for Generator {
         }
     }
 }
-type Session = PersistedSession<Generator, Repo, Box<dyn Fn() -> Repo + Send + Sync>>;
+type Session = PersistedSession<
+    cyoa_infrastructure::execution::generation::WorkerRunner<Generator>,
+    StorageRunner<Repo, Box<dyn Fn() -> Repo + Send + Sync>>,
+>;
 fn session(
     controller: SessionController,
     disk: Arc<Mutex<Disk>>,
@@ -247,11 +262,13 @@ fn session(
     let calls = Arc::new(AtomicUsize::new(0));
     let runtime = SessionRuntime::new(
         controller,
-        StoryUseCases::new(Generator {
-            calls: calls.clone(),
-            mode: mode.into(),
-        }),
-        PreviewLimit::default(),
+        cyoa_infrastructure::execution::generation::WorkerRunner::new(
+            StoryUseCases::new(Generator {
+                calls: calls.clone(),
+                mode: mode.into(),
+            }),
+            PreviewLimit::default(),
+        ),
     );
     let factory: Box<dyn Fn() -> Repo + Send + Sync> =
         Box::new(move || Repo { disk: disk.clone() });
@@ -267,7 +284,7 @@ fn settle(s: &mut Session) -> Vec<PersistenceEvent> {
         events.extend(s.poll());
         if !s.storage_busy()
             && !matches!(
-                s.controller().phase(),
+                s.view().phase(),
                 Phase::Running | Phase::Cancelling | Phase::Closing
             )
         {
@@ -291,13 +308,13 @@ fn failed_autosave_keeps_accepted_turn_and_storage_retry_never_regenerates() {
     s.dispatch(Intent::Turn(TurnDirection::Continue)).unwrap();
     settle(&mut s);
     assert_eq!(
-        s.controller().game().unwrap().turns().len(),
+        s.view().game().unwrap().turns().len(),
         1,
         "save failure must never retry inference"
     );
     assert_eq!(s.durability(), Durability::Dirty);
     assert!(s.storage_failure().is_some());
-    assert!(s.controller().failure().is_none());
+    assert!(s.view().failure().is_none());
     assert!(s.dispatch(Intent::Turn(TurnDirection::Continue)).is_err());
     assert!(
         s.dispatch(Intent::Rewind(TurnCount::new(1).unwrap()))
@@ -311,10 +328,10 @@ fn failed_autosave_keeps_accepted_turn_and_storage_retry_never_regenerates() {
         })
         .is_err()
     );
-    let canonical = s.controller().game().unwrap().clone();
+    let canonical = s.view().game().unwrap().clone();
     s.save(SaveSlot::Current).unwrap();
     settle(&mut s);
-    assert_eq!(s.controller().game().unwrap(), &canonical);
+    assert_eq!(s.view().game().unwrap(), &canonical);
     assert_eq!(calls.load(Ordering::SeqCst), 1);
     assert_eq!(s.durability(), Durability::Clean);
     assert!(s.storage_failure().is_none());
@@ -354,8 +371,8 @@ fn load_failure_preserves_stage_revision_binding_and_generation_retry() {
     bound(&mut s);
     s.dispatch(Intent::Turn(TurnDirection::Continue)).unwrap();
     settle(&mut s);
-    let stage = s.controller().stage().clone();
-    let revision = s.controller().revision();
+    let stage = s.view().stage().clone();
+    let revision = s.view().revision();
     let binding = s.binding().clone();
     disk.lock().unwrap().saved = None;
     s.load(LoadGame {
@@ -365,13 +382,10 @@ fn load_failure_preserves_stage_revision_binding_and_generation_retry() {
     })
     .unwrap();
     settle(&mut s);
-    assert_eq!(s.controller().stage(), &stage);
-    assert_eq!(s.controller().revision(), revision);
+    assert_eq!(s.view().stage(), &stage);
+    assert_eq!(s.view().revision(), revision);
     assert_eq!(s.binding(), &binding);
-    assert!(matches!(
-        s.controller().failure(),
-        Some(Failure::Generation(_))
-    ));
+    assert!(matches!(s.view().failure(), Some(Failure::Generation(_))));
     assert_eq!(disk.lock().unwrap().writes.len(), 1);
     s.dispatch(Intent::Retry).unwrap();
     settle(&mut s);
@@ -399,19 +413,14 @@ fn selection_saves_zero_turn_before_one_deferred_opening_and_quit_clears_it() {
         settle(&mut s);
         assert_eq!(calls.load(Ordering::SeqCst), 0);
         assert_eq!(
-            s.controller()
-                .game()
-                .unwrap()
-                .selected_world()
-                .position()
-                .get(),
+            s.view().game().unwrap().selected_world().position().get(),
             1
         );
         if quit {
             s.quit();
             s.quit();
             settle(&mut s);
-            assert_eq!(s.shutdown(), Shutdown::DrainingOutput);
+            assert_eq!(s.shutdown(), Shutdown::Complete);
             assert_eq!(calls.load(Ordering::SeqCst), 0);
             assert_eq!(disk.lock().unwrap().writes, [("create", 0), ("create", 0)]);
         } else {
@@ -450,7 +459,7 @@ fn rewind_and_changed_policy_load_save_canonical_snapshots_before_generation() {
             .is_empty()
     );
     assert_eq!(calls.load(Ordering::SeqCst), 0);
-    let revision = s.controller().revision();
+    let revision = s.view().revision();
     let mut limits = Limits::default();
     limits.max_major_events = cyoa_core::limits::MajorEventLimit::new(1).unwrap();
     s.load(LoadGame {
@@ -460,8 +469,8 @@ fn rewind_and_changed_policy_load_save_canonical_snapshots_before_generation() {
     })
     .unwrap();
     settle(&mut s);
-    assert!(s.controller().revision().get() > revision.get());
-    assert_eq!(s.controller().game().unwrap().limits(), limits);
+    assert!(s.view().revision().get() > revision.get());
+    assert_eq!(s.view().game().unwrap().limits(), limits);
     assert_eq!(
         disk.lock()
             .unwrap()
@@ -489,7 +498,7 @@ fn source_mismatch_preserves_session_and_backup_recovery_creates_instead_of_repl
     let disk = Arc::new(Mutex::new(Disk::default()));
     let (mut s, calls) = session(SessionController::from_game(game()), disk.clone(), false);
     bound(&mut s);
-    let before = s.controller().stage().clone();
+    let before = s.view().stage().clone();
     let binding = s.binding().clone();
     retag(
         &disk,
@@ -504,7 +513,7 @@ fn source_mismatch_preserves_session_and_backup_recovery_creates_instead_of_repl
     })
     .unwrap();
     settle(&mut s);
-    assert_eq!(s.controller().stage(), &before);
+    assert_eq!(s.view().stage(), &before);
     assert_eq!(s.binding(), &binding);
     assert_eq!(disk.lock().unwrap().writes.len(), 1);
     retag(&disk, StorySource::Live);
@@ -549,7 +558,7 @@ fn quit_during_write_finishes_current_revision_once_without_duplicate_backup_rot
     assert!(s.save(SaveSlot::Current).is_err());
     release.store(true, Ordering::SeqCst);
     settle(&mut s);
-    assert_eq!(s.shutdown(), Shutdown::DrainingOutput);
+    assert_eq!(s.shutdown(), Shutdown::Complete);
     assert!(!s.exit_failed());
     assert_eq!(calls.load(Ordering::SeqCst), 1);
     assert_eq!(disk.lock().unwrap().writes, [("create", 0), ("replace", 1)]);
@@ -563,8 +572,8 @@ fn quit_cancels_load_joins_and_saves_old_canonical_game_once() {
         false,
     );
     bound(&mut s);
-    let before = s.controller().game().unwrap().clone();
-    let revision = s.controller().revision();
+    let before = s.view().game().unwrap().clone();
+    let revision = s.view().revision();
     let started = Arc::new(AtomicBool::new(false));
     disk.lock().unwrap().wait_load = Some(started.clone());
     s.load(LoadGame {
@@ -577,11 +586,11 @@ fn quit_cancels_load_joins_and_saves_old_canonical_game_once() {
     s.quit();
     s.quit();
     settle(&mut s);
-    assert_eq!(s.controller().game().unwrap(), &before);
-    assert_eq!(s.controller().revision(), revision);
+    assert_eq!(s.view().game().unwrap(), &before);
+    assert_eq!(s.view().revision(), revision);
     assert_eq!(disk.lock().unwrap().writes, [("create", 1), ("replace", 1)]);
     assert_eq!(calls.load(Ordering::SeqCst), 0);
-    assert_eq!(s.shutdown(), Shutdown::DrainingOutput);
+    assert_eq!(s.shutdown(), Shutdown::Complete);
     assert!(!s.exit_failed());
 }
 #[test]
@@ -592,24 +601,18 @@ fn generation_and_storage_failure_views_remain_independent_and_copy_failure_keep
     s.dispatch(Intent::Turn(TurnDirection::Continue)).unwrap();
     settle(&mut s);
     let binding = s.binding().clone();
-    let revision = s.controller().revision();
+    let revision = s.view().revision();
     disk.lock().unwrap().modes.push_back(Mode::Fail);
     s.save(SaveSlot::NewCopy).unwrap();
     settle(&mut s);
     assert_eq!(s.binding(), &binding);
-    assert_eq!(s.controller().revision(), revision);
+    assert_eq!(s.view().revision(), revision);
     assert!(s.storage_failure().is_some());
-    assert!(matches!(
-        s.controller().failure(),
-        Some(Failure::Generation(_))
-    ));
+    assert!(matches!(s.view().failure(), Some(Failure::Generation(_))));
     s.save(SaveSlot::NewCopy).unwrap();
     settle(&mut s);
     assert!(s.storage_failure().is_none());
-    assert!(matches!(
-        s.controller().failure(),
-        Some(Failure::Generation(_))
-    ));
+    assert!(matches!(s.view().failure(), Some(Failure::Generation(_))));
     assert_eq!(calls.load(Ordering::SeqCst), 1);
 }
 
@@ -618,13 +621,13 @@ fn cancelled_generation_never_autosaves_a_rejected_turn() {
     let disk = Arc::new(Mutex::new(Disk::default()));
     let (mut s, _) = session(SessionController::from_game(game()), disk.clone(), false);
     bound(&mut s);
-    let before = s.controller().game().unwrap().clone();
-    let revision = s.controller().revision();
+    let before = s.view().game().unwrap().clone();
+    let revision = s.view().revision();
     s.dispatch(Intent::Turn(TurnDirection::Continue)).unwrap();
     s.dispatch(Intent::Cancel).unwrap();
     settle(&mut s);
-    assert_eq!(s.controller().game(), Some(&before));
-    assert_eq!(s.controller().revision(), revision);
+    assert_eq!(s.view().game(), Some(&before));
+    assert_eq!(s.view().revision(), revision);
     assert_eq!(s.durability(), Durability::Clean);
     assert_eq!(
         disk.lock().unwrap().writes,
@@ -633,7 +636,7 @@ fn cancelled_generation_never_autosaves_a_rejected_turn() {
     );
     s.dispatch(Intent::Retry).unwrap();
     settle(&mut s);
-    assert_eq!(s.controller().game().unwrap().turns().len(), 1);
+    assert_eq!(s.view().game().unwrap().turns().len(), 1);
     assert_eq!(disk.lock().unwrap().writes, [("create", 0), ("replace", 1)]);
 }
 
@@ -675,9 +678,9 @@ fn queued_generation_panic_remains_an_exit_failure_after_quit_and_successful_sav
     // No completion has been polled; quit invalidates acceptance first.
     s.quit();
     settle(&mut s);
-    assert_eq!(s.shutdown(), Shutdown::DrainingOutput);
+    assert_eq!(s.shutdown(), Shutdown::Complete);
     assert_eq!(s.durability(), Durability::Clean);
     assert!(s.exit_failed());
-    assert!(s.controller().game().unwrap().turns().is_empty());
+    assert!(s.view().game().unwrap().turns().is_empty());
     assert_eq!(disk.lock().unwrap().writes, [("create", 0), ("replace", 0)]);
 }

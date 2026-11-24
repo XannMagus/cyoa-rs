@@ -15,8 +15,12 @@ prompt/schema reference content. No calibre checkout is needed.
 
 ## Status
 
-**Phases 0–2 are complete; next is Phase 3, the TUI play screen over an existing
-save.**
+**Phases 0–2 provide a playable REPL MVP, and the
+[iso-functional architecture cleanup](docs/plans/iso-functional-cleanup.md) is complete.**
+The reusable application library drives CLI/REPL behavior through shared session policy.
+TUI and advanced roleplay features remain on the
+[future roadmap](docs/plans/mvp-and-roadmap.md); they are not prerequisites for
+calling the existing product an MVP.
 
 - Phase 0, the scripted engine:
   [acceptance](docs/decisions/phase0-acceptance.md).
@@ -36,6 +40,8 @@ save.**
   - Physical power-loss durability on arbitrary filesystems is not established.
 - The pre-Phase 3 cleanup is recorded in
   [the 2026-10-05 review](reviews/2026-10-05-cleanup/README.md).
+- The reusable application/CLI/REPL ownership cleanup is implemented; see
+  [the 2026-11-03 audit and regression evidence](reviews/2026-11-03-iso-functional-cleanup/README.md).
 - Astra's independent 2026-10-05 review found three boundary bugs (ambiguous Codex
   control keys, ambiguous Claude auth status, input read-ahead); its
   [findings](reviews/2026-10-05-repository-review/README.md) and
@@ -49,10 +55,12 @@ and [the decision history](docs/decisions/history.md).
   summary deltas, typed limits, owned protagonist selection, turns, chapters and
   rewind. Current/original restore policies preserve original settings and reapply
   active event caps to every snapshot. Character-edit propagation is still pending.
-- `cyoa-application`: inward-owned generation ports and commands for outline, cast,
+- `cyoa-application`: commands for outline, cast,
   turns and rewind; cancellation tokens with scoped wake notifications, transport
   diagnostics and the image port. Typed persistence ports/commands/queries apply
-  explicit restore policy and preserve storage outcomes. No JSON/vendor types.
+  explicit restore policy and preserve storage outcomes. Owns canonical session
+  admission/acceptance, autosave, load/rewind, recovery and final-save policy through
+  execution ports and read-only views. No JSON/vendor or terminal types.
 - `cyoa-infrastructure`: validated bundled templates, schema generation, wire
   mapping, generation orchestration, incremental narrative extraction,
   request-recording complete/chunked scripted transports and a process supervisor
@@ -64,9 +72,9 @@ and [the decision history](docs/decisions/history.md).
   Linux atomic local repository and a supervised storage helper (one bounded child
   per operation) implement the persistence port. Vendor-neutral transport plumbing
   shared by both adapters lives in `backends::transport`.
-- `cyoa-presentation`: session controller, owned worker/runtime, the storage runner
-  and persistence coordinator (autosave, explicit load/rewind, final save on quit),
-  explicit CLI intent and Linux headless input/output with cancellation and shutdown.
+  Generation/storage runners and scoped blocking jobs also live here.
+- `cyoa-presentation`: explicit CLI intent, REPL syntax/rendering and Linux headless
+  input/output, signals and bounded output draining; drives application policy.
 - `cyoa-cli`: executable and composition root, which also serves as the internal
   storage helper entry point.
 - `reference/`: source material and each backend's separate live-verification record.
@@ -79,6 +87,44 @@ audit text preserves every byte. Raw JSON and narrative previews cannot authoriz
 turn commit. Errors and observed cancellation leave the complete game unchanged;
 retry is explicit. The terminal-independent controller enforces canonical ownership
 and stale-worker rejection; the headless view drives this same controller.
+
+## Architecture at a glance
+
+Arrows mean “depends on”; execution through a port can run in the other direction.
+
+```mermaid
+flowchart TB
+    P["Presentation · cyoa-presentation<br/>Commands, terminal input and story display"]
+    I["Infrastructure · cyoa-infrastructure<br/>CLI backends, workers and local saves"]
+    A["Application · cyoa-application<br/>Session policy, autosave and execution contracts"]
+    D["Domain · cyoa-core<br/>Checked game types, story rules and business capabilities"]
+    P --> A
+    I --> A
+    A --> D
+    P --> D
+    I --> D
+```
+
+`cyoa-cli` sits outside these four layers and wires their concrete implementations
+together. Application owns the canonical game; infrastructure performs generation
+and storage behind inward-owned contracts; presentation submits intent and displays
+read-only views. [ARCH-001](docs/decisions/README.md#arch-001-dependencies-point-inward)
+defines the boundary rules, checked by `scripts/check_architecture.sh`.
+
+## Use as a library
+
+Construct an application `SessionController`, wrap it in `SessionRuntime` with a
+generation executor, then `PersistedSession` with a storage executor. Submit typed
+`Intent` commands, call nonblocking `poll()`, and read `view()`; the application
+handles selection/save/opening, autosave and recovery. Shutdown completes at
+`Shutdown::Complete`; a frontend drains its own output afterward.
+
+Infrastructure supplies `WorkerRunner`, `StorageRunner` and `SupervisedRepository`.
+Pass the installed `cyoa` executable explicitly to `HelperConfig::new` when using
+supervised storage. An embedding app's own executable only works if it handles
+`persistence::helper::run_internal` before normal startup, as `cyoa` does. See the
+[library-client acceptance test](cyoa-infrastructure/tests/application_library.rs)
+for a complete composition without a presentation dependency.
 
 ## Play headless (Linux)
 
@@ -201,11 +247,16 @@ The phase-by-phase status is in [Status](#status) above.
 
 ## Where to start
 
+[GLOSSARY.md](GLOSSARY.md) defines the adventure's domain vocabulary. The
+[ADR index](docs/adr/README.md) collects established decision rationale and maps
+it to the authoritative project contracts, including their remaining obligations.
+
 1. Read `PLAN.md` in full. It has the architecture, the reasoning behind
    every non-obvious decision, the build order, and a ranked list of the
-   risky parts. Phases 0–2 are complete. Continue with Phase 3's TUI play screen
-   over an existing save, using the Phase 2 acceptance audit and credential-free
-   demo for iteration.
+   risky parts. Phases 0–2 and the application-library cleanup are complete.
+   Consult the current status and roadmap before choosing another milestone.
+   If TUI work is selected, the original Phase 3 slice is its play screen over
+   an existing save, using the credential-free demo for iteration.
 2. `reference/00-engine-notes.md` — the game logic (schemas, the delta-merge
    rules, validation, chapter/rewind logic) in dense reference form.
 3. `reference/01-claude-cli.md` and `reference/02-codex-cli.md` — the exact

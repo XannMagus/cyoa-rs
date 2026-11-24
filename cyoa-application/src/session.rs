@@ -1,5 +1,5 @@
 //! Terminal-independent lifecycle. Only this controller owns canonical state.
-use cyoa_application::{
+use crate::{
     cancellation::{CancellationSource, CancellationToken},
     generation::{Generated, GenerationFailure, StoryGenerator, StoryUseCases, TurnDirection},
 };
@@ -74,7 +74,11 @@ impl WorkRequest {
     pub fn token(&self) -> &CancellationToken {
         &self.token
     }
-    pub(crate) fn execute<G: StoryGenerator>(
+    /// Execution adapters retain cancellation authority until their worker joins.
+    pub fn cancellation_source(&self) -> Arc<CancellationSource> {
+        Arc::clone(&self.source)
+    }
+    pub fn execute<G: StoryGenerator>(
         self,
         cases: &mut StoryUseCases<G>,
         progress: &mut dyn FnMut(&str),
@@ -98,6 +102,7 @@ impl WorkRequest {
                 .map_err(|failed| failed.failure),
         };
         Completion {
+            evidence: cases.take_evidence(),
             key: self.key,
             outcome,
         }
@@ -111,6 +116,7 @@ pub enum WorkSuccess {
 }
 #[derive(Debug)]
 pub struct Completion {
+    pub evidence: Option<crate::generation::GenerationEvidence>,
     pub key: RequestKey,
     pub outcome: Result<WorkSuccess, GenerationFailure>,
 }
@@ -170,6 +176,7 @@ pub enum SessionError {
 }
 #[derive(Debug)]
 pub struct SessionController {
+    evidence: Option<crate::generation::GenerationEvidence>,
     stage: Stage,
     operation: Operation,
     limits: Limits,
@@ -179,9 +186,53 @@ pub struct SessionController {
     preview: String,
     incomplete: bool,
 }
+
+/// Borrowed queries over canonical state, with no mutation or completion authority.
+///
+/// ```compile_fail
+/// use cyoa_application::session_persistence::ApplicationSession;
+/// use cyoa_core::game::TurnCount;
+/// fn bypass_use_case(session: &mut dyn ApplicationSession) {
+///     session.view().game().unwrap().rewind(TurnCount::new(1).unwrap());
+/// }
+/// ```
+#[derive(Clone, Copy)]
+pub struct SessionView<'a> {
+    controller: &'a SessionController,
+}
+impl<'a> SessionView<'a> {
+    pub fn evidence(self) -> Option<&'a crate::generation::GenerationEvidence> {
+        self.controller.evidence.as_ref()
+    }
+    pub fn stage(self) -> &'a Stage {
+        self.controller.stage()
+    }
+    pub fn revision(self) -> SessionRevision {
+        self.controller.revision()
+    }
+    pub fn game(self) -> Option<&'a GameState> {
+        self.controller.game()
+    }
+    pub fn phase(self) -> Phase {
+        self.controller.phase()
+    }
+    pub fn failure(self) -> Option<&'a Failure> {
+        self.controller.failure()
+    }
+    pub fn preview(self) -> &'a str {
+        self.controller.preview()
+    }
+    pub fn preview_incomplete(self) -> bool {
+        self.controller.preview_incomplete()
+    }
+}
 impl SessionController {
+    pub fn view(&self) -> SessionView<'_> {
+        SessionView { controller: self }
+    }
     pub fn new(limits: Limits, style: StoryStyle) -> Self {
         Self {
+            evidence: None,
             stage: Stage::Brief,
             operation: Operation::Ready,
             limits,
@@ -429,7 +480,7 @@ impl SessionController {
             // Once incomplete, the preview stops growing: appending a later, smaller
             // chunk would leave a gap where the dropped text was.
             let remaining =
-                crate::worker::PreviewLimit::MAX_BYTES.saturating_sub(self.preview.len());
+                crate::execution::PreviewLimit::MAX_BYTES.saturating_sub(self.preview.len());
             if !self.incomplete && text.len() <= remaining {
                 self.preview.push_str(text);
             } else {
@@ -444,6 +495,7 @@ impl SessionController {
             return Acceptance::Ignored;
         }
         let old = std::mem::replace(&mut self.operation, Operation::Ready);
+        self.evidence = completion.evidence;
         self.preview.clear();
         let pending = match old {
             Operation::Closing(_) => {
@@ -519,7 +571,7 @@ impl SessionController {
             Acceptance::Failed
         }
     }
-    pub(crate) fn dispatch_failed(&mut self, key: RequestKey, message: String) {
+    pub fn dispatch_failed(&mut self, key: RequestKey, message: String) {
         if self.active_key() == Some(key) {
             let Operation::Running(p) = std::mem::replace(&mut self.operation, Operation::Ready)
             else {
@@ -596,13 +648,14 @@ mod tests {
             revision: SessionRevision(1),
         };
         let failure = GenerationFailure::new(
-            cyoa_application::generation::FailureKind::InvalidResponse,
+            crate::generation::FailureKind::InvalidResponse,
             "bad",
             Some(cyoa_core::text::RawResponse::new("")),
-            cyoa_application::diagnostics::TransportDiagnostics::empty(),
+            crate::diagnostics::TransportDiagnostics::empty(),
         );
         assert_eq!(
             session.complete(Completion {
+                evidence: None,
                 key: wrong,
                 outcome: Err(failure)
             }),

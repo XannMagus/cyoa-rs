@@ -1,6 +1,8 @@
 use cyoa_application::{cancellation::CancellationToken, persistence::*};
+use cyoa_application::{execution::*, session::SessionController};
 use cyoa_core::{limits::Limits, style::StoryStyle};
-use cyoa_presentation::{session::SessionController, storage::*};
+use cyoa_infrastructure::execution::storage::StorageRunner;
+use cyoa_infrastructure::persistence::prepared::prepare_write;
 use std::{
     sync::{
         Arc,
@@ -12,7 +14,7 @@ fn id() -> SaveId {
     SaveId::new("story-0123456789abcdef0123456789abcdef").unwrap()
 }
 fn pending() -> PendingWrite {
-    PendingWrite::new(id(), None, ContentStamp::new([1; 32]), b"prepared".to_vec()).unwrap()
+    prepare_write(id(), None, ContentStamp::new([1; 32]), b"prepared".to_vec()).unwrap()
 }
 fn key() -> StorageKey {
     StorageKey {
@@ -28,11 +30,16 @@ struct Fake {
 fn cancelled(op: StorageOperation) -> StorageFailure {
     StorageFailure::cancelled(op)
 }
-impl GameRepository for Fake {
+impl cyoa_core::persistence::GameRepository for Fake {
+    type Context = cyoa_application::cancellation::CancellationToken;
+    type Failure = cyoa_application::persistence::StorageFailure;
+    type Attempt = cyoa_application::persistence::PendingWrite;
+    type Stored = cyoa_application::persistence::StoredGame;
+
     fn create(
         &mut self,
         _: SaveSnapshot,
-        _: &PreparedWriteEvidence,
+        _: &dyn AttemptObserver<PendingWrite>,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         unreachable!()
@@ -41,7 +48,7 @@ impl GameRepository for Fake {
         &mut self,
         _: SaveTarget,
         _: SaveSnapshot,
-        _: &PreparedWriteEvidence,
+        _: &dyn AttemptObserver<PendingWrite>,
         _: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         unreachable!()
@@ -49,7 +56,7 @@ impl GameRepository for Fake {
     fn reconcile(
         &mut self,
         attempt: PendingWrite,
-        prepared: &PreparedWriteEvidence,
+        prepared: &dyn AttemptObserver<PendingWrite>,
         token: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         if self.mode != 2 {
@@ -75,6 +82,8 @@ impl GameRepository for Fake {
     ) -> Result<StoredGame, StorageFailure> {
         unreachable!()
     }
+}
+impl cyoa_application::persistence::SaveQueries for Fake {
     fn list(
         &mut self,
         _: SavePage,

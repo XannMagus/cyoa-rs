@@ -4,12 +4,51 @@
     "coverage": "enforced",
     "checks": [
       {
+        "package": "cyoa-cli",
+        "target": "controller_story",
+        "tests": [
+          "complete_controller_story_preserves_context_retry_identity_chapters_and_rewind",
+          "controller_zero_npcs_and_both_restore_policies_use_active_limits"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "headless",
+        "tests": [
+          "both_shipped_backend_commands_play_retry_and_inspect_canonical_story"
+        ]
+      },
+      {
         "package": "cyoa-core",
         "target": "lib",
         "tests": [
+          "game::tests::world_namesakes_survive_into_summary_and_remain_addressable_by_id",
           "world::tests::distinct_playable_namesakes_satisfy_the_minimum",
-          "world::tests::exact_records_collapse_within_each_role_but_shared_names_survive",
-          "game::tests::world_namesakes_survive_into_summary_and_remain_addressable_by_id"
+          "world::tests::exact_records_collapse_within_each_role_but_shared_names_survive"
+        ]
+      },
+      {
+        "package": "cyoa-core",
+        "target": "restored_world",
+        "tests": [
+          "established_cast_is_not_pruned_or_rejected_by_restore_generation_limits",
+          "restored_cast_preserves_namesakes_role_order_and_checked_selection",
+          "restored_cast_rejects_empty_playables_and_exact_duplicates_in_each_role",
+          "restored_single_playable_and_no_npcs_is_a_valid_zero_turn_game"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "claude_story_acceptance",
+        "tests": [
+          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_story_acceptance",
+        "tests": [
+          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
         ]
       },
       {
@@ -21,41 +60,10 @@
       },
       {
         "package": "cyoa-infrastructure",
-        "target": "codex_story_acceptance",
+        "target": "persistence_limits",
         "tests": [
-          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "claude_story_acceptance",
-        "tests": [
-          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
-        ]
-      },
-      {
-        "package": "cyoa-cli",
-        "target": "controller_story",
-        "tests": [
-          "complete_controller_story_preserves_context_retry_identity_chapters_and_rewind",
-          "controller_zero_npcs_and_both_restore_policies_use_active_limits"
-        ]
-      },
-      {
-        "package": "cyoa-cli",
-        "target": "headless",
-        "tests": [
-          "both_shipped_backend_commands_play_retry_and_inspect_canonical_story"
-        ]
-      },
-      {
-        "package": "cyoa-core",
-        "target": "restored_world",
-        "tests": [
-          "restored_cast_rejects_empty_playables_and_exact_duplicates_in_each_role",
-          "restored_cast_preserves_namesakes_role_order_and_checked_selection",
-          "established_cast_is_not_pruned_or_rejected_by_restore_generation_limits",
-          "restored_single_playable_and_no_npcs_is_a_valid_zero_turn_game"
+          "repeated_codec_restore_cycles_rebind_every_snapshot_without_resurrecting_events_or_pruning_casts",
+          "zero_turn_restore_uses_selected_cap_and_preserves_established_single_playable"
         ]
       },
       {
@@ -65,14 +73,6 @@
           "frozen_full_story_roundtrip_preserves_complete_state_exact_audit_and_next_rewind_request",
           "zero_turn_selected_second_playable_roundtrip_restores_one_opening_request"
         ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "persistence_limits",
-        "tests": [
-          "repeated_codec_restore_cycles_rebind_every_snapshot_without_resurrecting_events_or_pruning_casts",
-          "zero_turn_restore_uses_selected_cap_and_preserves_established_single_playable"
-        ]
       }
     ]
   },
@@ -80,32 +80,6 @@
     "id": "IDENTITY-002",
     "coverage": "enforced",
     "checks": [
-      {
-        "package": "cyoa-core",
-        "target": "summary_merge",
-        "tests": [
-          "suffixing_preserves_existing_ids_and_repaired_ids_support_future_updates",
-          "exact_duplicates_collapse_before_suffixes_are_assigned",
-          "exact_deduplication_includes_identity_and_all_character_details",
-          "cast_supports_id_lookup_without_changing_order_after_rename_or_insertion",
-          "cast_equality_includes_presentation_order",
-          "explicit_ids_are_preserved_and_duplicate_names_match_the_last_entry"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "codex_story_acceptance",
-        "tests": [
-          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "claude_story_acceptance",
-        "tests": [
-          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
-        ]
-      },
       {
         "package": "cyoa-cli",
         "target": "controller_story",
@@ -119,6 +93,32 @@
         "target": "headless",
         "tests": [
           "both_shipped_backend_commands_play_retry_and_inspect_canonical_story"
+        ]
+      },
+      {
+        "package": "cyoa-core",
+        "target": "summary_merge",
+        "tests": [
+          "cast_equality_includes_presentation_order",
+          "cast_supports_id_lookup_without_changing_order_after_rename_or_insertion",
+          "exact_deduplication_includes_identity_and_all_character_details",
+          "exact_duplicates_collapse_before_suffixes_are_assigned",
+          "explicit_ids_are_preserved_and_duplicate_names_match_the_last_entry",
+          "suffixing_preserves_existing_ids_and_repaired_ids_support_future_updates"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "claude_story_acceptance",
+        "tests": [
+          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_story_acceptance",
+        "tests": [
+          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
         ]
       },
       {
@@ -143,31 +143,6 @@
     "coverage": "enforced",
     "checks": [
       {
-        "package": "cyoa-core",
-        "target": "lib",
-        "tests": [
-          "text::tests::exchange_text_preserves_every_byte_including_empty_and_whitespace"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "backend_contract",
-        "tests": [
-          "successful_response_retains_the_exact_json_it_parsed",
-          "malformed_response_is_an_error_with_original_diagnostics",
-          "every_backend_error_variant_maps_to_its_failure_kind_with_exact_diagnostics",
-          "nonzero_exit_with_no_stdout_maps_to_unavailable_with_exact_stderr_bytes",
-          "nonzero_exit_after_emitting_stdout_maps_to_generation_not_unavailable",
-          "cancelling_from_inside_the_streamed_callback_returns_cancelled_with_diagnostics_seen_so_far",
-          "empty_stdout_with_exit_zero_does_not_construct_a_false_success",
-          "crlf_in_diagnostics_is_preserved_without_normalization",
-          "non_utf8_stderr_diagnostics_survive_the_process_boundary_and_lossy_display_does_not_panic",
-          "fixture_round_trips_quotes_newlines_and_unicode_through_a_real_process_boundary",
-          "fixture_reports_the_exact_argv_and_stdin_prompt_bytes_it_received",
-          "duplicated_payload_keys_are_rejected_with_the_exact_payload_retained"
-        ]
-      },
-      {
         "package": "cyoa-application",
         "target": "lib",
         "tests": [
@@ -175,106 +150,12 @@
         ]
       },
       {
-        "package": "cyoa-infrastructure",
-        "target": "generation_use_cases",
-        "tests": [
-          "validation_failures_retain_transport_diagnostics_for_every_request_kind",
-          "application_cancellation_after_generation_preserves_evidence",
-          "successful_generation_preserves_observed_provenance_and_diagnostics",
-          "cancelled_commands_make_no_backend_calls_and_preserve_state"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "backend_contract",
-        "tests": [
-          "successful_fixture_transport_attaches_both_captured_streams"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "lib",
-        "tests": [
-          "backends::codex_cli::tests::prepared_request_owns_schema_stdin_environment_and_workspace_until_transfer_drop",
-          "generation::backend_compat::codex_cli::tests::framing_matches_the_committed_discovery_capture_byte_for_byte",
-          "json::tests::duplicate_keys_are_rejected_at_any_depth_and_never_resolved",
-          "json::tests::syntax_errors_stay_distinct_from_duplicates",
-          "json::tests::tree_free_validation_agrees_with_strict_parsing"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "lib",
-        "tests": [
-          "backends::codex_cli::protocol::tests::framing_metadata_and_escaped_text_preserve_exact_candidate_bytes",
-          "backends::codex_cli::protocol::tests::first_failure_is_sticky_and_keeps_candidate_after_later_records",
-          "backends::codex_cli::protocol::tests::invalid_payload_is_retained_and_never_repaired_or_accepted"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "backend_contract",
-        "tests": [
-          "complete_only_cancellation_and_timeout_keep_explicit_candidate_without_preview"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "codex_backend",
-        "tests": [
-          "application_receives_complete_candidate_and_diagnostics_on_adapter_timeout",
-          "successful_response_emits_once_after_cleanup_and_retains_usage_and_exact_request"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "lib",
-        "tests": [
-          "backends::codex_cli::adapter::tests::nested_cleanup_retains_initiating_failure_payload_and_prefix_without_displaying_buffers",
-          "backends::claude_cli::tests::prepared_request_has_exact_argv_environment_stdin_and_empty_workspace",
-          "backends::claude_cli::protocol::tests::result_payload_is_the_exact_span_not_a_reserialization",
-          "backends::claude_cli::protocol::tests::first_failure_is_sticky_and_later_records_cannot_repair_it",
-          "backends::claude_cli::protocol::tests::malformed_terminal_metadata_keeps_the_exact_candidate_span"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "codex_story_acceptance",
-        "tests": [
-          "late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once",
-          "real_workspace_cleanup_failure_preserves_the_game_and_candidate",
-          "cancellation_and_output_cap_preserve_state_context_and_explicit_retry"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "claude_backend",
-        "tests": [
-          "result_cannot_override_nonzero_exit_and_previews_are_tentative_evidence",
-          "protocol_rejections_keep_candidate_evidence_and_clean_up",
-          "successful_response_forwards_previews_then_returns_exact_payload_usage_and_provenance",
-          "application_receives_candidate_and_diagnostics_on_adapter_timeout",
-          "malformed_result_metadata_keeps_the_candidate_visible_to_the_application"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "claude_story_acceptance",
-        "tests": [
-          "late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once",
-          "real_workspace_cleanup_failure_preserves_the_game_and_candidate",
-          "cancellation_and_output_cap_preserve_state_context_and_explicit_retry",
-          "a_disagreeing_preview_is_shown_but_only_the_final_payload_is_committed",
-          "an_enforce_retry_stream_commits_only_the_structured_payload"
-        ]
-      },
-      {
-        "package": "cyoa-presentation",
+        "package": "cyoa-application",
         "target": "session",
         "tests": [
           "failed_and_cancelled_results_preserve_state_and_exact_evidence",
-          "stale_and_duplicate_completions_never_replace_current_state",
           "lifecycle_keeps_edited_outline_selection_and_one_opening",
+          "stale_and_duplicate_completions_never_replace_current_state",
           "wrong_kind_faults_and_quit_waits_for_active_completion"
         ]
       },
@@ -295,6 +176,119 @@
         ]
       },
       {
+        "package": "cyoa-core",
+        "target": "lib",
+        "tests": [
+          "text::tests::exchange_text_preserves_every_byte_including_empty_and_whitespace"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "backend_contract",
+        "tests": [
+          "cancelling_from_inside_the_streamed_callback_returns_cancelled_with_diagnostics_seen_so_far",
+          "complete_only_cancellation_and_timeout_keep_explicit_candidate_without_preview",
+          "crlf_in_diagnostics_is_preserved_without_normalization",
+          "duplicated_payload_keys_are_rejected_with_the_exact_payload_retained",
+          "empty_stdout_with_exit_zero_does_not_construct_a_false_success",
+          "every_backend_error_variant_maps_to_its_failure_kind_with_exact_diagnostics",
+          "fixture_reports_the_exact_argv_and_stdin_prompt_bytes_it_received",
+          "fixture_round_trips_quotes_newlines_and_unicode_through_a_real_process_boundary",
+          "malformed_response_is_an_error_with_original_diagnostics",
+          "non_utf8_stderr_diagnostics_survive_the_process_boundary_and_lossy_display_does_not_panic",
+          "nonzero_exit_after_emitting_stdout_maps_to_generation_not_unavailable",
+          "nonzero_exit_with_no_stdout_maps_to_unavailable_with_exact_stderr_bytes",
+          "successful_fixture_transport_attaches_both_captured_streams",
+          "successful_response_retains_the_exact_json_it_parsed"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "claude_backend",
+        "tests": [
+          "application_receives_candidate_and_diagnostics_on_adapter_timeout",
+          "malformed_result_metadata_keeps_the_candidate_visible_to_the_application",
+          "protocol_rejections_keep_candidate_evidence_and_clean_up",
+          "result_cannot_override_nonzero_exit_and_previews_are_tentative_evidence",
+          "successful_response_forwards_previews_then_returns_exact_payload_usage_and_provenance"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "claude_story_acceptance",
+        "tests": [
+          "a_disagreeing_preview_is_shown_but_only_the_final_payload_is_committed",
+          "an_enforce_retry_stream_commits_only_the_structured_payload",
+          "cancellation_and_output_cap_preserve_state_context_and_explicit_retry",
+          "late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once",
+          "real_workspace_cleanup_failure_preserves_the_game_and_candidate"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_backend",
+        "tests": [
+          "application_receives_complete_candidate_and_diagnostics_on_adapter_timeout",
+          "successful_response_emits_once_after_cleanup_and_retains_usage_and_exact_request"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_story_acceptance",
+        "tests": [
+          "cancellation_and_output_cap_preserve_state_context_and_explicit_retry",
+          "late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once",
+          "real_workspace_cleanup_failure_preserves_the_game_and_candidate"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "filesystem_repository",
+        "tests": [
+          "atomic_create_replace_and_independent_writer_conflict_preserve_exact_backup",
+          "corrupt_primary_never_rotates_over_a_good_backup_and_recovery_creates_a_new_slot",
+          "disk_restore_cycles_preserve_original_limits_and_every_narrowed_snapshot",
+          "hostile_unicode_titles_never_become_paths_and_retitle_preserves_the_slot_id",
+          "listing_pages_report_corrupt_future_and_backup_only_without_rewriting_documents",
+          "locks_survive_primary_replacement_and_hostile_entries_are_never_followed",
+          "missing_and_unsafe_storage_paths_are_errors_without_following_links"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "generation_use_cases",
+        "tests": [
+          "application_cancellation_after_generation_preserves_evidence",
+          "cancelled_commands_make_no_backend_calls_and_preserve_state",
+          "successful_generation_preserves_observed_provenance_and_diagnostics",
+          "validation_failures_retain_transport_diagnostics_for_every_request_kind"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "backends::claude_cli::protocol::tests::first_failure_is_sticky_and_later_records_cannot_repair_it",
+          "backends::claude_cli::protocol::tests::malformed_terminal_metadata_keeps_the_exact_candidate_span",
+          "backends::claude_cli::protocol::tests::result_payload_is_the_exact_span_not_a_reserialization",
+          "backends::claude_cli::tests::prepared_request_has_exact_argv_environment_stdin_and_empty_workspace",
+          "backends::codex_cli::adapter::tests::nested_cleanup_retains_initiating_failure_payload_and_prefix_without_displaying_buffers",
+          "backends::codex_cli::protocol::tests::first_failure_is_sticky_and_keeps_candidate_after_later_records",
+          "backends::codex_cli::protocol::tests::framing_metadata_and_escaped_text_preserve_exact_candidate_bytes",
+          "backends::codex_cli::protocol::tests::invalid_payload_is_retained_and_never_repaired_or_accepted",
+          "backends::codex_cli::tests::prepared_request_owns_schema_stdin_environment_and_workspace_until_transfer_drop",
+          "generation::backend_compat::codex_cli::tests::framing_matches_the_committed_discovery_capture_byte_for_byte",
+          "json::tests::duplicate_keys_are_rejected_at_any_depth_and_never_resolved",
+          "json::tests::syntax_errors_stay_distinct_from_duplicates",
+          "json::tests::tree_free_validation_agrees_with_strict_parsing",
+          "persistence::repository::linux::tests::default_data_location_honors_absolute_xdg_and_rejects_relative_locations",
+          "persistence::repository::linux::tests::every_write_failure_preserves_complete_files_visibility_and_retry_material",
+          "persistence::repository::linux::tests::first_create_receipt_loss_reconciles_without_duplicate_slots_or_backup_rotation",
+          "persistence::repository::linux::tests::preparation_read_encode_and_cleanup_failures_keep_the_initiating_cause",
+          "persistence::repository::linux::tests::sync_order_constant_clock_collision_entropy_and_revision_exhaustion_are_observable"
+        ]
+      },
+      {
         "package": "cyoa-infrastructure",
         "target": "persistence_roundtrip",
         "tests": [
@@ -308,42 +302,6 @@
         "tests": [
           "audit_strings_including_empty_whitespace_crlf_and_unicode_roundtrip_without_normalization"
         ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "filesystem_repository",
-        "tests": [
-          "missing_and_unsafe_storage_paths_are_errors_without_following_links",
-          "atomic_create_replace_and_independent_writer_conflict_preserve_exact_backup",
-          "corrupt_primary_never_rotates_over_a_good_backup_and_recovery_creates_a_new_slot",
-          "locks_survive_primary_replacement_and_hostile_entries_are_never_followed",
-          "listing_pages_report_corrupt_future_and_backup_only_without_rewriting_documents",
-          "disk_restore_cycles_preserve_original_limits_and_every_narrowed_snapshot"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "lib",
-        "tests": [
-          "persistence::repository::linux::tests::every_write_failure_preserves_complete_files_visibility_and_retry_material",
-          "persistence::repository::linux::tests::first_create_receipt_loss_reconciles_without_duplicate_slots_or_backup_rotation",
-          "persistence::repository::linux::tests::sync_order_constant_clock_collision_entropy_and_revision_exhaustion_are_observable",
-          "persistence::repository::linux::tests::preparation_read_encode_and_cleanup_failures_keep_the_initiating_cause"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "filesystem_repository",
-        "tests": [
-          "hostile_unicode_titles_never_become_paths_and_retitle_preserves_the_slot_id"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "lib",
-        "tests": [
-          "persistence::repository::linux::tests::default_data_location_honors_absolute_xdg_and_rejects_relative_locations"
-        ]
       }
     ]
   },
@@ -355,15 +313,8 @@
         "package": "cyoa-core",
         "target": "decision_contracts",
         "tests": [
-          "text_002_unicode_lowercase_is_not_python_casefold",
-          "text_002_combining_marks_stay_inside_generated_id_words"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "save_validation",
-        "tests": [
-          "stored_history_cannot_be_normalized_capped_or_reidentified"
+          "text_002_combining_marks_stay_inside_generated_id_words",
+          "text_002_unicode_lowercase_is_not_python_casefold"
         ]
       },
       {
@@ -371,6 +322,13 @@
         "target": "save_compatibility",
         "tests": [
           "stored_unicode_matching_preserves_sharp_s_distinctions_and_rejects_lowercase_duplicates"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "save_validation",
+        "tests": [
+          "stored_history_cannot_be_normalized_capped_or_reidentified"
         ]
       }
     ]
@@ -380,11 +338,14 @@
     "coverage": "enforced",
     "checks": [
       {
-        "package": "cyoa-core",
-        "target": "lib",
+        "package": "cyoa-application",
+        "target": "session",
         "tests": [
-          "world::tests::selection_is_checked_against_the_world_it_owns",
-          "game::tests::start_and_restore_keep_the_selected_world_and_protagonist_together"
+          "failed_and_cancelled_results_preserve_state_and_exact_evidence",
+          "lifecycle_keeps_edited_outline_selection_and_one_opening",
+          "obsolete_cast_cannot_replace_an_edited_outline_and_actions_are_checked",
+          "stale_and_duplicate_completions_never_replace_current_state",
+          "wrong_kind_faults_and_quit_waits_for_active_completion"
         ]
       },
       {
@@ -395,29 +356,20 @@
         ]
       },
       {
-        "package": "cyoa-presentation",
-        "target": "session",
+        "package": "cyoa-core",
+        "target": "lib",
         "tests": [
-          "failed_and_cancelled_results_preserve_state_and_exact_evidence",
-          "stale_and_duplicate_completions_never_replace_current_state",
-          "lifecycle_keeps_edited_outline_selection_and_one_opening",
-          "wrong_kind_faults_and_quit_waits_for_active_completion"
-        ]
-      },
-      {
-        "package": "cyoa-presentation",
-        "target": "session",
-        "tests": [
-          "obsolete_cast_cannot_replace_an_edited_outline_and_actions_are_checked"
+          "game::tests::start_and_restore_keep_the_selected_world_and_protagonist_together",
+          "world::tests::selection_is_checked_against_the_world_it_owns"
         ]
       },
       {
         "package": "cyoa-core",
         "target": "restored_world",
         "tests": [
-          "restored_cast_rejects_empty_playables_and_exact_duplicates_in_each_role",
-          "restored_cast_preserves_namesakes_role_order_and_checked_selection",
           "established_cast_is_not_pruned_or_rejected_by_restore_generation_limits",
+          "restored_cast_preserves_namesakes_role_order_and_checked_selection",
+          "restored_cast_rejects_empty_playables_and_exact_duplicates_in_each_role",
           "restored_single_playable_and_no_npcs_is_a_valid_zero_turn_game"
         ]
       },
@@ -443,54 +395,26 @@
     "coverage": "enforced",
     "checks": [
       {
-        "package": "cyoa-core",
+        "package": "cyoa-application",
         "target": "lib",
         "tests": [
-          "world::tests::npc_limit_applies_to_surviving_entries_including_zero",
-          "world::tests::zero_npc_limit_does_not_consume_candidates",
-          "limits::tests::zero_is_rejected_for_nonzero_limits",
-          "limits::tests::zero_is_accepted_for_count_limits"
+          "session_persistence::tests::deferred_opening_and_load_reserve_their_followup_write_before_admission",
+          "session_persistence::tests::stale_duplicate_or_wrong_revision_storage_receipts_never_clean_or_rebind",
+          "session_persistence::tests::storage_counter_exhaustion_rejects_admission_but_reserves_final_quit_save"
         ]
       },
       {
-        "package": "cyoa-core",
-        "target": "restore_limits",
+        "package": "cyoa-application",
+        "target": "persistence",
         "tests": [
-          "current_limits_apply_to_every_snapshot_and_survive_commit_and_rewind",
-          "original_limits_remain_available_after_restoring_with_current_settings",
-          "raising_the_limit_allows_future_events_without_recovering_discarded_ones",
-          "empty_restored_games_use_the_selected_limits_for_their_opening_summary",
-          "consuming_rebind_matches_a_full_restore_and_leaves_matching_policies_untouched"
+          "explicit_restore_policy_and_read_only_queries_do_not_write_or_rebind_the_disk_stamp"
         ]
       },
       {
-        "package": "cyoa-infrastructure",
-        "target": "prompt_rendering",
+        "package": "cyoa-application",
+        "target": "session",
         "tests": [
-          "cast_requests_and_schemas_obey_small_caps_and_large_minimums"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "generation_use_cases",
-        "tests": [
-          "restored_limits_reach_captured_prompt_schema_and_committed_memory"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "codex_story_acceptance",
-        "tests": [
-          "both_restore_policies_control_actual_requests_snapshots_and_chapter_bridge",
-          "zero_npc_limit_survives_cast_selection_opening_and_continuation"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "claude_story_acceptance",
-        "tests": [
-          "both_restore_policies_control_actual_requests_snapshots_and_chapter_bridge",
-          "zero_npc_limit_survives_cast_selection_opening_and_continuation"
+          "in_session_load_advances_revision_preserves_request_ids_and_rejects_old_generation"
         ]
       },
       {
@@ -502,13 +426,64 @@
         ]
       },
       {
+        "package": "cyoa-cli",
+        "target": "storage_helper",
+        "tests": [
+          "coordinator_rewind_load_and_quit_persist_through_shipped_helpers"
+        ]
+      },
+      {
+        "package": "cyoa-core",
+        "target": "lib",
+        "tests": [
+          "limits::tests::zero_is_accepted_for_count_limits",
+          "limits::tests::zero_is_rejected_for_nonzero_limits",
+          "world::tests::npc_limit_applies_to_surviving_entries_including_zero",
+          "world::tests::zero_npc_limit_does_not_consume_candidates"
+        ]
+      },
+      {
+        "package": "cyoa-core",
+        "target": "restore_limits",
+        "tests": [
+          "consuming_rebind_matches_a_full_restore_and_leaves_matching_policies_untouched",
+          "current_limits_apply_to_every_snapshot_and_survive_commit_and_rewind",
+          "empty_restored_games_use_the_selected_limits_for_their_opening_summary",
+          "original_limits_remain_available_after_restoring_with_current_settings",
+          "raising_the_limit_allows_future_events_without_recovering_discarded_ones"
+        ]
+      },
+      {
         "package": "cyoa-core",
         "target": "restored_world",
         "tests": [
-          "restored_cast_rejects_empty_playables_and_exact_duplicates_in_each_role",
-          "restored_cast_preserves_namesakes_role_order_and_checked_selection",
           "established_cast_is_not_pruned_or_rejected_by_restore_generation_limits",
+          "restored_cast_preserves_namesakes_role_order_and_checked_selection",
+          "restored_cast_rejects_empty_playables_and_exact_duplicates_in_each_role",
           "restored_single_playable_and_no_npcs_is_a_valid_zero_turn_game"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "claude_story_acceptance",
+        "tests": [
+          "both_restore_policies_control_actual_requests_snapshots_and_chapter_bridge",
+          "zero_npc_limit_survives_cast_selection_opening_and_continuation"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_story_acceptance",
+        "tests": [
+          "both_restore_policies_control_actual_requests_snapshots_and_chapter_bridge",
+          "zero_npc_limit_survives_cast_selection_opening_and_continuation"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "generation_use_cases",
+        "tests": [
+          "restored_limits_reach_captured_prompt_schema_and_committed_memory"
         ]
       },
       {
@@ -520,51 +495,28 @@
         ]
       },
       {
-        "package": "cyoa-application",
-        "target": "persistence",
+        "package": "cyoa-infrastructure",
+        "target": "prompt_rendering",
         "tests": [
-          "explicit_restore_policy_and_read_only_queries_do_not_write_or_rebind_the_disk_stamp"
+          "cast_requests_and_schemas_obey_small_caps_and_large_minimums"
         ]
       },
       {
-        "package": "cyoa-presentation",
-        "target": "persistence",
+        "package": "cyoa-infrastructure",
+        "target": "session_persistence",
         "tests": [
-          "failed_autosave_keeps_accepted_turn_and_storage_retry_never_regenerates",
-          "uncertain_write_and_worker_panic_reconcile_same_attempt_without_a_new_slot",
-          "load_failure_preserves_stage_revision_binding_and_generation_retry",
-          "selection_saves_zero_turn_before_one_deferred_opening_and_quit_clears_it",
-          "rewind_and_changed_policy_load_save_canonical_snapshots_before_generation",
-          "source_mismatch_preserves_session_and_backup_recovery_creates_instead_of_replacing",
-          "quit_during_write_finishes_current_revision_once_without_duplicate_backup_rotation",
-          "quit_cancels_load_joins_and_saves_old_canonical_game_once",
-          "generation_and_storage_failure_views_remain_independent_and_copy_failure_keeps_binding",
           "cancelled_generation_never_autosaves_a_rejected_turn",
+          "failed_autosave_keeps_accepted_turn_and_storage_retry_never_regenerates",
           "failed_copy_retains_previous_uncertain_attempt_for_reconciliation",
-          "queued_generation_panic_remains_an_exit_failure_after_quit_and_successful_save"
-        ]
-      },
-      {
-        "package": "cyoa-presentation",
-        "target": "lib",
-        "tests": [
-          "persistence::tests::stale_duplicate_or_wrong_revision_storage_receipts_never_clean_or_rebind",
-          "persistence::tests::storage_counter_exhaustion_rejects_admission_but_reserves_final_quit_save",
-          "persistence::tests::deferred_opening_and_load_reserve_their_followup_write_before_admission"
-        ]
-      },
-      {
-        "package": "cyoa-presentation",
-        "target": "session",
-        "tests": [
-          "in_session_load_advances_revision_preserves_request_ids_and_rejects_old_generation"
-        ]
-      },
-      {
-        "package": "cyoa-cli",
-        "target": "storage_helper",
-        "tests": [
-          "coordinator_rewind_load_and_quit_persist_through_shipped_helpers"
+          "generation_and_storage_failure_views_remain_independent_and_copy_failure_keeps_binding",
+          "load_failure_preserves_stage_revision_binding_and_generation_retry",
+          "queued_generation_panic_remains_an_exit_failure_after_quit_and_successful_save",
+          "quit_cancels_load_joins_and_saves_old_canonical_game_once",
+          "quit_during_write_finishes_current_revision_once_without_duplicate_backup_rotation",
+          "rewind_and_changed_policy_load_save_canonical_snapshots_before_generation",
+          "selection_saves_zero_turn_before_one_deferred_opening_and_quit_clears_it",
+          "source_mismatch_preserves_session_and_backup_recovery_creates_instead_of_replacing",
+          "uncertain_write_and_worker_panic_reconcile_same_attempt_without_a_new_slot"
         ]
       }
     ]
@@ -573,35 +525,6 @@
     "id": "CHAPTER-001",
     "coverage": "enforced",
     "checks": [
-      {
-        "package": "cyoa-core",
-        "target": "lib",
-        "tests": [
-          "game::tests::later_turn_retitles_its_chapter_and_rewind_restores_the_earlier_title",
-          "game::tests::first_turn_cannot_open_a_chapter"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "prompt_rendering",
-        "tests": [
-          "retitling_instructions_reach_wire_commit_and_rewind"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "codex_story_acceptance",
-        "tests": [
-          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "claude_story_acceptance",
-        "tests": [
-          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
-        ]
-      },
       {
         "package": "cyoa-cli",
         "target": "controller_story",
@@ -618,11 +541,40 @@
         ]
       },
       {
+        "package": "cyoa-core",
+        "target": "lib",
+        "tests": [
+          "game::tests::first_turn_cannot_open_a_chapter",
+          "game::tests::later_turn_retitles_its_chapter_and_rewind_restores_the_earlier_title"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "claude_story_acceptance",
+        "tests": [
+          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_story_acceptance",
+        "tests": [
+          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
+        ]
+      },
+      {
         "package": "cyoa-infrastructure",
         "target": "persistence_roundtrip",
         "tests": [
           "frozen_full_story_roundtrip_preserves_complete_state_exact_audit_and_next_rewind_request",
           "zero_turn_selected_second_playable_roundtrip_restores_one_opening_request"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "prompt_rendering",
+        "tests": [
+          "retitling_instructions_reach_wire_commit_and_rewind"
         ]
       }
     ]
@@ -631,6 +583,64 @@
     "id": "ARCH-001",
     "coverage": "partial",
     "checks": [
+      {
+        "package": "cyoa-application",
+        "target": "lib",
+        "tests": [
+          "session::tests::exhausted_counters_and_wrong_base_revision_cannot_start_or_commit"
+        ]
+      },
+      {
+        "package": "cyoa-application",
+        "target": "persistence",
+        "tests": [
+          "checked_persistence_values_reject_invalid_names_counters_pages_and_bounds",
+          "explicit_restore_policy_and_read_only_queries_do_not_write_or_rebind_the_disk_stamp",
+          "explicit_storage_commands_make_exactly_one_call_each_and_return_observed_receipts",
+          "late_read_cancellation_rejects_results_but_never_hides_a_durable_write_receipt",
+          "pre_cancelled_commands_and_queries_never_call_the_repository",
+          "repository_failures_are_preserved_without_retry_or_changing_the_owned_snapshot",
+          "writes_forward_the_callers_own_preparation_sink_to_the_repository"
+        ]
+      },
+      {
+        "package": "cyoa-application",
+        "target": "session",
+        "tests": [
+          "failed_and_cancelled_results_preserve_state_and_exact_evidence",
+          "lifecycle_keeps_edited_outline_selection_and_one_opening",
+          "stale_and_duplicate_completions_never_replace_current_state",
+          "wrong_kind_faults_and_quit_waits_for_active_completion"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "controller_story",
+        "tests": [
+          "complete_controller_story_preserves_context_retry_identity_chapters_and_rewind",
+          "controller_zero_npcs_and_both_restore_policies_use_active_limits"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "application_library",
+        "tests": [
+          "library_client_owns_full_session_without_presentation_and_uses_explicit_storage_helper"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "filesystem_repository",
+        "tests": [
+          "atomic_create_replace_and_independent_writer_conflict_preserve_exact_backup",
+          "corrupt_primary_never_rotates_over_a_good_backup_and_recovery_creates_a_new_slot",
+          "disk_restore_cycles_preserve_original_limits_and_every_narrowed_snapshot",
+          "hostile_unicode_titles_never_become_paths_and_retitle_preserves_the_slot_id",
+          "listing_pages_report_corrupt_future_and_backup_only_without_rewriting_documents",
+          "locks_survive_primary_replacement_and_hostile_entries_are_never_followed",
+          "missing_and_unsafe_storage_paths_are_errors_without_following_links"
+        ]
+      },
       {
         "package": "cyoa-infrastructure",
         "target": "generation_use_cases",
@@ -644,74 +654,25 @@
         "package": "cyoa-infrastructure",
         "target": "lib",
         "tests": [
-          "backends::codex_cli::tests::invalid_model_home_and_search_path_values_are_rejected",
-          "backends::codex_cli::tests::executable_resolution_handles_absolute_relative_and_selected_path_names",
-          "backends::codex_cli::tests::executable_search_skips_nonexecutables_and_resolves_empty_path_entries",
-          "backends::codex_cli::tests::preparation_never_launches_the_selected_executable",
-          "backends::codex_cli::tests::failed_schema_write_is_located_and_workspace_drop_cleans_up",
-          "backends::codex_cli::tests::public_generation_preparation_uses_one_rendered_request_for_prompt_and_schema",
           "backends::claude_cli::tests::invalid_model_home_config_dir_and_search_path_values_are_rejected",
           "backends::claude_cli::tests::preparation_never_launches_the_selected_executable",
+          "backends::codex_cli::tests::executable_resolution_handles_absolute_relative_and_selected_path_names",
+          "backends::codex_cli::tests::executable_search_skips_nonexecutables_and_resolves_empty_path_entries",
+          "backends::codex_cli::tests::failed_schema_write_is_located_and_workspace_drop_cleans_up",
+          "backends::codex_cli::tests::invalid_model_home_and_search_path_values_are_rejected",
+          "backends::codex_cli::tests::preparation_never_launches_the_selected_executable",
+          "backends::codex_cli::tests::public_generation_preparation_uses_one_rendered_request_for_prompt_and_schema",
+          "execution::blocking::tests::interruptible_jobs_return_values_and_name_their_operation_in_failures",
+          "execution::blocking::tests::scoped_job_cancellation_rejects_result_after_joined_cleanup",
+          "execution::generation::tests::failed_spawn_keeps_use_cases_available_for_explicit_retry",
+          "execution::generation::tests::mailbox_budget_is_cumulative_and_does_not_split_unicode",
+          "persistence::repository::linux::tests::default_data_location_honors_absolute_xdg_and_rejects_relative_locations",
+          "persistence::repository::linux::tests::every_write_failure_preserves_complete_files_visibility_and_retry_material",
+          "persistence::repository::linux::tests::first_create_receipt_loss_reconciles_without_duplicate_slots_or_backup_rotation",
+          "persistence::repository::linux::tests::preparation_read_encode_and_cleanup_failures_keep_the_initiating_cause",
+          "persistence::repository::linux::tests::sync_order_constant_clock_collision_entropy_and_revision_exhaustion_are_observable",
           "persistence::repository::linux::tests::writes_publish_the_prepared_attempt_before_their_first_disk_mutation",
           "persistence::repository::linux::tests::writes_rejected_at_admission_publish_nothing"
-        ]
-      },
-      {
-        "package": "cyoa-presentation",
-        "target": "session",
-        "tests": [
-          "failed_and_cancelled_results_preserve_state_and_exact_evidence",
-          "stale_and_duplicate_completions_never_replace_current_state",
-          "lifecycle_keeps_edited_outline_selection_and_one_opening",
-          "wrong_kind_faults_and_quit_waits_for_active_completion"
-        ]
-      },
-      {
-        "package": "cyoa-presentation",
-        "target": "worker",
-        "tests": [
-          "silent_cancel_joins_before_retry_and_preserves_generator_and_evidence",
-          "joined_success_queued_before_cancel_is_discarded",
-          "panic_faults_without_committing_and_quit_remains_available",
-          "paused_progress_consumer_cannot_block_completion_or_exceed_budget",
-          "dropping_runner_cancels_and_joins_silent_request"
-        ]
-      },
-      {
-        "package": "cyoa-presentation",
-        "target": "lib",
-        "tests": [
-          "worker::tests::mailbox_budget_is_cumulative_and_does_not_split_unicode",
-          "worker::tests::failed_spawn_keeps_use_cases_available_for_explicit_retry",
-          "session::tests::exhausted_counters_and_wrong_base_revision_cannot_start_or_commit"
-        ]
-      },
-      {
-        "package": "cyoa-cli",
-        "target": "controller_story",
-        "tests": [
-          "complete_controller_story_preserves_context_retry_identity_chapters_and_rewind",
-          "controller_zero_npcs_and_both_restore_policies_use_active_limits"
-        ]
-      },
-      {
-        "package": "cyoa-presentation",
-        "target": "worker",
-        "tests": [
-          "quick_action_and_player_text_share_the_same_generation_intent"
-        ]
-      },
-      {
-        "package": "cyoa-application",
-        "target": "persistence",
-        "tests": [
-          "repository_failures_are_preserved_without_retry_or_changing_the_owned_snapshot",
-          "pre_cancelled_commands_and_queries_never_call_the_repository",
-          "late_read_cancellation_rejects_results_but_never_hides_a_durable_write_receipt",
-          "checked_persistence_values_reject_invalid_names_counters_pages_and_bounds",
-          "explicit_restore_policy_and_read_only_queries_do_not_write_or_rebind_the_disk_stamp",
-          "explicit_storage_commands_make_exactly_one_call_each_and_return_observed_receipts",
-          "writes_forward_the_callers_own_preparation_sink_to_the_repository"
         ]
       },
       {
@@ -724,46 +685,22 @@
       },
       {
         "package": "cyoa-infrastructure",
-        "target": "filesystem_repository",
+        "target": "worker",
         "tests": [
-          "missing_and_unsafe_storage_paths_are_errors_without_following_links",
-          "atomic_create_replace_and_independent_writer_conflict_preserve_exact_backup",
-          "corrupt_primary_never_rotates_over_a_good_backup_and_recovery_creates_a_new_slot",
-          "locks_survive_primary_replacement_and_hostile_entries_are_never_followed",
-          "listing_pages_report_corrupt_future_and_backup_only_without_rewriting_documents",
-          "disk_restore_cycles_preserve_original_limits_and_every_narrowed_snapshot"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "lib",
-        "tests": [
-          "persistence::repository::linux::tests::every_write_failure_preserves_complete_files_visibility_and_retry_material",
-          "persistence::repository::linux::tests::first_create_receipt_loss_reconciles_without_duplicate_slots_or_backup_rotation",
-          "persistence::repository::linux::tests::sync_order_constant_clock_collision_entropy_and_revision_exhaustion_are_observable",
-          "persistence::repository::linux::tests::preparation_read_encode_and_cleanup_failures_keep_the_initiating_cause"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "filesystem_repository",
-        "tests": [
-          "hostile_unicode_titles_never_become_paths_and_retitle_preserves_the_slot_id"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "lib",
-        "tests": [
-          "persistence::repository::linux::tests::default_data_location_honors_absolute_xdg_and_rejects_relative_locations"
+          "dropping_runner_cancels_and_joins_silent_request",
+          "joined_success_queued_before_cancel_is_discarded",
+          "panic_faults_without_committing_and_quit_remains_available",
+          "paused_progress_consumer_cannot_block_completion_or_exceed_budget",
+          "quick_action_and_player_text_share_the_same_generation_intent",
+          "silent_cancel_joins_before_retry_and_preserves_generator_and_evidence"
         ]
       },
       {
         "package": "cyoa-presentation",
         "target": "commands",
         "tests": [
-          "parsed_options_translate_into_application_commands_without_panicking",
-          "inconsistent_play_options_are_usage_errors_not_panics"
+          "inconsistent_play_options_are_usage_errors_not_panics",
+          "parsed_options_translate_into_application_commands_without_panicking"
         ]
       }
     ]
@@ -772,6 +709,41 @@
     "id": "ARCH-002",
     "coverage": "partial",
     "checks": [
+      {
+        "package": "cyoa-application",
+        "target": "doc",
+        "tests": [
+          "attempt::PendingWrite",
+          "session::SessionView"
+        ]
+      },
+      {
+        "package": "cyoa-application",
+        "target": "persistence",
+        "tests": [
+          "storage_failures_derive_replacement_stamps_from_their_own_write"
+        ]
+      },
+      {
+        "package": "cyoa-core",
+        "target": "doc",
+        "tests": [
+          "character::Character",
+          "character::CharacterDetails",
+          "game::GameState",
+          "summary::StorySummary"
+        ]
+      },
+      {
+        "package": "cyoa-core",
+        "target": "restored_world",
+        "tests": [
+          "established_cast_is_not_pruned_or_rejected_by_restore_generation_limits",
+          "restored_cast_preserves_namesakes_role_order_and_checked_selection",
+          "restored_cast_rejects_empty_playables_and_exact_duplicates_in_each_role",
+          "restored_single_playable_and_no_npcs_is_a_valid_zero_turn_game"
+        ]
+      },
       {
         "package": "cyoa-core",
         "target": "summary_merge",
@@ -783,27 +755,41 @@
         ]
       },
       {
-        "package": "cyoa-core",
-        "target": "doc",
+        "package": "cyoa-infrastructure",
+        "target": "backend_contract",
         "tests": [
-          "character::Character",
-          "character::CharacterDetails",
-          "summary::StorySummary",
-          "game::GameState"
+          "adapter_reported_invalid_cache_accounting_normalizes_to_unknown_over_a_real_process_boundary",
+          "normalize_input_tokens_distinguishes_unknown_from_zero_and_repairs_only_invalid_cache"
         ]
       },
       {
         "package": "cyoa-infrastructure",
-        "target": "wire_mapping",
+        "target": "claude_backend",
         "tests": [
-          "blank_wire_fields_map_to_none_across_every_optional_field",
-          "upcoming_events_null_is_keep_empty_list_is_replace_with_no_threads",
-          "incomplete_generated_characters_are_dropped_not_erroring_the_whole_cast",
-          "unknown_quick_action_kind_deserializes_to_other_not_an_error",
-          "blank_quick_action_text_is_filtered_before_selection_not_a_hard_error",
-          "blank_narrative_is_rejected_but_blank_scene_description_is_not",
-          "new_chapter_marker_carries_a_blank_filtered_title_and_so_does_continue",
-          "world_outline_rejects_blank_title_or_description"
+          "duplicate_auth_keys_fail_closed_before_generation_and_retain_status"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "claude_story_acceptance",
+        "tests": [
+          "late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once",
+          "zero_npc_limit_survives_cast_selection_opening_and_continuation"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_backend",
+        "tests": [
+          "duplicate_control_keys_reject_without_emission_and_preserve_prior_candidate"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_story_acceptance",
+        "tests": [
+          "late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once",
+          "zero_npc_limit_survives_cast_selection_opening_and_continuation"
         ]
       },
       {
@@ -817,96 +803,57 @@
         "package": "cyoa-infrastructure",
         "target": "lib",
         "tests": [
-          "generation::backend_compat::codex_cli::tests::adapted_turn_keeps_order_nullability_defaults_and_empty_strings",
           "backends::claude_cli::protocol::tests::usage_and_provenance_distinguish_unknown_from_zero_and_never_invent_cost",
+          "generation::backend_compat::codex_cli::tests::adapted_turn_keeps_order_nullability_defaults_and_empty_strings",
           "persistence::helper::tests::helper_versions_round_trip_and_a_zero_version_is_a_helper_fault",
           "persistence::migrations::tests::synthetic_scaffold_rejects_missing_steps_and_incorrect_advancement"
         ]
       },
       {
         "package": "cyoa-infrastructure",
-        "target": "wire_mapping",
+        "target": "prepared_attempt",
         "tests": [
-          "required_response_text_distinguishes_missing_null_and_empty",
-          "wire_defaults_and_nullable_updates_keep_their_distinct_meanings"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "backend_contract",
-        "tests": [
-          "adapter_reported_invalid_cache_accounting_normalizes_to_unknown_over_a_real_process_boundary",
-          "normalize_input_tokens_distinguishes_unknown_from_zero_and_repairs_only_invalid_cache"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "codex_story_acceptance",
-        "tests": [
-          "late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once",
-          "zero_npc_limit_survives_cast_selection_opening_and_continuation"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "claude_story_acceptance",
-        "tests": [
-          "late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once",
-          "zero_npc_limit_survives_cast_selection_opening_and_continuation"
-        ]
-      },
-      {
-        "package": "cyoa-core",
-        "target": "restored_world",
-        "tests": [
-          "restored_cast_rejects_empty_playables_and_exact_duplicates_in_each_role",
-          "restored_cast_preserves_namesakes_role_order_and_checked_selection",
-          "established_cast_is_not_pruned_or_rejected_by_restore_generation_limits",
-          "restored_single_playable_and_no_npcs_is_a_valid_zero_turn_game"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "save_validation",
-        "tests": [
-          "malformed_versions_metadata_and_world_are_rejected_without_repair",
-          "invalid_json_utf8_and_duplicate_keys_are_never_last_key_wins",
-          "stored_history_cannot_be_normalized_capped_or_reidentified",
-          "required_fields_and_known_field_types_cannot_hide_behind_defaults",
-          "size_depth_overflow_and_nested_duplicate_keys_are_bounded_errors",
-          "cast_and_stored_character_ids_are_required_fields_not_failing_defaults"
+          "foreign_opaque_attempt_cannot_replace_a_real_saved_document",
+          "prepared_document_bounds_and_exact_evidence_are_preserved"
         ]
       },
       {
         "package": "cyoa-infrastructure",
         "target": "save_compatibility",
         "tests": [
-          "only_shipped_version_one_is_supported_and_reads_leave_input_bytes_unchanged",
-          "optional_omissions_nulls_and_empty_replacements_keep_distinct_meanings",
           "additive_optional_fields_warn_and_are_omitted_on_resave_while_known_fields_survive",
           "additive_source_fields_are_reported_for_both_source_variants",
+          "only_shipped_version_one_is_supported_and_reads_leave_input_bytes_unchanged",
+          "optional_omissions_nulls_and_empty_replacements_keep_distinct_meanings",
           "valid_authoritative_snapshots_and_unknown_style_keys_are_preserved_without_delta_replay"
         ]
       },
       {
-        "package": "cyoa-application",
-        "target": "persistence",
+        "package": "cyoa-infrastructure",
+        "target": "save_validation",
         "tests": [
-          "storage_failures_derive_replacement_stamps_from_their_own_write"
+          "cast_and_stored_character_ids_are_required_fields_not_failing_defaults",
+          "invalid_json_utf8_and_duplicate_keys_are_never_last_key_wins",
+          "malformed_versions_metadata_and_world_are_rejected_without_repair",
+          "required_fields_and_known_field_types_cannot_hide_behind_defaults",
+          "size_depth_overflow_and_nested_duplicate_keys_are_bounded_errors",
+          "stored_history_cannot_be_normalized_capped_or_reidentified"
         ]
       },
       {
         "package": "cyoa-infrastructure",
-        "target": "codex_backend",
+        "target": "wire_mapping",
         "tests": [
-          "duplicate_control_keys_reject_without_emission_and_preserve_prior_candidate"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "claude_backend",
-        "tests": [
-          "duplicate_auth_keys_fail_closed_before_generation_and_retain_status"
+          "blank_narrative_is_rejected_but_blank_scene_description_is_not",
+          "blank_quick_action_text_is_filtered_before_selection_not_a_hard_error",
+          "blank_wire_fields_map_to_none_across_every_optional_field",
+          "incomplete_generated_characters_are_dropped_not_erroring_the_whole_cast",
+          "new_chapter_marker_carries_a_blank_filtered_title_and_so_does_continue",
+          "required_response_text_distinguishes_missing_null_and_empty",
+          "unknown_quick_action_kind_deserializes_to_other_not_an_error",
+          "upcoming_events_null_is_keep_empty_list_is_replace_with_no_threads",
+          "wire_defaults_and_nullable_updates_keep_their_distinct_meanings",
+          "world_outline_rejects_blank_title_or_description"
         ]
       }
     ]
@@ -917,30 +864,9 @@
     "checks": [
       {
         "package": "cyoa-infrastructure",
-        "target": "lib",
+        "target": "claude_story_acceptance",
         "tests": [
-          "generation::schema::tests::generic_schemas_declare_a_root_schema_key",
-          "generation::backend_compat::claude_cli::tests::adapt_schema_strips_the_root_schema_key_and_nothing_else",
-          "generation::backend_compat::codex_cli::tests::malformed_property_map_is_a_located_preparation_error",
-          "generation::backend_compat::codex_cli::tests::required_names_outside_properties_are_rejected_without_losing_constraints",
-          "generation::backend_compat::codex_cli::tests::unsupported_dialects_and_structural_keywords_are_located_errors",
-          "generation::backend_compat::codex_cli::tests::malformed_required_keyword_is_rejected_even_without_properties",
-          "generation::backend_compat::codex_cli::tests::a_ref_with_a_union_sibling_is_rejected_at_its_location",
-          "generation::backend_compat::codex_cli::tests::unsupported_schema_children_report_their_location_and_boolean_constraints_survive",
-          "generation::backend_compat::codex_cli::tests::bundled_schemas_match_independent_discovery_expectations",
-          "generation::backend_compat::codex_cli::tests::transformation_is_idempotent_and_leaves_schema_looking_annotations_opaque",
-          "generation::backend_compat::codex_cli::tests::framing_matches_the_committed_discovery_capture_byte_for_byte",
-          "generation::schema::tests::shared_turn_schema_keeps_optional_character_updates"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "lib",
-        "tests": [
-          "backends::codex_cli::protocol::tests::frozen_live_story_captures_match_independent_payload_and_usage_expectations",
-          "backends::codex_cli::protocol::tests::live_tool_canary_is_unsupported_even_though_the_cli_exited_successfully",
-          "backends::claude_cli::tests::schema_argument_is_the_claude_adaptation_of_the_shared_schema_and_nothing_else",
-          "backends::claude_cli::tests::advisor_suppression_is_local_to_the_claude_invocation"
+          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
         ]
       },
       {
@@ -952,9 +878,24 @@
       },
       {
         "package": "cyoa-infrastructure",
-        "target": "claude_story_acceptance",
+        "target": "lib",
         "tests": [
-          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
+          "backends::claude_cli::tests::advisor_suppression_is_local_to_the_claude_invocation",
+          "backends::claude_cli::tests::schema_argument_is_the_claude_adaptation_of_the_shared_schema_and_nothing_else",
+          "backends::codex_cli::protocol::tests::frozen_live_story_captures_match_independent_payload_and_usage_expectations",
+          "backends::codex_cli::protocol::tests::live_tool_canary_is_unsupported_even_though_the_cli_exited_successfully",
+          "generation::backend_compat::claude_cli::tests::adapt_schema_strips_the_root_schema_key_and_nothing_else",
+          "generation::backend_compat::codex_cli::tests::a_ref_with_a_union_sibling_is_rejected_at_its_location",
+          "generation::backend_compat::codex_cli::tests::bundled_schemas_match_independent_discovery_expectations",
+          "generation::backend_compat::codex_cli::tests::framing_matches_the_committed_discovery_capture_byte_for_byte",
+          "generation::backend_compat::codex_cli::tests::malformed_property_map_is_a_located_preparation_error",
+          "generation::backend_compat::codex_cli::tests::malformed_required_keyword_is_rejected_even_without_properties",
+          "generation::backend_compat::codex_cli::tests::required_names_outside_properties_are_rejected_without_losing_constraints",
+          "generation::backend_compat::codex_cli::tests::transformation_is_idempotent_and_leaves_schema_looking_annotations_opaque",
+          "generation::backend_compat::codex_cli::tests::unsupported_dialects_and_structural_keywords_are_located_errors",
+          "generation::backend_compat::codex_cli::tests::unsupported_schema_children_report_their_location_and_boolean_constraints_survive",
+          "generation::schema::tests::generic_schemas_declare_a_root_schema_key",
+          "generation::schema::tests::shared_turn_schema_keeps_optional_character_updates"
         ]
       }
     ]
@@ -969,34 +910,6 @@
     "coverage": "enforced",
     "checks": [
       {
-        "package": "cyoa-infrastructure",
-        "target": "prompt_rendering",
-        "tests": [
-          "opening_turn_prompt_includes_the_identity_review_addition_exactly_once"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "generation_use_cases",
-        "tests": [
-          "scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "codex_story_acceptance",
-        "tests": [
-          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "claude_story_acceptance",
-        "tests": [
-          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
-        ]
-      },
-      {
         "package": "cyoa-cli",
         "target": "controller_story",
         "tests": [
@@ -1010,6 +923,34 @@
         "tests": [
           "both_shipped_backend_commands_play_retry_and_inspect_canonical_story"
         ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "claude_story_acceptance",
+        "tests": [
+          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_story_acceptance",
+        "tests": [
+          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "generation_use_cases",
+        "tests": [
+          "scripted_lifecycle_uses_edited_outline_and_preserves_namesake_ids_without_extra_calls"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "prompt_rendering",
+        "tests": [
+          "opening_turn_prompt_includes_the_identity_review_addition_exactly_once"
+        ]
       }
     ]
   },
@@ -1018,122 +959,10 @@
     "coverage": "partial",
     "checks": [
       {
-        "package": "cyoa-infrastructure",
-        "target": "codex_backend",
-        "tests": [
-          "candidate_and_success_terminal_cannot_override_nonzero_process_exit",
-          "protocol_rejection_and_missing_completion_keep_candidate_without_emission",
-          "preflight_rejects_non_subscription_unknown_and_conflicting_auth_without_generation",
-          "timeout_after_candidate_retains_unemitted_payload_and_reaps_child",
-          "silent_cancellation_uses_a_child_handshake_and_pre_cancel_launches_nothing",
-          "capped_output_preserves_prefix_metadata_and_a_structured_cause",
-          "successful_response_emits_once_after_cleanup_and_retains_usage_and_exact_request",
-          "cancellation_from_the_complete_callback_cannot_return_success",
-          "preparation_failure_and_removed_executable_never_launch_a_generation",
-          "no_stdout_failure_and_invalid_protocol_preserve_bytes_with_distinct_categories",
-          "application_receives_complete_candidate_and_diagnostics_on_adapter_timeout",
-          "failed_auth_exit_is_unavailable_even_with_a_success_looking_status_on_stdout",
-          "ineligible_message_is_rejected_after_cleanup",
-          "candidate_without_terminal_is_rejected_after_cleanup",
-          "conflicting_terminal_is_rejected_after_cleanup",
-          "duplicated_terminal_type_cannot_authorize_success_at_the_real_boundary"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "codex_story_acceptance",
-        "tests": [
-          "late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once",
-          "real_workspace_cleanup_failure_preserves_the_game_and_candidate",
-          "cancellation_and_output_cap_preserve_state_context_and_explicit_retry",
-          "both_restore_policies_control_actual_requests_snapshots_and_chapter_bridge",
-          "zero_npc_limit_survives_cast_selection_opening_and_continuation",
-          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
+        "package": "cyoa-application",
         "target": "lib",
         "tests": [
-          "backends::claude_cli::tests::nul_and_oversize_arguments_fail_preparation_before_any_launch",
-          "backends::claude_cli::tests::a_configured_model_is_inserted_before_the_prompt_arguments",
-          "backends::claude_cli::protocol::tests::frozen_error_variants_reject_with_located_reasons_and_candidate_evidence",
-          "backends::claude_cli::protocol::tests::frozen_completed_variants_emit_expected_previews_payload_usage_and_provenance",
-          "backends::claude_cli::protocol::tests::live_failure_captures_are_rejected_at_the_expected_record",
-          "backends::claude_cli::protocol::tests::malformed_terminal_metadata_keeps_the_exact_candidate_span",
-          "backends::claude_cli::protocol::tests::duplicate_control_fields_make_a_record_ambiguous_and_are_rejected",
-          "backends::codex_cli::protocol::tests::duplicated_control_keys_reject_the_record_instead_of_picking_one",
-          "backends::codex_cli::protocol::tests::duplicated_payload_keys_are_invalid_payload_with_the_candidate_retained",
-          "backends::codex_cli::protocol::tests::duplicates_outside_control_objects_are_tolerated_for_minor_cli_evolution"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "claude_backend",
-        "tests": [
-          "result_cannot_override_nonzero_exit_and_previews_are_tentative_evidence",
-          "protocol_rejections_keep_candidate_evidence_and_clean_up",
-          "is_error_result_is_rejected_after_cleanup",
-          "stream_without_a_result_is_rejected_after_cleanup",
-          "duplicate_result_is_rejected_after_cleanup",
-          "ambiguous_payload_blocks_are_rejected_after_cleanup",
-          "preflight_rejects_non_subscription_unknown_and_conflicting_auth_without_generation",
-          "failed_auth_exit_is_unavailable_even_with_a_success_looking_status_on_stdout",
-          "timeout_after_result_retains_unemitted_candidate_and_reaps_child",
-          "silent_cancellation_uses_a_child_handshake_and_pre_cancel_launches_nothing",
-          "cancellation_from_a_preview_stops_the_live_child_and_keeps_the_evidence",
-          "capped_output_preserves_prefix_metadata_and_a_structured_cause",
-          "successful_response_forwards_previews_then_returns_exact_payload_usage_and_provenance",
-          "complete_only_stream_emits_the_payload_once_after_cleanup",
-          "final_payload_wins_when_it_disagrees_with_the_preview",
-          "cancellation_from_the_complete_callback_cannot_return_success",
-          "preparation_failure_and_removed_executable_never_launch_a_generation",
-          "no_stdout_failure_and_invalid_protocol_preserve_bytes_with_distinct_categories",
-          "application_receives_candidate_and_diagnostics_on_adapter_timeout",
-          "malformed_result_metadata_keeps_the_candidate_visible_to_the_application",
-          "ambiguous_control_fields_cannot_authorize_success_at_the_real_boundary"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "claude_story_acceptance",
-        "tests": [
-          "late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once",
-          "real_workspace_cleanup_failure_preserves_the_game_and_candidate",
-          "cancellation_and_output_cap_preserve_state_context_and_explicit_retry",
-          "both_restore_policies_control_actual_requests_snapshots_and_chapter_bridge",
-          "zero_npc_limit_survives_cast_selection_opening_and_continuation",
-          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context",
-          "a_disagreeing_preview_is_shown_but_only_the_final_payload_is_committed",
-          "an_enforce_retry_stream_commits_only_the_structured_payload"
-        ]
-      },
-      {
-        "package": "cyoa-presentation",
-        "target": "worker",
-        "tests": [
-          "silent_cancel_joins_before_retry_and_preserves_generator_and_evidence",
-          "joined_success_queued_before_cancel_is_discarded",
-          "panic_faults_without_committing_and_quit_remains_available",
-          "paused_progress_consumer_cannot_block_completion_or_exceed_budget",
-          "dropping_runner_cancels_and_joins_silent_request"
-        ]
-      },
-      {
-        "package": "cyoa-presentation",
-        "target": "lib",
-        "tests": [
-          "worker::tests::mailbox_budget_is_cumulative_and_does_not_split_unicode",
-          "worker::tests::failed_spawn_keeps_use_cases_available_for_explicit_retry",
           "session::tests::exhausted_counters_and_wrong_base_revision_cannot_start_or_commit"
-        ]
-      },
-      {
-        "package": "cyoa-cli",
-        "target": "controller_story",
-        "tests": [
-          "complete_controller_story_preserves_context_retry_identity_chapters_and_rewind",
-          "controller_zero_npcs_and_both_restore_policies_use_active_limits"
         ]
       },
       {
@@ -1146,34 +975,10 @@
       },
       {
         "package": "cyoa-cli",
-        "target": "headless",
+        "target": "controller_story",
         "tests": [
-          "chosen_backend_is_required_and_demo_never_resolves_a_vendor",
-          "both_shipped_backend_commands_play_retry_and_inspect_canonical_story",
-          "missing_chosen_executable_does_not_probe_other_backend",
-          "command_surface_rejects_demo_vendor_settings_and_unimplemented_ui",
-          "malformed_turn_keeps_state_and_raw_candidate_until_explicit_retry"
-        ]
-      },
-      {
-        "package": "cyoa-presentation",
-        "target": "commands",
-        "tests": [
-          "persistence_cli_rejects_missing_policy_paths_invalid_ids_and_page_bounds",
-          "persistence_cli_accepts_explicit_resume_policies_and_auth_free_queries",
-          "in_session_persistence_syntax_rejects_partial_paths_and_invalid_rewind_before_effects"
-        ]
-      },
-      {
-        "package": "cyoa-cli",
-        "target": "headless_persistence",
-        "tests": [
-          "auth_free_list_inspect_and_invalid_resume_leave_save_bytes_unchanged",
-          "zero_turn_resume_waits_for_explicit_opening_and_rewind_persists_before_next_request",
-          "explicit_backup_recovery_creates_a_fresh_slot_and_preserves_damaged_originals",
-          "both_fixture_backends_restart_from_disk_and_live_saves_are_vendor_neutral",
-          "startup_policy_changes_persist_after_auth_and_failed_auth_never_rewrites_a_save",
-          "in_session_load_keeps_failed_edit_buffers_and_save_copy_switches_slots_only_after_success"
+          "complete_controller_story_preserves_context_retry_identity_chapters_and_rewind",
+          "controller_zero_npcs_and_both_restore_policies_use_active_limits"
         ]
       },
       {
@@ -1193,25 +998,149 @@
       },
       {
         "package": "cyoa-cli",
-        "target": "persistence_shutdown",
+        "target": "headless",
         "tests": [
-          "bounded_silent_storage_keeps_input_responsive_and_reaps_current_and_final_helpers",
-          "input_and_output_errors_still_save_last_canonical_story_and_remain_errors",
-          "blocked_storage_and_faulted_output_sinks_preserve_canonical_state_and_reap_helpers"
+          "both_shipped_backend_commands_play_retry_and_inspect_canonical_story",
+          "chosen_backend_is_required_and_demo_never_resolves_a_vendor",
+          "command_surface_rejects_demo_vendor_settings_and_unimplemented_ui",
+          "malformed_turn_keeps_state_and_raw_candidate_until_explicit_retry",
+          "missing_chosen_executable_does_not_probe_other_backend"
         ]
       },
       {
-        "package": "cyoa-infrastructure",
-        "target": "codex_backend",
+        "package": "cyoa-cli",
+        "target": "headless_persistence",
         "tests": [
-          "duplicate_control_keys_reject_without_emission_and_preserve_prior_candidate"
+          "auth_free_list_inspect_and_invalid_resume_leave_save_bytes_unchanged",
+          "both_fixture_backends_restart_from_disk_and_live_saves_are_vendor_neutral",
+          "explicit_backup_recovery_creates_a_fresh_slot_and_preserves_damaged_originals",
+          "in_session_load_keeps_failed_edit_buffers_and_save_copy_switches_slots_only_after_success",
+          "startup_policy_changes_persist_after_auth_and_failed_auth_never_rewrites_a_save",
+          "zero_turn_resume_waits_for_explicit_opening_and_rewind_persists_before_next_request"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "persistence_shutdown",
+        "tests": [
+          "blocked_storage_and_faulted_output_sinks_preserve_canonical_state_and_reap_helpers",
+          "bounded_silent_storage_keeps_input_responsive_and_reaps_current_and_final_helpers",
+          "input_and_output_errors_still_save_last_canonical_story_and_remain_errors"
         ]
       },
       {
         "package": "cyoa-infrastructure",
         "target": "claude_backend",
         "tests": [
-          "duplicate_auth_keys_fail_closed_before_generation_and_retain_status"
+          "ambiguous_control_fields_cannot_authorize_success_at_the_real_boundary",
+          "ambiguous_payload_blocks_are_rejected_after_cleanup",
+          "application_receives_candidate_and_diagnostics_on_adapter_timeout",
+          "cancellation_from_a_preview_stops_the_live_child_and_keeps_the_evidence",
+          "cancellation_from_the_complete_callback_cannot_return_success",
+          "capped_output_preserves_prefix_metadata_and_a_structured_cause",
+          "complete_only_stream_emits_the_payload_once_after_cleanup",
+          "duplicate_auth_keys_fail_closed_before_generation_and_retain_status",
+          "duplicate_result_is_rejected_after_cleanup",
+          "failed_auth_exit_is_unavailable_even_with_a_success_looking_status_on_stdout",
+          "final_payload_wins_when_it_disagrees_with_the_preview",
+          "is_error_result_is_rejected_after_cleanup",
+          "malformed_result_metadata_keeps_the_candidate_visible_to_the_application",
+          "no_stdout_failure_and_invalid_protocol_preserve_bytes_with_distinct_categories",
+          "preflight_rejects_non_subscription_unknown_and_conflicting_auth_without_generation",
+          "preparation_failure_and_removed_executable_never_launch_a_generation",
+          "protocol_rejections_keep_candidate_evidence_and_clean_up",
+          "result_cannot_override_nonzero_exit_and_previews_are_tentative_evidence",
+          "silent_cancellation_uses_a_child_handshake_and_pre_cancel_launches_nothing",
+          "stream_without_a_result_is_rejected_after_cleanup",
+          "successful_response_forwards_previews_then_returns_exact_payload_usage_and_provenance",
+          "timeout_after_result_retains_unemitted_candidate_and_reaps_child"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "claude_story_acceptance",
+        "tests": [
+          "a_disagreeing_preview_is_shown_but_only_the_final_payload_is_committed",
+          "an_enforce_retry_stream_commits_only_the_structured_payload",
+          "both_restore_policies_control_actual_requests_snapshots_and_chapter_bridge",
+          "cancellation_and_output_cap_preserve_state_context_and_explicit_retry",
+          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context",
+          "late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once",
+          "real_workspace_cleanup_failure_preserves_the_game_and_candidate",
+          "zero_npc_limit_survives_cast_selection_opening_and_continuation"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_backend",
+        "tests": [
+          "application_receives_complete_candidate_and_diagnostics_on_adapter_timeout",
+          "cancellation_from_the_complete_callback_cannot_return_success",
+          "candidate_and_success_terminal_cannot_override_nonzero_process_exit",
+          "candidate_without_terminal_is_rejected_after_cleanup",
+          "capped_output_preserves_prefix_metadata_and_a_structured_cause",
+          "conflicting_terminal_is_rejected_after_cleanup",
+          "duplicate_control_keys_reject_without_emission_and_preserve_prior_candidate",
+          "duplicated_terminal_type_cannot_authorize_success_at_the_real_boundary",
+          "failed_auth_exit_is_unavailable_even_with_a_success_looking_status_on_stdout",
+          "ineligible_message_is_rejected_after_cleanup",
+          "no_stdout_failure_and_invalid_protocol_preserve_bytes_with_distinct_categories",
+          "preflight_rejects_non_subscription_unknown_and_conflicting_auth_without_generation",
+          "preparation_failure_and_removed_executable_never_launch_a_generation",
+          "protocol_rejection_and_missing_completion_keep_candidate_without_emission",
+          "silent_cancellation_uses_a_child_handshake_and_pre_cancel_launches_nothing",
+          "successful_response_emits_once_after_cleanup_and_retains_usage_and_exact_request",
+          "timeout_after_candidate_retains_unemitted_payload_and_reaps_child"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_story_acceptance",
+        "tests": [
+          "both_restore_policies_control_actual_requests_snapshots_and_chapter_bridge",
+          "cancellation_and_output_cap_preserve_state_context_and_explicit_retry",
+          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context",
+          "late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once",
+          "real_workspace_cleanup_failure_preserves_the_game_and_candidate",
+          "zero_npc_limit_survives_cast_selection_opening_and_continuation"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "backends::claude_cli::protocol::tests::duplicate_control_fields_make_a_record_ambiguous_and_are_rejected",
+          "backends::claude_cli::protocol::tests::frozen_completed_variants_emit_expected_previews_payload_usage_and_provenance",
+          "backends::claude_cli::protocol::tests::frozen_error_variants_reject_with_located_reasons_and_candidate_evidence",
+          "backends::claude_cli::protocol::tests::live_failure_captures_are_rejected_at_the_expected_record",
+          "backends::claude_cli::protocol::tests::malformed_terminal_metadata_keeps_the_exact_candidate_span",
+          "backends::claude_cli::tests::a_configured_model_is_inserted_before_the_prompt_arguments",
+          "backends::claude_cli::tests::nul_and_oversize_arguments_fail_preparation_before_any_launch",
+          "backends::codex_cli::protocol::tests::duplicated_control_keys_reject_the_record_instead_of_picking_one",
+          "backends::codex_cli::protocol::tests::duplicated_payload_keys_are_invalid_payload_with_the_candidate_retained",
+          "backends::codex_cli::protocol::tests::duplicates_outside_control_objects_are_tolerated_for_minor_cli_evolution",
+          "execution::generation::tests::failed_spawn_keeps_use_cases_available_for_explicit_retry",
+          "execution::generation::tests::mailbox_budget_is_cumulative_and_does_not_split_unicode"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "worker",
+        "tests": [
+          "dropping_runner_cancels_and_joins_silent_request",
+          "joined_success_queued_before_cancel_is_discarded",
+          "panic_faults_without_committing_and_quit_remains_available",
+          "paused_progress_consumer_cannot_block_completion_or_exceed_budget",
+          "silent_cancel_joins_before_retry_and_preserves_generator_and_evidence"
+        ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "commands",
+        "tests": [
+          "in_session_persistence_syntax_rejects_partial_paths_and_invalid_rewind_before_effects",
+          "persistence_cli_accepts_explicit_resume_policies_and_auth_free_queries",
+          "persistence_cli_rejects_missing_policy_paths_invalid_ids_and_page_bounds"
         ]
       }
     ]
@@ -1224,57 +1153,45 @@
         "package": "cyoa-infrastructure",
         "target": "lib",
         "tests": [
+          "backends::claude_cli::tests::narrative_stays_the_first_property_in_the_schema_argument",
+          "backends::claude_cli::tests::public_generation_preparation_uses_one_rendered_request_for_prompt_and_schema",
+          "backends::codex_cli::tests::prepared_request_owns_schema_stdin_environment_and_workspace_until_transfer_drop",
+          "backends::codex_cli::tests::public_generation_preparation_uses_one_rendered_request_for_prompt_and_schema",
+          "generation::backend_compat::codex_cli::tests::adapted_turn_keeps_order_nullability_defaults_and_empty_strings",
+          "generation::schema::tests::every_generated_object_schema_forbids_additional_properties",
           "generation::schema::tests::schema_docs_cover_every_field_and_no_others",
-          "generation::schema::tests::story_turn_schema_lists_narrative_first",
           "generation::schema::tests::schema_docs_placeholders_render_against_supplied_limits",
-          "generation::schema::tests::every_generated_object_schema_forbids_additional_properties"
+          "generation::schema::tests::story_turn_schema_lists_narrative_first",
+          "generation::templates::tests::configured_opening_continuation_and_bridge_match_complete_snapshots",
+          "generation::templates::tests::configured_turn_fragments_render_once_and_player_text_is_not_a_template",
+          "generation::templates::tests::data_dependent_render_errors_are_values_with_template_locations",
+          "generation::templates::tests::empty_schema_descriptions_remove_defaults_and_nested_overrides_apply",
+          "generation::templates::tests::malformed_sources_report_the_source_file",
+          "generation::templates::tests::merged_configuration_drives_all_three_generation_requests",
+          "generation::templates::tests::prompt_shape_rejects_missing_wrong_type_and_unknown_keys",
+          "generation::templates::tests::quick_action_instructions_change_when_kinds_table_is_overridden",
+          "generation::templates::tests::quick_actions_reject_dangling_references_and_empty_groups",
+          "generation::templates::tests::schema_documentation_rejects_unknown_missing_and_invalid_entries",
+          "generation::templates::tests::startup_checks_the_zero_npc_branch_in_prompts_and_schema_docs",
+          "generation::templates::tests::styles_reject_empty_tables_duplicate_keys_and_wrong_shapes",
+          "generation::templates::tests::templates_reject_syntax_wrong_context_and_nested_typos",
+          "generation::templates::tests::toml_override_merges_per_key_not_per_file",
+          "generation::templates::tests::undefined_template_variable_is_a_render_error",
+          "generation::templates::tests::unknown_styles_use_configured_first_entry_and_blank_tone_is_omitted"
         ]
       },
       {
         "package": "cyoa-infrastructure",
         "target": "prompt_rendering",
         "tests": [
+          "interesting_event_includes_threads_only_when_present",
           "loaded_instructions_contain_no_json_formatting_directive",
           "loaded_turn_instructions_ask_for_schema_field_order",
+          "player_input_versus_no_direction",
           "prose_contract_omits_tone_clause_when_tone_is_default",
           "rendered_limits_reflect_the_supplied_value_not_a_constant",
-          "world_and_cast_prompts_interpolate_the_brief_and_world",
           "turn_prompt_bridge_and_transcript_appear_only_when_nonempty",
-          "interesting_event_includes_threads_only_when_present",
-          "player_input_versus_no_direction"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "lib",
-        "tests": [
-          "generation::templates::tests::malformed_sources_report_the_source_file",
-          "generation::templates::tests::prompt_shape_rejects_missing_wrong_type_and_unknown_keys",
-          "generation::templates::tests::templates_reject_syntax_wrong_context_and_nested_typos",
-          "generation::templates::tests::styles_reject_empty_tables_duplicate_keys_and_wrong_shapes",
-          "generation::templates::tests::quick_actions_reject_dangling_references_and_empty_groups",
-          "generation::templates::tests::schema_documentation_rejects_unknown_missing_and_invalid_entries",
-          "generation::templates::tests::data_dependent_render_errors_are_values_with_template_locations",
-          "generation::templates::tests::empty_schema_descriptions_remove_defaults_and_nested_overrides_apply",
-          "generation::templates::tests::unknown_styles_use_configured_first_entry_and_blank_tone_is_omitted",
-          "generation::templates::tests::configured_turn_fragments_render_once_and_player_text_is_not_a_template",
-          "generation::templates::tests::startup_checks_the_zero_npc_branch_in_prompts_and_schema_docs",
-          "generation::templates::tests::merged_configuration_drives_all_three_generation_requests",
-          "generation::templates::tests::configured_opening_continuation_and_bridge_match_complete_snapshots",
-          "generation::templates::tests::toml_override_merges_per_key_not_per_file",
-          "generation::templates::tests::undefined_template_variable_is_a_render_error",
-          "generation::templates::tests::quick_action_instructions_change_when_kinds_table_is_overridden"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "lib",
-        "tests": [
-          "generation::backend_compat::codex_cli::tests::adapted_turn_keeps_order_nullability_defaults_and_empty_strings",
-          "backends::codex_cli::tests::prepared_request_owns_schema_stdin_environment_and_workspace_until_transfer_drop",
-          "backends::codex_cli::tests::public_generation_preparation_uses_one_rendered_request_for_prompt_and_schema",
-          "backends::claude_cli::tests::public_generation_preparation_uses_one_rendered_request_for_prompt_and_schema",
-          "backends::claude_cli::tests::narrative_stays_the_first_property_in_the_schema_argument"
+          "world_and_cast_prompts_interpolate_the_brief_and_world"
         ]
       }
     ]
@@ -1284,11 +1201,32 @@
     "coverage": "partial",
     "checks": [
       {
-        "package": "cyoa-cli",
-        "target": "controller_story",
+        "package": "cyoa-application",
+        "target": "lib",
         "tests": [
-          "complete_controller_story_preserves_context_retry_identity_chapters_and_rewind",
-          "controller_zero_npcs_and_both_restore_policies_use_active_limits"
+          "session_persistence::tests::deferred_opening_and_load_reserve_their_followup_write_before_admission",
+          "session_persistence::tests::stale_duplicate_or_wrong_revision_storage_receipts_never_clean_or_rebind",
+          "session_persistence::tests::storage_counter_exhaustion_rejects_admission_but_reserves_final_quit_save"
+        ]
+      },
+      {
+        "package": "cyoa-application",
+        "target": "persistence",
+        "tests": [
+          "checked_persistence_values_reject_invalid_names_counters_pages_and_bounds",
+          "demo_sources_admit_at_most_their_scenarios_passages_and_live_admits_any",
+          "explicit_restore_policy_and_read_only_queries_do_not_write_or_rebind_the_disk_stamp",
+          "explicit_storage_commands_make_exactly_one_call_each_and_return_observed_receipts",
+          "late_read_cancellation_rejects_results_but_never_hides_a_durable_write_receipt",
+          "pre_cancelled_commands_and_queries_never_call_the_repository",
+          "repository_failures_are_preserved_without_retry_or_changing_the_owned_snapshot"
+        ]
+      },
+      {
+        "package": "cyoa-application",
+        "target": "session",
+        "tests": [
+          "in_session_load_advances_revision_preserves_request_ids_and_rejects_old_generation"
         ]
       },
       {
@@ -1301,92 +1239,121 @@
       },
       {
         "package": "cyoa-cli",
-        "target": "headless",
+        "target": "controller_story",
         "tests": [
-          "demo_full_story_exhaustion_and_idle_interrupt_are_credential_free",
-          "both_shipped_backend_commands_play_retry_and_inspect_canonical_story",
-          "broken_stdout_closes_worker_and_reports_io_failure",
-          "sigint_alone_cancels_idle_generation_before_any_fallback_command"
+          "complete_controller_story_preserves_context_retry_identity_chapters_and_rewind",
+          "controller_zero_npcs_and_both_restore_policies_use_active_limits"
         ]
       },
       {
         "package": "cyoa-cli",
-        "target": "headless",
+        "target": "demo_persistence",
         "tests": [
-          "full_undrained_stderr_does_not_block_error_exit"
+          "harbour_restart_rewind_and_exhaustion_preserve_fixed_passages_without_vendor_access",
+          "unknown_scenario_future_version_source_mismatch_and_excess_demo_turns_fail_before_auth"
         ]
       },
       {
         "package": "cyoa-cli",
         "target": "demo_retry",
         "tests": [
-          "cancellation_after_demo_consumption_retries_each_stage_and_preserves_all_passages"
+          "cancellation_after_demo_consumption_retries_each_stage_and_preserves_all_passages",
+          "cancelled_consumed_demo_passages_preserve_disk_and_retry_all_five_with_persistence"
         ]
       },
       {
-        "package": "cyoa-presentation",
-        "target": "lib",
+        "package": "cyoa-cli",
+        "target": "headless",
         "tests": [
-          "headless::output::tests::partial_writes_and_backpressure_retain_exact_unicode_bytes_once",
-          "headless::output::tests::permanent_stall_and_trickling_progress_have_distinct_clock_behavior",
-          "headless::output::tests::queue_overflow_write_zero_and_broken_pipe_are_explicit_errors",
-          "headless::output::tests::continuously_writable_output_and_interrupted_calls_have_finite_pump_budgets",
-          "terminal::tests::interruptible_jobs_return_values_and_name_their_operation_in_failures"
+          "both_shipped_backend_commands_play_retry_and_inspect_canonical_story",
+          "broken_stdout_closes_worker_and_reports_io_failure",
+          "demo_full_story_exhaustion_and_idle_interrupt_are_credential_free",
+          "full_undrained_stderr_does_not_block_error_exit",
+          "input_line_bound_ignores_read_ahead_and_rejects_oversized_lines",
+          "sigint_alone_cancels_idle_generation_before_any_fallback_command"
         ]
       },
       {
         "package": "cyoa-cli",
         "target": "headless_output",
         "tests": [
-          "paused_control_reader_resumes_and_final_drain_delivers_every_help_once",
-          "trickling_reader_cannot_extend_final_drain_indefinitely",
           "cancellation_and_quit_join_active_worker_while_control_output_is_blocked",
           "initially_full_real_control_pipe_recovers_without_losing_help_or_close",
           "initially_full_real_story_pipe_drains_exact_committed_narrative_on_exit",
-          "reader_resuming_after_final_deadline_cannot_turn_expiry_into_success"
+          "paused_control_reader_resumes_and_final_drain_delivers_every_help_once",
+          "reader_resuming_after_final_deadline_cannot_turn_expiry_into_success",
+          "trickling_reader_cannot_extend_final_drain_indefinitely"
         ]
       },
       {
-        "package": "cyoa-application",
-        "target": "persistence",
+        "package": "cyoa-cli",
+        "target": "headless_persistence",
         "tests": [
-          "repository_failures_are_preserved_without_retry_or_changing_the_owned_snapshot",
-          "pre_cancelled_commands_and_queries_never_call_the_repository",
-          "late_read_cancellation_rejects_results_but_never_hides_a_durable_write_receipt",
-          "checked_persistence_values_reject_invalid_names_counters_pages_and_bounds",
-          "explicit_restore_policy_and_read_only_queries_do_not_write_or_rebind_the_disk_stamp",
-          "explicit_storage_commands_make_exactly_one_call_each_and_return_observed_receipts",
-          "demo_sources_admit_at_most_their_scenarios_passages_and_live_admits_any"
+          "auth_free_list_inspect_and_invalid_resume_leave_save_bytes_unchanged",
+          "both_fixture_backends_restart_from_disk_and_live_saves_are_vendor_neutral",
+          "explicit_backup_recovery_creates_a_fresh_slot_and_preserves_damaged_originals",
+          "in_session_load_keeps_failed_edit_buffers_and_save_copy_switches_slots_only_after_success",
+          "startup_policy_changes_persist_after_auth_and_failed_auth_never_rewrites_a_save",
+          "zero_turn_resume_waits_for_explicit_opening_and_rewind_persists_before_next_request"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "persistence_shutdown",
+        "tests": [
+          "blocked_storage_and_faulted_output_sinks_preserve_canonical_state_and_reap_helpers",
+          "bounded_silent_storage_keeps_input_responsive_and_reaps_current_and_final_helpers",
+          "input_and_output_errors_still_save_last_canonical_story_and_remain_errors"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "storage_helper",
+        "tests": [
+          "closing_or_dropping_storage_runner_reaps_a_real_silent_helper",
+          "coordinator_rewind_load_and_quit_persist_through_shipped_helpers",
+          "internal_helper_runs_storage_before_clap_or_auth_and_preserves_exact_documents",
+          "presentation_storage_runner_drives_shipped_helpers_off_the_event_loop",
+          "unavailable_or_precancelled_helpers_cannot_report_durable_success"
         ]
       },
       {
         "package": "cyoa-infrastructure",
-        "target": "save_validation",
+        "target": "filesystem_repository",
         "tests": [
-          "malformed_versions_metadata_and_world_are_rejected_without_repair",
-          "invalid_json_utf8_and_duplicate_keys_are_never_last_key_wins",
-          "stored_history_cannot_be_normalized_capped_or_reidentified",
-          "required_fields_and_known_field_types_cannot_hide_behind_defaults",
-          "size_depth_overflow_and_nested_duplicate_keys_are_bounded_errors"
+          "atomic_create_replace_and_independent_writer_conflict_preserve_exact_backup",
+          "corrupt_primary_never_rotates_over_a_good_backup_and_recovery_creates_a_new_slot",
+          "disk_restore_cycles_preserve_original_limits_and_every_narrowed_snapshot",
+          "hostile_unicode_titles_never_become_paths_and_retitle_preserves_the_slot_id",
+          "listing_pages_report_corrupt_future_and_backup_only_without_rewriting_documents",
+          "locks_survive_primary_replacement_and_hostile_entries_are_never_followed",
+          "missing_and_unsafe_storage_paths_are_errors_without_following_links"
         ]
       },
       {
         "package": "cyoa-infrastructure",
-        "target": "save_compatibility",
+        "target": "lib",
         "tests": [
-          "only_shipped_version_one_is_supported_and_reads_leave_input_bytes_unchanged",
-          "optional_omissions_nulls_and_empty_replacements_keep_distinct_meanings",
-          "additive_optional_fields_warn_and_are_omitted_on_resave_while_known_fields_survive",
-          "additive_source_fields_are_reported_for_both_source_variants",
-          "valid_authoritative_snapshots_and_unknown_style_keys_are_preserved_without_delta_replay"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "persistence_roundtrip",
-        "tests": [
-          "frozen_full_story_roundtrip_preserves_complete_state_exact_audit_and_next_rewind_request",
-          "zero_turn_selected_second_playable_roundtrip_restores_one_opening_request"
+          "execution::blocking::tests::interruptible_jobs_return_values_and_name_their_operation_in_failures",
+          "execution::storage::tests::failed_storage_thread_spawn_preserves_ready_state_and_never_runs_factory",
+          "generation::demo::tests::bundled_harbour_script_length_is_the_scenarios_declared_passages",
+          "persistence::codec::tests::bounded_writer_rejects_a_document_or_final_newline_that_exceeds_the_limit",
+          "persistence::codec::tests::canonical_writer_timestamps_cover_utc_year_boundaries_and_millisecond_precision",
+          "persistence::helper::tests::preparation_clock_or_entropy_failure_launches_no_helper_and_keeps_visibility_unchanged",
+          "persistence::helper::tests::private_protocol_rejects_duplicate_keys_unknown_fields_versions_and_wrong_shapes_before_disk",
+          "persistence::migrations::tests::synthetic_scaffold_rejects_missing_steps_and_incorrect_advancement",
+          "persistence::migrations::tests::synthetic_scaffold_runs_each_step_once_in_order_without_shipping_legacy_support",
+          "persistence::repository::linux::tests::default_data_location_honors_absolute_xdg_and_rejects_relative_locations",
+          "persistence::repository::linux::tests::every_write_failure_preserves_complete_files_visibility_and_retry_material",
+          "persistence::repository::linux::tests::first_create_receipt_loss_reconciles_without_duplicate_slots_or_backup_rotation",
+          "persistence::repository::linux::tests::killed_helpers_leave_complete_crash_window_files_release_locks_and_reconcile_once",
+          "persistence::repository::linux::tests::noreplace_publish_moves_the_temp_without_leaving_its_name",
+          "persistence::repository::linux::tests::occupied_noreplace_target_is_never_replaced_and_the_temp_is_retained",
+          "persistence::repository::linux::tests::preparation_read_encode_and_cleanup_failures_keep_the_initiating_cause",
+          "persistence::repository::linux::tests::sync_order_constant_clock_collision_entropy_and_revision_exhaustion_are_observable",
+          "persistence::repository::linux::tests::unsupported_noreplace_publishes_by_rename_with_exactly_one_link",
+          "persistence::repository::linux::tests::writes_sweep_only_their_own_slots_orphaned_temps_under_the_lock",
+          "persistence::save_id::tests::generated_ids_slug_titles_and_always_satisfy_the_id_grammar"
         ]
       },
       {
@@ -1401,218 +1368,90 @@
         "package": "cyoa-infrastructure",
         "target": "persistence_roundtrip",
         "tests": [
-          "content_stamps_cover_exact_bytes_and_have_independent_sha256_evidence"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "lib",
-        "tests": [
-          "persistence::codec::tests::bounded_writer_rejects_a_document_or_final_newline_that_exceeds_the_limit",
-          "persistence::codec::tests::canonical_writer_timestamps_cover_utc_year_boundaries_and_millisecond_precision",
-          "persistence::migrations::tests::synthetic_scaffold_rejects_missing_steps_and_incorrect_advancement",
-          "persistence::migrations::tests::synthetic_scaffold_runs_each_step_once_in_order_without_shipping_legacy_support",
-          "persistence::repository::linux::tests::unsupported_noreplace_publishes_by_rename_with_exactly_one_link",
-          "persistence::repository::linux::tests::occupied_noreplace_target_is_never_replaced_and_the_temp_is_retained",
-          "persistence::repository::linux::tests::noreplace_publish_moves_the_temp_without_leaving_its_name",
-          "persistence::repository::linux::tests::writes_sweep_only_their_own_slots_orphaned_temps_under_the_lock",
-          "generation::demo::tests::bundled_harbour_script_length_is_the_scenarios_declared_passages",
-          "persistence::save_id::tests::generated_ids_slug_titles_and_always_satisfy_the_id_grammar"
+          "content_stamps_cover_exact_bytes_and_have_independent_sha256_evidence",
+          "frozen_full_story_roundtrip_preserves_complete_state_exact_audit_and_next_rewind_request",
+          "zero_turn_selected_second_playable_roundtrip_restores_one_opening_request"
         ]
       },
       {
         "package": "cyoa-infrastructure",
         "target": "save_compatibility",
         "tests": [
+          "additive_optional_fields_warn_and_are_omitted_on_resave_while_known_fields_survive",
+          "additive_source_fields_are_reported_for_both_source_variants",
+          "audit_strings_including_empty_whitespace_crlf_and_unicode_roundtrip_without_normalization",
+          "only_shipped_version_one_is_supported_and_reads_leave_input_bytes_unchanged",
+          "optional_omissions_nulls_and_empty_replacements_keep_distinct_meanings",
+          "stored_unicode_matching_preserves_sharp_s_distinctions_and_rejects_lowercase_duplicates",
           "supported_demo_source_roundtrips_and_rejects_impossible_passage_counts",
-          "stored_unicode_matching_preserves_sharp_s_distinctions_and_rejects_lowercase_duplicates"
+          "valid_authoritative_snapshots_and_unknown_style_keys_are_preserved_without_delta_replay"
         ]
       },
       {
         "package": "cyoa-infrastructure",
-        "target": "save_compatibility",
+        "target": "save_validation",
         "tests": [
-          "audit_strings_including_empty_whitespace_crlf_and_unicode_roundtrip_without_normalization"
+          "invalid_json_utf8_and_duplicate_keys_are_never_last_key_wins",
+          "malformed_versions_metadata_and_world_are_rejected_without_repair",
+          "required_fields_and_known_field_types_cannot_hide_behind_defaults",
+          "size_depth_overflow_and_nested_duplicate_keys_are_bounded_errors",
+          "stored_history_cannot_be_normalized_capped_or_reidentified"
         ]
       },
       {
         "package": "cyoa-infrastructure",
-        "target": "filesystem_repository",
+        "target": "session_persistence",
         "tests": [
-          "missing_and_unsafe_storage_paths_are_errors_without_following_links",
-          "atomic_create_replace_and_independent_writer_conflict_preserve_exact_backup",
-          "corrupt_primary_never_rotates_over_a_good_backup_and_recovery_creates_a_new_slot",
-          "locks_survive_primary_replacement_and_hostile_entries_are_never_followed",
-          "listing_pages_report_corrupt_future_and_backup_only_without_rewriting_documents",
-          "disk_restore_cycles_preserve_original_limits_and_every_narrowed_snapshot"
+          "cancelled_generation_never_autosaves_a_rejected_turn",
+          "failed_autosave_keeps_accepted_turn_and_storage_retry_never_regenerates",
+          "failed_copy_retains_previous_uncertain_attempt_for_reconciliation",
+          "generation_and_storage_failure_views_remain_independent_and_copy_failure_keeps_binding",
+          "load_failure_preserves_stage_revision_binding_and_generation_retry",
+          "queued_generation_panic_remains_an_exit_failure_after_quit_and_successful_save",
+          "quit_cancels_load_joins_and_saves_old_canonical_game_once",
+          "quit_during_write_finishes_current_revision_once_without_duplicate_backup_rotation",
+          "rewind_and_changed_policy_load_save_canonical_snapshots_before_generation",
+          "selection_saves_zero_turn_before_one_deferred_opening_and_quit_clears_it",
+          "source_mismatch_preserves_session_and_backup_recovery_creates_instead_of_replacing",
+          "uncertain_write_and_worker_panic_reconcile_same_attempt_without_a_new_slot"
         ]
       },
       {
         "package": "cyoa-infrastructure",
-        "target": "lib",
+        "target": "storage",
         "tests": [
-          "persistence::repository::linux::tests::every_write_failure_preserves_complete_files_visibility_and_retry_material",
-          "persistence::repository::linux::tests::first_create_receipt_loss_reconciles_without_duplicate_slots_or_backup_rotation",
-          "persistence::repository::linux::tests::sync_order_constant_clock_collision_entropy_and_revision_exhaustion_are_observable",
-          "persistence::repository::linux::tests::preparation_read_encode_and_cleanup_failures_keep_the_initiating_cause"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "lib",
-        "tests": [
-          "persistence::repository::linux::tests::killed_helpers_leave_complete_crash_window_files_release_locks_and_reconcile_once",
-          "persistence::helper::tests::private_protocol_rejects_duplicate_keys_unknown_fields_versions_and_wrong_shapes_before_disk"
+          "dropping_runner_cancels_and_joins_without_leaving_storage_work_detached",
+          "polling_is_nonblocking_preparation_precedes_completion_and_close_joins_cancelled_work",
+          "worker_panics_distinguish_unprepared_from_uncertain_writes_and_retain_identity"
         ]
       },
       {
         "package": "cyoa-infrastructure",
         "target": "storage_transport",
         "tests": [
-          "silent_helper_cancellation_and_timeout_reap_children_and_keep_prepared_identity",
           "lost_invalid_multiple_or_capped_replies_never_authorize_success_and_reconcile_exact_write",
           "preparation_exhausting_the_total_deadline_launches_no_helper_or_disk_write",
-          "replacement_prepares_with_one_read_child_and_dispatches_one_mutating_child"
-        ]
-      },
-      {
-        "package": "cyoa-presentation",
-        "target": "storage",
-        "tests": [
-          "polling_is_nonblocking_preparation_precedes_completion_and_close_joins_cancelled_work",
-          "worker_panics_distinguish_unprepared_from_uncertain_writes_and_retain_identity",
-          "dropping_runner_cancels_and_joins_without_leaving_storage_work_detached"
-        ]
-      },
-      {
-        "package": "cyoa-presentation",
-        "target": "lib",
-        "tests": [
-          "storage::tests::failed_storage_thread_spawn_preserves_ready_state_and_never_runs_factory"
-        ]
-      },
-      {
-        "package": "cyoa-cli",
-        "target": "storage_helper",
-        "tests": [
-          "internal_helper_runs_storage_before_clap_or_auth_and_preserves_exact_documents",
-          "unavailable_or_precancelled_helpers_cannot_report_durable_success",
-          "presentation_storage_runner_drives_shipped_helpers_off_the_event_loop",
-          "closing_or_dropping_storage_runner_reaps_a_real_silent_helper"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "lib",
-        "tests": [
-          "persistence::helper::tests::preparation_clock_or_entropy_failure_launches_no_helper_and_keeps_visibility_unchanged"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "filesystem_repository",
-        "tests": [
-          "hostile_unicode_titles_never_become_paths_and_retitle_preserves_the_slot_id"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "lib",
-        "tests": [
-          "persistence::repository::linux::tests::default_data_location_honors_absolute_xdg_and_rejects_relative_locations"
-        ]
-      },
-      {
-        "package": "cyoa-presentation",
-        "target": "persistence",
-        "tests": [
-          "failed_autosave_keeps_accepted_turn_and_storage_retry_never_regenerates",
-          "uncertain_write_and_worker_panic_reconcile_same_attempt_without_a_new_slot",
-          "load_failure_preserves_stage_revision_binding_and_generation_retry",
-          "selection_saves_zero_turn_before_one_deferred_opening_and_quit_clears_it",
-          "rewind_and_changed_policy_load_save_canonical_snapshots_before_generation",
-          "source_mismatch_preserves_session_and_backup_recovery_creates_instead_of_replacing",
-          "quit_during_write_finishes_current_revision_once_without_duplicate_backup_rotation",
-          "quit_cancels_load_joins_and_saves_old_canonical_game_once",
-          "generation_and_storage_failure_views_remain_independent_and_copy_failure_keeps_binding",
-          "cancelled_generation_never_autosaves_a_rejected_turn",
-          "failed_copy_retains_previous_uncertain_attempt_for_reconciliation",
-          "queued_generation_panic_remains_an_exit_failure_after_quit_and_successful_save"
-        ]
-      },
-      {
-        "package": "cyoa-presentation",
-        "target": "lib",
-        "tests": [
-          "persistence::tests::stale_duplicate_or_wrong_revision_storage_receipts_never_clean_or_rebind",
-          "persistence::tests::storage_counter_exhaustion_rejects_admission_but_reserves_final_quit_save",
-          "persistence::tests::deferred_opening_and_load_reserve_their_followup_write_before_admission"
-        ]
-      },
-      {
-        "package": "cyoa-presentation",
-        "target": "session",
-        "tests": [
-          "in_session_load_advances_revision_preserves_request_ids_and_rejects_old_generation"
-        ]
-      },
-      {
-        "package": "cyoa-cli",
-        "target": "storage_helper",
-        "tests": [
-          "coordinator_rewind_load_and_quit_persist_through_shipped_helpers"
+          "replacement_prepares_with_one_read_child_and_dispatches_one_mutating_child",
+          "silent_helper_cancellation_and_timeout_reap_children_and_keep_prepared_identity"
         ]
       },
       {
         "package": "cyoa-presentation",
         "target": "commands",
         "tests": [
-          "persistence_cli_rejects_missing_policy_paths_invalid_ids_and_page_bounds",
+          "in_session_persistence_syntax_rejects_partial_paths_and_invalid_rewind_before_effects",
           "persistence_cli_accepts_explicit_resume_policies_and_auth_free_queries",
-          "in_session_persistence_syntax_rejects_partial_paths_and_invalid_rewind_before_effects"
+          "persistence_cli_rejects_missing_policy_paths_invalid_ids_and_page_bounds"
         ]
       },
       {
-        "package": "cyoa-cli",
-        "target": "headless_persistence",
+        "package": "cyoa-presentation",
+        "target": "lib",
         "tests": [
-          "auth_free_list_inspect_and_invalid_resume_leave_save_bytes_unchanged",
-          "zero_turn_resume_waits_for_explicit_opening_and_rewind_persists_before_next_request",
-          "explicit_backup_recovery_creates_a_fresh_slot_and_preserves_damaged_originals",
-          "both_fixture_backends_restart_from_disk_and_live_saves_are_vendor_neutral",
-          "startup_policy_changes_persist_after_auth_and_failed_auth_never_rewrites_a_save",
-          "in_session_load_keeps_failed_edit_buffers_and_save_copy_switches_slots_only_after_success"
-        ]
-      },
-      {
-        "package": "cyoa-cli",
-        "target": "demo_persistence",
-        "tests": [
-          "harbour_restart_rewind_and_exhaustion_preserve_fixed_passages_without_vendor_access",
-          "unknown_scenario_future_version_source_mismatch_and_excess_demo_turns_fail_before_auth"
-        ]
-      },
-      {
-        "package": "cyoa-cli",
-        "target": "demo_retry",
-        "tests": [
-          "cancelled_consumed_demo_passages_preserve_disk_and_retry_all_five_with_persistence"
-        ]
-      },
-      {
-        "package": "cyoa-cli",
-        "target": "persistence_shutdown",
-        "tests": [
-          "bounded_silent_storage_keeps_input_responsive_and_reaps_current_and_final_helpers",
-          "input_and_output_errors_still_save_last_canonical_story_and_remain_errors",
-          "blocked_storage_and_faulted_output_sinks_preserve_canonical_state_and_reap_helpers"
-        ]
-      },
-      {
-        "package": "cyoa-cli",
-        "target": "headless",
-        "tests": [
-          "input_line_bound_ignores_read_ahead_and_rejects_oversized_lines"
+          "headless::output::tests::continuously_writable_output_and_interrupted_calls_have_finite_pump_budgets",
+          "headless::output::tests::partial_writes_and_backpressure_retain_exact_unicode_bytes_once",
+          "headless::output::tests::permanent_stall_and_trickling_progress_have_distinct_clock_behavior",
+          "headless::output::tests::queue_overflow_write_zero_and_broken_pipe_are_explicit_errors"
         ]
       }
     ]
@@ -1627,258 +1466,36 @@
     "coverage": "partial",
     "checks": [
       {
-        "package": "cyoa-infrastructure",
-        "target": "streaming",
-        "tests": [
-          "truncated_and_invalid_json_only_yield_available_preview_text",
-          "surrogate_pairs_lone_halves_and_escapes_survive_single_character_chunks",
-          "only_the_requested_top_level_string_is_streamed",
-          "arbitrary_scalar_splits_match_the_independent_narrative"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "generation_use_cases",
-        "tests": [
-          "preview_then_transport_failure_leaves_state_untouched",
-          "cancelling_after_a_streamed_preview_preserves_state_and_partial_diagnostics",
-          "chunked_and_complete_transports_commit_the_same_turn_without_duplicate_preview"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "process_supervisor",
-        "tests": [
-          "missing_executable_is_a_spawn_error_not_a_panic",
-          "cancellation_before_spawn_launches_no_process",
-          "cancellation_while_the_child_is_silent_still_wakes_the_poll_loop_and_returns_promptly",
-          "nonzero_exit_is_reported_with_diagnostics",
-          "failure_after_a_candidate_record_still_reports_nonzero_exit_not_success",
-          "deadline_exceeded_kills_the_child_and_reports_timeout",
-          "output_bound_exceeded_stops_the_child_instead_of_buffering_forever",
-          "consumer_rejection_triggers_cleanup_and_reports_the_reason",
-          "final_record_without_a_trailing_newline_is_still_delivered",
-          "crlf_records_are_delivered_with_the_carriage_return_intact",
-          "a_descendant_retaining_the_inherited_pipe_does_not_hang_the_supervisor",
-          "broken_stdin_delivery_is_reported_without_hanging",
-          "a_child_that_never_reads_stdin_still_completes",
-          "exact_argv_and_stdin_reach_the_child_and_both_pipes_are_drained",
-          "env_policy_is_an_explicit_allowlist_not_ambient_inheritance",
-          "multiple_records_are_delivered_in_order_and_success_requires_zero_exit",
-          "cancelling_from_inside_the_record_consumer_wins_over_a_same_tick_exit",
-          "cancelling_from_inside_the_final_no_newline_record_still_wins_over_exit",
-          "records_written_right_before_exit_are_not_silently_dropped",
-          "a_panicking_consumer_still_gets_the_child_cleaned_up",
-          "stdin_larger_than_pipe_capacity_is_delivered_in_full_when_the_child_reads_it",
-          "stdout_larger_than_pipe_capacity_is_fully_delivered_and_diagnostics_agree"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "lib",
-        "tests": [
-          "backends::process::split_record_tests::empty_buffer_yields_no_records_and_stays_empty",
-          "backends::process::split_record_tests::a_single_complete_record_is_extracted_and_removed",
-          "backends::process::split_record_tests::a_trailing_partial_record_without_newline_remains_buffered",
-          "backends::process::split_record_tests::crlf_records_keep_the_carriage_return_attached_to_the_record",
-          "backends::process::split_record_tests::an_empty_record_between_two_newlines_is_preserved_as_empty",
-          "backends::process::split_record_tests::feeding_bytes_across_multiple_calls_reassembles_a_split_record"
-        ]
-      },
-      {
-        "package": "cyoa-application",
-        "target": "cancellation",
-        "tests": [
-          "notifier_registered_after_cancel_already_fired_still_runs_immediately",
-          "notifier_registered_before_cancel_runs_once_when_cancel_fires"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "backend_contract",
-        "tests": [
-          "with_diagnostics_attaches_transport_bytes_to_an_otherwise_successful_response",
-          "a_response_with_no_attached_diagnostics_reports_empty"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "generation_use_cases",
-        "tests": [
-          "success_diagnostics_reach_generation_failure_when_outline_cancels_right_after_transport",
-          "success_diagnostics_reach_generation_failure_when_turns_own_post_decode_check_cancels"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "process_supervisor",
-        "tests": [
-          "incomplete_request_delivery_cannot_report_success",
-          "cancelled_token_wins_even_before_its_notifier_runs"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "process_supervisor",
-        "tests": [
-          "captured_output_never_exceeds_either_configured_bound",
-          "capture_at_the_exact_bound_is_complete_and_preserves_arbitrary_bytes",
-          "cancellation_and_deadline_stop_continuous_writers_with_bounded_diagnostics"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "lib",
-        "tests": [
-          "backends::process::unix_impl::fault_tests::fatal_read_error_is_not_treated_as_would_block",
-          "backends::process::unix_impl::fault_tests::setup_write_read_poll_and_exit_observation_failures_are_errors",
-          "backends::process::unix_impl::fault_tests::cleanup_failures_preserve_the_initiating_error"
-        ]
-      },
-      {
         "package": "cyoa-application",
         "target": "cancellation",
         "tests": [
           "a_panicking_notifier_does_not_skip_later_notifiers_or_poison_state",
           "dropping_a_subscription_releases_resources_without_waiting_for_cancellation",
+          "notifier_registered_after_cancel_already_fired_still_runs_immediately",
+          "notifier_registered_before_cancel_runs_once_when_cancel_fires",
           "scoped_notifications_handle_reuse_late_registration_and_reentrant_callbacks"
         ]
       },
       {
-        "package": "cyoa-infrastructure",
-        "target": "process_supervisor",
-        "tests": [
-          "requests_do_not_inherit_the_repository_working_directory",
-          "request_files_live_through_execution_and_are_removed_on_every_outcome",
-          "request_workspace_is_private_and_unique"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
+        "package": "cyoa-application",
         "target": "lib",
         "tests": [
-          "backends::process::unix_impl::fault_tests::self_pipe_wakes_a_long_poll_without_removing_token_checks"
+          "session::tests::exhausted_counters_and_wrong_base_revision_cannot_start_or_commit",
+          "session_persistence::tests::deferred_opening_and_load_reserve_their_followup_write_before_admission",
+          "session_persistence::tests::stale_duplicate_or_wrong_revision_storage_receipts_never_clean_or_rebind",
+          "session_persistence::tests::storage_counter_exhaustion_rejects_admission_but_reserves_final_quit_save"
         ]
       },
       {
-        "package": "cyoa-infrastructure",
-        "target": "lib",
-        "tests": [
-          "backends::process::unix_impl::fault_tests::interrupted_reaping_still_has_a_finite_deadline"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "lib",
-        "tests": [
-          "backends::codex_cli::protocol::tests::frozen_error_transcripts_reject_with_located_reasons_and_candidate_evidence",
-          "backends::codex_cli::protocol::tests::malformed_required_fields_and_unsupported_items_are_not_candidates",
-          "backends::codex_cli::protocol::tests::order_failures_and_end_of_stream_never_authorize_completion",
-          "backends::codex_cli::protocol::tests::invalid_payload_is_retained_and_never_repaired_or_accepted",
-          "backends::codex_cli::protocol::tests::optional_telemetry_preserves_unknown_zero_and_normalizes_invalid_cache",
-          "backends::codex_cli::protocol::tests::first_failure_is_sticky_and_keeps_candidate_after_later_records",
-          "backends::codex_cli::protocol::tests::frozen_live_story_captures_match_independent_payload_and_usage_expectations",
-          "backends::codex_cli::protocol::tests::live_tool_canary_is_unsupported_even_though_the_cli_exited_successfully"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "lib",
-        "tests": [
-          "backends::codex_cli::adapter::tests::every_transport_failure_category_remains_distinct_and_never_emits",
-          "backends::codex_cli::adapter::tests::cancellation_at_acceptance_overrides_protocol_completion_without_emitting",
-          "backends::claude_cli::protocol::tests::frozen_error_variants_reject_with_located_reasons_and_candidate_evidence",
-          "backends::claude_cli::protocol::tests::frozen_completed_variants_emit_expected_previews_payload_usage_and_provenance",
-          "backends::claude_cli::protocol::tests::frozen_live_captures_match_independent_payload_preview_usage_and_provenance",
-          "backends::claude_cli::protocol::tests::live_failure_captures_are_rejected_at_the_expected_record",
-          "backends::claude_cli::protocol::tests::preview_is_forwarded_at_the_delta_record_and_never_waits_for_the_result",
-          "backends::claude_cli::protocol::tests::first_failure_is_sticky_and_later_records_cannot_repair_it",
-          "backends::claude_cli::protocol::tests::ping_is_tolerated_and_a_stream_error_event_is_a_vendor_error",
-          "backends::claude_cli::protocol::tests::malformed_required_fields_and_unsupported_records_are_rejected_not_ignored",
-          "backends::claude_cli::protocol::tests::malformed_terminal_metadata_keeps_the_exact_candidate_span",
-          "backends::claude_cli::protocol::tests::duplicate_control_fields_make_a_record_ambiguous_and_are_rejected"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "codex_backend",
-        "tests": [
-          "silent_cancellation_uses_a_child_handshake_and_pre_cancel_launches_nothing",
-          "timeout_after_candidate_retains_unemitted_payload_and_reaps_child",
-          "cancellation_from_the_complete_callback_cannot_return_success"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "codex_story_acceptance",
-        "tests": [
-          "late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once",
-          "real_workspace_cleanup_failure_preserves_the_game_and_candidate",
-          "cancellation_and_output_cap_preserve_state_context_and_explicit_retry"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "claude_backend",
-        "tests": [
-          "silent_cancellation_uses_a_child_handshake_and_pre_cancel_launches_nothing",
-          "timeout_after_result_retains_unemitted_candidate_and_reaps_child",
-          "cancellation_from_a_preview_stops_the_live_child_and_keeps_the_evidence",
-          "cancellation_from_the_complete_callback_cannot_return_success",
-          "final_payload_wins_when_it_disagrees_with_the_preview",
-          "complete_only_stream_emits_the_payload_once_after_cleanup",
-          "capped_output_preserves_prefix_metadata_and_a_structured_cause",
-          "successful_response_forwards_previews_then_returns_exact_payload_usage_and_provenance"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "claude_story_acceptance",
-        "tests": [
-          "late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once",
-          "real_workspace_cleanup_failure_preserves_the_game_and_candidate",
-          "cancellation_and_output_cap_preserve_state_context_and_explicit_retry",
-          "a_disagreeing_preview_is_shown_but_only_the_final_payload_is_committed",
-          "an_enforce_retry_stream_commits_only_the_structured_payload"
-        ]
-      },
-      {
-        "package": "cyoa-presentation",
+        "package": "cyoa-application",
         "target": "session",
         "tests": [
+          "an_incomplete_preview_stops_growing_instead_of_leaving_a_gap",
           "failed_and_cancelled_results_preserve_state_and_exact_evidence",
-          "stale_and_duplicate_completions_never_replace_current_state",
+          "in_session_load_advances_revision_preserves_request_ids_and_rejects_old_generation",
           "lifecycle_keeps_edited_outline_selection_and_one_opening",
-          "wrong_kind_faults_and_quit_waits_for_active_completion",
-          "an_incomplete_preview_stops_growing_instead_of_leaving_a_gap"
-        ]
-      },
-      {
-        "package": "cyoa-presentation",
-        "target": "worker",
-        "tests": [
-          "silent_cancel_joins_before_retry_and_preserves_generator_and_evidence",
-          "joined_success_queued_before_cancel_is_discarded",
-          "panic_faults_without_committing_and_quit_remains_available",
-          "paused_progress_consumer_cannot_block_completion_or_exceed_budget",
-          "dropping_runner_cancels_and_joins_silent_request"
-        ]
-      },
-      {
-        "package": "cyoa-presentation",
-        "target": "lib",
-        "tests": [
-          "worker::tests::mailbox_budget_is_cumulative_and_does_not_split_unicode",
-          "worker::tests::failed_spawn_keeps_use_cases_available_for_explicit_retry",
-          "session::tests::exhausted_counters_and_wrong_base_revision_cannot_start_or_commit"
-        ]
-      },
-      {
-        "package": "cyoa-cli",
-        "target": "controller_story",
-        "tests": [
-          "complete_controller_story_preserves_context_retry_identity_chapters_and_rewind",
-          "controller_zero_npcs_and_both_restore_policies_use_active_limits"
+          "stale_and_duplicate_completions_never_replace_current_state",
+          "wrong_kind_faults_and_quit_waits_for_active_completion"
         ]
       },
       {
@@ -1891,151 +1508,52 @@
       },
       {
         "package": "cyoa-cli",
-        "target": "headless",
+        "target": "controller_story",
         "tests": [
-          "idle_output_cancellation_eof_and_quit_join_real_children",
-          "sigint_alone_cancels_idle_generation_before_any_fallback_command",
-          "preview_failure_and_disagreement_never_masquerade_as_committed_prose",
-          "broken_stdout_closes_worker_and_reports_io_failure",
-          "invalid_utf8_input_closes_active_worker_without_committing",
-          "buffered_multiple_lines_are_read_without_waiting_for_more_kernel_bytes"
+          "complete_controller_story_preserves_context_retry_identity_chapters_and_rewind",
+          "controller_zero_npcs_and_both_restore_policies_use_active_limits"
         ]
       },
       {
         "package": "cyoa-cli",
-        "target": "headless",
+        "target": "demo_persistence",
         "tests": [
-          "full_undrained_stderr_does_not_block_error_exit"
+          "harbour_restart_rewind_and_exhaustion_preserve_fixed_passages_without_vendor_access",
+          "unknown_scenario_future_version_source_mismatch_and_excess_demo_turns_fail_before_auth"
         ]
       },
       {
         "package": "cyoa-cli",
         "target": "demo_retry",
         "tests": [
-          "cancellation_after_demo_consumption_retries_each_stage_and_preserves_all_passages"
+          "cancellation_after_demo_consumption_retries_each_stage_and_preserves_all_passages",
+          "cancelled_consumed_demo_passages_preserve_disk_and_retry_all_five_with_persistence"
         ]
       },
       {
-        "package": "cyoa-presentation",
-        "target": "lib",
+        "package": "cyoa-cli",
+        "target": "headless",
         "tests": [
-          "headless::output::tests::partial_writes_and_backpressure_retain_exact_unicode_bytes_once",
-          "headless::output::tests::permanent_stall_and_trickling_progress_have_distinct_clock_behavior",
-          "headless::output::tests::queue_overflow_write_zero_and_broken_pipe_are_explicit_errors",
-          "headless::output::tests::continuously_writable_output_and_interrupted_calls_have_finite_pump_budgets"
+          "broken_stdout_closes_worker_and_reports_io_failure",
+          "buffered_multiple_lines_are_read_without_waiting_for_more_kernel_bytes",
+          "full_undrained_stderr_does_not_block_error_exit",
+          "idle_output_cancellation_eof_and_quit_join_real_children",
+          "input_line_bound_ignores_read_ahead_and_rejects_oversized_lines",
+          "invalid_utf8_input_closes_active_worker_without_committing",
+          "preview_failure_and_disagreement_never_masquerade_as_committed_prose",
+          "sigint_alone_cancels_idle_generation_before_any_fallback_command"
         ]
       },
       {
         "package": "cyoa-cli",
         "target": "headless_output",
         "tests": [
-          "paused_control_reader_resumes_and_final_drain_delivers_every_help_once",
-          "trickling_reader_cannot_extend_final_drain_indefinitely",
           "cancellation_and_quit_join_active_worker_while_control_output_is_blocked",
           "initially_full_real_control_pipe_recovers_without_losing_help_or_close",
           "initially_full_real_story_pipe_drains_exact_committed_narrative_on_exit",
-          "reader_resuming_after_final_deadline_cannot_turn_expiry_into_success"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "lib",
-        "tests": [
-          "persistence::repository::linux::tests::killed_helpers_leave_complete_crash_window_files_release_locks_and_reconcile_once",
-          "persistence::helper::tests::private_protocol_rejects_duplicate_keys_unknown_fields_versions_and_wrong_shapes_before_disk"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "storage_transport",
-        "tests": [
-          "silent_helper_cancellation_and_timeout_reap_children_and_keep_prepared_identity",
-          "lost_invalid_multiple_or_capped_replies_never_authorize_success_and_reconcile_exact_write",
-          "preparation_exhausting_the_total_deadline_launches_no_helper_or_disk_write",
-          "replacement_prepares_with_one_read_child_and_dispatches_one_mutating_child"
-        ]
-      },
-      {
-        "package": "cyoa-presentation",
-        "target": "storage",
-        "tests": [
-          "polling_is_nonblocking_preparation_precedes_completion_and_close_joins_cancelled_work",
-          "worker_panics_distinguish_unprepared_from_uncertain_writes_and_retain_identity",
-          "dropping_runner_cancels_and_joins_without_leaving_storage_work_detached"
-        ]
-      },
-      {
-        "package": "cyoa-presentation",
-        "target": "lib",
-        "tests": [
-          "storage::tests::failed_storage_thread_spawn_preserves_ready_state_and_never_runs_factory"
-        ]
-      },
-      {
-        "package": "cyoa-cli",
-        "target": "storage_helper",
-        "tests": [
-          "internal_helper_runs_storage_before_clap_or_auth_and_preserves_exact_documents",
-          "unavailable_or_precancelled_helpers_cannot_report_durable_success",
-          "presentation_storage_runner_drives_shipped_helpers_off_the_event_loop",
-          "closing_or_dropping_storage_runner_reaps_a_real_silent_helper"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "lib",
-        "tests": [
-          "persistence::helper::tests::preparation_clock_or_entropy_failure_launches_no_helper_and_keeps_visibility_unchanged"
-        ]
-      },
-      {
-        "package": "cyoa-presentation",
-        "target": "persistence",
-        "tests": [
-          "failed_autosave_keeps_accepted_turn_and_storage_retry_never_regenerates",
-          "uncertain_write_and_worker_panic_reconcile_same_attempt_without_a_new_slot",
-          "load_failure_preserves_stage_revision_binding_and_generation_retry",
-          "selection_saves_zero_turn_before_one_deferred_opening_and_quit_clears_it",
-          "rewind_and_changed_policy_load_save_canonical_snapshots_before_generation",
-          "source_mismatch_preserves_session_and_backup_recovery_creates_instead_of_replacing",
-          "quit_during_write_finishes_current_revision_once_without_duplicate_backup_rotation",
-          "quit_cancels_load_joins_and_saves_old_canonical_game_once",
-          "generation_and_storage_failure_views_remain_independent_and_copy_failure_keeps_binding",
-          "cancelled_generation_never_autosaves_a_rejected_turn",
-          "failed_copy_retains_previous_uncertain_attempt_for_reconciliation",
-          "queued_generation_panic_remains_an_exit_failure_after_quit_and_successful_save"
-        ]
-      },
-      {
-        "package": "cyoa-presentation",
-        "target": "lib",
-        "tests": [
-          "persistence::tests::stale_duplicate_or_wrong_revision_storage_receipts_never_clean_or_rebind",
-          "persistence::tests::storage_counter_exhaustion_rejects_admission_but_reserves_final_quit_save",
-          "persistence::tests::deferred_opening_and_load_reserve_their_followup_write_before_admission"
-        ]
-      },
-      {
-        "package": "cyoa-presentation",
-        "target": "session",
-        "tests": [
-          "in_session_load_advances_revision_preserves_request_ids_and_rejects_old_generation"
-        ]
-      },
-      {
-        "package": "cyoa-cli",
-        "target": "storage_helper",
-        "tests": [
-          "coordinator_rewind_load_and_quit_persist_through_shipped_helpers"
-        ]
-      },
-      {
-        "package": "cyoa-presentation",
-        "target": "commands",
-        "tests": [
-          "persistence_cli_rejects_missing_policy_paths_invalid_ids_and_page_bounds",
-          "persistence_cli_accepts_explicit_resume_policies_and_auth_free_queries",
-          "in_session_persistence_syntax_rejects_partial_paths_and_invalid_rewind_before_effects"
+          "paused_control_reader_resumes_and_final_drain_delivers_every_help_once",
+          "reader_resuming_after_final_deadline_cannot_turn_expiry_into_success",
+          "trickling_reader_cannot_extend_final_drain_indefinitely"
         ]
       },
       {
@@ -2043,11 +1561,271 @@
         "target": "headless_persistence",
         "tests": [
           "auth_free_list_inspect_and_invalid_resume_leave_save_bytes_unchanged",
-          "zero_turn_resume_waits_for_explicit_opening_and_rewind_persists_before_next_request",
-          "explicit_backup_recovery_creates_a_fresh_slot_and_preserves_damaged_originals",
           "both_fixture_backends_restart_from_disk_and_live_saves_are_vendor_neutral",
+          "explicit_backup_recovery_creates_a_fresh_slot_and_preserves_damaged_originals",
+          "in_session_load_keeps_failed_edit_buffers_and_save_copy_switches_slots_only_after_success",
           "startup_policy_changes_persist_after_auth_and_failed_auth_never_rewrites_a_save",
-          "in_session_load_keeps_failed_edit_buffers_and_save_copy_switches_slots_only_after_success"
+          "zero_turn_resume_waits_for_explicit_opening_and_rewind_persists_before_next_request"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "persistence_shutdown",
+        "tests": [
+          "blocked_storage_and_faulted_output_sinks_preserve_canonical_state_and_reap_helpers",
+          "bounded_silent_storage_keeps_input_responsive_and_reaps_current_and_final_helpers",
+          "input_and_output_errors_still_save_last_canonical_story_and_remain_errors"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "storage_helper",
+        "tests": [
+          "closing_or_dropping_storage_runner_reaps_a_real_silent_helper",
+          "coordinator_rewind_load_and_quit_persist_through_shipped_helpers",
+          "internal_helper_runs_storage_before_clap_or_auth_and_preserves_exact_documents",
+          "presentation_storage_runner_drives_shipped_helpers_off_the_event_loop",
+          "unavailable_or_precancelled_helpers_cannot_report_durable_success"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "backend_contract",
+        "tests": [
+          "a_response_with_no_attached_diagnostics_reports_empty",
+          "with_diagnostics_attaches_transport_bytes_to_an_otherwise_successful_response"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "claude_backend",
+        "tests": [
+          "cancellation_from_a_preview_stops_the_live_child_and_keeps_the_evidence",
+          "cancellation_from_the_complete_callback_cannot_return_success",
+          "capped_output_preserves_prefix_metadata_and_a_structured_cause",
+          "complete_only_stream_emits_the_payload_once_after_cleanup",
+          "final_payload_wins_when_it_disagrees_with_the_preview",
+          "silent_cancellation_uses_a_child_handshake_and_pre_cancel_launches_nothing",
+          "successful_response_forwards_previews_then_returns_exact_payload_usage_and_provenance",
+          "timeout_after_result_retains_unemitted_candidate_and_reaps_child"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "claude_story_acceptance",
+        "tests": [
+          "a_disagreeing_preview_is_shown_but_only_the_final_payload_is_committed",
+          "an_enforce_retry_stream_commits_only_the_structured_payload",
+          "cancellation_and_output_cap_preserve_state_context_and_explicit_retry",
+          "late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once",
+          "real_workspace_cleanup_failure_preserves_the_game_and_candidate"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_backend",
+        "tests": [
+          "cancellation_from_the_complete_callback_cannot_return_success",
+          "silent_cancellation_uses_a_child_handshake_and_pre_cancel_launches_nothing",
+          "timeout_after_candidate_retains_unemitted_payload_and_reaps_child"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_story_acceptance",
+        "tests": [
+          "cancellation_and_output_cap_preserve_state_context_and_explicit_retry",
+          "late_transport_protocol_and_domain_failures_leave_state_equal_and_retry_once",
+          "real_workspace_cleanup_failure_preserves_the_game_and_candidate"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "generation_use_cases",
+        "tests": [
+          "cancelling_after_a_streamed_preview_preserves_state_and_partial_diagnostics",
+          "chunked_and_complete_transports_commit_the_same_turn_without_duplicate_preview",
+          "preview_then_transport_failure_leaves_state_untouched",
+          "success_diagnostics_reach_generation_failure_when_outline_cancels_right_after_transport",
+          "success_diagnostics_reach_generation_failure_when_turns_own_post_decode_check_cancels"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "lib",
+        "tests": [
+          "backends::claude_cli::protocol::tests::duplicate_control_fields_make_a_record_ambiguous_and_are_rejected",
+          "backends::claude_cli::protocol::tests::first_failure_is_sticky_and_later_records_cannot_repair_it",
+          "backends::claude_cli::protocol::tests::frozen_completed_variants_emit_expected_previews_payload_usage_and_provenance",
+          "backends::claude_cli::protocol::tests::frozen_error_variants_reject_with_located_reasons_and_candidate_evidence",
+          "backends::claude_cli::protocol::tests::frozen_live_captures_match_independent_payload_preview_usage_and_provenance",
+          "backends::claude_cli::protocol::tests::live_failure_captures_are_rejected_at_the_expected_record",
+          "backends::claude_cli::protocol::tests::malformed_required_fields_and_unsupported_records_are_rejected_not_ignored",
+          "backends::claude_cli::protocol::tests::malformed_terminal_metadata_keeps_the_exact_candidate_span",
+          "backends::claude_cli::protocol::tests::ping_is_tolerated_and_a_stream_error_event_is_a_vendor_error",
+          "backends::claude_cli::protocol::tests::preview_is_forwarded_at_the_delta_record_and_never_waits_for_the_result",
+          "backends::codex_cli::adapter::tests::cancellation_at_acceptance_overrides_protocol_completion_without_emitting",
+          "backends::codex_cli::adapter::tests::every_transport_failure_category_remains_distinct_and_never_emits",
+          "backends::codex_cli::protocol::tests::first_failure_is_sticky_and_keeps_candidate_after_later_records",
+          "backends::codex_cli::protocol::tests::frozen_error_transcripts_reject_with_located_reasons_and_candidate_evidence",
+          "backends::codex_cli::protocol::tests::frozen_live_story_captures_match_independent_payload_and_usage_expectations",
+          "backends::codex_cli::protocol::tests::invalid_payload_is_retained_and_never_repaired_or_accepted",
+          "backends::codex_cli::protocol::tests::live_tool_canary_is_unsupported_even_though_the_cli_exited_successfully",
+          "backends::codex_cli::protocol::tests::malformed_required_fields_and_unsupported_items_are_not_candidates",
+          "backends::codex_cli::protocol::tests::optional_telemetry_preserves_unknown_zero_and_normalizes_invalid_cache",
+          "backends::codex_cli::protocol::tests::order_failures_and_end_of_stream_never_authorize_completion",
+          "backends::process::split_record_tests::a_single_complete_record_is_extracted_and_removed",
+          "backends::process::split_record_tests::a_trailing_partial_record_without_newline_remains_buffered",
+          "backends::process::split_record_tests::an_empty_record_between_two_newlines_is_preserved_as_empty",
+          "backends::process::split_record_tests::crlf_records_keep_the_carriage_return_attached_to_the_record",
+          "backends::process::split_record_tests::empty_buffer_yields_no_records_and_stays_empty",
+          "backends::process::split_record_tests::feeding_bytes_across_multiple_calls_reassembles_a_split_record",
+          "backends::process::unix_impl::fault_tests::cleanup_failures_preserve_the_initiating_error",
+          "backends::process::unix_impl::fault_tests::fatal_read_error_is_not_treated_as_would_block",
+          "backends::process::unix_impl::fault_tests::interrupted_reaping_still_has_a_finite_deadline",
+          "backends::process::unix_impl::fault_tests::self_pipe_wakes_a_long_poll_without_removing_token_checks",
+          "backends::process::unix_impl::fault_tests::setup_write_read_poll_and_exit_observation_failures_are_errors",
+          "execution::generation::tests::failed_spawn_keeps_use_cases_available_for_explicit_retry",
+          "execution::generation::tests::mailbox_budget_is_cumulative_and_does_not_split_unicode",
+          "execution::storage::tests::failed_storage_thread_spawn_preserves_ready_state_and_never_runs_factory",
+          "persistence::helper::tests::preparation_clock_or_entropy_failure_launches_no_helper_and_keeps_visibility_unchanged",
+          "persistence::helper::tests::private_protocol_rejects_duplicate_keys_unknown_fields_versions_and_wrong_shapes_before_disk",
+          "persistence::repository::linux::tests::killed_helpers_leave_complete_crash_window_files_release_locks_and_reconcile_once"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "process_supervisor",
+        "tests": [
+          "a_child_that_never_reads_stdin_still_completes",
+          "a_descendant_retaining_the_inherited_pipe_does_not_hang_the_supervisor",
+          "a_panicking_consumer_still_gets_the_child_cleaned_up",
+          "broken_stdin_delivery_is_reported_without_hanging",
+          "cancellation_and_deadline_stop_continuous_writers_with_bounded_diagnostics",
+          "cancellation_before_spawn_launches_no_process",
+          "cancellation_while_the_child_is_silent_still_wakes_the_poll_loop_and_returns_promptly",
+          "cancelled_token_wins_even_before_its_notifier_runs",
+          "cancelling_from_inside_the_final_no_newline_record_still_wins_over_exit",
+          "cancelling_from_inside_the_record_consumer_wins_over_a_same_tick_exit",
+          "capture_at_the_exact_bound_is_complete_and_preserves_arbitrary_bytes",
+          "captured_output_never_exceeds_either_configured_bound",
+          "consumer_rejection_triggers_cleanup_and_reports_the_reason",
+          "crlf_records_are_delivered_with_the_carriage_return_intact",
+          "deadline_exceeded_kills_the_child_and_reports_timeout",
+          "env_policy_is_an_explicit_allowlist_not_ambient_inheritance",
+          "exact_argv_and_stdin_reach_the_child_and_both_pipes_are_drained",
+          "failure_after_a_candidate_record_still_reports_nonzero_exit_not_success",
+          "final_record_without_a_trailing_newline_is_still_delivered",
+          "incomplete_request_delivery_cannot_report_success",
+          "missing_executable_is_a_spawn_error_not_a_panic",
+          "multiple_records_are_delivered_in_order_and_success_requires_zero_exit",
+          "nonzero_exit_is_reported_with_diagnostics",
+          "output_bound_exceeded_stops_the_child_instead_of_buffering_forever",
+          "records_written_right_before_exit_are_not_silently_dropped",
+          "request_files_live_through_execution_and_are_removed_on_every_outcome",
+          "request_workspace_is_private_and_unique",
+          "requests_do_not_inherit_the_repository_working_directory",
+          "stdin_larger_than_pipe_capacity_is_delivered_in_full_when_the_child_reads_it",
+          "stdout_larger_than_pipe_capacity_is_fully_delivered_and_diagnostics_agree"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "session_persistence",
+        "tests": [
+          "cancelled_generation_never_autosaves_a_rejected_turn",
+          "failed_autosave_keeps_accepted_turn_and_storage_retry_never_regenerates",
+          "failed_copy_retains_previous_uncertain_attempt_for_reconciliation",
+          "generation_and_storage_failure_views_remain_independent_and_copy_failure_keeps_binding",
+          "load_failure_preserves_stage_revision_binding_and_generation_retry",
+          "queued_generation_panic_remains_an_exit_failure_after_quit_and_successful_save",
+          "quit_cancels_load_joins_and_saves_old_canonical_game_once",
+          "quit_during_write_finishes_current_revision_once_without_duplicate_backup_rotation",
+          "rewind_and_changed_policy_load_save_canonical_snapshots_before_generation",
+          "selection_saves_zero_turn_before_one_deferred_opening_and_quit_clears_it",
+          "source_mismatch_preserves_session_and_backup_recovery_creates_instead_of_replacing",
+          "uncertain_write_and_worker_panic_reconcile_same_attempt_without_a_new_slot"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "storage",
+        "tests": [
+          "dropping_runner_cancels_and_joins_without_leaving_storage_work_detached",
+          "polling_is_nonblocking_preparation_precedes_completion_and_close_joins_cancelled_work",
+          "worker_panics_distinguish_unprepared_from_uncertain_writes_and_retain_identity"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "storage_transport",
+        "tests": [
+          "lost_invalid_multiple_or_capped_replies_never_authorize_success_and_reconcile_exact_write",
+          "preparation_exhausting_the_total_deadline_launches_no_helper_or_disk_write",
+          "replacement_prepares_with_one_read_child_and_dispatches_one_mutating_child",
+          "silent_helper_cancellation_and_timeout_reap_children_and_keep_prepared_identity"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "streaming",
+        "tests": [
+          "arbitrary_scalar_splits_match_the_independent_narrative",
+          "only_the_requested_top_level_string_is_streamed",
+          "surrogate_pairs_lone_halves_and_escapes_survive_single_character_chunks",
+          "truncated_and_invalid_json_only_yield_available_preview_text"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "worker",
+        "tests": [
+          "dropping_runner_cancels_and_joins_silent_request",
+          "joined_success_queued_before_cancel_is_discarded",
+          "panic_faults_without_committing_and_quit_remains_available",
+          "paused_progress_consumer_cannot_block_completion_or_exceed_budget",
+          "silent_cancel_joins_before_retry_and_preserves_generator_and_evidence"
+        ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "commands",
+        "tests": [
+          "in_session_persistence_syntax_rejects_partial_paths_and_invalid_rewind_before_effects",
+          "persistence_cli_accepts_explicit_resume_policies_and_auth_free_queries",
+          "persistence_cli_rejects_missing_policy_paths_invalid_ids_and_page_bounds"
+        ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "lib",
+        "tests": [
+          "headless::output::tests::continuously_writable_output_and_interrupted_calls_have_finite_pump_budgets",
+          "headless::output::tests::partial_writes_and_backpressure_retain_exact_unicode_bytes_once",
+          "headless::output::tests::permanent_stall_and_trickling_progress_have_distinct_clock_behavior",
+          "headless::output::tests::queue_overflow_write_zero_and_broken_pipe_are_explicit_errors"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "ACCEPTANCE-001",
+    "coverage": "enforced",
+    "checks": [
+      {
+        "package": "cyoa-cli",
+        "target": "controller_backends",
+        "tests": [
+          "both_adapters_preserve_controller_state_through_failure_cancel_retry_and_quit",
+          "both_joined_adapter_successes_are_rejected_if_cancel_wins_acceptance"
+        ]
+      },
+      {
+        "package": "cyoa-cli",
+        "target": "controller_story",
+        "tests": [
+          "complete_controller_story_preserves_context_retry_identity_chapters_and_rewind",
+          "controller_zero_npcs_and_both_restore_policies_use_active_limits"
         ]
       },
       {
@@ -2063,67 +1841,6 @@
         "target": "demo_retry",
         "tests": [
           "cancelled_consumed_demo_passages_preserve_disk_and_retry_all_five_with_persistence"
-        ]
-      },
-      {
-        "package": "cyoa-cli",
-        "target": "persistence_shutdown",
-        "tests": [
-          "bounded_silent_storage_keeps_input_responsive_and_reaps_current_and_final_helpers",
-          "input_and_output_errors_still_save_last_canonical_story_and_remain_errors",
-          "blocked_storage_and_faulted_output_sinks_preserve_canonical_state_and_reap_helpers"
-        ]
-      },
-      {
-        "package": "cyoa-cli",
-        "target": "headless",
-        "tests": [
-          "input_line_bound_ignores_read_ahead_and_rejects_oversized_lines"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "ACCEPTANCE-001",
-    "coverage": "enforced",
-    "checks": [
-      {
-        "package": "cyoa-infrastructure",
-        "target": "phase_zero_acceptance",
-        "tests": [
-          "invalid_rewind_is_an_error_without_state_changes_or_generation",
-          "rewinding_the_only_turn_restores_opening_context_without_an_extra_call",
-          "full_story_preserves_contracts_through_failure_retry_cancellation_and_rewind"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "codex_story_acceptance",
-        "tests": [
-          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
-        ]
-      },
-      {
-        "package": "cyoa-infrastructure",
-        "target": "claude_story_acceptance",
-        "tests": [
-          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
-        ]
-      },
-      {
-        "package": "cyoa-cli",
-        "target": "controller_story",
-        "tests": [
-          "complete_controller_story_preserves_context_retry_identity_chapters_and_rewind",
-          "controller_zero_npcs_and_both_restore_policies_use_active_limits"
-        ]
-      },
-      {
-        "package": "cyoa-cli",
-        "target": "controller_backends",
-        "tests": [
-          "both_adapters_preserve_controller_state_through_failure_cancel_retry_and_quit",
-          "both_joined_adapter_successes_are_rejected_if_cancel_wins_acceptance"
         ]
       },
       {
@@ -2134,48 +1851,56 @@
         ]
       },
       {
-        "package": "cyoa-presentation",
-        "target": "commands",
-        "tests": [
-          "persistence_cli_rejects_missing_policy_paths_invalid_ids_and_page_bounds",
-          "persistence_cli_accepts_explicit_resume_policies_and_auth_free_queries",
-          "in_session_persistence_syntax_rejects_partial_paths_and_invalid_rewind_before_effects"
-        ]
-      },
-      {
         "package": "cyoa-cli",
         "target": "headless_persistence",
         "tests": [
           "auth_free_list_inspect_and_invalid_resume_leave_save_bytes_unchanged",
-          "zero_turn_resume_waits_for_explicit_opening_and_rewind_persists_before_next_request",
-          "explicit_backup_recovery_creates_a_fresh_slot_and_preserves_damaged_originals",
           "both_fixture_backends_restart_from_disk_and_live_saves_are_vendor_neutral",
+          "explicit_backup_recovery_creates_a_fresh_slot_and_preserves_damaged_originals",
+          "in_session_load_keeps_failed_edit_buffers_and_save_copy_switches_slots_only_after_success",
           "startup_policy_changes_persist_after_auth_and_failed_auth_never_rewrites_a_save",
-          "in_session_load_keeps_failed_edit_buffers_and_save_copy_switches_slots_only_after_success"
-        ]
-      },
-      {
-        "package": "cyoa-cli",
-        "target": "demo_persistence",
-        "tests": [
-          "harbour_restart_rewind_and_exhaustion_preserve_fixed_passages_without_vendor_access",
-          "unknown_scenario_future_version_source_mismatch_and_excess_demo_turns_fail_before_auth"
-        ]
-      },
-      {
-        "package": "cyoa-cli",
-        "target": "demo_retry",
-        "tests": [
-          "cancelled_consumed_demo_passages_preserve_disk_and_retry_all_five_with_persistence"
+          "zero_turn_resume_waits_for_explicit_opening_and_rewind_persists_before_next_request"
         ]
       },
       {
         "package": "cyoa-cli",
         "target": "persistence_shutdown",
         "tests": [
+          "blocked_storage_and_faulted_output_sinks_preserve_canonical_state_and_reap_helpers",
           "bounded_silent_storage_keeps_input_responsive_and_reaps_current_and_final_helpers",
-          "input_and_output_errors_still_save_last_canonical_story_and_remain_errors",
-          "blocked_storage_and_faulted_output_sinks_preserve_canonical_state_and_reap_helpers"
+          "input_and_output_errors_still_save_last_canonical_story_and_remain_errors"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "claude_story_acceptance",
+        "tests": [
+          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "codex_story_acceptance",
+        "tests": [
+          "composed_story_preserves_namesakes_repaired_ids_retitling_and_rewind_context"
+        ]
+      },
+      {
+        "package": "cyoa-infrastructure",
+        "target": "phase_zero_acceptance",
+        "tests": [
+          "full_story_preserves_contracts_through_failure_retry_cancellation_and_rewind",
+          "invalid_rewind_is_an_error_without_state_changes_or_generation",
+          "rewinding_the_only_turn_restores_opening_context_without_an_extra_call"
+        ]
+      },
+      {
+        "package": "cyoa-presentation",
+        "target": "commands",
+        "tests": [
+          "in_session_persistence_syntax_rejects_partial_paths_and_invalid_rewind_before_effects",
+          "persistence_cli_accepts_explicit_resume_policies_and_auth_free_queries",
+          "persistence_cli_rejects_missing_policy_paths_invalid_ids_and_page_bounds"
         ]
       }
     ]
@@ -2188,11 +1913,14 @@
         "package": "cyoa-core",
         "target": "domain_invariants",
         "tests": [
-          "chapters_expose_zero_based_numbers_and_one_based_ordinals",
           "changing_style_preserves_committed_story_and_other_game_settings",
+          "chapters_expose_zero_based_numbers_and_one_based_ordinals",
+          "cost_amount_preserves_valid_values_and_rejects_nonfinite_or_negative_values",
           "npc_relationships_survive_initial_summary_construction",
           "optional_turn_fields_and_audit_record_survive_commit",
-          "cost_amount_preserves_valid_values_and_rejects_nonfinite_or_negative_values"
+          "persistence_identity_counters_stamps_and_time_keep_checked_boundaries",
+          "save_snapshot_preserves_game_source_and_demo_passage_limit",
+          "turn_direction_keeps_player_input_distinct_from_generated_continuation"
         ]
       }
     ]

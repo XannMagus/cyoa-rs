@@ -1,4 +1,8 @@
 //! Event-loop output regressions, with deterministic sinks rather than scheduler luck.
+use cyoa_application::execution::PreviewLimit;
+use cyoa_application::runtime::{Intent, SessionRuntime};
+use cyoa_application::session::{Phase, SessionController};
+use cyoa_application::session_persistence::{ApplicationSession, PersistedSession};
 use cyoa_application::{
     cancellation::CancellationToken,
     generation::{Generated, GenerationFailure, StoryGenerator, StoryUseCases, TurnDirection},
@@ -11,15 +15,10 @@ use cyoa_core::{
     turn::StoryTurn,
     world::{WorldCast, WorldOutline},
 };
+use cyoa_infrastructure::execution::storage::StorageRunner;
 use cyoa_infrastructure::generation::demo;
-use cyoa_presentation::{
-    headless::{self, Input, InputEvent},
-    persistence::{HeadlessSession, PersistedSession},
-    runtime::{Intent, SessionRuntime},
-    session::{Phase, SessionController},
-    storage::StorageRunner,
-    worker::PreviewLimit,
-};
+use cyoa_presentation::headless::{self, Input, InputEvent};
+
 use std::{
     collections::VecDeque,
     io::{self, Write},
@@ -50,14 +49,18 @@ impl Input for Lines {
 fn runtime<G: StoryGenerator + Send + 'static>(
     generator: G,
 ) -> PersistedSession<
-    G,
-    cyoa_infrastructure::persistence::helper::SupervisedRepository,
-    impl Fn() -> cyoa_infrastructure::persistence::helper::SupervisedRepository,
+    cyoa_infrastructure::execution::generation::WorkerRunner<G>,
+    StorageRunner<
+        cyoa_infrastructure::persistence::helper::SupervisedRepository,
+        impl Fn() -> cyoa_infrastructure::persistence::helper::SupervisedRepository,
+    >,
 > {
     let runtime = SessionRuntime::new(
         SessionController::new(Limits::default(), StoryStyle::default()),
-        StoryUseCases::new(generator),
-        PreviewLimit::default(),
+        cyoa_infrastructure::execution::generation::WorkerRunner::new(
+            StoryUseCases::new(generator),
+            PreviewLimit::default(),
+        ),
     );
     let root = tempfile::tempdir().unwrap();
     let config = cyoa_infrastructure::persistence::helper::HelperConfig::new(
@@ -112,7 +115,7 @@ fn paused_control_reader_resumes_and_final_drain_delivers_every_help_once() {
     let text = String::from_utf8(control.written).unwrap();
     assert_eq!(text.matches("Commands: /help").count(), 400);
     assert!(text.ends_with("Session closed; durability=Clean.\n"));
-    assert_eq!(runtime.controller().phase(), Phase::Closed);
+    assert_eq!(runtime.view().phase(), Phase::Closed);
 }
 struct Trickle {
     next: Instant,
@@ -146,14 +149,18 @@ fn trickling_reader_cannot_extend_final_drain_indefinitely() {
     assert!(error.to_string().contains("did not drain on exit"));
     // The TimedOut error already proves the drain deadline fired; hang guard only.
     assert!(start.elapsed() < Duration::from_secs(30));
-    assert_eq!(runtime.controller().phase(), Phase::Closed);
+    assert_eq!(runtime.view().phase(), Phase::Closed);
 }
 struct Silent<G> {
     inner: G,
     started: Arc<AtomicBool>,
     cancelled: Arc<AtomicBool>,
 }
-impl<G: StoryGenerator> StoryGenerator for Silent<G> {
+impl<G: StoryGenerator> cyoa_core::generation::StoryGenerator for Silent<G> {
+    type Context = cyoa_application::cancellation::CancellationToken;
+    type Failure = cyoa_application::generation::GenerationFailure;
+    type Report<T> = cyoa_application::generation::Generated<T>;
+
     fn outline(
         &mut self,
         brief: &Brief,
@@ -221,8 +228,8 @@ fn cancellation_and_quit_join_active_worker_while_control_output_is_blocked() {
             headless::run(&mut runtime, &mut input, &mut vec![], &mut control, true).unwrap_err();
         assert_eq!(error.kind(), io::ErrorKind::Interrupted);
         assert!(cancelled.load(Ordering::SeqCst));
-        assert_eq!(runtime.controller().phase(), Phase::Closed);
-        assert!(runtime.controller().game().is_none());
+        assert_eq!(runtime.view().phase(), Phase::Closed);
+        assert!(runtime.view().game().is_none());
         assert!(
             // Half the 10 s stall: only waiting out the stalled sink crosses this.
             start.elapsed() < Duration::from_secs(5),
@@ -360,9 +367,9 @@ fn initially_full_real_story_pipe_drains_exact_committed_narrative_on_exit() {
     use std::{cell::RefCell, rc::Rc};
     let (mut story, reader, filled) = full_pipe_with_delayed_reader();
     let mut runtime = runtime(demo::harbour_v1().unwrap());
-    fn settle(runtime: &mut dyn HeadlessSession) {
+    fn settle(runtime: &mut dyn ApplicationSession) {
         let deadline = Instant::now() + Duration::from_secs(30);
-        while runtime.controller().phase() == Phase::Running {
+        while runtime.view().phase() == Phase::Running {
             runtime.poll();
             assert!(Instant::now() < deadline);
             thread::sleep(Duration::from_millis(1));
@@ -412,12 +419,12 @@ fn initially_full_real_story_pipe_drains_exact_committed_narrative_on_exit() {
     drop(story);
     let bytes = reader.join().unwrap();
     result.unwrap();
-    let narrative = runtime.controller().game().unwrap().turns()[0]
+    let narrative = runtime.view().game().unwrap().turns()[0]
         .turn()
         .narrative()
         .as_str();
     assert_eq!(&bytes[filled..], format!("{narrative}\n").as_bytes());
-    assert_eq!(runtime.controller().phase(), Phase::Closed);
+    assert_eq!(runtime.view().phase(), Phase::Closed);
 }
 
 #[test]
@@ -451,5 +458,5 @@ fn reader_resuming_after_final_deadline_cannot_turn_expiry_into_success() {
         control.written.is_empty(),
         "expired drain must not pump newly writable output"
     );
-    assert_eq!(runtime.controller().phase(), Phase::Closed);
+    assert_eq!(runtime.view().phase(), Phase::Closed);
 }

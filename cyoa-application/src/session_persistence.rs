@@ -1,13 +1,13 @@
 //! Canonical session coordination. Storage owns snapshots, never the live game.
 use crate::{
+    execution::{
+        GenerationExecution, StorageEvent, StorageExecution, StorageIntent, StorageKey,
+        StorageOutcome,
+    },
     runtime::{CanonicalChange, Intent, RuntimeError, SessionRuntime},
-    session::{Acceptance, Phase, SessionController, SessionError},
-    storage::{StorageEvent, StorageIntent, StorageKey, StorageOutcome, StorageRunner},
+    session::{Acceptance, Phase, SessionError, SessionView},
 };
-use cyoa_application::{
-    generation::{StoryGenerator, TurnDirection},
-    persistence::*,
-};
+use crate::{generation::TurnDirection, persistence::*};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SaveBinding {
@@ -29,8 +29,7 @@ pub enum Shutdown {
     Open,
     StoppingGeneration,
     SavingFinal,
-    DrainingOutput,
-    Closed,
+    Complete,
 }
 #[derive(Debug, thiserror::Error)]
 pub enum CoordinationError {
@@ -93,14 +92,13 @@ pub enum PersistenceEvent {
     Failed(StorageFailure),
     Ignored,
 }
-pub struct PersistedSession<G, R, F>
+pub struct PersistedSession<E, S>
 where
-    G: StoryGenerator + Send + 'static,
-    R: GameRepository + Send + 'static,
-    F: Fn() -> R + Send + Sync + 'static,
+    E: GenerationExecution,
+    S: StorageExecution,
 {
-    runtime: SessionRuntime<G>,
-    storage: StorageRunner<R, F>,
+    runtime: SessionRuntime<E>,
+    storage: S,
     source: StorySource,
     binding: SaveBinding,
     durability: Durability,
@@ -114,18 +112,13 @@ where
     worker_fault: bool,
     notifications: Vec<PersistenceEvent>,
 }
-impl<G, R, F> PersistedSession<G, R, F>
+impl<E, S> PersistedSession<E, S>
 where
-    G: StoryGenerator + Send + 'static,
-    R: GameRepository + Send + 'static,
-    F: Fn() -> R + Send + Sync + 'static,
+    E: GenerationExecution,
+    S: StorageExecution,
 {
-    pub fn new(
-        runtime: SessionRuntime<G>,
-        storage: StorageRunner<R, F>,
-        source: StorySource,
-    ) -> Self {
-        let durability = if runtime.controller().game().is_some() {
+    pub fn new(runtime: SessionRuntime<E>, storage: S, source: StorySource) -> Self {
+        let durability = if runtime.view().game().is_some() {
             Durability::Dirty
         } else {
             Durability::Clean
@@ -147,8 +140,8 @@ where
             notifications: Vec::new(),
         }
     }
-    pub fn controller(&self) -> &SessionController {
-        self.runtime.controller()
+    pub fn view(&self) -> SessionView<'_> {
+        self.runtime.view()
     }
     pub fn binding(&self) -> &SaveBinding {
         &self.binding
@@ -166,14 +159,13 @@ where
         self.storage_failure.as_ref()
     }
     pub fn exit_failed(&self) -> bool {
-        self.worker_fault
-            || self.controller().game().is_some() && self.durability != Durability::Clean
+        self.worker_fault || self.view().game().is_some() && self.durability != Durability::Clean
     }
     fn idle(&self, allow_fault: bool) -> Result<(), CoordinationError> {
         if self.shutdown != Shutdown::Open || self.running.is_some() {
             return Err(CoordinationError::Busy);
         }
-        match self.controller().phase() {
+        match self.view().phase() {
             Phase::Ready | Phase::Failed => Ok(()),
             Phase::Faulted if allow_fault => Ok(()),
             _ => Err(CoordinationError::Busy),
@@ -206,7 +198,7 @@ where
         };
         let key = StorageKey {
             id,
-            revision: self.controller().revision(),
+            revision: self.view().revision(),
         };
         self.storage.recover_fault();
         self.last_storage_id = Some(id);
@@ -250,11 +242,11 @@ where
         let canonical = matches!(intent, Intent::Select(_) | Intent::Rewind(_));
         let selection = matches!(intent, Intent::Select(_));
         if selection {
-            self.controller().reserve_selection_opening()?;
+            self.runtime.reserve_selection_opening()?;
         }
         // Every generation can produce a turn; reserve autosave capacity before admission.
         self.capacity_for(if selection { 2 } else { 1 })?;
-        if matches!(intent, Intent::Rewind(_)) && self.controller().game().is_none() {
+        if matches!(intent, Intent::Rewind(_)) && self.view().game().is_none() {
             return Err(CoordinationError::NoGame);
         }
         if let Err(error) = self.runtime.dispatch(intent) {
@@ -271,12 +263,12 @@ where
         Ok(())
     }
     fn write(&mut self, slot: SaveSlot, urgency: SaveUrgency) -> Result<(), CoordinationError> {
-        let game = self.controller().game().ok_or(CoordinationError::NoGame)?;
+        let game = self.view().game().ok_or(CoordinationError::NoGame)?;
         let command = if slot == SaveSlot::Current
             && self
                 .retry_write
                 .as_ref()
-                .is_some_and(|r| r.revision == self.controller().revision())
+                .is_some_and(|r| r.revision == self.view().revision())
         {
             SaveGame::Reconcile(self.retry_write.as_ref().unwrap().pending.clone())
         } else {
@@ -316,7 +308,7 @@ where
         if self.durability != Durability::Clean {
             return Err(CoordinationError::Unsaved);
         }
-        self.controller().can_replace_game()?;
+        self.runtime.can_replace_game()?;
         self.capacity_for(2)?;
         self.start(
             Effect::Load,
@@ -361,11 +353,10 @@ pub fn validate_loaded_source(
         "save source does not match this session",
     ))
 }
-impl<G, R, F> PersistedSession<G, R, F>
+impl<E, S> PersistedSession<E, S>
 where
-    G: StoryGenerator + Send + 'static,
-    R: GameRepository + Send + 'static,
-    F: Fn() -> R + Send + Sync + 'static,
+    E: GenerationExecution,
+    S: StorageExecution,
 {
     fn install_loaded(&mut self, loaded: LoadedGame) -> Result<(), CoordinationError> {
         let LoadedGame {
@@ -411,15 +402,10 @@ where
             self.storage.cancel();
         }
     }
-    pub fn output_drained(&mut self) {
-        if self.shutdown == Shutdown::DrainingOutput {
-            self.shutdown = Shutdown::Closed;
-        }
-    }
     pub fn poll(&mut self) -> Vec<PersistenceEvent> {
         let mut events = std::mem::take(&mut self.notifications);
         for event in self.runtime.poll_events() {
-            if event.worker_fault || self.controller().phase() == Phase::Faulted {
+            if event.worker_fault || self.view().phase() == Phase::Faulted {
                 self.worker_fault = true;
             }
             let save = event.change == Some(CanonicalChange::Turn);
@@ -446,7 +432,7 @@ where
             StorageEvent::Prepared { key, .. } | StorageEvent::Finished { key, .. } => *key,
         };
         if !self.running.as_ref().is_some_and(|r| r.key == key)
-            || key.revision != self.controller().revision()
+            || key.revision != self.view().revision()
         {
             if let StorageEvent::Finished { result, .. } = &event {
                 match result {
@@ -558,10 +544,10 @@ where
     }
     fn advance_shutdown(&mut self) {
         if self.shutdown == Shutdown::StoppingGeneration
-            && self.controller().phase() == Phase::Closed
+            && self.view().phase() == Phase::Closed
             && self.running.is_none()
         {
-            if self.controller().game().is_none() || self.closing_write_satisfied {
+            if self.view().game().is_none() || self.closing_write_satisfied {
                 self.finish_storage();
             } else {
                 self.shutdown = Shutdown::SavingFinal;
@@ -577,18 +563,18 @@ where
     }
     fn finish_storage(&mut self) {
         self.storage.close();
-        self.shutdown = Shutdown::DrainingOutput;
+        self.shutdown = Shutdown::Complete;
     }
 }
 
 #[cfg(test)]
-#[path = "persistence_tests.rs"]
+#[path = "session_persistence_tests.rs"]
 mod tests;
 
 /// Operations needed by the headless driver, independent of generator/repository
 /// composition. Canonical queries remain borrowed; effects own their inputs.
-pub trait HeadlessSession {
-    fn controller(&self) -> &SessionController;
+pub trait ApplicationSession {
+    fn view(&self) -> SessionView<'_>;
     fn dispatch(&mut self, intent: Intent) -> Result<(), CoordinationError>;
     fn save(&mut self, slot: SaveSlot) -> Result<(), CoordinationError>;
     fn list(&mut self, page: SavePage) -> Result<(), CoordinationError>;
@@ -599,17 +585,15 @@ pub trait HeadlessSession {
     fn storage_busy(&self) -> bool;
     fn storage_failure(&self) -> Option<&StorageFailure>;
     fn shutdown(&self) -> Shutdown;
-    fn output_drained(&mut self);
     fn exit_failed(&self) -> bool;
 }
-impl<G, R, F> HeadlessSession for PersistedSession<G, R, F>
+impl<E, S> ApplicationSession for PersistedSession<E, S>
 where
-    G: StoryGenerator + Send + 'static,
-    R: GameRepository + Send + 'static,
-    F: Fn() -> R + Send + Sync + 'static,
+    E: GenerationExecution,
+    S: StorageExecution,
 {
-    fn controller(&self) -> &SessionController {
-        self.controller()
+    fn view(&self) -> SessionView<'_> {
+        self.view()
     }
     fn dispatch(&mut self, intent: Intent) -> Result<(), CoordinationError> {
         self.dispatch(intent)
@@ -640,9 +624,6 @@ where
     }
     fn shutdown(&self) -> Shutdown {
         self.shutdown()
-    }
-    fn output_drained(&mut self) {
-        self.output_drained()
     }
     fn exit_failed(&self) -> bool {
         self.exit_failed()

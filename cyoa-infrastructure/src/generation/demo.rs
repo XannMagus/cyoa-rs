@@ -10,7 +10,7 @@ use crate::backend::BackendError;
 use cyoa_application::{
     cancellation::CancellationToken,
     diagnostics::TransportDiagnostics,
-    generation::{Generated, GenerationFailure, StoryGenerator, TurnDirection},
+    generation::{Generated, GenerationFailure, TurnDirection},
 };
 use cyoa_core::{
     game::GameState,
@@ -52,7 +52,11 @@ impl HarbourDemo {
             .replace_backend(ChunkedBackend::new([response], 17));
     }
 }
-impl StoryGenerator for HarbourDemo {
+impl cyoa_core::generation::StoryGenerator for HarbourDemo {
+    type Context = cyoa_application::cancellation::CancellationToken;
+    type Failure = cyoa_application::generation::GenerationFailure;
+    type Report<T> = cyoa_application::generation::Generated<T>;
+
     fn outline(
         &mut self,
         brief: &Brief,

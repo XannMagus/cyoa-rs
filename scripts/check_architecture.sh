@@ -41,6 +41,18 @@ errors=$(cargo metadata --format-version 1 --no-deps --locked | jq -r '
 # Shared generation code must never special-case a vendor. Each backend's quirks
 # live in its own adapter; the only shared mention allowed is the one-line module
 # registration in backend_compat/mod.rs. Comments may cite reference files.
+execution=$(grep --recursive --line-number --extended-regexp \
+  'JoinHandle|thread::(spawn|scope)|thread::Builder' \
+  cyoa-core/src cyoa-application/src cyoa-presentation/src \
+  | grep --invert-match --extended-regexp '^[^:]+:[0-9]+:[[:space:]]*(//|#)' || true)
+if [[ -n "$execution" ]]; then
+  errors+=${errors:+$'\n'}"Execution resources must be owned by infrastructure (ARCH-001):"$'\n'"$execution"
+fi
+presentation_policy=$(grep --line-number --extended-regexp \
+  '^pub mod (session|runtime|worker|storage|persistence);' cyoa-presentation/src/lib.rs || true)
+if [[ -n "$presentation_policy" ]]; then
+  errors+=${errors:+$'\n'}"Session/execution policy must not return to presentation (ARCH-001)."
+fi
 shared=(
   cyoa-core/src
   cyoa-application/src

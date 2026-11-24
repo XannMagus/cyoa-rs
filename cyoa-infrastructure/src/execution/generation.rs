@@ -1,34 +1,15 @@
 //! Sequential owned inference threads. Poll never joins a live thread.
-use crate::session::{Completion, RequestKey, WorkRequest};
+use cyoa_application::execution::{GenerationExecution, PreviewLimit, WorkerEvent};
+use cyoa_application::session::{Completion, RequestKey, WorkRequest};
 use cyoa_application::{
     cancellation::CancellationSource,
     generation::{StoryGenerator, StoryUseCases},
 };
 use std::{
-    num::NonZeroUsize,
     sync::{Arc, Mutex},
     thread::{self, JoinHandle},
 };
 
-#[derive(Debug, Clone, Copy)]
-pub struct PreviewLimit(NonZeroUsize);
-impl PreviewLimit {
-    /// The largest preview any layer retains.
-    pub const MAX_BYTES: usize = 1_048_576;
-    pub fn new(bytes: usize) -> Option<Self> {
-        (bytes <= Self::MAX_BYTES)
-            .then(|| NonZeroUsize::new(bytes).map(Self))
-            .flatten()
-    }
-    pub fn bytes(self) -> usize {
-        self.0.get()
-    }
-}
-impl Default for PreviewLimit {
-    fn default() -> Self {
-        Self::new(Self::MAX_BYTES).unwrap()
-    }
-}
 #[derive(Default)]
 struct Mailbox {
     text: String,
@@ -58,18 +39,6 @@ impl Mailbox {
             incomplete: self.incomplete,
         })
     }
-}
-pub enum WorkerEvent {
-    Progress {
-        key: RequestKey,
-        text: String,
-        incomplete: bool,
-    },
-    Finished(Completion),
-    Fault {
-        key: RequestKey,
-        message: String,
-    },
 }
 type Returned<G> = (StoryUseCases<G>, Completion);
 type Job<G> = Box<dyn FnOnce() -> Returned<G> + Send>;
@@ -122,7 +91,7 @@ impl<G: StoryGenerator + Send + 'static> WorkerRunner<G> {
         let writer = Arc::clone(&mailbox);
         let limit = self.limit;
         let key = request.key();
-        let source = Arc::clone(&request.source);
+        let source = request.cancellation_source();
         let job = Box::new(move || {
             let mut cases = worker_cell
                 .lock()
@@ -200,7 +169,7 @@ impl<G: StoryGenerator + Send + 'static> WorkerRunner<G> {
             match handle.join() {
                 Ok((cases, completion)) => {
                     self.state = State::Ready(cases);
-                    events.push(WorkerEvent::Finished(completion));
+                    events.push(WorkerEvent::Finished(Box::new(completion)));
                 }
                 Err(_) => {
                     self.state = State::Faulted;
@@ -212,6 +181,14 @@ impl<G: StoryGenerator + Send + 'static> WorkerRunner<G> {
             }
         }
         events
+    }
+}
+impl<G: StoryGenerator + Send + 'static> GenerationExecution for WorkerRunner<G> {
+    fn start(&mut self, request: WorkRequest) -> std::io::Result<()> {
+        self.start(request)
+    }
+    fn poll(&mut self) -> Vec<WorkerEvent> {
+        self.poll()
     }
 }
 impl<G: StoryGenerator + Send + 'static> Drop for WorkerRunner<G> {
@@ -242,7 +219,11 @@ mod tests {
     };
     use std::sync::atomic::{AtomicUsize, Ordering};
     struct Counter(Arc<AtomicUsize>);
-    impl StoryGenerator for Counter {
+    impl cyoa_core::generation::StoryGenerator for Counter {
+        type Context = cyoa_application::cancellation::CancellationToken;
+        type Failure = cyoa_application::generation::GenerationFailure;
+        type Report<T> = cyoa_application::generation::Generated<T>;
+
         fn outline(
             &mut self,
             _: &Brief,
@@ -284,8 +265,10 @@ mod tests {
             StoryUseCases::new(Counter(Arc::clone(&calls))),
             PreviewLimit::default(),
         );
-        let mut controller =
-            crate::session::SessionController::new(Limits::default(), StoryStyle::default());
+        let mut controller = cyoa_application::session::SessionController::new(
+            Limits::default(),
+            StoryStyle::default(),
+        );
         let request = controller
             .submit_brief(Brief::new("brief").unwrap())
             .unwrap();
@@ -302,7 +285,7 @@ mod tests {
         while !runner.is_ready() {
             for event in runner.poll() {
                 if let WorkerEvent::Finished(done) = event {
-                    controller.complete(done);
+                    controller.complete(*done);
                 }
             }
             assert!(std::time::Instant::now() < deadline);
@@ -311,7 +294,7 @@ mod tests {
         assert_eq!(calls.load(Ordering::SeqCst), 1);
         assert!(matches!(
             controller.stage(),
-            crate::session::Stage::OutlineReview { .. }
+            cyoa_application::session::Stage::OutlineReview { .. }
         ));
     }
     #[test]

@@ -27,4 +27,4 @@
 +        let _ = response;
      }
  }
- impl StoryGenerator for HarbourDemo {
+ impl cyoa_core::generation::StoryGenerator for HarbourDemo {

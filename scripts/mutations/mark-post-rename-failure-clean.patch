@@ -1,5 +1,5 @@
---- a/cyoa-presentation/src/persistence.rs
-+++ b/cyoa-presentation/src/persistence.rs
+--- a/cyoa-application/src/session_persistence.rs
++++ b/cyoa-application/src/session_persistence.rs
 @@ -514,7 +514,7 @@
                                      Durability::Dirty
                                  }

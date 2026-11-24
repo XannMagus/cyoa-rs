@@ -4,6 +4,7 @@ use crate::backends::process::{
     self, EnvPolicy, MaxStderrBytes, MaxStdoutBytes, ProcessBounds, ProcessSpec, RequestWorkspace,
     SupervisorError,
 };
+use crate::persistence::prepared::{PreparedWriteBytes, prepare_write};
 use cyoa_application::{
     cancellation::{CancellationSource, CancellationToken},
     persistence::*,
@@ -220,7 +221,7 @@ fn execute(request: Request) -> Result<OutputWire, StorageFailure> {
                 return Err(boundary(operation, "invalid write operation"));
             }
             let id = SaveId::new(id).map_err(|e| boundary(operation, e.to_string()))?;
-            let pending = PendingWrite::new(
+            let pending = prepare_write(
                 id,
                 previous.map(ContentStamp::new),
                 ContentStamp::new(stamp),
@@ -366,13 +367,13 @@ impl SupervisedRepository {
             },
         )
         .map_err(|e| super::repository::decode_failure(op, e).with_stage(StorageStage::Prepare))?;
-        PendingWrite::new(id, previous, codec::stamp(&bytes), bytes)
+        prepare_write(id, previous, codec::stamp(&bytes), bytes)
             .map_err(|e| boundary(op, e.to_string()))
     }
     fn apply(
         &self,
         pending: PendingWrite,
-        prepared: &PreparedWriteEvidence,
+        prepared: &dyn AttemptObserver<PendingWrite>,
         op: StorageOperation,
         cancel: &CancellationToken,
         started: Instant,
@@ -457,11 +458,16 @@ impl SupervisedRepository {
         }
     }
 }
-impl GameRepository for SupervisedRepository {
+impl cyoa_core::persistence::GameRepository for SupervisedRepository {
+    type Context = cyoa_application::cancellation::CancellationToken;
+    type Failure = cyoa_application::persistence::StorageFailure;
+    type Attempt = cyoa_application::persistence::PendingWrite;
+    type Stored = cyoa_application::persistence::StoredGame;
+
     fn create(
         &mut self,
         snapshot: SaveSnapshot,
-        prepared: &PreparedWriteEvidence,
+        prepared: &dyn AttemptObserver<PendingWrite>,
         cancel: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         let op = StorageOperation::Create;
@@ -493,7 +499,7 @@ impl GameRepository for SupervisedRepository {
         &mut self,
         target: SaveTarget,
         snapshot: SaveSnapshot,
-        prepared: &PreparedWriteEvidence,
+        prepared: &dyn AttemptObserver<PendingWrite>,
         cancel: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         let op = StorageOperation::Replace;
@@ -524,7 +530,7 @@ impl GameRepository for SupervisedRepository {
     fn reconcile(
         &mut self,
         pending: PendingWrite,
-        prepared: &PreparedWriteEvidence,
+        prepared: &dyn AttemptObserver<PendingWrite>,
         cancel: &CancellationToken,
     ) -> Result<SaveReceipt, StorageFailure> {
         check(cancel, StorageOperation::Reconcile)?;
@@ -544,6 +550,8 @@ impl GameRepository for SupervisedRepository {
     ) -> Result<StoredGame, StorageFailure> {
         self.read(id, copy, cancel, Instant::now())
     }
+}
+impl cyoa_application::persistence::SaveQueries for SupervisedRepository {
     fn list(
         &mut self,
         page: SavePage,

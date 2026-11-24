@@ -1,5 +1,5 @@
---- a/cyoa-presentation/src/session.rs
-+++ b/cyoa-presentation/src/session.rs
+--- a/cyoa-application/src/session.rs
++++ b/cyoa-application/src/session.rs
 @@ -377,9 +377,9 @@
              else {
                  unreachable!()

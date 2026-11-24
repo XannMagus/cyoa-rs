@@ -1,5 +1,5 @@
 #![cfg(target_os = "linux")]
-use cyoa_application::persistence::GameRepository;
+use cyoa_application::persistence::{DomainGameRepository as _, SaveQueries as _};
 use std::process::{Command, Stdio};
 
 #[test]

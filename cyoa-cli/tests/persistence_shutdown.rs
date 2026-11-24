@@ -1,5 +1,10 @@
 #![cfg(target_os = "linux")]
+use cyoa_application::execution::PreviewLimit;
+use cyoa_application::runtime::SessionRuntime;
+use cyoa_application::session::SessionController;
+use cyoa_application::session_persistence::{Durability, PersistedSession, Shutdown};
 use cyoa_application::{generation::StoryUseCases, persistence::*};
+use cyoa_infrastructure::execution::storage::StorageRunner;
 use cyoa_infrastructure::{
     generation::demo,
     persistence::{
@@ -8,14 +13,8 @@ use cyoa_infrastructure::{
         repository::LocalRepository,
     },
 };
-use cyoa_presentation::{
-    headless::{self, Input, InputEvent},
-    persistence::{Durability, PersistedSession, Shutdown},
-    runtime::SessionRuntime,
-    session::SessionController,
-    storage::StorageRunner,
-    worker::PreviewLimit,
-};
+use cyoa_presentation::headless::{self, Input, InputEvent};
+
 use std::{
     fs,
     io::{self, Write},
@@ -162,8 +161,10 @@ fn bounded_silent_storage_keeps_input_responsive_and_reaps_current_and_final_hel
         let initial = snapshot();
         let runtime = SessionRuntime::new(
             SessionController::from_game(initial.game().clone()),
-            StoryUseCases::new(demo::harbour_v1().unwrap()),
-            PreviewLimit::default(),
+            cyoa_infrastructure::execution::generation::WorkerRunner::new(
+                StoryUseCases::new(demo::harbour_v1().unwrap()),
+                PreviewLimit::default(),
+            ),
         );
         let mut session = PersistedSession::new(
             runtime,
@@ -182,16 +183,11 @@ fn bounded_silent_storage_keeps_input_responsive_and_reaps_current_and_final_hel
             headless::run(&mut session, &mut input, &mut vec![], &mut control, false).unwrap_err();
         // Hang guard: silent helpers end only through the 250 ms deadline.
         assert!(begin.elapsed() < Duration::from_secs(30));
-        assert_eq!(
-            session.shutdown(),
-            if ending == 3 {
-                Shutdown::DrainingOutput
-            } else {
-                Shutdown::Closed
-            }
-        );
+        // Application completion is independent of the presentation drain result.
+        // The returned error and sink-specific assertions below retain I/O evidence.
+        assert_eq!(session.shutdown(), Shutdown::Complete);
         assert_eq!(session.durability(), Durability::Uncertain);
-        assert_eq!(session.controller().game(), Some(initial.game()));
+        assert_eq!(session.view().game(), Some(initial.game()));
         if ending == 3 {
             assert_eq!(error.kind(), io::ErrorKind::InvalidData);
         } else {
@@ -258,8 +254,10 @@ fn input_and_output_errors_still_save_last_canonical_story_and_remain_errors() {
         .unwrap();
         let runtime = SessionRuntime::new(
             SessionController::from_game(initial.game().clone()),
-            StoryUseCases::new(demo::harbour_v1().unwrap()),
-            PreviewLimit::default(),
+            cyoa_infrastructure::execution::generation::WorkerRunner::new(
+                StoryUseCases::new(demo::harbour_v1().unwrap()),
+                PreviewLimit::default(),
+            ),
         );
         let mut session = PersistedSession::new(
             runtime,
@@ -283,7 +281,7 @@ fn input_and_output_errors_still_save_last_canonical_story_and_remain_errors() {
                 io::ErrorKind::InvalidData
             }
         );
-        assert_eq!(session.shutdown(), Shutdown::DrainingOutput);
+        assert_eq!(session.shutdown(), Shutdown::Complete);
         assert_eq!(session.durability(), Durability::Clean);
         let mut repo = LocalRepository::new(root.path().into()).unwrap();
         let token = cyoa_application::cancellation::CancellationSource::default().token();
@@ -355,8 +353,10 @@ fn blocked_storage_and_faulted_output_sinks_preserve_canonical_state_and_reap_he
                 .unwrap();
             let runtime = SessionRuntime::new(
                 SessionController::from_game(initial.game().clone()),
-                StoryUseCases::new(demo::harbour_v1().unwrap()),
-                PreviewLimit::default(),
+                cyoa_infrastructure::execution::generation::WorkerRunner::new(
+                    StoryUseCases::new(demo::harbour_v1().unwrap()),
+                    PreviewLimit::default(),
+                ),
             );
             let mut session = PersistedSession::new(
                 runtime,
@@ -392,7 +392,7 @@ fn blocked_storage_and_faulted_output_sinks_preserve_canonical_state_and_reap_he
                 begin.elapsed() < Duration::from_secs(10),
                 "sink failure must not extend storage deadlines"
             );
-            let canonical = session.controller().game().unwrap();
+            let canonical = session.view().game().unwrap();
             assert_eq!(
                 canonical.turns().len(),
                 5,

@@ -149,7 +149,11 @@ fn generated<T>(value: T, response: &GenerationResponse) -> Generated<T> {
     )
     .with_diagnostics(response.diagnostics().clone())
 }
-impl<B: Backend> StoryGenerator for GenerationEngine<B> {
+impl<B: Backend> cyoa_core::generation::StoryGenerator for GenerationEngine<B> {
+    type Context = cyoa_application::cancellation::CancellationToken;
+    type Failure = cyoa_application::generation::GenerationFailure;
+    type Report<T> = cyoa_application::generation::Generated<T>;
+
     fn outline(
         &mut self,
         brief: &Brief,
