@@ -1,0 +1,72 @@
+{
+  "files": {
+    "cyoa-infrastructure/src/backend.rs": {
+      "name": "Structured response contract",
+      "description": "Keeps exact model replies, normalized usage and diagnostics separate from domain validation."
+    },
+    "cyoa-infrastructure/src/generation/backend_compat/claude_cli.rs": {
+      "name": "Claude request adjustments",
+      "description": "Removes the root schema marker and supplies a Claude-only advisor suppression instruction."
+    },
+    "cyoa-infrastructure/src/generation/backend_compat/codex_cli.rs": {
+      "name": "Codex request adjustments",
+      "description": "Adapts required properties and annotated references and frames instructions with the prompt on stdin."
+    },
+    "cyoa-infrastructure/src/generation/backend_compat/mod.rs": {
+      "name": "Separate vendor adjustments",
+      "description": "Keeps each CLI tolerance adjustment outside shared response shapes and request rendering."
+    },
+    "cyoa-infrastructure/src/generation/demo.rs": {
+      "name": "Fixed harbour adventure",
+      "description": "Replays five prepared successful passages without credentials or network and explicitly reports exhaustion."
+    },
+    "cyoa-infrastructure/src/generation/engine.rs": {
+      "name": "Typed story generation connection",
+      "description": "Renders a request, calls the selected transport and validates its final reply before returning typed story content."
+    },
+    "cyoa-infrastructure/src/generation/limits_context.rs": {
+      "name": "Generation preferences",
+      "description": "Adjusts requested cast sizes and event caps to the active game limits."
+    },
+    "cyoa-infrastructure/src/generation/mod.rs": {
+      "name": "Generation connection assembly",
+      "description": "Groups request rendering, response mapping and vendor-specific compatibility without mixing their responsibilities."
+    },
+    "cyoa-infrastructure/src/generation/prompts.rs": {
+      "name": "Internal override merge checks",
+      "description": "Merges per-key template sources only in tests; public arbitrary overrides remain unavailable."
+    },
+    "cyoa-infrastructure/src/generation/schema.rs": {
+      "name": "Shared response shapes",
+      "description": "Builds model response shapes and field descriptions while preserving narrative-first ordering."
+    },
+    "cyoa-infrastructure/src/generation/scripted.rs": {
+      "name": "Recorded response playback",
+      "description": "Records requests and replays complete or seeded chunked replies for deterministic offline checks."
+    },
+    "cyoa-infrastructure/src/generation/stream.rs": {
+      "name": "Narrative preview extraction",
+      "description": "Decodes a selected top-level JSON string incrementally, including escapes and surrogate pairs."
+    },
+    "cyoa-infrastructure/src/generation/templates.rs": {
+      "name": "Validated bundled instructions",
+      "description": "Owns checked bundled templates and renders matching instructions, prompts and response shapes."
+    },
+    "cyoa-infrastructure/src/generation/templates/configuration.rs": {
+      "name": "Bundled configuration reading",
+      "description": "Checks the structure of template sources and style tables before they can be rendered."
+    },
+    "cyoa-infrastructure/src/generation/templates/rendering.rs": {
+      "name": "Adventure prompt rendering",
+      "description": "Builds world, cast and turn requests using active limits, story context and the opening identity review."
+    },
+    "cyoa-infrastructure/src/generation/templates/tests.rs": {
+      "name": "Template validation tests",
+      "description": "Checks bundled structure, override preparation and rendering failures without enabling arbitrary public overrides."
+    },
+    "cyoa-infrastructure/src/generation/wire.rs": {
+      "name": "Model reply conversion",
+      "description": "Normalizes tolerant model output into checked worlds and turns while preserving null-versus-empty updates."
+    }
+  }
+}

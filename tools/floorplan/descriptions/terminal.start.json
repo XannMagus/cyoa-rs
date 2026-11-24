@@ -1,0 +1,8 @@
+{
+  "files": {
+    "cyoa-cli/src/main.rs": {
+      "name": "Executable wiring",
+      "description": "Chooses concrete generation and storage connections and handles the private save-helper entry before normal startup."
+    }
+  }
+}

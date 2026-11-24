@@ -1,0 +1,51 @@
+{
+  "schema": "cyoa-floorplan-health@1",
+  "generator": {
+    "version": "0.11.0",
+    "repository": "https://github.com/haydenschmitty/floorplan.git",
+    "revision": "94f81b463b7617e06d873ac71323ce71644c8399"
+  },
+  "health": {
+    "summary": {
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    },
+    "issues": [],
+    "checked": [
+      {
+        "check": "endpoints",
+        "label": "Endpoint sign-in",
+        "checked": false,
+        "text": "not checked: no endpoints found. If your app has a server, it may use a setup Floorplan doesn’t recognise yet."
+      },
+      {
+        "check": "supabase",
+        "label": "Supabase table rules",
+        "checked": false,
+        "text": "no Supabase found"
+      },
+      {
+        "check": "firebase",
+        "label": "Firebase rules",
+        "checked": false,
+        "text": "no rules files found"
+      },
+      {
+        "check": "stripe",
+        "label": "Stripe webhooks",
+        "checked": false,
+        "text": "no Stripe code found"
+      },
+      {
+        "check": "secrets",
+        "label": "Secrets in code",
+        "checked": true,
+        "text": "read 515 files"
+      }
+    ]
+  },
+  "buildWarnings": [
+    "secret-looking text in cyoa-infrastructure/src/backends/process.rs (generous_default.doc) is shown on the map as «hidden». The value isn't repeated here; take it out of that file and name the secret instead (e.g. \"the Stripe key in .env\")."
+  ]
+}

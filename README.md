@@ -111,6 +111,11 @@ and storage behind inward-owned contracts; presentation submits intent and displ
 read-only views. [ARCH-001](docs/decisions/README.md#arch-001-dependencies-point-inward)
 defines the boundary rules, checked by `scripts/check_architecture.sh`.
 
+For the interactive code map, run `node tools/floorplan/run.mjs`. It opens the
+logical **App relationships** view with an **Architecture layers** alternative.
+[Floorplan tooling](tools/floorplan/README.md) documents setup, tracked map sources
+and Health findings; generated HTML stays local.
+
 ## Use as a library
 
 Construct an application `SessionController`, wrap it in `SessionRuntime` with a

@@ -1,0 +1,116 @@
+{
+  "files": {
+    "cyoa-infrastructure/src/bin/storage_fixture.rs": {
+      "name": "Controlled save child",
+      "description": "Provides a test-only child with controlled storage behavior, separate from the shipped command surface."
+    },
+    "cyoa-infrastructure/src/bin/subprocess_fixture.rs": {
+      "name": "Controlled process child",
+      "description": "Emits controlled bytes and process behavior so tests can exercise real pipes, cancellation and cleanup."
+    },
+    "cyoa-infrastructure/tests/application_library.rs": {
+      "name": "Application embedding tests",
+      "description": "Drives a full application client with explicit helper configuration and no presentation dependency."
+    },
+    "cyoa-infrastructure/tests/backend_contract.rs": {
+      "name": "Response evidence tests",
+      "description": "Checks exact subprocess payload and diagnostic bytes, duplicate-key rejection and usage normalization."
+    },
+    "cyoa-infrastructure/tests/claude_backend.rs": {
+      "name": "Claude connection tests",
+      "description": "Runs the actual Claude adapter against controlled child processes to check previews, final acceptance and cleanup."
+    },
+    "cyoa-infrastructure/tests/claude_story_acceptance.rs": {
+      "name": "Claude story acceptance tests",
+      "description": "Checks composed Claude fixture stories through validation, failure, cancellation, retry and restored context."
+    },
+    "cyoa-infrastructure/tests/codex_backend.rs": {
+      "name": "Codex connection tests",
+      "description": "Runs the actual Codex adapter against controlled children to check complete-only acceptance, cancellation and evidence."
+    },
+    "cyoa-infrastructure/tests/codex_story_acceptance.rs": {
+      "name": "Codex story acceptance tests",
+      "description": "Checks composed Codex fixture stories through identity, chapters, failure, retry and restored limits."
+    },
+    "cyoa-infrastructure/tests/filesystem_repository.rs": {
+      "name": "Local save safety tests",
+      "description": "Checks atomic backups, concurrent writers, hostile paths, listing and explicit recovery against real disk operations."
+    },
+    "cyoa-infrastructure/tests/generation_lifecycle.rs": {
+      "name": "World construction lifecycle tests",
+      "description": "Checks that an outline can be edited before cast generation without needing a placeholder cast."
+    },
+    "cyoa-infrastructure/tests/generation_use_cases.rs": {
+      "name": "Generation orchestration tests",
+      "description": "Checks request counts, edited outlines, active limits and untouched games after failed or cancelled generation."
+    },
+    "cyoa-infrastructure/tests/persistence_limits.rs": {
+      "name": "Save restoration limits tests",
+      "description": "Checks current and original limits through save reconstruction, rewind and future context."
+    },
+    "cyoa-infrastructure/tests/persistence_roundtrip.rs": {
+      "name": "Saved adventure round-trip tests",
+      "description": "Checks that encoded and restored games retain story history and generation evidence."
+    },
+    "cyoa-infrastructure/tests/phase_zero_acceptance.rs": {
+      "name": "Complete scripted adventure tests",
+      "description": "Runs a frozen story through malformed replies, explicit retry, cancellation and rewind while checking future context."
+    },
+    "cyoa-infrastructure/tests/prepared_attempt.rs": {
+      "name": "Opaque save preparation tests",
+      "description": "Checks private prepared-document ownership and rejects attempts created by a foreign adapter."
+    },
+    "cyoa-infrastructure/tests/process_supervisor.rs": {
+      "name": "Real process supervision tests",
+      "description": "Checks exact pipes, finite bounds, process cancellation, reaping and private request-folder cleanup."
+    },
+    "cyoa-infrastructure/tests/prompt_rendering.rs": {
+      "name": "Adventure instruction tests",
+      "description": "Checks rendered prompts, response-shape descriptions, chapter context and the opening identity review."
+    },
+    "cyoa-infrastructure/tests/save_compatibility.rs": {
+      "name": "Save compatibility tests",
+      "description": "Checks optional fields, format compatibility and unchanged historical values at the document boundary."
+    },
+    "cyoa-infrastructure/tests/save_validation.rs": {
+      "name": "Saved history validation tests",
+      "description": "Rejects malformed, oversized, duplicate-key and invalid-history documents without silent repair."
+    },
+    "cyoa-infrastructure/tests/session_persistence.rs": {
+      "name": "Session saving acceptance tests",
+      "description": "Checks autosave, uncertain-write recovery, load, copy, rewind and shutdown without regenerating accepted fiction."
+    },
+    "cyoa-infrastructure/tests/storage_transport.rs": {
+      "name": "Save-helper transport tests",
+      "description": "Checks bounded helper cleanup and ensures lost, invalid or capped replies never authorize durable success."
+    },
+    "cyoa-infrastructure/tests/storage.rs": {
+      "name": "Storage execution tests",
+      "description": "Checks nonblocking polling, preparation publication, panic uncertainty and joined cancellation."
+    },
+    "cyoa-infrastructure/tests/streaming.rs": {
+      "name": "Narrative extraction tests",
+      "description": "Checks arbitrary chunk boundaries, Unicode escapes, surrogate pairs and incomplete narrative previews."
+    },
+    "cyoa-infrastructure/tests/support/fixture_backend.rs": {
+      "name": "Controlled transport test connection",
+      "description": "Builds subprocess scenarios and maps controlled payloads and reported usage through a test-only connection."
+    },
+    "cyoa-infrastructure/tests/support/mod.rs": {
+      "name": "Shared test preparation",
+      "description": "Provides bundled generation requests and reusable helpers for retained regression tests."
+    },
+    "cyoa-infrastructure/tests/support/session.rs": {
+      "name": "Prepared session test values",
+      "description": "Builds checked worlds, games, turns and failures for deterministic session policy tests."
+    },
+    "cyoa-infrastructure/tests/wire_mapping.rs": {
+      "name": "Model reply boundary tests",
+      "description": "Checks tolerant defaults, unknown action kinds and null-versus-empty changes before checked domain construction."
+    },
+    "cyoa-infrastructure/tests/worker.rs": {
+      "name": "Generation execution tests",
+      "description": "Checks bounded previews, stale success rejection, worker panic and cancellation before explicit retry."
+    }
+  }
+}

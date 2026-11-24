@@ -1,0 +1,16 @@
+{
+  "files": {
+    "cyoa-application/src/attempt.rs": {
+      "name": "Opaque save attempts",
+      "description": "Keeps immutable attempt identity together with private adapter evidence across retries and failures."
+    },
+    "cyoa-application/src/persistence.rs": {
+      "name": "Save commands and results",
+      "description": "Applies explicit save and restore intent through repository contracts with typed outcomes and failure evidence."
+    },
+    "cyoa-application/src/session_persistence.rs": {
+      "name": "Autosave and recovery policy",
+      "description": "Coordinates selection, accepted changes, save uncertainty, load, recovery and final saving."
+    }
+  }
+}

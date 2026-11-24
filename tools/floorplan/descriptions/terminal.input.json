@@ -1,0 +1,12 @@
+{
+  "files": {
+    "cyoa-presentation/src/commands.rs": {
+      "name": "Player command syntax",
+      "description": "Parses CLI options and in-session commands into checked application intent."
+    },
+    "cyoa-presentation/src/terminal.rs": {
+      "name": "Responsive terminal input",
+      "description": "Handles Linux input, signals and descriptor flags while allowing bounded startup jobs to be interrupted."
+    }
+  }
+}

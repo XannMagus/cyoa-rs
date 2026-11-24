@@ -1,0 +1,48 @@
+{
+  "files": {
+    "cyoa-infrastructure/src/persistence/codec.rs": {
+      "name": "Bounded saved-game documents",
+      "description": "Encodes and strictly reconstructs versioned saved games without performing filesystem operations."
+    },
+    "cyoa-infrastructure/src/persistence/dto.rs": {
+      "name": "Saved history representation",
+      "description": "Maps saved documents into checked game values without silently repairing or normalizing stored history."
+    },
+    "cyoa-infrastructure/src/persistence/filesystem.rs": {
+      "name": "Safe Linux file access",
+      "description": "Uses directory-relative operations that avoid following hostile filesystem links."
+    },
+    "cyoa-infrastructure/src/persistence/helper.rs": {
+      "name": "Supervised save helpers",
+      "description": "Runs one bounded isolated storage child per operation and dispatches the private helper entry."
+    },
+    "cyoa-infrastructure/src/persistence/helper/wire.rs": {
+      "name": "Private save-helper messages",
+      "description": "Encodes requests, replies and failures between the parent process and its storage child."
+    },
+    "cyoa-infrastructure/src/persistence/migrations.rs": {
+      "name": "Save format version checks",
+      "description": "Recognizes the current Rust save version and rejects unsupported versions; no older Rust format has shipped."
+    },
+    "cyoa-infrastructure/src/persistence/mod.rs": {
+      "name": "Local save connection assembly",
+      "description": "Exposes saved-document validation, atomic local storage and supervised helper access."
+    },
+    "cyoa-infrastructure/src/persistence/prepared.rs": {
+      "name": "Private save preparation",
+      "description": "Keeps exact encoded save bytes behind an opaque attempt handle recoverable only by the creating adapter."
+    },
+    "cyoa-infrastructure/src/persistence/repository_tests.rs": {
+      "name": "Atomic write failure tests",
+      "description": "Exercises injected filesystem faults and crash windows around save replacement and reconciliation."
+    },
+    "cyoa-infrastructure/src/persistence/repository.rs": {
+      "name": "Atomic game saves",
+      "description": "Locks save slots and writes primary and backup documents atomically, with same-attempt reconciliation."
+    },
+    "cyoa-infrastructure/src/persistence/save_id.rs": {
+      "name": "New save-slot identities",
+      "description": "Generates stable slot identities for local and supervised repositories."
+    }
+  }
+}

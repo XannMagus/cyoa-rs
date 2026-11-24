@@ -1,0 +1,24 @@
+{
+  "files": {
+    "cyoa-core/tests/decision_contracts.rs": {
+      "name": "Project decision tests",
+      "description": "Checks deliberate namesake, identity and chapter behavior independently of Python parity."
+    },
+    "cyoa-core/tests/domain_invariants.rs": {
+      "name": "Public game invariant tests",
+      "description": "Checks style, chapter numbering, audit records, save values and turn-direction distinctions."
+    },
+    "cyoa-core/tests/restore_limits.rs": {
+      "name": "Restored memory bounds tests",
+      "description": "Checks event caps and prose bridge behavior across restore policies and rewind."
+    },
+    "cyoa-core/tests/restored_world.rs": {
+      "name": "Restored world boundary tests",
+      "description": "Checks owned protagonist selection and restoration without reapplying generation-only cast filtering."
+    },
+    "cyoa-core/tests/summary_merge.rs": {
+      "name": "Story memory merge tests",
+      "description": "Checks stable-ID matching, name fallback, blank updates, event caps and exact null-versus-empty semantics."
+    }
+  }
+}

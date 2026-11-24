@@ -1,0 +1,48 @@
+{
+  "files": {
+    "cyoa-cli/tests/controller_backends.rs": {
+      "name": "Session storyteller boundary tests",
+      "description": "Checks both fixture adapters through session failure, cancellation, retry and quit."
+    },
+    "cyoa-cli/tests/controller_story.rs": {
+      "name": "Canonical story acceptance tests",
+      "description": "Checks the full controller story, request context, repaired identities, chapters and rewind."
+    },
+    "cyoa-cli/tests/demo_persistence.rs": {
+      "name": "Demo restart tests",
+      "description": "Checks fixed demo continuation across restart, rewind, exhaustion and source validation."
+    },
+    "cyoa-cli/tests/demo_retry.rs": {
+      "name": "Cancelled demo retry tests",
+      "description": "Checks that cancelled passages remain available on explicit retry and do not alter durable story state."
+    },
+    "cyoa-cli/tests/headless_output.rs": {
+      "name": "Terminal backpressure tests",
+      "description": "Checks responsive cancellation, exact output delivery and finite final drains under blocked or trickling output."
+    },
+    "cyoa-cli/tests/headless_persistence.rs": {
+      "name": "Terminal save acceptance tests",
+      "description": "Checks disk restart, explicit backup recovery, auth ordering and save-copy behavior through the shipped CLI."
+    },
+    "cyoa-cli/tests/headless.rs": {
+      "name": "Shipped terminal play tests",
+      "description": "Drives fixture storytellers and demo play through input, retry, inspection and cancellation behavior."
+    },
+    "cyoa-cli/tests/persistence_shutdown.rs": {
+      "name": "Final-save shutdown tests",
+      "description": "Checks that input or output failures preserve canonical state and still join helpers and attempt the final save."
+    },
+    "cyoa-cli/tests/storage_helper.rs": {
+      "name": "Shipped save-helper tests",
+      "description": "Checks private helper dispatch, exact documents and bounded child lifecycle through the real executable."
+    },
+    "cyoa-cli/tests/support/headless.rs": {
+      "name": "Terminal process test harness",
+      "description": "Launches the executable and coordinates stage prompts, input and output for terminal acceptance checks."
+    },
+    "cyoa-presentation/tests/commands.rs": {
+      "name": "Player command parsing tests",
+      "description": "Checks valid persistence intent and rejects invalid policies, IDs, paths and inconsistent options before effects."
+    }
+  }
+}

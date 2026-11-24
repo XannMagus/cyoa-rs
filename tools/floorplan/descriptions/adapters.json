@@ -1,0 +1,28 @@
+{
+  "files": {
+    "cyoa-infrastructure/examples/claude_adapter_acceptance.rs": {
+      "name": "Opt-in live Claude gate",
+      "description": "Exercises a bounded composed story through the actual Claude adapter when explicitly invoked."
+    },
+    "cyoa-infrastructure/examples/codex_adapter_acceptance.rs": {
+      "name": "Opt-in live Codex gate",
+      "description": "Exercises a bounded composed story through the actual Codex adapter when explicitly invoked."
+    },
+    "cyoa-infrastructure/examples/codex_adapter_smoke.rs": {
+      "name": "Opt-in live Codex outline",
+      "description": "Checks one real outline request through the Codex adapter without running as part of offline tests."
+    },
+    "cyoa-infrastructure/src/image.rs": {
+      "name": "Disabled image connection",
+      "description": "Returns an explicit disabled outcome without attempting image generation."
+    },
+    "cyoa-infrastructure/src/json.rs": {
+      "name": "Strict document reading",
+      "description": "Rejects duplicate JSON keys and invalid document structure for model replies and saved games."
+    },
+    "cyoa-infrastructure/src/lib.rs": {
+      "name": "External connections library",
+      "description": "Exposes story generation, subprocess execution and local save implementations."
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "files": {
+    "cyoa-core/src/character.rs": {
+      "name": "Distinct story characters",
+      "description": "Keeps a nonempty ordered cast, repairs colliding IDs and preserves distinct namesakes."
+    },
+    "cyoa-core/src/ids.rs": {
+      "name": "Stable character identity",
+      "description": "Builds readable character IDs independently of later name changes."
+    },
+    "cyoa-core/src/world.rs": {
+      "name": "World and protagonist selection",
+      "description": "Combines a checked outline and cast, then binds a valid protagonist selection to that world."
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "files": {
+    "cyoa-infrastructure/src/backends/codex_cli.rs": {
+      "name": "Codex invocation preparation",
+      "description": "Validates Codex settings, checks subscription sign-in and prepares private complete-only generation requests."
+    },
+    "cyoa-infrastructure/src/backends/codex_cli/adapter.rs": {
+      "name": "Codex result acceptance",
+      "description": "Emits one complete payload only after protocol success, full delivery, reaping and cleanup."
+    },
+    "cyoa-infrastructure/src/backends/codex_cli/adapter/tests.rs": {
+      "name": "Codex acceptance boundary tests",
+      "description": "Checks that cancellation and every transport failure prevent candidate acceptance and emission."
+    },
+    "cyoa-infrastructure/src/backends/codex_cli/protocol.rs": {
+      "name": "Codex event reading",
+      "description": "Requires one ordered complete-message result and rejects ambiguous, tool-bearing or unsupported event streams."
+    },
+    "cyoa-infrastructure/src/backends/codex_cli/protocol/tests.rs": {
+      "name": "Codex event profile tests",
+      "description": "Checks captured replies, unsupported tool events and malformed streams without claiming new live vendor evidence."
+    }
+  }
+}

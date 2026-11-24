@@ -1,0 +1,24 @@
+{
+  "files": {
+    "cyoa-infrastructure/src/backends/executable.rs": {
+      "name": "Selected executable lookup",
+      "description": "Resolves configured programs against the selected search path before private request directories change the working folder."
+    },
+    "cyoa-infrastructure/src/backends/mod.rs": {
+      "name": "Storyteller process connections",
+      "description": "Exposes both co-equal CLI connections and their shared process plumbing."
+    },
+    "cyoa-infrastructure/src/backends/process.rs": {
+      "name": "Bounded process contract",
+      "description": "Defines explicit child environments, capture limits, deadlines and process outcomes."
+    },
+    "cyoa-infrastructure/src/backends/process/unix_impl.rs": {
+      "name": "Unix process supervision",
+      "description": "Fairly polls child input and output while enforcing cancellation, deadlines, reaping and request-folder cleanup."
+    },
+    "cyoa-infrastructure/src/backends/transport.rs": {
+      "name": "Shared transport failures",
+      "description": "Maps supervised process outcomes into generation errors while retaining exact candidates and diagnostic bytes."
+    }
+  }
+}

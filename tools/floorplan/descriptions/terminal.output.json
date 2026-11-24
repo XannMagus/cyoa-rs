@@ -1,0 +1,12 @@
+{
+  "files": {
+    "cyoa-presentation/src/headless.rs": {
+      "name": "Interactive story loop",
+      "description": "Drives the canonical session and renders prose, choices and save results while handling input and output failures."
+    },
+    "cyoa-presentation/src/headless/output.rs": {
+      "name": "Bounded terminal output",
+      "description": "Queues exact output bytes and handles temporary backpressure without blocking input polling indefinitely."
+    }
+  }
+}

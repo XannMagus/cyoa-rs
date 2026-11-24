@@ -1,0 +1,8 @@
+{
+  "files": {
+    "cyoa-presentation/src/lib.rs": {
+      "name": "Terminal interface library",
+      "description": "Exposes command parsing, play rendering and Linux terminal handling."
+    }
+  }
+}

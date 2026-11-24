@@ -1,0 +1,20 @@
+{
+  "files": {
+    "cyoa-infrastructure/src/execution/blocking.rs": {
+      "name": "Scoped startup jobs",
+      "description": "Runs one blocking startup or read-only operation with bounded lifecycle ownership."
+    },
+    "cyoa-infrastructure/src/execution/generation.rs": {
+      "name": "Sequential generation execution",
+      "description": "Runs owned generation threads and coalesces bounded previews before reporting joined completion."
+    },
+    "cyoa-infrastructure/src/execution/mod.rs": {
+      "name": "Background execution connections",
+      "description": "Exposes generation, storage and scoped blocking job implementations."
+    },
+    "cyoa-infrastructure/src/execution/storage.rs": {
+      "name": "Owned save execution",
+      "description": "Runs storage requests off the caller thread and retains prepared attempts when worker failures leave uncertainty."
+    }
+  }
+}

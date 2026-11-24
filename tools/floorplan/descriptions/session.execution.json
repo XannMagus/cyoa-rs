@@ -1,0 +1,20 @@
+{
+  "files": {
+    "cyoa-application/src/cancellation.rs": {
+      "name": "Cancellation authority",
+      "description": "Separates the authority to cancel work from tokens that observe cancellation and wake waiting work."
+    },
+    "cyoa-application/src/diagnostics.rs": {
+      "name": "Exact transport evidence",
+      "description": "Retains captured stdout and stderr bytes with completeness information separately from story content."
+    },
+    "cyoa-application/src/execution.rs": {
+      "name": "Background work contracts",
+      "description": "Defines generation and storage dispatch, progress and completion without concrete threads or child processes."
+    },
+    "cyoa-application/src/image.rs": {
+      "name": "Future image capability",
+      "description": "Defines an image-generation boundary whose only supported outcome is currently disabled."
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "files": {
+    "cyoa-application/src/lib.rs": {
+      "name": "Reusable session library",
+      "description": "Exposes session policy and inward-owned execution contracts for terminal-independent clients."
+    }
+  }
+}

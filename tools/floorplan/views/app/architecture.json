@@ -1,0 +1,539 @@
+{
+  "project": {
+    "name": "Create your own adventure",
+    "summary": "A Rust adventure REPL backed by either Claude Code or OpenAI Codex subscriptions, with bounded story memory and local saves.",
+    "entrypoints": [
+      "cyoa-cli/src/main.rs"
+    ]
+  },
+  "ignore": [
+    "reference/calibre/**",
+    "reviews/**",
+    "docs/review-dark.css",
+    "tools/floorplan/**"
+  ],
+  "nodes": [
+    {
+      "id": "terminal",
+      "label": "Terminal play",
+      "kind": "ui",
+      "summary": "Accepts player commands and displays tentative prose, accepted passages and save results.",
+      "paths": [
+        "cyoa-presentation/src/**",
+        "cyoa-cli/src/**"
+      ]
+    },
+    {
+      "id": "terminal.start",
+      "label": "Start the game",
+      "kind": "feature",
+      "summary": "Wires the chosen storyteller, session and save helpers into the terminal.",
+      "paths": [
+        "cyoa-cli/src/**"
+      ],
+      "parent": "terminal"
+    },
+    {
+      "id": "terminal.input",
+      "label": "Commands and signals",
+      "kind": "feature",
+      "summary": "Reads player intent and cancellation without reading ahead into later commands.",
+      "paths": [
+        "cyoa-presentation/src/commands.rs",
+        "cyoa-presentation/src/terminal.rs"
+      ],
+      "parent": "terminal"
+    },
+    {
+      "id": "terminal.output",
+      "label": "Story display",
+      "kind": "feature",
+      "summary": "Runs the play loop and drains prose and control output with bounded waits.",
+      "paths": [
+        "cyoa-presentation/src/headless*",
+        "cyoa-presentation/src/headless/**"
+      ],
+      "parent": "terminal"
+    },
+    {
+      "id": "session",
+      "label": "Session policy",
+      "kind": "library",
+      "summary": "Owns accepted game state, explicit retry, autosave and shutdown decisions.",
+      "paths": [
+        "cyoa-application/src/**"
+      ]
+    },
+    {
+      "id": "session.lifecycle",
+      "label": "Story lifecycle",
+      "kind": "feature",
+      "summary": "Admits player intent and accepts completed generation only when it still belongs to the session.",
+      "paths": [
+        "cyoa-application/src/session.rs",
+        "cyoa-application/src/runtime.rs",
+        "cyoa-application/src/generation.rs"
+      ],
+      "parent": "session"
+    },
+    {
+      "id": "session.saves",
+      "label": "Save policy",
+      "kind": "feature",
+      "summary": "Coordinates save attempts, load, recovery and final saving through replaceable execution contracts.",
+      "paths": [
+        "cyoa-application/src/persistence.rs",
+        "cyoa-application/src/session_persistence.rs",
+        "cyoa-application/src/attempt.rs"
+      ],
+      "parent": "session"
+    },
+    {
+      "id": "session.execution",
+      "label": "Execution contracts",
+      "kind": "library",
+      "summary": "Defines cancellation, progress and background-work boundaries without terminal or vendor details.",
+      "paths": [
+        "cyoa-application/src/execution.rs",
+        "cyoa-application/src/cancellation.rs",
+        "cyoa-application/src/diagnostics.rs",
+        "cyoa-application/src/image.rs"
+      ],
+      "parent": "session"
+    },
+    {
+      "id": "rules",
+      "label": "Adventure rules",
+      "kind": "library",
+      "summary": "Keeps characters distinct and derives story memory, chapter continuity and rewind from accepted turns.",
+      "paths": [
+        "cyoa-core/src/**"
+      ]
+    },
+    {
+      "id": "rules.people",
+      "label": "World and characters",
+      "kind": "feature",
+      "summary": "Validates worlds, protagonist selection and stable character identities while preserving namesakes.",
+      "paths": [
+        "cyoa-core/src/character.rs",
+        "cyoa-core/src/world.rs",
+        "cyoa-core/src/ids.rs"
+      ],
+      "parent": "rules"
+    },
+    {
+      "id": "rules.story",
+      "label": "Turns and memory",
+      "kind": "feature",
+      "summary": "Merges summary changes and derives chapters, recent prose and rewind from the turn log.",
+      "paths": [
+        "cyoa-core/src/game.rs",
+        "cyoa-core/src/summary.rs",
+        "cyoa-core/src/turn.rs"
+      ],
+      "parent": "rules"
+    },
+    {
+      "id": "rules.values",
+      "label": "Settings and capabilities",
+      "kind": "library",
+      "summary": "Defines checked text, limits, styles and the business capabilities for generation and saves.",
+      "paths": [
+        "cyoa-core/src/text.rs",
+        "cyoa-core/src/limits.rs",
+        "cyoa-core/src/style.rs",
+        "cyoa-core/src/generation.rs",
+        "cyoa-core/src/persistence.rs"
+      ],
+      "parent": "rules"
+    },
+    {
+      "id": "adapters",
+      "label": "Story and disk connections",
+      "kind": "library",
+      "summary": "Turns external model replies and saved documents into checked game values.",
+      "paths": [
+        "cyoa-infrastructure/src/**",
+        "cyoa-infrastructure/examples/**"
+      ],
+      "exclude": [
+        "**/tests.rs",
+        "**/*_tests.rs"
+      ]
+    },
+    {
+      "id": "adapters.generation",
+      "label": "Story requests",
+      "kind": "feature",
+      "summary": "Renders bundled instructions and validates generated worlds, casts and turns.",
+      "paths": [
+        "cyoa-infrastructure/src/generation/**",
+        "cyoa-infrastructure/src/backend.rs"
+      ],
+      "parent": "adapters"
+    },
+    {
+      "id": "adapters.claude",
+      "label": "Claude connection",
+      "kind": "feature",
+      "summary": "Checks subscription sign-in and accepts Claude structured results with optional narrative previews.",
+      "paths": [
+        "cyoa-infrastructure/src/backends/claude_cli*",
+        "cyoa-infrastructure/src/backends/claude_cli/**"
+      ],
+      "parent": "adapters"
+    },
+    {
+      "id": "adapters.codex",
+      "label": "Codex connection",
+      "kind": "feature",
+      "summary": "Checks subscription sign-in and accepts one complete structured reply after successful cleanup.",
+      "paths": [
+        "cyoa-infrastructure/src/backends/codex_cli*",
+        "cyoa-infrastructure/src/backends/codex_cli/**"
+      ],
+      "parent": "adapters"
+    },
+    {
+      "id": "adapters.process",
+      "label": "Child process supervision",
+      "kind": "library",
+      "summary": "Bounds process input, output, cancellation and cleanup for both storyteller connections.",
+      "paths": [
+        "cyoa-infrastructure/src/backends/**"
+      ],
+      "parent": "adapters"
+    },
+    {
+      "id": "adapters.disk",
+      "label": "Save documents and disk",
+      "kind": "data",
+      "summary": "Validates saved games and supervises atomic primary and backup writes with explicit recovery.",
+      "paths": [
+        "cyoa-infrastructure/src/persistence/**"
+      ],
+      "parent": "adapters"
+    },
+    {
+      "id": "adapters.execution",
+      "label": "Background execution",
+      "kind": "worker",
+      "summary": "Runs generation, storage and bounded blocking tasks behind application-owned contracts.",
+      "paths": [
+        "cyoa-infrastructure/src/execution/**"
+      ],
+      "parent": "adapters"
+    },
+    {
+      "id": "checks",
+      "label": "Checks and evidence tools",
+      "kind": "test",
+      "summary": "Protects story behavior, boundaries, subprocess handling and disk recovery with tests and mutation checks.",
+      "paths": [
+        "**/tests/**",
+        "**/*_tests.rs",
+        "**/src/bin/*fixture.rs",
+        "scripts/**"
+      ]
+    },
+    {
+      "id": "checks.domain",
+      "label": "Adventure rule tests",
+      "kind": "test",
+      "summary": "Checks identity, summary merging, chapters and checked game construction.",
+      "paths": [
+        "cyoa-core/tests/**"
+      ],
+      "parent": "checks"
+    },
+    {
+      "id": "checks.application",
+      "label": "Session policy tests",
+      "kind": "test",
+      "summary": "Checks admission, retry, save policy and shutdown through controlled execution contracts.",
+      "paths": [
+        "cyoa-application/tests/**",
+        "cyoa-application/src/*_tests.rs"
+      ],
+      "parent": "checks"
+    },
+    {
+      "id": "checks.adapters",
+      "label": "Connection and disk tests",
+      "kind": "test",
+      "summary": "Checks generated replies, process cleanup, library embedding and crash recovery.",
+      "paths": [
+        "cyoa-infrastructure/tests/**",
+        "cyoa-infrastructure/src/**/*tests*",
+        "cyoa-infrastructure/src/bin/*fixture.rs",
+        "cyoa-infrastructure/src/**/tests.rs",
+        "cyoa-infrastructure/src/**/*_tests.rs"
+      ],
+      "parent": "checks"
+    },
+    {
+      "id": "checks.terminal",
+      "label": "Terminal acceptance tests",
+      "kind": "test",
+      "summary": "Drives the shipped command through story, output, restart and shutdown cases.",
+      "paths": [
+        "cyoa-cli/tests/**",
+        "cyoa-presentation/tests/**"
+      ],
+      "parent": "checks"
+    },
+    {
+      "id": "checks.tools",
+      "label": "Contract and mutation tools",
+      "kind": "script",
+      "summary": "Runs registered behavior checks, dependency checks and deliberate regression probes.",
+      "paths": [
+        "scripts/**"
+      ],
+      "parent": "checks"
+    },
+    {
+      "id": "claude",
+      "label": "Claude Code",
+      "kind": "external",
+      "summary": "Generates story content through the locally authenticated Claude CLI."
+    },
+    {
+      "id": "codex",
+      "label": "OpenAI Codex",
+      "kind": "external",
+      "summary": "Generates story content through the locally authenticated Codex CLI."
+    },
+    {
+      "id": "disk",
+      "label": "Local save folder",
+      "kind": "external",
+      "summary": "Keeps primary game documents, preceding backups and save-attempt evidence on local disk."
+    }
+  ],
+  "edges": [
+    {
+      "from": "terminal.start",
+      "to": "terminal.input",
+      "kind": "call",
+      "label": "Starts terminal interaction"
+    },
+    {
+      "from": "terminal.output",
+      "to": "session.saves",
+      "kind": "call",
+      "label": "Submits intent and polls views"
+    },
+    {
+      "from": "session.saves",
+      "to": "session.lifecycle",
+      "kind": "call",
+      "label": "Coordinates canonical play"
+    },
+    {
+      "from": "session.lifecycle",
+      "to": "rules.story",
+      "kind": "call",
+      "label": "Accepts valid turns"
+    },
+    {
+      "from": "session.lifecycle",
+      "to": "adapters.execution",
+      "kind": "call",
+      "label": "Dispatches through execution ports"
+    },
+    {
+      "from": "session.saves",
+      "to": "adapters.execution",
+      "kind": "call",
+      "label": "Dispatches save work through ports"
+    },
+    {
+      "from": "adapters.execution",
+      "to": "adapters.generation",
+      "kind": "call",
+      "label": "Runs story generation"
+    },
+    {
+      "from": "adapters.execution",
+      "to": "adapters.disk",
+      "kind": "call",
+      "label": "Runs storage operations"
+    },
+    {
+      "from": "adapters.generation",
+      "to": "adapters.claude",
+      "kind": "call",
+      "label": "Uses selected storyteller"
+    },
+    {
+      "from": "adapters.generation",
+      "to": "adapters.codex",
+      "kind": "call",
+      "label": "Uses selected storyteller"
+    },
+    {
+      "from": "adapters.claude",
+      "to": "claude",
+      "kind": "rpc",
+      "label": "Starts claude -p"
+    },
+    {
+      "from": "adapters.codex",
+      "to": "codex",
+      "kind": "rpc",
+      "label": "Starts codex exec"
+    },
+    {
+      "from": "adapters.disk",
+      "to": "disk",
+      "kind": "data",
+      "label": "Reads and writes saves"
+    },
+    {
+      "from": "terminal.start",
+      "to": "session",
+      "kind": "call",
+      "label": "Constructs canonical session"
+    },
+    {
+      "from": "terminal.start",
+      "to": "adapters",
+      "kind": "call",
+      "label": "Selects concrete connections"
+    },
+    {
+      "from": "session.lifecycle",
+      "to": "rules.people",
+      "kind": "call",
+      "label": "Builds world and selects protagonist"
+    },
+    {
+      "from": "adapters.generation",
+      "to": "rules",
+      "kind": "call",
+      "label": "Constructs checked story values"
+    },
+    {
+      "from": "adapters.disk",
+      "to": "rules",
+      "kind": "call",
+      "label": "Restores checked history"
+    },
+    {
+      "from": "session",
+      "to": "rules",
+      "kind": "call",
+      "label": "Uses domain capabilities and values"
+    }
+  ],
+  "flows": [
+    {
+      "id": "play",
+      "title": "Generate and accept a passage",
+      "steps": [
+        {
+          "node": "terminal.output",
+          "note": "The player submits a story direction."
+        },
+        {
+          "node": "session.lifecycle",
+          "note": "The session admits one request and keeps the accepted game unchanged while work runs."
+        },
+        {
+          "node": "adapters.execution",
+          "note": "A background task runs the selected generation request."
+        },
+        {
+          "node": "adapters.generation",
+          "note": "Bundled instructions and checked response shapes guide generation."
+        },
+        {
+          "node": "adapters.codex",
+          "note": "When Codex is selected, one complete candidate is accepted after process cleanup."
+        },
+        {
+          "node": "session.lifecycle",
+          "note": "Only a valid, current completion changes the canonical game."
+        },
+        {
+          "node": "rules.story",
+          "note": "The turn log determines updated memory and chapter context."
+        }
+      ]
+    },
+    {
+      "id": "save",
+      "title": "Save an accepted game",
+      "steps": [
+        {
+          "node": "session.saves",
+          "note": "An accepted turn or rewind makes the canonical game need saving."
+        },
+        {
+          "node": "adapters.execution",
+          "note": "The storage runner preserves attempt identity while work runs."
+        },
+        {
+          "node": "adapters.disk",
+          "note": "A bounded helper validates and atomically writes the primary and backup."
+        },
+        {
+          "node": "disk",
+          "note": "The save folder retains the durable game and previous valid bytes."
+        },
+        {
+          "node": "session.saves",
+          "note": "A matching successful receipt marks the game clean; uncertainty remains explicit."
+        }
+      ]
+    }
+  ],
+  "tour": [
+    {
+      "node": "terminal",
+      "title": "Play in the terminal",
+      "note": "The shipped product is a playable REPL; TUI and export remain future work."
+    },
+    {
+      "node": "session",
+      "title": "One owner of the game",
+      "note": "All frontends can use the same canonical session, retry and saving policy."
+    },
+    {
+      "node": "rules",
+      "title": "Memory without the full transcript",
+      "note": "Story summaries and a chapter bridge keep the next request bounded."
+    },
+    {
+      "node": "adapters",
+      "title": "Two equal storytellers",
+      "note": "Claude previews prose as it arrives; the supported Codex profile reveals a complete result."
+    },
+    {
+      "node": "disk",
+      "title": "Resume safely",
+      "note": "Primary saves and explicit backup recovery preserve accepted adventures."
+    },
+    {
+      "node": "cyoa-cli/src/main.rs",
+      "title": "Where the pieces meet",
+      "note": "The executable chooses concrete connections and wires the reusable application together."
+    }
+  ],
+  "annotations": [
+    {
+      "path": "cyoa-application/src/session.rs",
+      "note": "ARCH-001: canonical game ownership lives in the application; views expose no mutable game."
+    },
+    {
+      "path": "cyoa-infrastructure/src/generation/backend_compat/mod.rs",
+      "note": "ARCH-003: keep each vendor tolerance adjustment local; shared schema and prompt generation stay vendor-independent."
+    },
+    {
+      "path": "cyoa-infrastructure/src/persistence/prepared.rs",
+      "note": "ARCH-002: encoded save bytes stay private behind the application attempt handle."
+    }
+  ]
+}

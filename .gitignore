@@ -5,3 +5,7 @@
 
 # personal save files if you ever run this from inside the repo during dev
 /dev-saves/
+
+# Local renderings, dependency checkout and server state; sources live in tools/floorplan.
+/floorplan/
+/floorplan-layers/

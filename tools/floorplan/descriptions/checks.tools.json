@@ -1,0 +1,32 @@
+{
+  "files": {
+    "scripts/check_architecture.sh": {
+      "name": "Inward dependency checks",
+      "description": "Checks workspace dependency direction and keeps vendor-specific rules out of shared generation code."
+    },
+    "scripts/check_contract_mutations.sh": {
+      "name": "Deliberate regression gate",
+      "description": "Runs registered intentional regressions in an isolated source copy and requires genuine behavioral test failures."
+    },
+    "scripts/check_contracts.sh": {
+      "name": "Shared completion gate",
+      "description": "Checks required regressions, workspace tests, doctests, architecture and both mutation gates."
+    },
+    "scripts/check_domain_mutations.sh": {
+      "name": "Domain mutation gate",
+      "description": "Runs pinned mutation tools against adventure rules and only their own tests."
+    },
+    "scripts/check_test_tools.sh": {
+      "name": "Pinned test tool checks",
+      "description": "Rejects incompatible cargo-mutants and cargo-nextest versions before the shared gates run."
+    },
+    "scripts/lib/test_outcome.sh": {
+      "name": "Targeted test outcome reading",
+      "description": "Distinguishes genuine assertion failures from missing tests, compiler failures and other invalid outcomes."
+    },
+    "scripts/test_mutation_outcome.sh": {
+      "name": "Mutation result reader tests",
+      "description": "Checks that test-result parsing rejects invalid evidence instead of counting it as a detected regression."
+    }
+  }
+}

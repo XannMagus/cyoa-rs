@@ -1,0 +1,24 @@
+{
+  "files": {
+    "cyoa-application/src/session_persistence_tests.rs": {
+      "name": "Save coordination boundary tests",
+      "description": "Injects stale receipts and counter boundaries into private coordination state without weakening public admission."
+    },
+    "cyoa-application/tests/cancellation.rs": {
+      "name": "Cancellation notification tests",
+      "description": "Checks token observation, callback registration and cancellation wake behavior."
+    },
+    "cyoa-application/tests/persistence.rs": {
+      "name": "Persistence use-case tests",
+      "description": "Checks repository forwarding, explicit restore choices and typed save failure outcomes."
+    },
+    "cyoa-application/tests/session.rs": {
+      "name": "Canonical lifecycle tests",
+      "description": "Checks edited outlines, one opening, bounded previews and rejection of stale or duplicate completions."
+    },
+    "cyoa-application/tests/support/mod.rs": {
+      "name": "Shared test preparation",
+      "description": "Builds checked story values and failures for application lifecycle tests."
+    }
+  }
+}

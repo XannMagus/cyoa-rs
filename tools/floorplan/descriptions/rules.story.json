@@ -1,0 +1,16 @@
+{
+  "files": {
+    "cyoa-core/src/game.rs": {
+      "name": "Accepted adventure history",
+      "description": "Derives chapters, story memory and prose context from accepted turns and supports rewind."
+    },
+    "cyoa-core/src/summary.rs": {
+      "name": "Bounded story memory",
+      "description": "Merges character and event changes while distinguishing unchanged upcoming events from an empty replacement."
+    },
+    "cyoa-core/src/turn.rs": {
+      "name": "Story passages and choices",
+      "description": "Requires valid prose and usable actions while retaining chapter intent, usage and generation evidence."
+    }
+  }
+}

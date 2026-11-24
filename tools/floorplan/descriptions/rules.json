@@ -1,0 +1,8 @@
+{
+  "files": {
+    "cyoa-core/src/lib.rs": {
+      "name": "Adventure rules library",
+      "description": "Exposes checked game values and story rules without filesystem, terminal or vendor dependencies."
+    }
+  }
+}

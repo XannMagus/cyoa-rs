@@ -1,0 +1,24 @@
+{
+  "files": {
+    "cyoa-core/src/generation.rs": {
+      "name": "Story generation capabilities",
+      "description": "Defines world, cast and turn generation in business terms without vendor protocols."
+    },
+    "cyoa-core/src/limits.rs": {
+      "name": "Adventure bounds",
+      "description": "Distinguishes event caps, NPC caps, playable minimums and chapter bridge lengths with checked values."
+    },
+    "cyoa-core/src/persistence.rs": {
+      "name": "Save identity and capabilities",
+      "description": "Defines checked save identities, snapshots, counters and repository operations without encoded documents."
+    },
+    "cyoa-core/src/style.rs": {
+      "name": "Adventure style choices",
+      "description": "Keeps optional pace, tone, narration and art choices; absent choices use table defaults."
+    },
+    "cyoa-core/src/text.rs": {
+      "name": "Business and audit text",
+      "description": "Trims and validates business text while preserving raw responses and prompts byte for byte."
+    }
+  }
+}

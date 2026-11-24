@@ -1,0 +1,20 @@
+{
+  "files": {
+    "cyoa-infrastructure/src/backends/claude_cli.rs": {
+      "name": "Claude invocation preparation",
+      "description": "Validates Claude settings, checks subscription sign-in and prepares isolated requests for the supported profile."
+    },
+    "cyoa-infrastructure/src/backends/claude_cli/adapter.rs": {
+      "name": "Claude result acceptance",
+      "description": "Forwards tentative narrative previews and accepts the final structured result only after successful process cleanup."
+    },
+    "cyoa-infrastructure/src/backends/claude_cli/protocol.rs": {
+      "name": "Claude event reading",
+      "description": "Interprets the frozen stream profile and rejects ambiguous controls while retaining final payload and usage evidence."
+    },
+    "cyoa-infrastructure/src/backends/claude_cli/protocol/tests.rs": {
+      "name": "Claude event profile tests",
+      "description": "Checks frozen live captures and synthetic malformed events against independent acceptance expectations."
+    }
+  }
+}

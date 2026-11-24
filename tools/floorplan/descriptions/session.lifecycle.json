@@ -1,0 +1,16 @@
+{
+  "files": {
+    "cyoa-application/src/generation.rs": {
+      "name": "Story generation use cases",
+      "description": "Orchestrates typed generation and returns an unchanged game with evidence when a turn fails."
+    },
+    "cyoa-application/src/runtime.rs": {
+      "name": "Session effect driver",
+      "description": "Dispatches typed intent and polls execution results without exposing mutable canonical state."
+    },
+    "cyoa-application/src/session.rs": {
+      "name": "Canonical story lifecycle",
+      "description": "Owns accepted game state and rejects stale or duplicate generation completions before they can change it."
+    }
+  }
+}
